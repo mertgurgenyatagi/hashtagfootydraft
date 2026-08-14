@@ -42,10 +42,19 @@ Every purchased footballer goes into the buyer's **graveyard** — a holding are
 purchased-but-unused players, not substitutes, not part of the final list. Players
 place footballers from their graveyard into their formation as desired. The graveyard
 lets a player upgrade their lineup or block opponents from getting certain footballers.
+The graveyard is **unlimited** — no cap on how many footballers can sit in it, no extra
+cost beyond the winning bid. *(Q7)*
 
-**Open:** what happens when a player runs out of money / has very little left; how the
-footballer pool is selected so all positions are covered; how footballers are chosen
-for the pool in general.
+**Running low on money — reserve mechanic** *(Q1, decided by Claude)*: a player can
+never bid away the funds needed to fill their remaining empty slots. At any moment, the
+app reserves *(cheapest currently-eligible footballer price for each still-open slot)*
+out of a player's budget, and only the leftover is biddable. This guarantees every
+Auction player can always complete their XI, tying directly into the completion
+guarantee below (Q5). Deal or No Deal has no budget in the briefing, so "running out of
+money" doesn't apply there — see that section.
+
+**Open:** how footballers are chosen for the pool in general, beyond guaranteeing
+position coverage (Q2 settles coverage; deeper selection/weighting criteria still TBD).
 
 #### Deal or No Deal
 3 example players: John, Paul, Ringo. One position is picked at random (e.g. CDM).
@@ -58,14 +67,18 @@ they go back, the next box they open is the player they must take. Round ends; a
 position is picked at random and the turn order rotates (a different player goes
 first).
 
-Same **graveyard** mechanic as Auction.
+Same **graveyard** mechanic as Auction (unlimited, no extra cost).
 
-**Open:** same as Auction — running out of money/low money, pool selection for
-position coverage, general footballer selection.
+This format has no budget/currency in the briefing — every player is guaranteed a
+footballer each round (stick, take the offer, or go back to the boxes), so it's
+self-completing by design and doesn't need the Auction's reserve mechanic. *(Q1)*
+
+**Open:** how footballers are chosen for the pool in general, beyond position coverage.
 
 #### Free Pick
 3 example players: John, Paul, Ringo. Straight **snake draft**, 11 picks total, each
 player freely picking any footballer in the pool on their turn. **No graveyard.**
+Self-completing by design (11 picks = 11 slots).
 
 #### Spin the Wheel
 Mechanic depends on Scope (not fully decided yet):
@@ -74,9 +87,12 @@ Mechanic depends on Scope (not fully decided yet):
 - Scope = one specific league → spin a wheel of clubs or nationalities, then free pick
   in a snake draft.
 
-The wheel is spun before every pick.
+The wheel is spun before every pick. If the wheel lands on a category with no eligible
+footballers left, that turn **falls back to a free pick from the full remaining pool**
+— just for that turn, the wheel category isn't removed and play resumes normally next
+turn. *(Q4, decided by Claude)*
 
-**Open:** exact wheel mechanics/weighting, full interaction with each Scope option.
+**Open:** exact wheel weighting/odds, full interaction with each Scope option.
 
 ### Scope
 Four values: **All players**, **Top 5 leagues**, **one specific league**, **one
@@ -84,7 +100,36 @@ specific nationality**.
 
 ### Constraints
 Four possible values: **1 per club**, **3 per club**, **1 per nationality**, **3 per
-nationality**.
+nationality**. Exactly **one** constraint is active per draft — they don't stack. *(Q8)*
+
+### Lobby Size
+**2–10** drafters (humans + bots combined), no minimum-to-start beyond 2. The size
+isn't chosen up front — the lobby leader starts whenever ready and the headcount is
+whatever's joined by then. *(Q3 — the answer also mentioned a cap of "up to 5"; that
+looks like it may conflict with the 2–10 range, flagged for Q3 follow-up in
+`questionnaire_2.md`.)*
+
+### Squad Completion Guarantee
+A draft can **never** end with an unfilled slot in the 4-2-3-1 — every format must
+produce a complete XI. *(Q5)* This is already true by construction for Deal or No Deal,
+Free Pick, and Spin the Wheel (each cycles exactly 11 times, one slot per turn); Auction
+is the only format that could otherwise leave gaps, which is what the reserve mechanic
+above exists to prevent.
+
+### Turns & Timers
+Host-configurable per-turn/bid timer (a length can be set, or timers can be turned off
+entirely) rather than one fixed rule for every lobby. *(Q6, decided by Claude — exact
+default length and timeout behavior still TBD, see `questionnaire_2.md`.)*
+
+### Bots
+Bots always play **one consistent default style** — no personality/aggressiveness
+picker exposed to players. *(Q9)* The actual behavioral rules (how a bot bids, sticks,
+takes offers, etc.) are still open — see Open Questions below.
+
+### Post-Draft Editing
+Once a draft ends, the **roster is locked** but players can still rearrange which
+already-drafted footballer sits in which formation slot (positioning only, no
+swapping/adding footballers). *(Q10)*
 
 ## Player Data
 
@@ -99,20 +144,32 @@ Tracked and resolved via the questionnaire process — see `questionnaire_1.md` 
 Each entry below is closed out (with the decision folded into the rules above) once its
 questionnaire is answered.
 
-1. Auction / Deal or No Deal: what happens when a player runs out of money or is very
-   low on funds?
-2. How is the footballer pool selected per draft so all positions are covered?
-3. How are footballers chosen for the pool in general (beyond position coverage)?
-4. Spin the Wheel: exact mechanics, especially interaction with each Scope value.
+~~1. Auction / Deal or No Deal: what happens when a player runs out of money or is very
+   low on funds?~~ Resolved Q1 (reserve mechanic for Auction; N/A for Deal or No Deal).
+~~2. How is the footballer pool selected per draft so all positions are covered?~~
+   Resolved Q2 (pool is built position-by-position first, guaranteeing eligible
+   footballers per position, then combined).
+3. How are footballers chosen for the pool in general (beyond position coverage —
+   quality curve, duplicates across drafts, etc.)?
+4. ~~Spin the Wheel: exact mechanics~~ — dry-category fallback resolved (Q4); wheel
+   weighting/odds and full Scope interaction still open.
 5. AI bots: game-facing behavior rules (not implementation) — how they bid, pick,
-   accept/decline offers, etc.
+   accept/decline offers, etc. (Q9 only ruled out a personality picker; the actual
+   default behavior is still undefined.)
+6. Lobby size: reconcile the "2–10" vs "up to 5" answer in Q3.
+7. Turn/bid timer: default length and exact timeout behavior (Q6 only set that it's
+   host-configurable).
+8. Auction: how is a footballer's starting bid value set, and what's the bid increment?
+9. Turn order: who picks/bids first in Auction and Free Pick, and how (if at all) does
+   it rotate?
+10. What does "compare squads" actually show, given there's no scoring system?
 
 ## Questionnaire Log
 
 | # | Topic | Status |
 |---|-------|--------|
-| 1 | TBD | Pending |
-| 2 | TBD | Not started |
+| 1 | Money, pool coverage, lobby size, timers, graveyard, constraints, bots, post-draft editing | Answered — see `questionnaire_1.md` |
+| 2 | TBD | Pending |
 | 3 | TBD | Not started |
 | 4 | TBD | Not started |
 | 5 | TBD | Not started |
