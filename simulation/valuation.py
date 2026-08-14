@@ -46,42 +46,57 @@ def run_valuation_study(
     starting_value_fn: StartingValueFn = flat,
     seed: int | None = None,
     progress_every: int | None = None,
-) -> dict[str, PlayerStats]:
+) -> tuple[dict[str, PlayerStats], int]:
     """Runs n simulated auctions and tallies, per player, how they fared in the
     market: how often they land in a *finished squad* (graveyard buys don't count,
     since they never contribute to a squad's ability total) and what price they
-    fetched when they did.
+    fetched when they did. Returns (stats, completed_runs).
+
+    A small fraction of auctions can hit a known edge case: the player pool
+    doesn't guarantee position coverage (PROJECT.md open question #21), so a
+    thin position (e.g. only 10 CM-eligible footballers) can run dry before
+    backfill needs it. Those trials are skipped and counted rather than
+    aborting the whole study -- one bad draw shouldn't cost every run before it.
     """
     pool = load_pool(csv_path)  # static data, safe to reuse across every run
     stats = {p.name: PlayerStats(ability=p.ability) for p in pool}
     rng = random.Random(seed)
     start_time = time.perf_counter()
+    completed = 0
+    skipped = 0
 
     for i in range(n):
         bidders = [Bidder(name=f"Bidder {j + 1}", starting_budget=budget) for j in range(bidder_count)]
-        result = run_auction(pool, bidders, starting_value_fn=starting_value_fn, rng=rng)
+        try:
+            result = run_auction(pool, bidders, starting_value_fn=starting_value_fn, rng=rng)
+        except RuntimeError:
+            skipped += 1
+        else:
+            completed += 1
+            squad_ability = {b.name: sum(f.ability for f, _ in b.squad.values()) for b in result.bidders}
+            best = max(squad_ability.values())
+            winning_bidders = {name for name, total in squad_ability.items() if total == best}
 
-        squad_ability = {b.name: sum(f.ability for f, _ in b.squad.values()) for b in result.bidders}
-        best = max(squad_ability.values())
-        winning_bidders = {name for name, total in squad_ability.items() if total == best}
+            for b in result.bidders:
+                is_winner = b.name in winning_bidders
+                for occupant in b.squad.values():
+                    footballer, price = occupant
+                    s = stats[footballer.name]
+                    s.times_acquired += 1
+                    s.total_price += price
+                    if is_winner:
+                        s.times_in_winning_squad += 1
 
-        for b in result.bidders:
-            is_winner = b.name in winning_bidders
-            for occupant in b.squad.values():
-                footballer, price = occupant
-                s = stats[footballer.name]
-                s.times_acquired += 1
-                s.total_price += price
-                if is_winner:
-                    s.times_in_winning_squad += 1
         if progress_every and (i + 1) % progress_every == 0:
             _print_progress_bar(i + 1, n, start_time)
 
     if progress_every:
         _print_progress_bar(n, n, start_time)
         sys.stdout.write("\n")
+    if skipped:
+        print(f"Skipped {skipped}/{n} runs (position-coverage edge case; see PROJECT.md open question #21)")
 
-    return stats
+    return stats, completed
 
 
 def _print_progress_bar(done: int, total: int, start_time: float, width: int = 30) -> None:

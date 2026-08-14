@@ -26,7 +26,7 @@ def main():
     progress_every = args.progress_every or max(1, args.runs // 200)
 
     start = time.perf_counter()
-    stats = run_valuation_study(
+    stats, completed = run_valuation_study(
         args.runs,
         args.pool,
         bidder_count=args.bidders,
@@ -35,9 +35,9 @@ def main():
         seed=args.seed,
         progress_every=progress_every,
     )
-    dump_valuations(stats, args.out, args.runs)
+    dump_valuations(stats, args.out, completed)
     elapsed = time.perf_counter() - start
-    print(f"Ran {args.runs} auctions in {elapsed / 60:.1f} min -> {args.out}")
+    print(f"Ran {completed}/{args.runs} auctions in {elapsed / 60:.1f} min -> {args.out}")
 
 
 if __name__ == "__main__":
