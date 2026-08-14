@@ -59,17 +59,24 @@ Timers). Deal or No Deal has no budget in the briefing, so "running out of money
 doesn't apply there.
 
 There's **no designated opener/nominator** — any footballer can be bid on by anyone the
-moment it appears, no rotating turn to bring it up. *(R2-Q5)*
+moment it appears, no rotating turn to bring it up. *(R2-Q5)* Footballers surface
+**one at a time**: the system auto-reveals the next one as soon as the current one
+sells or passes. *(R3-Q1)*
 
-Bid increments are **flat, stepped amounts** (e.g. +1M, +5M, +10M — think eBay-style
-bid buttons) rather than a percentage of the current price. *(R2-Q3)* Exact step table
-still TBD. How a footballer's *starting* value is set is explicitly deferred — not
-needed yet. *(R2-Q2)*
+Bid increments are **flat, stepped amounts**, offered as a small fixed set of buttons
+(e.g. +1M / +5M / +10M) available at every price point — the steps don't scale up with
+the current price. *(R2-Q3, R3-Q9)* How a footballer's *starting* value is set is
+explicitly deferred — not needed yet. *(R2-Q2)*
+
+The auction "runs its course" (triggering the backfill) as a **hard, global stop**: the
+moment every remaining player is unable to afford anything more, the auction ends
+immediately for everyone at once — it doesn't wait for individual players to trail off
+one by one. It also ends once every footballer in the pool has been sold or passed on,
+whichever comes first. *(R3-Q10)*
 
 **Open:** how footballers are chosen for the pool in general, beyond guaranteeing
 position coverage (Q2 settles coverage; Round 2 settled a quality skew — see Player
-Data Pool below); Auction starting-value formula (deferred); exact bid increment
-step table.
+Data Pool below); Auction starting-value formula (deferred).
 
 #### Deal or No Deal
 3 example players: John, Paul, Ringo. One position is picked at random (e.g. CDM).
@@ -82,16 +89,19 @@ they go back, the next box they open is the player they must take. Round ends; a
 position is picked at random and the turn order rotates (a different player goes
 first).
 
-Same **graveyard** mechanic as Auction (unlimited, no extra cost).
+**No graveyard** — overturning the briefing's original wording. With exactly 11 rounds,
+each mapped to one designated position, every round's result (stick, take the offer, or
+go back to the boxes) fills that round's slot directly. There's no purchased-but-
+unplaced surplus to hold, so a graveyard has nothing to do. *(R3-Q2)*
 
 This format has no budget/currency in the briefing — every player is guaranteed a
-footballer each round (stick, take the offer, or go back to the boxes), so it's
-self-completing by design. *(R1-Q1)*
+footballer each round, so it's self-completing by design. *(R1-Q1)*
 
-**Open:** how footballers are chosen for the pool in general, beyond position coverage;
-how the AI proposer picks the quality/identity of its offer (a format rule that applies
-to every player, human or bot — not the same question as bot personality below, which
-is explicitly deferred).
+The AI proposer's offer is **deliberately a bit worse** than the average ability of the
+remaining unopened boxes for that round's position — sticking with the boxes should
+feel like the tempting choice, taking the deal a concession. *(R3-Q4)*
+
+**Open:** how footballers are chosen for the pool in general, beyond position coverage.
 
 #### Free Pick
 3 example players: John, Paul, Ringo. Straight **snake draft**, 11 picks total, each
@@ -100,18 +110,24 @@ Self-completing by design (11 picks = 11 slots). First pick order is a **random 
 at draft start. *(R2-Q6, also applies to Spin the Wheel below)*
 
 #### Spin the Wheel
-Mechanic depends on Scope (not fully decided yet):
-- Scope = Top 5 Leagues → spin a wheel of clubs, leagues, or nationalities, then free
-  pick in a snake draft.
-- Scope = one specific league → spin a wheel of clubs or nationalities, then free pick
-  in a snake draft.
+The wheel's categories are always whichever of **league / club / nationality** the
+current Scope *hasn't already fixed* — Scope = All players fixes nothing, so all three
+are in play; Top 5 Leagues also leaves all three in play (which of the five is still up
+to the wheel); one specific league fixes league, leaving clubs or nationalities; one
+specific nationality fixes nationality, leaving leagues or clubs. Whichever category the
+wheel lands on, the pick itself is a free pick in a snake draft. *(R3-Q3, decided by
+Claude, extending the two examples the briefing already gave)*
 
 The wheel is spun before every pick. If the wheel lands on a category with no eligible
 footballers left, that turn **falls back to a free pick from the full remaining pool**
 — just for that turn, the wheel category isn't removed and play resumes normally next
-turn. *(Q4, decided by Claude)*
+turn. *(R2-Q4)*
 
-**Open:** exact wheel weighting/odds, full interaction with each Scope option.
+**No graveyard**, same as Free Pick — it's a picking format, not a bidding one. *(R3-Q2)*
+First pick order is a **random draw**, same as Free Pick. *(R2-Q6)*
+
+**Open:** exact wheel weighting/odds (equal chance per category vs. something
+weighted).
 
 ### Scope
 Four values: **All players**, **Top 5 leagues**, **one specific league**, **one
@@ -125,6 +141,10 @@ nationality**. Exactly **one** constraint is active per draft — they don't sta
 **2–5** drafters (humans + bots combined), no minimum-to-start beyond 2. The size isn't
 chosen up front — the lobby leader starts whenever ready and the headcount is whatever
 has joined by then. *(R1-Q3, resolved: the earlier "10" was a slip, R2-Q1)*
+
+### Single-Player
+A solo human picks how many bots fill out the rest of the lobby at setup, within the
+normal 2–5 range — there's no fixed "always max" or "always 1v1" default. *(R3-Q7)*
 
 ### Squad Completion Guarantee
 A draft can **never** end with an unfilled slot in the 4-2-3-1 — every format must
@@ -147,6 +167,11 @@ the Auction backfill philosophy (stalling gets you scraps, not a curated pick):
   footballer** for that slot — mirroring the Auction backfill rule. *(R2-Q7, decided by
   Claude; first-pass rule, may get refined later)*
 
+### Disconnection
+A player who drops mid-draft is left alone at first — only **after a long while** of
+staying disconnected do they get replaced by a bot for the rest of that draft. Exact
+duration TBD; the mechanism (eventual bot takeover, not immediate) is decided. *(R3-Q6)*
+
 ### Bots
 Bots always play **one consistent default style** — no personality/aggressiveness
 picker exposed to players. *(R1-Q9)* The actual decision logic (how a bot bids,
@@ -157,6 +182,11 @@ sticks, takes offers, etc.) is **explicitly deferred** — not to be speced out 
 No numbers, no leaderboard — just a **pure side-by-side visual** of both finished
 formations. *(R2-Q9)*
 
+### Squad Sharing
+"Squads can be shared" (Overview) means a **downloadable/shareable image** — a lineup
+graphic — of the finished squad. Not a link, not a screenshot players take themselves.
+*(R3-Q5)*
+
 ### Player Data Pool
 Beyond guaranteeing every position has enough eligible footballers, the pool should
 **skew toward higher-ability players** so drafts feel star-studded rather than
@@ -165,7 +195,14 @@ strictly representative of the full Scope. *(R2-Q10)*
 ### Post-Draft Editing
 Once a draft ends, the **roster is locked** but players can still rearrange which
 already-drafted footballer sits in which formation slot (positioning only, no
-swapping/adding footballers). *(Q10)*
+swapping/adding footballers). *(R1-Q10)*
+
+### Multi-Position Eligibility
+A footballer listed with several eligible positions (e.g. "AMF, RW, LW") still only
+fills **one slot**, and only counts as one pick — but which of their listed positions
+they occupy is **freely reassignable** afterward, consistent with the general
+real-time-reformation and post-draft-positioning rules above (not locked in at draft
+time). *(R3-Q8)*
 
 ## Player Data
 
@@ -191,21 +228,28 @@ questionnaire is answered.
 4. ~~Spin the Wheel: exact mechanics~~ — dry-category fallback resolved; wheel
    weighting/odds and full Scope interaction still open.
 5. AI bots: game-facing decision logic is **explicitly deferred by design** — not to be
-   speced out yet (R2-Q8). Separately open: how the Deal or No Deal AI proposer chooses
-   what to offer (a format rule, not bot personality).
+   speced out yet (R2-Q8). ~~Separately open: D-o-N-D AI proposer offer logic~~ Resolved
+   R3-Q4 (deliberately a bit worse than the average remaining box).
 ~~6. Lobby size~~ Resolved: 2–5 (R2-Q1).
 ~~7. Turn/bid timer default behavior~~ Resolved, first pass (R2-Q7). Still open: default
    timer length.
-8. Auction: starting bid value formula (explicitly deferred, R2-Q2) and the exact bid
-   increment step table (flat/stepped decided, R2-Q3; table itself TBD).
-~~9. Turn order~~ Resolved: Auction is a pure free-for-all, no nomination order (R2-Q5);
-   Free Pick / Spin the Wheel first pick is a random draw (R2-Q6).
+8. Auction: starting bid value formula (explicitly deferred, R2-Q2). ~~Bid increment
+   step table~~ Resolved R3-Q9 (small fixed set of buttons, same at every price point).
+~~9. Turn order~~ Resolved: Auction is a pure free-for-all, no nomination order (R2-Q5),
+   footballers auto-reveal one at a time (R3-Q1); Free Pick / Spin the Wheel first pick
+   is a random draw (R2-Q6).
 ~~10. What does "compare squads" show?~~ Resolved: pure side-by-side visual, no numbers
    (R2-Q9).
-11. Precise definition of "the auction has run its course" (first pass written into the
-    Auction rules above — may need tightening once implementation starts).
-12. Scope × Spin the Wheel: full interaction details still open (which wheel categories
-    apply to which Scope, beyond the two examples in the briefing).
+~~11. Precise definition of "the auction has run its course"~~ Resolved R3-Q10: hard,
+    global stop the moment nobody left can afford anything, or the pool is exhausted.
+~~12. Scope × Spin the Wheel~~ Resolved R3-Q3: wheel always offers whichever of
+    league/club/nationality the Scope hasn't already fixed.
+13. Spin the Wheel: exact odds/weighting per category (equal chance vs. weighted).
+14. Squad sharing image: what it actually looks like/contains (name, ability, club
+    per player? just the formation graphic?).
+15. Disconnection: exact "long while" duration before bot takeover.
+16. Auction starting-bid formula and pool selection weighting curve — both explicitly
+    deferred by the user, revisit later rather than in the next round.
 
 ## Questionnaire Log
 
@@ -213,8 +257,8 @@ questionnaire is answered.
 |---|-------|--------|
 | 1 | Money, pool coverage, lobby size, timers, graveyard, constraints, bots, post-draft editing | Answered — see `questionnaire_1.md` |
 | 2 | Lobby size fix, Auction pricing/increments/turn order, timer timeout, D-o-N-D bots, squad comparison, pool quality | Answered — see `questionnaire_2.md` |
-| 3 | Auction reveal flow, wheel/scope/graveyard interactions, D-o-N-D offers, sharing, disconnects, single-player, multi-position slotting, bid steps | Pending |
-| 4 | TBD | Not started |
+| 3 | Auction reveal flow, wheel/scope/graveyard interactions, D-o-N-D offers, sharing, disconnects, single-player, multi-position slotting, bid steps | Answered — see `questionnaire_3.md` |
+| 4 | Constraint enforcement, disconnect/reconnect timing, share image contents, wheel odds, lobby chat/privacy/spectators, pool freshness | Pending |
 | 5 | TBD | Not started |
 | 6 | TBD | Not started |
 | 7 | TBD | Not started |
