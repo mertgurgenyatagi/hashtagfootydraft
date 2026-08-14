@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from .auction import run_auction
 from .models import Bidder
 from .pool import load_pool
-from .starting_value import StartingValueFn, linear_ability
+from .starting_value import StartingValueFn, flat
 
 
 @dataclass
@@ -24,7 +24,7 @@ class PlayerStats:
         # value a player delivers per unit of money spent acquiring them -- a
         # "bang for buck" signal derived purely from simulated market behavior.
         avg = self.avg_price
-        return self.ability / avg if avg else None
+        return self.ability / avg if avg else None  # guards both None and a literal 0 price
 
 
 def run_valuation_study(
@@ -32,7 +32,7 @@ def run_valuation_study(
     csv_path: str,
     bidder_count: int = 3,
     budget: float = 1_000_000_000,
-    starting_value_fn: StartingValueFn = linear_ability,
+    starting_value_fn: StartingValueFn = flat,
     seed: int | None = None,
     progress_every: int | None = None,
 ) -> dict[str, PlayerStats]:

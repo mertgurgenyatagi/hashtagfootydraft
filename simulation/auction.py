@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from .bidder import naive_bid_round
 from .models import SLOT_POSITION, Bidder, Footballer
-from .starting_value import StartingValueFn, linear_ability
+from .starting_value import StartingValueFn, flat
 
 DEFAULT_INCREMENTS = [1_000_000, 5_000_000, 10_000_000]
 
@@ -19,7 +19,7 @@ class AuctionResult:
 def run_auction(
     pool: list[Footballer],
     bidders: list[Bidder],
-    starting_value_fn: StartingValueFn = linear_ability,
+    starting_value_fn: StartingValueFn = flat,
     increments: list[float] | None = None,
     rng: random.Random | None = None,
 ) -> AuctionResult:

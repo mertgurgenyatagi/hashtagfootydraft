@@ -4,7 +4,7 @@ import random
 from .auction import AuctionResult, run_auction
 from .models import Bidder
 from .pool import load_pool
-from .starting_value import StartingValueFn, linear_ability
+from .starting_value import StartingValueFn, flat
 
 
 def run_batch(
@@ -12,7 +12,7 @@ def run_batch(
     csv_path: str,
     bidder_count: int = 3,
     budget: float = 1_000_000_000,
-    starting_value_fn: StartingValueFn = linear_ability,
+    starting_value_fn: StartingValueFn = flat,
     seed: int | None = None,
 ) -> list[AuctionResult]:
     rng = random.Random(seed)
