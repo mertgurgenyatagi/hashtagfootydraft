@@ -6,10 +6,11 @@ This document is the living source of truth for how the game works. It starts fr
 decisions. Open questions are tracked at the bottom and resolved into the rules above
 as answers come in.
 
-**Status:** rounds 1–6 (60 questions) are folded in; the `questionnaires` branch was
-merged into `main` as of 2026-08-15. `questionnaire_7.md`–`questionnaire_10.md` remain
-empty, held in reserve in case the questionnaire process resumes. Work has moved to the
-`valuations` branch (branched from `main`).
+**Status:** rounds 1–6 (60 questions) are folded in and merged into `main`.
+`questionnaire_7.md`–`questionnaire_10.md` remain empty, held in reserve in case the
+questionnaire process resumes. The `valuations` branch (player Current Ability
+calibration, Derived Price, and Auction Opening Bid formula) is complete and merged
+into `main` as of 2026-08-15.
 
 ## Overview
 
@@ -73,8 +74,10 @@ best/worst-first, or position cycling. *(R6-Q1)*
 
 Bid increments are **flat, stepped amounts**, offered as a small fixed set of buttons
 (e.g. +1M / +5M / +10M) available at every price point — the steps don't scale up with
-the current price. *(R2-Q3, R3-Q9)* How a footballer's *starting* value is set is
-explicitly deferred — not needed yet. *(R2-Q2)*
+the current price. *(R2-Q3, R3-Q9)* A footballer's **starting (opening) bid** is **70%
+of its derived market value, rounded to the nearest 5M** — see Player Data Pool below
+for how that market value is derived. *(R2-Q2, resolved on the `valuations` branch,
+2026-08-15)*
 
 The auction "runs its course" (triggering the backfill) as a **hard, global stop**: the
 moment every remaining player is unable to afford anything more, the auction ends
@@ -86,7 +89,7 @@ cost** on blocking bids. Intended strategy, not an exploit to guard against. *(R
 
 **Open:** how footballers are chosen for the pool in general, beyond guaranteeing
 position coverage (Q2 settles coverage; Round 2 settled a quality skew — see Player
-Data Pool below); Auction starting-value formula (deferred).
+Data Pool below).
 
 #### Deal or No Deal
 3 example players: John, Paul, Ringo. One position is picked at random (e.g. CDM).
@@ -254,6 +257,20 @@ strictly representative of the full Scope. *(R2-Q10)* Every draft starts **compl
 fresh** from the full pool — no memory of footballers used in past drafts, per-lobby or
 site-wide. *(R4-Q10)*
 
+**Current Ability calibration:** the original per-player ratings were cross-checked
+against two independent rounds of AI deep-research groupings — players judged to be of
+equal real-world caliber as of August 2026, grouped in threes (`gemini_quizzes/`) —
+then refit with a regularized least-squares pass: each player is pulled toward
+agreement with whoever they were grouped with, weighted by how much evidence exists for
+them, while staying anchored to their original rating so weakly-evidenced players barely
+move. Pre-calibration values are preserved in `player_data_ability_backup.csv`.
+
+**Derived market value → Auction opening bid:** a small real-world price sample (56
+age-27 players, manually researched) was fit to an exponential curve in ability
+(`price ≈ 0.0134 × e^(0.0512 × ability)` million EUR, anchored so Mbappé = 200M),
+producing a **Derived Price (EURm)** for every player. **Auction opening bids** are
+`Derived Price × 0.7`, rounded to the nearest 5M, stored as **Opening Bid (EURm)**.
+
 ### Post-Draft Editing
 Once a draft ends, the **roster is locked** but players can still rearrange which
 already-drafted footballer sits in which formation slot (positioning only, no
@@ -268,10 +285,12 @@ time). *(R3-Q8)*
 
 ## Player Data
 
-`player_data.csv` is the footballer pool: name, nation, age, club, position(s),
-current ability, league. Covers the top 5 leagues (Premier Division, Serie A, First
-Division, Bundesliga, Ligue 1) plus a number of high-ability players from other leagues
-(Saudi Pro League, MLS, Eredivisie, Sky Bet Championship, etc.).
+`player_data.csv` is the footballer pool: name, nation, age, club, position(s), current
+ability, league, plus derived **Derived Price (EURm)** and **Opening Bid (EURm)**
+columns (see Player Data Pool above for how those are computed). Covers the top 5
+leagues (Premier Division, Serie A, First Division, Bundesliga, Ligue 1) plus a number
+of high-ability players from other leagues (Saudi Pro League, MLS, Eredivisie, Sky Bet
+Championship, etc.).
 
 ## Open Questions Log
 
@@ -295,8 +314,11 @@ questionnaire is answered.
 ~~6. Lobby size~~ Resolved: 2–5 (R2-Q1).
 ~~7. Turn/bid timer default behavior~~ Resolved, first pass (R2-Q7). ~~Default timer
    length~~ Resolved R6-Q5: ~15 seconds.
-8. Auction: starting bid value formula (explicitly deferred, R2-Q2). ~~Bid increment
-   step table~~ Resolved R3-Q9 (small fixed set of buttons, same at every price point).
+~~8. Auction: starting bid value formula~~ Resolved on the `valuations` branch,
+   2026-08-15: opening bid = 70% of a derived market-value estimate (ability-based
+   exponential fit, anchored to a real transfer-value sample), rounded to the nearest
+   5M. ~~Bid increment step table~~ Resolved R3-Q9 (small fixed set of buttons, same at
+   every price point).
 ~~9. Turn order~~ Resolved: Auction is a pure free-for-all, no nomination order (R2-Q5),
    footballers auto-reveal one at a time (R3-Q1); Free Pick / Spin the Wheel first pick
    is a random draw (R2-Q6).
@@ -312,8 +334,8 @@ questionnaire is answered.
 ~~14. Squad sharing image contents~~ Resolved R4-Q5/R5-Q3: name, position, small
     headshot/portrait per player; exact art assets still TBD.
 ~~15. Disconnection duration~~ Resolved R4-Q3: 45 seconds.
-16. Auction starting-bid formula and pool selection weighting curve — both explicitly
-    deferred by the user, revisit later rather than in the next round.
+16. ~~Auction starting-bid formula~~ Resolved (see item 8). Pool selection weighting
+    curve (exact skew toward higher ability, see item 3) is still open.
 ~~17. Constraints scope~~ Resolved and narrowed R5-Q2: Constraints only exist for Free
     Pick — not Auction, Deal or No Deal, *or* Spin the Wheel (R4's "and Spin the Wheel"
     was wrong, corrected here). The setting isn't shown at all for the other three.

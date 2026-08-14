@@ -1,0 +1,238 @@
+Kylian Mbappé,Erling Haaland,Rodri
+Vinícius Júnior,Jude Bellingham,Harry Kane
+Kevin De Bruyne,Mohamed Salah,Martin Ødegaard
+Virgil van Dijk,Alisson,Thibaut Courtois
+Gianluigi Donnarumma,Lautaro Martínez,Florian Wirtz
+Bukayo Saka,Phil Foden,Federico Valverde
+Jamal Musiala,Antoine Griezmann,Bernardo Silva
+Antonio Rüdiger,Rúben Dias,Robert Lewandowski
+William Saliba,Alessandro Bastoni,Nicolò Barella
+Marc-André ter Stegen,Gregor Kobel,Jan Oblak
+Declan Rice,Bruno Fernandes,Cole Palmer
+Rafael Leão,Khvicha Kvaratskhelia,Alexis Mac Allister
+Trent Alexander-Arnold,Joshua Kimmich,Theo Hernández
+Achraf Hakimi,Marquinhos,Gabriel
+Éder Militão,Ronald Araujo,Pedri
+Gavi,Dani Olmo,Nico Williams
+Raphinha,Ousmane Dembélé,Alexander Isak
+Victor Osimhen,Viktor Gyökeres,Julián Álvarez
+Rodrygo,Aurélien Tchouameni,Eduardo Camavinga
+Frenkie de Jong,Vitinha,Bruno Guimarães
+Moisés Caicedo,Heung-Min Son,Lionel Messi
+Cristiano Ronaldo,Mike Maignan,David Raya
+Diogo Costa,Unai Simón,Álex Grimaldo
+Jules Koundé,Cristian Romero,Bremer
+Jonathan Tah,Nico Schlotterbeck,John Stones
+Joško Gvardiol,Michael Olise,Bradley Barcola
+Gabriel Martinelli,Luis Díaz,Leroy Sané
+Kingsley Coman,Serge Gnabry,Mikel Merino
+Sandro Tonali,Martín Zubimendi,Exequiel Palacios
+Hakan Çalhanoglu,Federico Dimarco,Andrew Robertson
+Benjamin White,Jeremie Frimpong,Pedro Porro
+Dani Carvajal,Pau Torres,Ibrahima Konaté
+Dayot Upamecano,Matthijs de Ligt,Manuel Akanji
+Marc Guéhi,Kim Min-Jae,Giorgi Mamardashvili
+Emiliano Martínez,Yann Sommer,Ederson
+Piotr Zielinski,Tijjani Reijnders,Stanislav Lobotka
+Ollie Watkins,Victor Boniface,Dušan Vlahovic
+Serhou Guirassy,Loïs Openda,Marcus Thuram
+Ademola Lookman,Christian Pulisic,Xavi Simons
+James Maddison,Ebere Eze,Álex Baena
+Takefusa Kubo,Mikel Oyarzábal,Axel Disasi
+Matheus Nunes,Jordan Henderson,Álex Moreno
+Harry Maguire,Luis Alberto,Lewis Dunk
+Kai Havertz,Alfonso Pedraza,Marcos Alonso
+David Raum,Gonçalo Guedes,Noussair Mazraoui
+Fabián,Billy Gilmour,Harvey Barnes
+Isco,Nicolò Fagioli,Alejandro Balde
+Sebastian Szymanski,Ricardo Horta,Wesley Fofana
+Lisandro Martínez,Cody Gakpo,Ferland Mendy
+Mario Hermoso,Héctor Herrera,Álvaro García
+Manuel Ugarte,Kalidou Koulibaly,Séko Fofana
+Ellyes Skhiri,Ben Davies,Denzel Dumfries
+Lucas Perri,Giovani Lo Celso,Giacomo Raspadori
+Eric García,Rodrigo Riquelme,Mathías Olivera
+Robert Sánchez,Tammy Abraham,Alejandro Catena
+Matthias Ginter,Youssouf Fofana,Sávio
+Ferran Torres,Christopher Nkunku,Karim Adeyemi
+Dominic Calvert-Lewin,Evan N'Dicka,Joachim Andersen
+Mathias Jensen,João Félix,Conor Gallagher
+Diogo Dalot,Alex Meret,Amadou Haïdara
+Nicolò Zaniolo,Noah Okafor,Santi Comesaña
+Benjamin Pavard,Gianluca Scamacca,Carlos Soler
+Carles Pérez,Morten Hjulmand,Rodrigo Bentancur
+Kepa Arrizabalaga,Andriy Lunin,Alessio Romagnoli
+Kieran Trippier,Guido Rodríguez,Íñigo Ruiz de Galarreta
+Luiz Felipe,Alexis Saelemaekers,Borja Mayoral
+Ivan Provedel,Yangel Herrera,Brennan Johnson
+Edin Džeko,Jan Paul van Hecke,David Alaba
+Weston McKennie,Davide Zappacosta,Marcelo Brozovic
+Arkadiusz Milik,Tino Livramento,Edon Zhegrova
+Riccardo Orsolini,Reiss Nelson,Mateo Kovacic
+Aymeric Laporte,Juan Foyth,Álvaro Morata
+Lucas Ocampos,Sergej Milinkovic-Savic,Marc Roca
+Henrikh Mkhitaryan,Yves Bissouma,Breel Embolo
+Keylor Navas,Fredrik Aursnes,Umar Sadiq
+Nuno Mendes,Ruben Loftus-Cheek,Darwin Núñez
+Federico Chiesa,Donyell Malen,Richarlison
+Randal Kolo Muani,Florentino Luís,Nikola Vlašic
+Matías Vecino,Kenny Tete,Mario Pašalic
+Walter Benítez,Nordi Mukiele,Raheem Sterling
+Noa Lang,James Ward-Prowse,Justin Kluivert
+Javi Galán,Hidemasa Morita,Thiago Silva
+Domenico Berardi,Emile Smith Rowe,Artem Dovbyk
+Oleksandr Zinchenko,Jordan Pickford,Philipp Lienhart
+Ross Barkley,Andrea Colpani,Ramy Bensebaïni
+Patric,Valentin Rongier,António Silva
+Bukayo Saka,Alexander Isak,David Raya
+Julian Brandt,Jurriën Timber,Federico Gatti
+Nicolò Rovella,Kang-In Lee,Lorenzo Pellegrini
+Ayoze Pérez,Paulo Dybala,Kurt Zouma
+David Soria,Giorgio Scalvini,Vincenzo Grifo
+Moussa Diaby,Dávid Hancko,Bernd Leno
+Enzo Fernández,Nayef Aguerd,Marcel Sabitzer
+Nico Williams,Leandro Trossard,Danilo Pereira
+Allan Saint-Maximin,Pablo Sarabia,Joelinton
+Yann Sommer,Ederson,Kevin Kampl
+Mason Mount,Olivier Giroud,Lucas Digne
+Justin Bijlow,Thomas Müller,Kostas Tsimikas
+Daichi Kamada,Granit Xhaka,Luka Modric
+Andreas Christensen,Robert Andrich,João Cancelo
+Iñaki Williams,Joshua Zirkzee,Talisca
+Ludovic Blas,Benjamin Henrichs,Gonçalo Ramos
+Jonathan Tah,José Giménez,Willi Orbán
+Antony,Ousmane Diomande,Iago Aspas
+Alexandr Golovin,Viktor Gyökeres,Pau Torres
+Danny Welbeck,Lautaro Martínez,Denis Zakaria
+Pedro Porro,Rúben Neves,Kevin Danso
+Giovanni Di Lorenzo,Sebastián Coates,João Pedro
+Douglas Luiz,Brice Samba,Tyler Adams
+Marcão,Charles De Ketelaere,Reece James
+Youri Tielemans,Jonas Hofmann,Lucas Torreira
+N'Golo Kanté,Pascal Groß,Ansu Fati
+Mario Götze,Ismaël Bennacer,James Maddison
+Nathan Aké,Renato Sanches,Nicolò Barella
+Heung-Min Son,Nahuel Molina,Michael Olise
+Edson Álvarez,Hakan Çalhanoglu,Marc Cucurella
+Alfred Duncan,Yassine Bounou,Manuel Akanji
+Evanilson,Fábio Vieira,Odilon Kossounou
+Matteo Politano,Callum Hudson-Odoi,Leonardo Spinazzola
+Lionel Messi,Gerard Moreno,Malick Thiaw
+Jonathan Clauss,Fabinho,Neymar
+Adam Marušic,Cristiano Ronaldo,Matthijs de Ligt
+Eduardo Camavinga,Kylian Mbappé,Martín Zubimendi
+Takehiro Tomiyasu,Ben Chilwell,Cheick Doucouré
+Edmond Tapsoba,Igor Zubeldia,Ivan Toney
+Lutsharel Geertruida,Lewis Ferguson,Micky van de Ven
+Christian Nørgaard,Pierre Kalulu,Ivan Ilic
+Bruno Fernandes,Rico Lewis,Callum Wilson
+Borja Iglesias,Myles Lewis-Skelly,Fabian Schär
+Jesper Karlsson,Bryan Cristante,Gianluca Mancini
+Deniz Undav,Kaoru Mitoma,Joško Gvardiol
+Federico Bernardeschi,Leon Goretzka,Ronald Araujo
+Reinildo,Jacob Ramsey,Kyle Walker
+Felix Nmecha,Jérémy Doku,Brahim Díaz
+Ðorde Petrovic,Marc-André ter Stegen,Dani Carvajal
+José Gayà,Yan Couto,Julian Ryerson
+Destiny Udogie,Mats Hummels,Dejan Kulusevski
+Dan Burn,Oihan Sancet,Virgil van Dijk
+Dušan Vlahovic,Jude Bellingham,Marco Asensio
+Sandro Tonali,Santiago Giménez,Marco Verratti
+Kim Min-Jae,John McGinn,Arthur
+Joe Willock,Emre Can,Nico Schlotterbeck
+Sadio Mané,Bradley Barcola,Marquinhos
+Matteo Ruggeri,Robin Gosens,Jamal Musiala
+Harry Kane,Romelu Lukaku,Levi Colwill
+Jack Grealish,Aleksandar Mitrovic,Duván Zapata
+Tyrone Mings,Gabriel Martinelli,Youssef En-Nesyri
+Alexander Sørloth,Kevin Trapp,Leroy Sané
+Otávio,Jorge Cuenca,Christoph Baumgartner
+Mateus Uribe,Terem Moffi,Nicolás Otamendi
+Harvey Elliott,Albert Guðmundsson,Casemiro
+Pedri,Aaron Hickey,Riyad Mahrez
+Ryan Gravenberch,Thomas Lemar,David De Gea
+Rico Henry,Martin Terrier,Luke Shaw
+Nemanja Matic,Andrea Cambiaso,David Neres
+Robin Le Normand,Nicolás González,Ezri Konsa
+Erling Haaland,John Stones,Benoît Badiashile
+Alessandro Buongiorno,Serge Gnabry,Jarrod Bowen
+Sergio Canales,Jonathan David,Davide Frattesi
+Antoine Griezmann,Álex Remiro,Lucas Vázquez
+Yan Diomandé,Dayot Upamecano,Boubacar Kamara
+Yuri,Michele Di Gregorio,Rafael Leão
+Lukas Klostermann,Facundo Medina,Vinícius Júnior
+André-Franck Zambo Anguissa,Rodri,Alejandro Garnacho
+Diego Llorente,Trevoh Chalobah,Giorgi Mamardashvili
+Ander Barrenetxea,Milan Škriniar,Fred
+João Palhinha,Nicolas Jackson,Guglielmo Vicario
+Mattia Zaccagni,Kevin De Bruyne,Geoffrey Kondogbia
+Wataru Endo,Manuel Locatelli,João Mário
+Mouctar Diakhaby,Victor Lindelöf,Memphis Depay
+Moise Kean,Francesco Acerbi,Ebere Eze
+Pedro Gonçalves,Eljif Elmas,Enes Ünal
+Dominik Szoboszlai,Manuel Neuer,Pepê
+Fikayo Tomori,Gregor Kobel,Denis Suárez
+Khvicha Kvaratskhelia,Marcos Llorente,Xavi Simons
+Victor Boniface,Jeremie Frimpong,Mohamed Salah
+Cole Palmer,Sead Kolašinac,Patrik Schick
+Rúben Dias,Bruno Guimarães,Luis Suárez
+Aleix García,Kieran Tierney,Jason Steele
+Presnel Kimpembe,Dominic Solanke,Kristoffer Ajer
+Konrad Laimer,Alisson,Samuel Chukwueze
+Bremer,Matheus Cunha,Rasmus Højlund
+Ibrahim Sangaré,Gabriel Jesus,Rafa
+Andrej Kramaric,Thomas Partey,Franck Kessié
+Xaver Schlager,Lazar Samardžic,Luis Díaz
+Danilo,Teun Koopmeiners,Lucas Paquetá
+Joe Gomez,Achraf Hakimi,Marten de Roon
+Ferdi Kadioglu,Nick Pope,Koke
+Igor,Wojciech Szczesny,Marcus Thuram
+Alphonso Davies,Arnaut Danjuma,Amir Rrahmani
+Yeremy Pino,Marcus Rashford,Eddie Nketiah
+Yannick Carrasco,Mauro Icardi,Giovanni Simeone
+Leon Bailey,Moisés Caicedo,Javi Guerra
+Emiliano Buendía,Nikola Milenkovic,Beto
+Sacha Boey,Rodrigo De Paul,Warren Zaïre-Emery
+Pervis Estupiñán,Édouard Mendy,Jérémie Boga
+Jules Koundé,Scott McTominay,Pape Matar Sarr
+Gabriel,Dani Olmo,Miguel Gutiérrez
+Karim Benzema,Ángel Di María,Adrien Rabiot
+Bryan Mbeumo,Exequiel Palacios,Anthony Gordon
+Ciro Immobile,Aurélien Tchouameni,James Tarkowski
+Sergio Ramos,Takefusa Kubo,Carlos Augusto
+Sven Botman,Rodrygo,Dani Vivian
+Khephren Thuram,Héctor Bellerín,Dani Ceballos
+Álvaro Fidalgo,Ilkay Gündogan,Curtis Jones
+Cristiano Biraghi,Unai Simón,Lucas Hernández
+Mohammed Kudus,Mikel Oyarzábal,Takumi Minamino
+Phil Foden,Axel Disasi,Matheus Nunes
+Jordan Henderson,Álex Moreno,Raphinha
+Harry Maguire,Luis Alberto,Lewis Dunk
+Kai Havertz,Alfonso Pedraza,Marcos Alonso
+David Raum,Gonçalo Guedes,Noussair Mazraoui
+Fabián,Billy Gilmour,Harvey Barnes
+Isco,Nicolò Fagioli,Alejandro Balde
+Sebastian Szymanski,Ricardo Horta,Bernardo Silva
+Wesley Fofana,Emiliano Martínez,Antonio Rüdiger
+Lisandro Martínez,Cody Gakpo,Ferland Mendy
+Mario Hermoso,Héctor Herrera,Álvaro García
+Gianluigi Donnarumma,Manuel Ugarte,Kalidou Koulibaly
+Séko Fofana,Ellyes Skhiri,Ben Davies
+Denzel Dumfries,Lucas Perri,Giovani Lo Celso
+Giacomo Raspadori,Eric García,Rodrigo Riquelme
+Mathías Olivera,Robert Sánchez,Tammy Abraham
+Alejandro Catena,Matthias Ginter,Youssouf Fofana
+Sávio,Martin Ødegaard,Ferran Torres
+Christopher Nkunku,Karim Adeyemi,Dominic Calvert-Lewin
+Mikel Merino,Evan N'Dicka,Alexis Mac Allister
+Serhou Guirassy,Joachim Andersen,Mathias Jensen
+João Félix,Conor Gallagher,Diogo Dalot
+Alex Meret,Jan Oblak,Amadou Haïdara
+Nicolò Zaniolo,Noah Okafor,Santi Comesaña
+Benjamin Pavard,Gianluca Scamacca,Carlos Soler
+Carles Pérez,Morten Hjulmand,Ollie Watkins
+Trent Alexander-Arnold,Éder Militão,Ademola Lookman
+Rodrigo Bentancur,Kepa Arrizabalaga,Andriy Lunin
+Alessio Romagnoli,Kieran Trippier,Guido Rodríguez
+Íñigo Ruiz de Galarreta,Luiz Felipe,Alexis Saelemaekers
+Joshua Kimmich,Borja Mayoral,Ivan Provedel
