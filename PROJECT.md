@@ -6,9 +6,10 @@ This document is the living source of truth for how the game works. It starts fr
 decisions. Open questions are tracked at the bottom and resolved into the rules above
 as answers come in.
 
-**Status:** rounds 1–6 (60 questions) are folded in and committed/pushed to the
-`questionnaires` branch as of 2026-08-15. `questionnaire_7.md`–`questionnaire_10.md`
-remain empty, held in reserve in case the questionnaire process resumes.
+**Status:** rounds 1–6 (60 questions) are folded in; the `questionnaires` branch was
+merged into `main` as of 2026-08-15. `questionnaire_7.md`–`questionnaire_10.md` remain
+empty, held in reserve in case the questionnaire process resumes. Work has moved to the
+`valuations` branch (branched from `main`).
 
 ## Overview
 
