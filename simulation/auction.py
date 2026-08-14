@@ -1,3 +1,4 @@
+import itertools
 import random
 from dataclasses import dataclass
 
@@ -42,9 +43,10 @@ def run_auction(
         else:
             unsold.append(footballer)
 
-        remaining = unsold + reveal_order[idx + 1:]
         non_full = [b for b in bidders if not b.is_full()]
-        if non_full and all(not _can_afford_anything(b, remaining, starting_value_fn) for b in non_full):
+        if non_full and all(
+            not _can_afford_anything(b, unsold, reveal_order, idx + 1, starting_value_fn) for b in non_full
+        ):
             unsold.extend(reveal_order[idx + 1:])
             break
 
@@ -52,11 +54,22 @@ def run_auction(
     return AuctionResult(bidders=bidders, unsold=unsold, backfilled=backfilled)
 
 
-def _can_afford_anything(bidder: Bidder, candidates: list[Footballer], starting_value_fn: StartingValueFn) -> bool:
+def _can_afford_anything(
+    bidder: Bidder,
+    unsold: list[Footballer],
+    reveal_order: list[Footballer],
+    tail_start: int,
+    starting_value_fn: StartingValueFn,
+) -> bool:
     if bidder.is_full():
         return False
+    # Lazily chains unsold + not-yet-revealed footballers so a match short-circuits
+    # the scan instead of copying the whole remaining pool on every reveal (this
+    # runs once per reveal, so it matters at Monte Carlo scale).
+    candidates = itertools.chain(unsold, itertools.islice(reveal_order, tail_start, None))
+    open_positions = {SLOT_POSITION[slot] for slot in bidder.open_slots()}
     return any(
-        bidder.eligible_open_slots(f) and bidder.remaining_budget >= starting_value_fn(f)
+        bidder.remaining_budget >= starting_value_fn(f) and open_positions.intersection(f.positions)
         for f in candidates
     )
 
