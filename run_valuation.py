@@ -1,7 +1,14 @@
 import argparse
 import time
 
+from simulation.starting_value import flat, linear_ability
 from simulation.valuation import dump_valuations, run_valuation_study
+
+FORMULAS = {
+    "zero": lambda player: 0,
+    "flat10m": flat,
+    "linear": linear_ability,
+}
 
 
 def main():
@@ -13,6 +20,7 @@ def main():
     parser.add_argument("--out", default="player_valuations.csv")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--progress-every", type=int, default=10_000)
+    parser.add_argument("--formula", choices=sorted(FORMULAS), default="flat10m")
     args = parser.parse_args()
 
     start = time.perf_counter()
@@ -21,6 +29,7 @@ def main():
         args.pool,
         bidder_count=args.bidders,
         budget=args.budget,
+        starting_value_fn=FORMULAS[args.formula],
         seed=args.seed,
         progress_every=args.progress_every,
     )
