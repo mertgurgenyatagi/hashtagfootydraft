@@ -19,9 +19,11 @@ def main():
     parser.add_argument("--pool", default="player_data.csv")
     parser.add_argument("--out", default="player_valuations.csv")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--progress-every", type=int, default=10_000)
+    parser.add_argument("--progress-every", type=int, default=None, help="Default: ~200 bar updates over the run")
     parser.add_argument("--formula", choices=sorted(FORMULAS), default="flat10m")
     args = parser.parse_args()
+
+    progress_every = args.progress_every or max(1, args.runs // 200)
 
     start = time.perf_counter()
     stats = run_valuation_study(
@@ -31,7 +33,7 @@ def main():
         budget=args.budget,
         starting_value_fn=FORMULAS[args.formula],
         seed=args.seed,
-        progress_every=args.progress_every,
+        progress_every=progress_every,
     )
     dump_valuations(stats, args.out, args.runs)
     elapsed = time.perf_counter() - start

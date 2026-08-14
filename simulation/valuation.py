@@ -1,5 +1,7 @@
 import csv
 import random
+import sys
+import time
 from dataclasses import dataclass
 
 from .auction import run_auction
@@ -53,6 +55,7 @@ def run_valuation_study(
     pool = load_pool(csv_path)  # static data, safe to reuse across every run
     stats = {p.name: PlayerStats(ability=p.ability) for p in pool}
     rng = random.Random(seed)
+    start_time = time.perf_counter()
 
     for i in range(n):
         bidders = [Bidder(name=f"Bidder {j + 1}", starting_budget=budget) for j in range(bidder_count)]
@@ -72,9 +75,23 @@ def run_valuation_study(
                 if is_winner:
                     s.times_in_winning_squad += 1
         if progress_every and (i + 1) % progress_every == 0:
-            print(f"{i + 1}/{n} auctions simulated")
+            _print_progress_bar(i + 1, n, start_time)
+
+    if progress_every:
+        _print_progress_bar(n, n, start_time)
+        sys.stdout.write("\n")
 
     return stats
+
+
+def _print_progress_bar(done: int, total: int, start_time: float, width: int = 30) -> None:
+    frac = done / total
+    filled = int(width * frac)
+    bar = "#" * filled + "-" * (width - filled)
+    elapsed = time.perf_counter() - start_time
+    eta = elapsed / frac - elapsed if frac else 0.0
+    sys.stdout.write(f"\r[{bar}] {frac * 100:5.1f}%  {done}/{total}  elapsed {elapsed:6.1f}s  eta {eta:6.1f}s")
+    sys.stdout.flush()
 
 
 def dump_valuations(stats: dict[str, PlayerStats], path: str, n: int) -> None:
