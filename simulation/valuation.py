@@ -13,6 +13,7 @@ class PlayerStats:
     ability: float
     times_acquired: int = 0
     total_price: float = 0.0
+    times_in_winning_squad: int = 0
 
     @property
     def avg_price(self):
@@ -25,6 +26,14 @@ class PlayerStats:
         # "bang for buck" signal derived purely from simulated market behavior.
         avg = self.avg_price
         return self.ability / avg if avg else None  # guards both None and a literal 0 price
+
+    @property
+    def win_rate(self):
+        # Of the auctions where this player landed in a finished squad, how often
+        # was that the winning squad (highest total ability among that auction's
+        # bidders)? Sidesteps price noise from naive/random bidding entirely --
+        # this correlates presence with outcome instead.
+        return self.times_in_winning_squad / self.times_acquired if self.times_acquired else None
 
 
 def run_valuation_study(
@@ -48,12 +57,20 @@ def run_valuation_study(
     for i in range(n):
         bidders = [Bidder(name=f"Bidder {j + 1}", starting_budget=budget) for j in range(bidder_count)]
         result = run_auction(pool, bidders, starting_value_fn=starting_value_fn, rng=rng)
+
+        squad_ability = {b.name: sum(f.ability for f, _ in b.squad.values()) for b in result.bidders}
+        best = max(squad_ability.values())
+        winning_bidders = {name for name, total in squad_ability.items() if total == best}
+
         for b in result.bidders:
+            is_winner = b.name in winning_bidders
             for occupant in b.squad.values():
                 footballer, price = occupant
                 s = stats[footballer.name]
                 s.times_acquired += 1
                 s.total_price += price
+                if is_winner:
+                    s.times_in_winning_squad += 1
         if progress_every and (i + 1) % progress_every == 0:
             print(f"{i + 1}/{n} auctions simulated")
 
@@ -61,10 +78,13 @@ def run_valuation_study(
 
 
 def dump_valuations(stats: dict[str, PlayerStats], path: str, n: int) -> None:
-    rows = sorted(stats.items(), key=lambda kv: (kv[1].avg_price is not None, kv[1].avg_price or 0), reverse=True)
+    rows = sorted(stats.items(), key=lambda kv: (kv[1].win_rate is not None, kv[1].win_rate or 0), reverse=True)
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["Name", "Ability", "Times Acquired", "Acquisition Rate", "Avg Price", "Ability Per Price"])
+        writer.writerow([
+            "Name", "Ability", "Times Acquired", "Acquisition Rate",
+            "Avg Price", "Ability Per Price", "Win Rate",
+        ])
         for name, s in rows:
             writer.writerow([
                 name,
@@ -73,4 +93,5 @@ def dump_valuations(stats: dict[str, PlayerStats], path: str, n: int) -> None:
                 round(s.times_acquired / n, 4),
                 round(s.avg_price, 2) if s.avg_price is not None else "",
                 round(s.ability_per_price, 8) if s.ability_per_price is not None else "",
+                round(s.win_rate, 4) if s.win_rate is not None else "",
             ])
