@@ -6,14 +6,14 @@ This document is the living source of truth for how the game works. It starts fr
 decisions. Open questions are tracked at the bottom and resolved into the rules above
 as answers come in.
 
-**Status:** rounds 1–6 (60 questions) are folded in and merged into `main`.
-`questionnaire_7.md`–`questionnaire_10.md` remain empty, held in reserve in case the
-questionnaire process resumes. The `valuations` branch (player Current Ability
-calibration, Derived Price, and Auction Opening Bid formula) is complete and merged
-into `main` as of 2026-08-15. The `training` branch (self-play reinforcement-learning
-pipeline for the bot AI, plus a monitoring dashboard) is also complete and merged into
-`main` as of 2026-08-15 — see Bot AI Training below. Next-phase work continues on the
-`prototype` branch.
+**Status:** rounds 1–6 (60 questions) were answered and folded into the rules below;
+the raw questionnaire files, the self-play RL bot-training pipeline, and the
+single-player HTML prototype have all since been removed in a workspace cleanup
+(2026-08-15) — none of that infra is needed for the upcoming frontend build. The rules
+they informed (player pool calibration, Auction pricing formula) remain in force below.
+Player Current Ability calibration and the Derived Price / Auction Opening Bid formula
+are already baked into `player_data.csv`'s columns. Work continues on the `frontend`
+branch.
 
 ## Overview
 
@@ -30,11 +30,11 @@ is constant and cannot change.
 - Frontend hosted on **GitHub Pages**.
 - Backend/data via **Firebase / Firestore** (or whatever Firebase service fits —
   realtime lobby state, auth, etc. TBD as needed).
-- AI bots are **machine learning models**, trained via self-play reinforcement
-  learning (`bot_ai/` — see Bot AI Training below). This document still only covers
-  game rules the bots (and humans) must follow, not the training mechanics; what the
-  trained model's actual play style ends up looking like is whatever the training
-  process converges on, not a specced-out behavior.
+- AI bot decision logic (how a bot bids, sticks, takes offers, etc.) is **explicitly
+  deferred** — not yet speced out (R2-Q8). A prior self-play reinforcement-learning
+  attempt at this was scrapped in the 2026-08-15 cleanup; this document only covers
+  the game rules bots (and humans) must follow, not how a future bot implementation
+  decides its moves.
 
 ## Configuration Mechanics
 
@@ -304,58 +304,6 @@ therefore the binding constraint on which Scopes can support a draft at all — 
 league or nationality rarely has enough CMs for a 3+ drafter lobby, so those Scope
 options are mostly unusable until more CMs are added to the data.
 
-## Playable Prototype
-
-`prototype/` is a single-player HTML prototype of the whole game — all four formats,
-Scope/Constraint selection, timers, graveyard and post-draft rearranging, side-by-side
-squad comparison and a downloadable lineup image. Start it with `start_prototype.bat`
-(or `python -m prototype.server`) and play at `http://localhost:8777`.
-
-It is a thin client over the real `bot_ai` engines rather than a reimplementation: the
-server drives the same generators used in training, resolves bot seats with
-`checkpoints/champion.pt` (falling back to the scripted heuristic bots when no
-checkpoint exists), and parks the generator whenever it's the human's turn. So the
-prototype and the training environment can't drift apart, and rules only need
-implementing once. One deliberate difference: the setup screen offers any Scope that
-can actually complete a draft (one eligible footballer per drafter per slot) rather
-than `pool_sampling._meets_depth`'s 3–6× training headroom, which — given the CM gap
-above — would reject nearly every Scope.
-
-## Bot AI Training
-
-A self-play reinforcement-learning pipeline for the bot AI lives in `bot_ai/`, with a
-`dashboard/` pywebview monitor and a `start_training.bat` launcher for both (merged
-from the `training` branch into `main` as of 2026-08-15).
-
-One shared policy network is dropped into randomly sampled Format / Scope /
-Constraint / lobby-size combinations and learns to handle all of them, playing
-against a mix of scripted heuristic bots and frozen snapshots of itself (including
-past versions) — self-play plus a fixed opponent pool, not self-play alone. Training
-runs indefinitely with checkpoints; the model actually exposed as "current best"
-(`champion.pt`) only advances when a new checkpoint beats it in a head-to-head
-evaluation, so it can plateau but can't regress. Auction budget for training episodes
-is the average Derived Price across that episode's sampled player pool **times 11** —
-i.e. enough to buy a full XI at that pool's market rate.
-
-**Status:** infrastructure is complete and verified end-to-end (GPU training loop,
-checkpointing, champion gating, dashboard) via a short manual test run, then stopped
-well before any meaningful skill level. No trained checkpoints are committed —
-`checkpoints/` is gitignored, runtime output only, regenerated by running
-`start_training.bat`.
-
-Two Auction bugs were found while building the prototype (2026-08-15) and fixed:
-bid increments were written in raw euros (`1_000_000`) while every other price in the
-repo is in EURm, making every raise unaffordable; and the training budget was missing
-its ×11, leaving a whole XI to be bought for one average footballer's price. Together
-they meant Auction episodes were effectively "first bidder wins at the opening price,
-backfill supplies the rest" — so **any Auction skill in a pre-fix checkpoint is
-meaningless and training should be restarted from scratch** (delete `checkpoints/`).
-The other three formats were unaffected.
-
-This doesn't resolve the open question of what the bots' actual
-play style should be (R2-Q8) — that's whatever the training process converges on, not
-a designed spec.
-
 ## Open Questions Log
 
 Tracked and resolved via the questionnaire process — see `questionnaire_1.md` onward.
@@ -419,14 +367,18 @@ questionnaire is answered.
 
 ## Questionnaire Log
 
+The raw `questionnaire_N.md` files were removed in the 2026-08-15 workspace cleanup —
+every answer they contained was already folded into the rules above before removal.
+This table is kept as a historical index of what each round covered.
+
 | # | Topic | Status |
 |---|-------|--------|
-| 1 | Money, pool coverage, lobby size, timers, graveyard, constraints, bots, post-draft editing | Answered — see `questionnaire_1.md` |
-| 2 | Lobby size fix, Auction pricing/increments/turn order, timer timeout, D-o-N-D bots, squad comparison, pool quality | Answered — see `questionnaire_2.md` |
-| 3 | Auction reveal flow, wheel/scope/graveyard interactions, D-o-N-D offers, sharing, disconnects, single-player, multi-position slotting, bid steps | Answered — see `questionnaire_3.md` |
-| 4 | Constraint enforcement, disconnect/reconnect timing, share image contents, wheel odds, lobby chat/privacy/spectators, pool freshness | Answered — see `questionnaire_4.md` |
-| 5 | Wheel category timing, constraint scope clarification, share-image asset, format/scope selection, bot auto-fill, Auction bidding-after-full-XI, D-o-N-D rotation, graveyard visibility, lobby lifecycle | Answered — see `questionnaire_5.md` |
-| 6 | Auction/D-o-N-D reveal-quality ordering, constraint scope (per-squad vs global), Free Pick constraint deadlocks, default timer length, host transfer, indefinite-blocking bidding, AI proposer targeting, share-image timing | Answered — see `questionnaire_6.md` |
+| 1 | Money, pool coverage, lobby size, timers, graveyard, constraints, bots, post-draft editing | Answered |
+| 2 | Lobby size fix, Auction pricing/increments/turn order, timer timeout, D-o-N-D bots, squad comparison, pool quality | Answered |
+| 3 | Auction reveal flow, wheel/scope/graveyard interactions, D-o-N-D offers, sharing, disconnects, single-player, multi-position slotting, bid steps | Answered |
+| 4 | Constraint enforcement, disconnect/reconnect timing, share image contents, wheel odds, lobby chat/privacy/spectators, pool freshness | Answered |
+| 5 | Wheel category timing, constraint scope clarification, share-image asset, format/scope selection, bot auto-fill, Auction bidding-after-full-XI, D-o-N-D rotation, graveyard visibility, lobby lifecycle | Answered |
+| 6 | Auction/D-o-N-D reveal-quality ordering, constraint scope (per-squad vs global), Free Pick constraint deadlocks, default timer length, host transfer, indefinite-blocking bidding, AI proposer targeting, share-image timing | Answered |
 | 7 | TBD | Pending |
 | 8 | TBD | Not started |
 | 9 | TBD | Not started |
