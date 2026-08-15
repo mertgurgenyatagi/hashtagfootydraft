@@ -1,6 +1,8 @@
 import csv
 import random
 
+from simulation.models import FORMATION_SLOTS
+
 from .types import Constraint, EpisodeConfig, Format, Player, ScopeType, TOP5_LEAGUES
 
 SLOT_POSITIONS = ("GK", "CB", "LB", "RB", "CDM", "CM", "AMF", "LW", "RW", "ST")
@@ -122,7 +124,11 @@ def sample_pool(rng: random.Random, scope_players: list, lobby_size: int, fmt: F
 
 
 def compute_auction_budget(pool: list) -> float:
-    return sum(p.derived_price for p in pool) / len(pool)
+    """Enough to buy a full XI at the pool's average market rate -- i.e. the average
+    Derived Price times the 11 formation slots. Without the x11 the budget is one
+    average footballer's price for an entire squad, which makes almost every
+    footballer unaffordable and hands the whole XI to the auction's backfill rule."""
+    return sum(p.derived_price for p in pool) / len(pool) * len(FORMATION_SLOTS)
 
 
 def sample_episode_config(rng: random.Random, all_players: list, lobby_size: int = None, format_override: Format = None):

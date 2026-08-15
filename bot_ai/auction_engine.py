@@ -4,7 +4,8 @@ from simulation.models import SLOT_POSITION
 
 from .types import DecisionKind, PendingDecision
 
-INCREMENTS = (1_000_000, 5_000_000, 10_000_000)
+# EURm, matching every other price in the repo (opening_bid, derived_price, budgets).
+INCREMENTS = (1.0, 5.0, 10.0)
 
 
 class AuctionEngine:

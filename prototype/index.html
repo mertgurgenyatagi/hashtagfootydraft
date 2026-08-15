@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>#footydraft</title>
+<style>
+  :root{
+    --bg:#0a0c0b; --panel:#121614; --panel-2:#171d1a; --line:#242e29;
+    --text:#dfe7e3; --muted:#7d8f88; --accent:#b7ff3d; --accent-dim:#5d8a1f;
+    --blue:#5cc8ff; --warn:#ffb347; --bad:#ff6b6b;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  button{font:inherit;color:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);
+    background:var(--panel-2);padding:8px 14px;transition:background .12s,border-color .12s}
+  button:hover:not(:disabled){background:#1f2723;border-color:var(--accent-dim)}
+  button:disabled{opacity:.35;cursor:not-allowed}
+  button.primary{background:var(--accent);color:#0a0c0b;border-color:var(--accent);font-weight:600}
+  button.primary:hover:not(:disabled){background:#c9ff6b}
+  select,input{font:inherit;color:inherit;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:6px;padding:8px 10px;width:100%}
+  h1,h2,h3{margin:0;font-weight:600}
+  .mono{font-family:var(--mono)}
+  .muted{color:var(--muted)}
+
+  /* ---- header ---- */
+  header{display:flex;align-items:center;gap:16px;padding:10px 18px;border-bottom:1px solid var(--line);
+    background:var(--panel);position:sticky;top:0;z-index:5}
+  header .logo{font-weight:700;letter-spacing:-.4px;color:var(--accent)}
+  header .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+  header .meta b{color:var(--text);font-weight:500}
+  header .spacer{flex:1}
+
+  /* ---- setup ---- */
+  #setup{position:fixed;inset:0;background:rgba(6,8,7,.92);display:grid;place-items:center;z-index:20;padding:20px;overflow:auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;width:min(480px,100%)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+
+  /* ---- layout ---- */
+  main{display:grid;grid-template-columns:300px minmax(0,1fr) 300px;gap:14px;padding:14px;align-items:start}
+  @media(max-width:1000px){main{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .panel > h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px}
+
+  /* ---- pitch ---- */
+  .pitch{background:linear-gradient(#132018,#0e1712);border:1px solid #1e2c23;border-radius:8px;padding:10px 6px;
+    display:flex;flex-direction:column;gap:6px}
+  .prow{display:flex;gap:6px;justify-content:center}
+  .slot{flex:0 1 calc(25% - 5px);min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;
+    padding:6px 5px;text-align:center;cursor:pointer;min-height:52px;display:flex;flex-direction:column;
+    justify-content:center;gap:2px}
+  .slot .pos{font-size:9.5px;color:var(--muted);letter-spacing:.8px}
+  .slot .nm{font-size:11.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .slot .ab{font-family:var(--mono);font-size:10.5px;color:var(--accent)}
+  .slot.empty{border-style:dashed;color:var(--muted)}
+  .slot.sel{border-color:var(--accent);background:#1c2a14}
+  .slot:hover{border-color:var(--accent-dim)}
+
+  .grave{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .gchip{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:11.5px;cursor:pointer}
+  .gchip.sel{border-color:var(--accent);background:#1c2a14}
+
+  /* ---- action ---- */
+  .stage{text-align:center;padding:6px 0 14px}
+  .stage .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+  .bigcard{margin:14px auto;max-width:380px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:10px;padding:16px}
+  .bigcard .name{font-size:21px;font-weight:600}
+  .bigcard .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .stats{display:flex;justify-content:center;gap:22px;margin-top:12px}
+  .stats div{text-align:center}
+  .stats .v{font-family:var(--mono);font-size:18px;color:var(--accent)}
+  .stats .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .choices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .price{font-family:var(--mono);font-size:30px;color:var(--accent)}
+
+  /* ---- pick list ---- */
+  .toolbar{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+  .list{max-height:52vh;overflow:auto;border:1px solid var(--line);border-radius:8px}
+  .row{display:grid;grid-template-columns:1fr 92px 62px 52px 56px;gap:8px;align-items:center;
+    padding:7px 10px;border-bottom:1px solid #1b221e;cursor:pointer;font-size:12.5px}
+  .row:last-child{border-bottom:none}
+  .row:hover{background:#181f1b}
+  .row.sel{background:#1c2a14;box-shadow:inset 2px 0 0 var(--accent)}
+  .row .pos{font-family:var(--mono);font-size:11px;color:var(--blue)}
+  .row .ab{font-family:var(--mono);color:var(--accent);text-align:right}
+  .row .pr{font-family:var(--mono);color:var(--muted);text-align:right}
+  .row .cl{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ---- opponents + log ---- */
+  .opp{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1b221e;font-size:12.5px}
+  .opp:last-child{border:none}
+  .opp .bars{font-family:var(--mono);color:var(--muted);font-size:11px}
+  #log{max-height:340px;overflow:auto;font-size:12px;display:flex;flex-direction:column;gap:3px}
+  #log div{color:var(--muted)}
+  #log div.me{color:var(--accent)}
+  #log div.sys{color:var(--blue)}
+
+  .timer{font-family:var(--mono);font-size:12px;color:var(--warn)}
+  .err{color:var(--bad);font-size:12.5px;margin-top:8px;min-height:18px;text-align:center}
+
+  /* ---- final ---- */
+  .compare{display:flex;gap:10px;overflow:auto;margin-top:12px}
+  .col{min-width:170px;flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px}
+  .col.me{border-color:var(--accent-dim)}
+  .col h4{margin:0 0 8px;font-size:13px}
+  .col .ln{display:flex;justify-content:space-between;gap:6px;font-size:11.5px;padding:2px 0}
+  .col .ln span:first-child{color:var(--muted);font-family:var(--mono);font-size:10px;width:32px;flex:none}
+  .col .ln span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .col .ln span:last-child{font-family:var(--mono);color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div id="setup">
+  <div class="card">
+    <h2 style="color:var(--accent);margin-bottom:4px">#footydraft</h2>
+    <p class="muted" style="margin:0 0 18px;font-size:13px">Single-player prototype. Pick your draft.</p>
+
+    <div class="field"><label>Format</label><select id="s-format"></select></div>
+    <div class="field"><label>Drafters (you + bots)</label><select id="s-size">
+      <option value="2">2</option><option value="3" selected>3</option>
+      <option value="4">4</option><option value="5">5</option></select></div>
+    <div class="field"><label>Scope</label><select id="s-scope"></select></div>
+    <div class="field" id="f-constraint"><label>Constraint (Free Pick only)</label><select id="s-constraint"></select></div>
+    <div class="field" id="f-budget"><label>Auction budget</label><select id="s-budget">
+      <option value="auto">Auto — a full XI at market rate (same as training)</option>
+      <option value="250">€250m</option><option value="500">€500m</option><option value="1000">€1000m</option>
+    </select></div>
+    <div class="field"><label>Turn timer</label><select id="s-timer">
+      <option value="15" selected>15 seconds (default)</option>
+      <option value="30">30 seconds</option><option value="60">60 seconds</option>
+      <option value="0">Off</option></select></div>
+
+    <button class="primary" style="width:100%;margin-top:6px" onclick="startDraft()">Start draft</button>
+    <p class="muted" id="botinfo" style="font-size:11.5px;margin:12px 0 0;text-align:center"></p>
+  </div>
+</div>
+
+<header style="display:none" id="hdr">
+  <span class="logo">#footydraft</span>
+  <div class="meta" id="hdr-meta"></div>
+  <span class="spacer"></span>
+  <span class="timer" id="timer"></span>
+  <button onclick="document.getElementById('setup').style.display='grid'">New draft</button>
+</header>
+
+<main style="display:none" id="game">
+  <section class="panel">
+    <h3>Your XI <span id="fillcount" class="muted"></span></h3>
+    <div class="pitch" id="pitch"></div>
+    <h3 style="margin-top:14px">Graveyard <span class="muted" id="gcount"></span></h3>
+    <div class="grave" id="graveyard"></div>
+    <p class="muted" id="movehint" style="font-size:11px;margin:8px 0 0"></p>
+  </section>
+
+  <section class="panel" id="action"></section>
+
+  <section class="panel">
+    <h3>Lobby</h3>
+    <div id="opps"></div>
+    <h3 style="margin-top:16px">Draft log</h3>
+    <div id="log"></div>
+  </section>
+</main>
+
+<script>
+let S = null;            // server state
+let sel = null;          // {type:'slot'|'grave', key}
+let pickSel = null;      // index into candidates
+let filter = '';
+let timerId = null, timerLeft = 0, acting = false;
+
+const fmtM = v => '€' + Math.round(v) + 'm';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function api(path, body) {
+  const opt = body ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)} : {};
+  const r = await fetch(path, opt);
+  return r.json();
+}
+
+/* ------------------------------------------------------------------ setup */
+
+async function boot() {
+  S = await api('/api/state');
+  const setup = S.setup;
+  const fs = document.getElementById('s-format');
+  fs.innerHTML = setup.formats.map(f => `<option value="${f.value}">${f.label}</option>`).join('');
+  document.getElementById('s-constraint').innerHTML =
+    setup.constraints.filter(c => c.value !== 'none')
+      .map(c => `<option value="${c.value}">${c.label}</option>`).join('');
+  fs.onchange = onSetupChange;
+  document.getElementById('s-size').onchange = onSetupChange;
+  await onSetupChange();
+  if (S.started) { render(); document.getElementById('setup').style.display = 'none'; }
+}
+
+async function onSetupChange() {
+  const fmt = document.getElementById('s-format').value;
+  const size = document.getElementById('s-size').value;
+  document.getElementById('f-constraint').style.display = fmt === 'free_pick' ? '' : 'none';
+  document.getElementById('f-budget').style.display = fmt === 'auction' ? '' : 'none';
+
+  const sc = await api(`/api/scopes?format=${fmt}&lobby_size=${size}`);
+  let html = '';
+  if (sc.all) html += `<option value="all">All players</option>`;
+  if (sc.top5) html += `<option value="top5">Top 5 leagues</option>`;
+  if (sc.leagues.length) html += `<optgroup label="One league">` +
+    sc.leagues.map(l => `<option value="league:${esc(l)}">${esc(l)}</option>`).join('') + `</optgroup>`;
+  if (sc.nations.length) html += `<optgroup label="One nationality">` +
+    sc.nations.map(n => `<option value="nationality:${esc(n)}">${esc(n)}</option>`).join('') + `</optgroup>`;
+  document.getElementById('s-scope').innerHTML = html || `<option value="all">All players</option>`;
+}
+
+async function startDraft() {
+  const raw = document.getElementById('s-scope').value;
+  const [type, value] = raw.includes(':') ? raw.split(/:(.+)/) : [raw, null];
+  S = await api('/api/new', {
+    format: document.getElementById('s-format').value,
+    lobby_size: +document.getElementById('s-size').value,
+    scope_type: type, scope_value: value,
+    constraint: document.getElementById('s-constraint').value,
+    budget: document.getElementById('s-budget').value,
+  });
+  sel = null; pickSel = null; filter = '';
+  document.getElementById('setup').style.display = 'none';
+  render();
+}
+
+/* ----------------------------------------------------------------- acting */
+
+async function act(action) {
+  if (acting) return;
+  acting = true; stopTimer();
+  S = await api('/api/action', {action});
+  pickSel = null; filter = '';
+  acting = false;
+  render();
+}
+
+async function move(a, b) {
+  S = await api('/api/move', {from:a, to:b});
+  sel = null;
+  render();
+}
+
+function clickTarget(ref) {
+  if (!S.can_rearrange) return;
+  if (sel && sel.type === ref.type && String(sel.key) === String(ref.key)) { sel = null; render(); return; }
+  if (sel) { move(sel, ref); return; }
+  sel = ref; render();
+}
+
+/* ------------------------------------------------------------------ timer */
+
+function stopTimer(){ if (timerId) clearInterval(timerId); timerId = null; document.getElementById('timer').textContent = ''; }
+
+function startTimer() {
+  stopTimer();
+  const secs = +document.getElementById('s-timer').value;
+  if (!secs || !S.pending || S.done) return;
+  timerLeft = secs;
+  const tick = () => {
+    document.getElementById('timer').textContent = `⏱ ${timerLeft}s`;
+    if (timerLeft-- <= 0) { stopTimer(); act(null); }
+  };
+  tick();
+  timerId = setInterval(tick, 1000);
+}
+
+/* ----------------------------------------------------------------- render */
+
+const ROWS = [['ST'],['LW','AMF','RW'],['CDM','CM'],['LB','CB1','CB2','RB'],['GK']];
+
+function render() {
+  document.getElementById('hdr').style.display = 'flex';
+  document.getElementById('game').style.display = 'grid';
+
+  document.getElementById('hdr-meta').innerHTML = [
+    `<span><b>${esc(S.format_label)}</b></span>`,
+    `<span>Scope <b>${esc(S.scope)}</b></span>`,
+    S.constraint !== 'None' ? `<span>Constraint <b>${esc(S.constraint)}</b></span>` : '',
+    S.wheel_category ? `<span>Wheel <b>${esc(S.wheel_category)}</b></span>` : '',
+    `<span>${S.lobby_size} drafters</span>`,
+    S.budget_total > 0 ? `<span>Budget <b class="mono">${fmtM(S.budget_total)}</b></span>` : '',
+    `<span>Bots: ${esc(S.bot_source)}</span>`,
+  ].join('');
+
+  const me = S.squads[S.human_seat];
+  renderPitch(me);
+  renderOpponents();
+  renderLog();
+  renderAction(me);
+  startTimer();
+}
+
+function renderPitch(me) {
+  document.getElementById('fillcount').textContent = `${me.filled}/11`;
+  document.getElementById('pitch').innerHTML = ROWS.map(row => `<div class="prow">` + row.map(slot => {
+    const p = me.slots[slot];
+    const on = sel && sel.type === 'slot' && sel.key === slot;
+    return `<div class="slot ${p ? '' : 'empty'} ${on ? 'sel' : ''}"
+      onclick='clickTarget({type:"slot",key:"${slot}"})'>
+      <div class="pos">${slot}</div>
+      ${p ? `<div class="nm">${esc(p.name)}</div><div class="ab">${Math.round(p.ability)}</div>` : `<div class="nm">—</div>`}
+    </div>`;
+  }).join('') + `</div>`).join('');
+
+  document.getElementById('gcount').textContent = me.graveyard.length ? `(${me.graveyard.length})` : '';
+  document.getElementById('graveyard').innerHTML = me.graveyard.length
+    ? me.graveyard.map((p, i) => {
+        const on = sel && sel.type === 'grave' && String(sel.key) === String(i);
+        return `<div class="gchip ${on ? 'sel' : ''}" onclick='clickTarget({type:"grave",key:${i}})'>
+          ${esc(p.name)} <span class="mono muted">${p.positions.join('/')} · ${Math.round(p.ability)}</span></div>`;
+      }).join('')
+    : `<span class="muted" style="font-size:12px">empty</span>`;
+
+  document.getElementById('movehint').textContent = S.can_rearrange
+    ? (sel ? 'Now click where it should go.' : 'Click two spots to swap players between them.')
+    : 'Rearranging unlocks when the draft ends.';
+}
+
+function renderOpponents() {
+  document.getElementById('opps').innerHTML = S.squads.map(s => `
+    <div class="opp">
+      <span style="color:${s.is_human ? 'var(--accent)' : 'inherit'}">${esc(s.name)}</span>
+      <span class="bars">${'█'.repeat(s.filled)}${'·'.repeat(11 - s.filled)} ${s.filled}/11${
+        S.budget_total > 0 ? ' · ' + fmtM(Math.max(0, s.budget_remaining)) : ''}</span>
+    </div>`).join('');
+}
+
+function renderLog() {
+  const el = document.getElementById('log');
+  el.innerHTML = S.log.map(l =>
+    `<div class="${l.seat === S.human_seat ? 'me' : (l.seat === null ? 'sys' : '')}">${esc(l.text)}</div>`).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+/* --------------------------------------------------------- action panels */
+
+function card(p, sub) {
+  return `<div class="bigcard">
+    <div class="name">${esc(p.name)}</div>
+    <div class="sub">${esc(p.positions.join(' / '))} · ${esc(p.club)} · ${esc(p.nation)} · age ${p.age}</div>
+    <div class="stats">
+      <div><div class="v">${Math.round(p.ability)}</div><div class="k">ability</div></div>
+      <div><div class="v">${fmtM(p.price)}</div><div class="k">value</div></div>
+      ${sub || ''}
+    </div></div>`;
+}
+
+function renderAction(me) {
+  const el = document.getElementById('action');
+  const err = S.error ? `<div class="err">${esc(S.error)}</div>` : `<div class="err"></div>`;
+
+  if (S.done) { el.innerHTML = renderFinal(); return; }
+  const d = S.pending;
+  if (!d) { el.innerHTML = `<p class="muted">Waiting…</p>`; return; }
+
+  if (d.kind === 'bid') {
+    const leader = d.leader === null ? 'no bids yet' : `leading: <b>${esc(d.leader_name)}</b>`;
+    const btns = d.leader === null
+      ? `<button class="primary" ${d.legal[1] ? '' : 'disabled'} onclick="act(1)">Open at ${fmtM(d.costs[1])}</button>`
+      : [1,2,3].map(i => `<button class="${i===1?'primary':''}" ${d.legal[i] ? '' : 'disabled'}
+           onclick="act(${i})">+${Math.round(d.costs[i]-d.price)}m → ${fmtM(d.costs[i])}</button>`).join('');
+    el.innerHTML = `
+      <div class="stage"><div class="kicker">On the block</div>
+      ${card(d.footballer, `<div><div class="v">${fmtM(d.footballer.opening)}</div><div class="k">opening</div></div>`)}
+      <div class="price">${fmtM(d.price)}</div>
+      <div class="muted" style="font-size:12.5px">${leader} · you have <b class="mono">${fmtM(me.budget_remaining)}</b></div>
+      <div class="choices" style="margin-top:16px">
+        ${btns}<button onclick="act(0)">Pass</button>
+      </div>${err}</div>`;
+
+  } else if (d.kind === 'stick_or_hear') {
+    el.innerHTML = `
+      <div class="stage"><div class="kicker">Your box — ${esc(d.position)}</div>
+      ${card(d.revealed)}
+      <div class="choices">
+        <button class="primary" onclick="act(0)">Stick with ${esc(d.revealed.name)}</button>
+        <button onclick="act(1)">Hear the offer</button>
+      </div>${err}</div>`;
+
+  } else if (d.kind === 'take_or_goback') {
+    el.innerHTML = `
+      <div class="stage"><div class="kicker">The offer</div>
+      ${card(d.offer)}
+      <div class="muted" style="font-size:12.5px">
+        ${d.boxes_left} box${d.boxes_left === 1 ? '' : 'es'} unopened · average ability
+        <b class="mono">${Math.round(d.boxes_avg)}</b></div>
+      <div class="choices" style="margin-top:14px">
+        <button class="primary" onclick="act(0)">Take the offer</button>
+        <button onclick="act(1)">Back to the boxes</button>
+      </div>
+      <p class="muted" style="font-size:11.5px">Go back and you must take the next box you open.</p>
+      ${err}</div>`;
+
+  } else {
+    renderPick(el, d, err);
+  }
+}
+
+function renderPick(el, d, err) {
+  const kicker = d.spin ? `The wheel landed on ${esc(d.spin)}`
+    : d.category ? `Dry spin — free pick this turn` : `Your pick`;
+  const list = d.candidates
+    .map((p, i) => ({p, i}))
+    .filter(({p}) => !filter || (p.name + ' ' + p.club + ' ' + p.nation).toLowerCase().includes(filter))
+    .sort((a, b) => b.p.ability - a.p.ability);
+
+  const chosen = pickSel !== null ? d.candidates[pickSel] : null;
+  el.innerHTML = `
+    <div class="stage" style="padding-bottom:8px"><div class="kicker">${kicker}</div>
+      <div class="muted" style="font-size:12.5px">${d.candidates.length} eligible${
+        S.constraint !== 'None' ? ` · constraint: ${esc(S.constraint)}` : ''}</div></div>
+    <div class="toolbar">
+      <input id="q" placeholder="Search name, club, nation…" value="${esc(filter)}"
+        oninput="filter=this.value.toLowerCase();renderAction(S.squads[S.human_seat]);document.getElementById('q').focus()">
+      <button class="primary" style="white-space:nowrap" ${chosen ? '' : 'disabled'}
+        onclick="act(${pickSel})">${chosen ? 'Draft ' + esc(chosen.name) : 'Select a player'}</button>
+    </div>
+    <div class="list">${list.map(({p, i}) => `
+      <div class="row ${pickSel === i ? 'sel' : ''}" onclick="pickSel=${i};renderAction(S.squads[S.human_seat])">
+        <span>${esc(p.name)}</span>
+        <span class="cl">${esc(p.club)}</span>
+        <span class="pos">${esc(p.positions.join('/'))}</span>
+        <span class="ab">${Math.round(p.ability)}</span>
+        <span class="pr">${fmtM(p.price)}</span>
+      </div>`).join('') || `<div class="row muted">No matches</div>`}</div>${err}`;
+}
+
+function renderFinal() {
+  const cols = S.squads.map(s => `
+    <div class="col ${s.is_human ? 'me' : ''}">
+      <h4 style="color:${s.is_human ? 'var(--accent)' : 'inherit'}">${esc(s.name)}</h4>
+      ${ROWS.flat().map(slot => {
+        const p = s.slots[slot];
+        return `<div class="ln"><span>${slot}</span><span>${p ? esc(p.name) : '—'}</span>
+                <span>${p ? Math.round(p.ability) : ''}</span></div>`;
+      }).join('')}
+      <div class="ln" style="margin-top:8px;border-top:1px solid var(--line);padding-top:6px">
+        <span></span><span class="muted">avg</span><span>${s.avg_ability.toFixed(1)}</span></div>
+    </div>`).join('');
+
+  return `<div class="stage"><div class="kicker">Draft complete</div>
+    <p class="muted" style="font-size:12.5px;margin:6px 0 0">
+      Squads side by side — no scores, no winner. Rearrange your XI on the left, then export.</p></div>
+    <div style="text-align:center"><button class="primary" onclick="exportImage()">Download lineup image</button></div>
+    <div class="compare">${cols}</div>`;
+}
+
+/* ------------------------------------------------------------ share image */
+
+function exportImage() {
+  const me = S.squads[S.human_seat];
+  const W = 700, H = 940, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  x.fillStyle = '#0e1712'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#b7ff3d'; x.font = '600 26px system-ui, sans-serif';
+  x.fillText('#footydraft', 30, 46);
+  x.fillStyle = '#7d8f88'; x.font = '14px system-ui, sans-serif';
+  x.fillText(`${S.format_label} · ${S.scope} · ${S.lobby_size} drafters`, 30, 70);
+
+  x.strokeStyle = '#243a2c'; x.lineWidth = 2;
+  x.strokeRect(30, 96, W - 60, H - 140);
+  x.beginPath(); x.moveTo(30, (96 + H - 44) / 2); x.lineTo(W - 30, (96 + H - 44) / 2); x.stroke();
+  x.beginPath(); x.arc(W / 2, (96 + H - 44) / 2, 62, 0, Math.PI * 2); x.stroke();
+
+  const top = 130, rowH = (H - 200) / ROWS.length;
+  ROWS.forEach((row, r) => {
+    const y = top + r * rowH;
+    row.forEach((slot, i) => {
+      const p = me.slots[slot];
+      const cx = (W / (row.length + 1)) * (i + 1);
+      x.fillStyle = '#16211b'; x.strokeStyle = '#2b3d33';
+      x.beginPath(); x.roundRect(cx - 82, y, 164, 62, 8); x.fill(); x.stroke();
+      x.fillStyle = '#7d8f88'; x.font = '11px ui-monospace, monospace';
+      x.fillText(slot, cx - 72, y + 18);
+      x.fillStyle = '#dfe7e3'; x.font = '600 14px system-ui, sans-serif';
+      const nm = p ? p.name : '—';
+      x.fillText(nm.length > 20 ? nm.slice(0, 19) + '…' : nm, cx - 72, y + 38);
+      x.fillStyle = '#7d8f88'; x.font = '11px system-ui, sans-serif';
+      x.fillText(p ? p.club : '', cx - 72, y + 54);
+      if (p) { x.fillStyle = '#b7ff3d'; x.font = '600 13px ui-monospace, monospace';
+        x.textAlign = 'right'; x.fillText(Math.round(p.ability), cx + 72, y + 18); x.textAlign = 'left'; }
+    });
+  });
+
+  const a = document.createElement('a');
+  a.download = 'footydraft-xi.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+
+/* Auction runs to 100+ prompts, so make Pass / raise reachable from the keyboard. */
+document.addEventListener('keydown', e => {
+  if (!S || !S.pending || S.done || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  const d = S.pending;
+  if (d.kind === 'bid') {
+    if (e.key === 'p' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); act(0); }
+    else if ('123'.includes(e.key) && d.legal[+e.key]) act(+e.key);
+  } else if (d.kind === 'stick_or_hear' || d.kind === 'take_or_goback') {
+    if (e.key === '1') act(0); else if (e.key === '2') act(1);
+  } else if (d.kind === 'pick' && e.key === 'Enter' && pickSel !== null) {
+    act(pickSel);
+  }
+});
+
+boot();
+</script>
+</body>
+</html>
