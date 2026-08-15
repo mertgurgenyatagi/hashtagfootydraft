@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+/* Palette lifted from "The 27 Ledger" dark theme. One saturated accent (gold),
+   one reserved functional colour (mint), off-white text — never pure #fff. */
+@theme {
+  --color-ground: #101613;
+  --color-surface: #182019;
+  --color-line: #2a342c;
+  --color-ink: #ecefe8;
+  --color-muted: #93a599;
+  --color-accent: #d9a54a;
+  --color-accent-ink: #1b1204;
+  --color-live: #6cc397;
+
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* The page never scrolls. */
+    overflow: hidden;
+    overscroll-behavior: none;
+    user-select: none;
+  }
+
+  /* An I-beam never appears over anything that isn't editable. */
+  *,
+  *::before,
+  *::after {
+    cursor: default;
+  }
+
+  a,
+  button,
+  [role='button'],
+  label,
+  summary {
+    cursor: pointer;
+  }
+
+  input,
+  textarea {
+    cursor: text;
+    user-select: text;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  /* Numbers must not jitter when they tick. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---- Motion. Compositor-only: transform and opacity, no per-frame JS. ---- */
+
+@keyframes fd-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes fd-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: fd-marquee 64s linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+.rise {
+  animation: fd-rise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -9,11 +9,14 @@ as answers come in.
 **Status:** rounds 1–6 (60 questions) were answered and folded into the rules below;
 the raw questionnaire files, the self-play RL bot-training pipeline, and the
 single-player HTML prototype have all since been removed in a workspace cleanup
-(2026-08-15) — none of that infra is needed for the upcoming frontend build. The rules
+(2026-08-15) — none of that infra is needed for the frontend build. The rules
 they informed (player pool calibration, Auction pricing formula) remain in force below.
 Player Current Ability calibration and the Derived Price / Auction Opening Bid formula
-are already baked into `player_data.csv`'s columns. Work continues on the `frontend`
-branch.
+are already baked into `player_data.csv`'s columns.
+
+The frontend build began on 2026-08-15 (`frontend` branch). The **home page is
+complete**; see Frontend below. No Firebase wiring and no bot decision logic exist yet
+— both remain deliberately deferred.
 
 ## Overview
 
@@ -27,14 +30,84 @@ is constant and cannot change.
 
 ## Hosting / Stack
 
-- Frontend hosted on **GitHub Pages**.
+- Frontend hosted on **GitHub Pages**. Built with **Vite + React 19 + TypeScript +
+  Tailwind v4**. Routing is **`HashRouter`** — GitHub Pages serves static files with no
+  rewrite rules, so deep links have to live in the hash. Vite `base` is `'./'` so the
+  build works from a project subpath without hardcoding the repo name.
 - Backend/data via **Firebase / Firestore** (or whatever Firebase service fits —
-  realtime lobby state, auth, etc. TBD as needed).
+  realtime lobby state, auth, etc. TBD as needed). **Nothing is wired yet.**
+- **No global store.** State lives next to the thing that needs it; each future data
+  need gets its own hook owning one subscription. See `frontend_inspo.md` §2.2.
 - AI bot decision logic (how a bot bids, sticks, takes offers, etc.) is **explicitly
   deferred** — not yet speced out (R2-Q8). A prior self-play reinforcement-learning
   attempt at this was scrapped in the 2026-08-15 cleanup; this document only covers
   the game rules bots (and humans) must follow, not how a future bot implementation
   decides its moves.
+
+## Frontend
+
+Design direction and the patterns behind it are recorded in `frontend_inspo.md`. The
+home page's own spec is `docs/superpowers/specs/2026-08-15-home-page-design.md`.
+
+### Design tokens
+
+Defined once in `src/styles/index.css` as a Tailwind v4 `@theme` block. Lifted from the
+"27 Ledger" dark theme, with roles reassigned for this app.
+
+| Token | Value | Role |
+|---|---|---|
+| `--color-ground` | `#101613` | page ground — near-black, green next to true black |
+| `--color-surface` | `#182019` | cards, panels, inputs |
+| `--color-line` | `#2a342c` | hairline borders |
+| `--color-ink` | `#ecefe8` | primary text — off-white, faintly green |
+| `--color-muted` | `#93a599` | secondary text — sage, not grey |
+| `--color-accent` | `#d9a54a` | gold — primary CTA fill, the `#` glyph, focus rings |
+| `--color-accent-ink` | `#1b1204` | text on gold |
+| `--color-live` | `#6cc397` | mint — reserved for "secured" states, currently unused |
+
+Standing rules:
+
+- **Exactly one saturated accent** (gold). Mint is functional-only and never decorative
+  — it is reserved for confirmed/secured states (a slot filled, a footballer won).
+- **No glow.** No `box-shadow` as a halo, no coloured blur. Depth comes from an offset
+  directional shadow or a flat surface step.
+- **Off-white, never `#fff`.** Use `--color-ink` wherever pure white is tempting.
+- **Do not reuse the Premier League palette** (`#37003C` / `#00FF87`) — #footydraft
+  spans multiple leagues and hasn't earned those colours.
+
+### Typography
+
+**Oswald** (condensed, mostly uppercase) for the wordmark, buttons, labels, and every
+number — bid amounts, countdowns, position codes — with `tabular-nums` so ticking
+values don't jitter. **Inter** for body copy, inputs, and helper text. No third family.
+
+### Interaction rules
+
+- **The page never scrolls.** Screens are `100dvh` with `overflow: hidden`; display
+  type uses `clamp()` so a short viewport compresses rather than overflows.
+- **No I-beam over anything non-editable.** Global `cursor: default`, `pointer` on
+  interactives, `text` on real inputs only, plus `user-select: none` on chrome text.
+- **Motion is compositor-only** — `transform` and `opacity`, no per-frame JS — so
+  ambient animation never contends with the real-time updates coming later. Everything
+  is disabled under `prefers-reduced-motion`.
+- **Dead ends stay honest.** Unbuilt actions say so in a status line; no fake spinners.
+  Disabled controls carry a visible reason.
+
+### Art assets
+
+Real art (player portraits in a wide iPhone-landscape crop, club and league crests as
+SVG) does not exist yet. Every image points at its eventual path — `/players/{slug}.webp`,
+`/clubs/{slug}.svg` — and falls through on load error to a generated SVG stand-in
+(`src/lib/placeholderImage.ts`). Dropping real files into `public/` needs no code change.
+
+### Built so far
+
+- **Home page** (`/`) — full-bleed single viewport, no chrome: wordmark, tagline, format
+  strip, guest-nickname field, Create Lobby / Join code / Play solo, and a scrolling
+  player marquee. Nickname persists to `localStorage`. Nothing routes anywhere yet.
+
+Verify with `npm run build` (typecheck + build), `npm test` (Vitest smoke tests), and
+`npm run dev` for the real thing.
 
 ## Configuration Mechanics
 
