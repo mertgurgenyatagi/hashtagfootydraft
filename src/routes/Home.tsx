@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { EntryPanel } from '../components/home/EntryPanel'
 import { PlayerMarquee } from '../components/home/PlayerMarquee'
+import { StadiumBackdrop } from '../components/home/StadiumBackdrop'
 import { Wordmark } from '../components/home/Wordmark'
 
 const NAME_STORAGE_KEY = 'footydraft.name'
@@ -33,6 +34,9 @@ export function Home() {
     // minmax(0,1fr) column: without it the marquee's max-content track inflates
     // the implicit column and drags this whole stack off-screen.
     <div className="grid h-[100dvh] grid-cols-[minmax(0,1fr)] grid-rows-[1fr_auto] overflow-hidden">
+      {/* Fixed, so it sits outside the grid's flow rather than claiming a row. */}
+      <StadiumBackdrop />
+
       <main className="flex min-h-0 w-full flex-col items-center justify-center px-6 text-center">
         <div className="rise">
           <Wordmark />

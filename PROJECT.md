@@ -93,6 +93,22 @@ values don't jitter. **Inter** for body copy, inputs, and helper text. No third 
 - **Dead ends stay honest.** Unbuilt actions say so in a status line; no fake spinners.
   Disabled controls carry a visible reason.
 
+### Backdrop
+
+Two bands, both inert and painted behind everything (`StadiumBackdrop.tsx`):
+
+- **Top ~42dvh** is a monochrome stadium plate, full-bleed and zoomed past both edges.
+  It is masked down hard over its top third — which turns the blank sky into a roofline
+  silhouette rather than a bright slab behind the wordmark — and dissolves at the bottom
+  into the ground colour. A `mix-blend-mode: color` layer gives it a *barely perceptible*
+  green cast so it sits in the page's colour family without reading as a tinted photo.
+  That blend takes saturation as an absolute RGB spread, not an HSL percentage, so the
+  usable range is tiny: `--color-ground` itself blends to flat grey, while anything past
+  `hsl(150 10% …)` becomes an obvious green wash.
+- **From there down**, a 1px line grid on 64px cells at 8% ink — the exact metrics
+  #irishtable uses (`frontend_inspo.md` §1.4). It masks *in* across the band where the
+  photo fades out, so the two cross over instead of meeting on a seam.
+
 ### Art assets
 
 Real art (player portraits in a wide iPhone-landscape crop, club and league crests as
@@ -100,11 +116,25 @@ SVG) does not exist yet. Every image points at its eventual path — `/players/{
 `/clubs/{slug}.svg` — and falls through on load error to a generated SVG stand-in
 (`src/lib/placeholderImage.ts`). Dropping real files into `public/` needs no code change.
 
+The one real asset in the build is the backdrop, `public/stadium.webp` (234 KB). It is
+referenced through `import.meta.env.BASE_URL`, not a leading slash, so it survives being
+served from a GitHub Pages project subpath, and it is preloaded in `index.html` so it
+doesn't wait on the bundle.
+
+It is derived from a 4.9 MB, 8561×5707 photograph that is **deliberately not in the
+repo** — `assets/` is gitignored, because everything else here is text and the largest
+tracked file is ~110 KB. Keep raw source art outside version control and commit only the
+shipped derivative. The transform, should it need regenerating from an equivalent source
+(Pillow): crop to the **22–80% vertical band** — the only part `object-cover` ever shows,
+so the blank sky and foreground grass are dropped — then `.convert('L')`, resize to
+**2400px wide** with LANCZOS, and save at `quality=76, method=6`.
+
 ### Built so far
 
-- **Home page** (`/`) — full-bleed single viewport, no chrome: wordmark, tagline, format
-  strip, guest-nickname field, Create Lobby / Join code / Play solo, and a scrolling
-  player marquee. Nickname persists to `localStorage`. Nothing routes anywhere yet.
+- **Home page** (`/`) — full-bleed single viewport, no chrome: stadium/grid backdrop,
+  wordmark, tagline, format strip, guest-nickname field, Create Lobby / Join code / Play
+  solo, and a scrolling player marquee. Nickname persists to `localStorage`. Nothing
+  routes anywhere yet.
 
 Verify with `npm run build` (typecheck + build), `npm test` (Vitest smoke tests), and
 `npm run dev` for the real thing.

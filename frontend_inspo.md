@@ -147,5 +147,6 @@ Still open:
 
 - Whether to enable Firestore offline persistence this time — kupatakipucl didn't, but a bidder's in-flight action not surviving a reload is a worse failure mode in a live auction than it was there.
 - The turn-timer force-resolve mechanism has no prior implementation to lean on; needs its own design pass once backend work starts.
-- §1.4's countdown timer, stepper, and crest strip components are described here but not
-  built — only the marquee (§1.4's crest-strip idea, applied to players) exists so far.
+- §1.4's countdown timer and stepper components are described here but not built. Of that
+  section, the marquee (the crest-strip idea, applied to players) and the background grid
+  (64px cells, 1px lines, 8% — copied at irishtable's exact metrics) both exist now.

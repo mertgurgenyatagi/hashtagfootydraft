@@ -82,6 +82,65 @@
   }
 }
 
+/* ---- Home backdrop: a stadium band up top, a line grid from there down. ---- */
+
+/* Fades at both ends so the plate has no cut edge. The hard pull-back over the
+   top third is doing real work: it drops the blank sky almost to the ground
+   colour, which leaves the roofline reading as a silhouette instead of a bright
+   slab behind the wordmark. The bottom dissolves rather than stopping on a line. */
+.backdrop-photo {
+  isolation: isolate;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.2) 0%,
+    rgb(0 0 0 / 0.55) 16%,
+    #000 34%,
+    #000 58%,
+    rgb(0 0 0 / 0.45) 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.2) 0%,
+    rgb(0 0 0 / 0.55) 16%,
+    #000 34%,
+    #000 58%,
+    rgb(0 0 0 / 0.45) 84%,
+    transparent 100%
+  );
+}
+
+/* The file already ships greyscale; grayscale() stays so the effect survives
+   someone swapping in a colour photo. Held well under the text either way. */
+.backdrop-photo img {
+  filter: grayscale(1) contrast(1.2) brightness(0.4);
+}
+
+/* `color` blending keeps the photo's own luminance and takes only hue and
+   saturation from the source, so the plate lands in the same colour family as
+   the page rather than sitting on it as neutral grey. The mask above isolates
+   the blend to this band.
+   Deliberately barely there. The blend reads saturation as an absolute RGB
+   spread rather than an HSL percentage, so this is the ground's own hue held at
+   a spread of ~0.045 — a shade off grey, nowhere near a green wash. Raising the
+   `s` here climbs very fast; past ~10% it stops reading as a photo. */
+.backdrop-tint {
+  background: hsl(150 6.5% 35%);
+  mix-blend-mode: color;
+}
+
+/* 64px cells, 1px lines — the exact metrics #irishtable uses (§1.4). Masked in
+   across the band where the photo fades out, so the two cross over instead of
+   meeting on a seam. */
+.backdrop-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 32%, #000 48%);
+  mask-image: linear-gradient(to bottom, transparent 32%, #000 48%);
+}
+
 /* ---- Motion. Compositor-only: transform and opacity, no per-frame JS. ---- */
 
 @keyframes fd-marquee {

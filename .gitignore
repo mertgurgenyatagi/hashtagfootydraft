@@ -6,6 +6,10 @@ dist/
 .playwright-mcp/
 *.local
 
+# Raw source art. Multi-MB originals stay out of a repo that is otherwise all text —
+# only the shipped derivative in public/ is versioned. See PROJECT.md → Art assets.
+assets/
+
 # Tooling scratch, not project files.
 .serena/
 # Claude Context MCP mis-expands ~ and writes its vector store in-repo.
