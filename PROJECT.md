@@ -111,23 +111,51 @@ Two bands, both inert and painted behind everything (`StadiumBackdrop.tsx`):
 
 ### Art assets
 
-Real art (player portraits in a wide iPhone-landscape crop, club and league crests as
-SVG) does not exist yet. Every image points at its eventual path — `/players/{slug}.webp`,
-`/clubs/{slug}.svg` — and falls through on load error to a generated SVG stand-in
-(`src/lib/placeholderImage.ts`). Dropping real files into `public/` needs no code change.
+Club and league crests as SVG (`/clubs/{slug}.svg`) don't exist yet and still fall
+through on load error to a generated SVG stand-in (`src/lib/placeholderImage.ts`).
 
-The one real asset in the build is the backdrop, `public/stadium.webp` (234 KB). It is
+Player photos are real, for 545 of the 546 players in `player_data.csv`, at
+`public/players/{slug}.webp` — `PlayerImage` already points every player at this path,
+so nothing else needed to change when the files landed. The one gap is
+`ederson-atalanta` (the CSV has two different players named "Ederson"; only one photo
+was ever fetched and it's unambiguously the other one, the Fenerbahçe keeper — see
+`scripts/process_player_images.py`'s docstring). It falls through to the SVG stand-in
+until a distinct photo is fetched for him specifically.
+
+These are **deliberately uncropped and unresized** — full original resolution, each
+photo's native aspect ratio intact (an earlier pass force-cropped everything to the
+marquee card's one aspect ratio at ingest time, which was wrong: that's a decision for
+whatever UI is doing the displaying, not something to bake in once for every future
+consumer). Whatever crop a given layout needs should happen at that layout, not here.
+Total is ~249 MB across 545 files — noticeably more than the rest of this repo, and a
+real cost of that decision; revisit if it becomes a problem (git-lfs, a CDN, or
+per-use-case derivatives generated from the face boxes below are all on the table).
+
+To help with that future cropping, `face_coordinates.json` has a hand-marked bounding
+box per player — `{ x, y, width, height, imageWidth, imageHeight }`, all in that
+player's own image's pixel space — locating their face, so a later smart-crop can anchor
+on it instead of guessing. Marked by hand against `public/players/`; the tool used to do
+it was a throwaway local HTML page, not worth keeping once the data existed.
+
+Player photos are fetched via `save_player_images.py` (`run_save.bat`) — semi-automatic:
+it drives the browser through a Google Images search per player and waits for a manual
+click on the right thumbnail, since no fully-automatic heuristic proved reliable enough
+to trust unattended. Raw fetches land in `assets/` (gitignored, kept locally as the
+archive) and `scripts/process_player_images.py` converts whichever ones match
+`player_data.csv` into the `public/players/{slug}.webp` files actually shipped.
+
+The other real asset in the build is the backdrop, `public/stadium.webp` (234 KB). It is
 referenced through `import.meta.env.BASE_URL`, not a leading slash, so it survives being
 served from a GitHub Pages project subpath, and it is preloaded in `index.html` so it
 doesn't wait on the bundle.
 
 It is derived from a 4.9 MB, 8561×5707 photograph that is **deliberately not in the
-repo** — `assets/` is gitignored, because everything else here is text and the largest
-tracked file is ~110 KB. Keep raw source art outside version control and commit only the
-shipped derivative. The transform, should it need regenerating from an equivalent source
-(Pillow): crop to the **22–80% vertical band** — the only part `object-cover` ever shows,
-so the blank sky and foreground grass are dropped — then `.convert('L')`, resize to
-**2400px wide** with LANCZOS, and save at `quality=76, method=6`.
+repo** — kept in the same gitignored `assets/` as the player photo sources. Keep raw
+source art outside version control and commit only the shipped derivative. The
+transform, should it need regenerating from an equivalent source (Pillow): crop to the
+**22–80% vertical band** — the only part `object-cover` ever shows, so the blank sky and
+foreground grass are dropped — then `.convert('L')`, resize to **2400px wide** with
+LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
