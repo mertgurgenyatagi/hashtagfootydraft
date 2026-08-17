@@ -18,16 +18,19 @@ The frontend build began on 2026-08-15 (`frontend` branch). On 2026-08-17 the ho
 page's visual direction was reopened on the **`frontend-retry`** branch, a 20-layout
 exhibition was built beside it (`mockups/home.html`), and layout **04 "The wall"** on the
 **petrol** palette was picked. The old home page and the old lobby were then **deleted
-outright** and the home page rebuilt from that layout — see Frontend below. **The home
-page is now the entire site**: there is no lobby, no router and no second route, and every
-control on the page is an honest dead end that says so. No Firebase wiring and no bot
-decision logic exist yet — both remain deliberately deferred.
+outright** and the home page rebuilt from that layout — see Frontend below. No Firebase
+wiring and no bot decision logic exist yet — both remain deliberately deferred.
 
 Work on the **single-player lobby** opened on the **`singleplayer-lobby`** branch on
 2026-08-17. Same first-look method as the home page: an exhibition of lobby layouts was
 built beside the app (`mockups/lobby-solo.html`), **layout 04 "Ready room" was picked**,
-and it has since been **ported into `src/`**. The site therefore has two routes now and
-the router is back. See The single-player lobby below.
+and it has since been **ported into `src/`**. See The single-player lobby below.
+
+The **multiplayer lobby** followed on the **`multiplayer-lobby`** branch, same day, with
+**no exhibition** — it is the friends-facing cut of the same Split Studio diptych, so it
+was built directly off the single-player screen. It brought the **fake-functionality
+rule** with it (see Interaction rules): with no Firebase behind it, the lobby simulates
+the room rather than announcing the gap. The site has **three routes** now.
 
 ## Tachyon Mode
 
@@ -162,8 +165,17 @@ favourite.
   `prefers-reduced-motion`.
 - **Nothing jumps under the pointer.** Hover states change colour, draw a rule, or slide
   an affordance in; they don't translate the thing you're about to click.
-- **Dead ends stay honest.** Unbuilt actions say so in a status line; no fake spinners.
-  Disabled controls carry a visible reason.
+- **Fake the functionality.** *(Project-wide, set by Mert 2026-08-17, replacing the
+  earlier "dead ends stay honest" rule.)* Where a screen needs a backend that doesn't
+  exist yet, **the screen simulates it** rather than announcing the gap in a status line.
+  People join the lobby on a stagger and take real seats; chat arrives and sends; a room
+  code you were handed already has a host and settings behind it. The point is that the
+  screen reaches its real states now, so the wiring drops in behind a UI that already
+  behaves — and so the thing can be judged as a product rather than as a scaffold.
+  Disabled controls still carry a visible reason, because a disabled control is a real
+  state rather than a confession. The one thing not faked is a **destination that doesn't
+  exist**: `Kick off` can't navigate to a draft screen that hasn't been built, so it says
+  so.
 
 ### Backdrop
 
@@ -272,10 +284,11 @@ LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
-**The home page and the single-player lobby.** `App.tsx` is a `HashRouter` over two
-routes — `/` and `/solo/:formatId` (plus a bare `/solo`, and a catch-all back to home).
-The hash is not a preference: GitHub Pages serves static files with no rewrite rules, so
-a deep link that isn't in the hash 404s on refresh.
+**The home page, the single-player lobby and the multiplayer lobby.** `App.tsx` is a
+`HashRouter` over `/`, `/solo/:formatId` (plus a bare `/solo`) and `/lobby/:code`, with a
+catch-all back to home. The hash is not a preference: GitHub Pages serves static files
+with no rewrite rules, so a deep link that isn't in the hash 404s on refresh — and
+`/#/lobby/KX7QD` is the invite link, so it has to survive being pasted.
 
 Home is a single `100dvh` viewport, top to bottom:
 
@@ -297,11 +310,12 @@ Home is a single `100dvh` viewport, top to bottom:
 - **PLAY WITH FRIENDS** in the same orange, a hairline, then **Create a lobby** (orange,
   owning the left edge on its own) against a **room code** field and a quieter **Join
   lobby** pushed right.
-- A reserved status line under everything.
 
-**The format tiles now go somewhere** — each opens the lobby on that format. The friends
-controls are still honest dead ends: nothing is wired to Firebase, so they report that in
-the status line rather than faking a destination.
+**Every control on the page goes somewhere.** A format tile opens the single-player lobby
+on that format. **Create a lobby** mints a five-character room code; **Join lobby** takes
+whatever code is in the field. Both stop at the same **name gate** — a modal `<dialog>`
+over the home page — and then open `/#/lobby/:code`. The reserved status line under the
+bar is gone with the dead ends it used to carry.
 
 The page **initialises as one sequenced move**, ~1.3s end to end: the plate scales in, the
 wall is printed left-to-right by a `clip-path` wipe with an accent hairline riding its
@@ -469,6 +483,56 @@ follows the frame's composition and departs from it where a live screen has to:
 
 **Kicking off is an honest dead end** — the draft screen doesn't exist, so the status line
 says so. That line does double duty: it carries the disabled control's reason too.
+
+### The multiplayer lobby (built)
+
+`src/routes/MultiLobby.tsx` at `/lobby/:code`, plus `NameGate`, `RoomCode` and
+`LobbyChat` in `src/components/lobby/`, `src/data/lobbyPeople.ts`, and two small modules
+in `src/lib/` (`roomCode.ts`, `lobbySession.ts`). `SeatList` was generalised from
+"you plus bots" to a list of typed `Seat`s — you, humans, bots — and both lobbies now
+render off it. `ChipGroup` and `ScopeDetail` gained a `readOnly` mode.
+
+No exhibition: it is the same **Split Studio** diptych as the single-player lobby, at
+different knob values. What a room full of people needs that a room full of bots doesn't:
+
+- **The name gate.** Creating a lobby and joining one both stop at the same modal
+  `<dialog>` — one field, the room code shown alongside it. A real `<dialog>` so the page
+  behind it goes inert, focus is trapped and Escape closes it without any of that being
+  hand-rolled; there's a non-modal fallback for engines without `showModal`. The field
+  opens pre-filled from the last name used. The gate is rendered from **two places** —
+  over the home page for create/join, and over the lobby itself for a pasted invite link,
+  which is what makes `/#/lobby/KX7QD` work as an address rather than only as a
+  destination.
+- **The room code is the display type**, where the single-player lobby had "Your table".
+  It's the thing being read out over a call, so it gets the size and the tracking, with a
+  **Copy link** control that writes the full invite URL to the clipboard and reports back
+  in its own label rather than in a toast. Below `md` the block collapses onto one row —
+  the four settings groups and five seats have to land above the fold at 320×568, and
+  this is where the room comes from.
+- **Host and guest are different screens.** Only the host sets Format, Scope, Constraint
+  and Turn timer *(R5-Q4)*, so a guest gets the same four groups drawn as static chips
+  with the host's choices already on them, `Only <host> can change the draft or start it`
+  in the status line, and `Waiting for the host` where `Kick off` would be. Whose lobby
+  it is rides in on router state and is kept in `sessionStorage` per code, so a refresh
+  doesn't quietly demote the host.
+- **The room is simulated**, per the fake-functionality rule. People arrive on a stagger
+  (2.6s / 7.8s / 15.4s), take real seats, stop when the table is full, and say something
+  a beat after they sit down. A code you were *handed* already has a host and a draft
+  behind it — settings are derived from a hash of the code, so the same code always opens
+  the same lobby.
+- **Chat**, in the space the single-player lobby left empty under the table. It sends,
+  and what you send is drawn in the accent against everyone else's ink. It is the one
+  scrolling region in the app — the page never scrolls, but a conversation has to go
+  somewhere — and it's the first thing to go under `@media (max-height: 720px)`.
+- **Seats start empty.** The friends lobby opens with just you: `1 / 5`, `Kick off`
+  disabled, and `Two at the table to start — invite someone, or add a bot.` Bots are
+  still added by hand and only by the host *(R5-Q5)*. `minSeats` is 1 here rather than 2,
+  so a bot added early can be removed again when a human turns up; the 2-drafter minimum
+  is enforced at kick-off instead.
+
+Verified in a browser at 1280×800, 1280×700, 768×568 and 320×568, host and guest, in the
+tallest possible state (Free Pick + One league, five seats). No scroll anywhere, no
+horizontal overflow, footer always above the fold.
 
 ## Configuration Mechanics
 

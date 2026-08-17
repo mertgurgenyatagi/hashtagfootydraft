@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ChipGroup, Collapse } from '../components/lobby/ChipGroup'
 import { LobbyPlate } from '../components/lobby/LobbyPlate'
 import { ScopeDetail } from '../components/lobby/ScopeDetail'
-import { SeatList } from '../components/lobby/SeatList'
+import { SeatList, type Seat } from '../components/lobby/SeatList'
 import { formats } from '../data/formats'
 import { MAX_SEATS, constraints, scopes, timers } from '../data/lobbyOptions'
 
@@ -53,7 +53,24 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
     setStatusKey((key) => key + 1)
   }
 
-  const seats = bots.length + 1
+  const seats: Seat[] = [
+    {
+      id: 'you',
+      kind: 'you',
+      name: 'You',
+      mark: 'Y',
+      note: 'Host — sets the draft on the right',
+      tag: 'Seat 1',
+    },
+    ...bots.map((id, index) => ({
+      id: String(id),
+      kind: 'bot' as const,
+      name: `Bot ${index + 1}`,
+      mark: String(index + 1),
+      note: 'Default style',
+    })),
+  ]
+
   /** Constraints exist for Free Pick and are not offered anywhere else. */
   const takesConstraint = format === 'free-pick'
 
@@ -75,10 +92,10 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
             Who's playing
           </span>
           <span
-            key={seats}
+            key={seats.length}
             className="tabular fx fx-fade shrink-0 font-display text-[11px] font-medium uppercase tracking-[0.1em] text-dim"
           >
-            {seats} / {MAX_SEATS} seats
+            {seats.length} / {MAX_SEATS} seats
           </span>
         </div>
 
@@ -92,13 +109,12 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
 
         <SeatList
           seats={seats}
-          bots={bots}
           onAdd={() => {
             const id = nextBotId.current
             nextBotId.current += 1
             setBots((current) => [...current, id])
           }}
-          onRemove={(id) => setBots((current) => current.filter((entry) => entry !== id))}
+          onRemove={(id) => setBots((current) => current.filter((entry) => String(entry) !== id))}
         />
 
         <div className="hidden flex-1 md:block" />

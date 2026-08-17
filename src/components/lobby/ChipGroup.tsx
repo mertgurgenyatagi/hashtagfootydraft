@@ -6,14 +6,16 @@ import type { Choice } from '../../data/lobbyOptions'
  * chips. Nothing moves on hover — the border and the fill change, which is the
  * same promise the format tiles on the home page make.
  */
-export function chipClass(selected: boolean) {
+export function chipClass(selected: boolean, readOnly = false) {
   return [
     'rounded-[2px] border px-[clamp(0.5rem,1.2vw,1rem)] py-[var(--lobby-chip-py)]',
     'font-display text-[clamp(0.625rem,1vw,0.8125rem)] font-medium uppercase tracking-[0.08em]',
     'whitespace-nowrap transition-colors duration-150 ease-out',
     selected
       ? 'border-accent bg-accent-soft text-ink'
-      : 'border-line text-muted hover:border-line-strong hover:text-ink',
+      : readOnly
+        ? 'border-line text-faint'
+        : 'border-line text-muted hover:border-line-strong hover:text-ink',
   ].join(' ')
 }
 
@@ -48,6 +50,8 @@ interface ChipGroupProps {
   note?: string
   /** Sub-selection revealed by the chosen chip. */
   children?: ReactNode
+  /** The host's settings, seen from a guest's seat: shown, not offered. */
+  readOnly?: boolean
   delayMs: number
 }
 
@@ -58,6 +62,7 @@ export function ChipGroup({
   onChange,
   note,
   children,
+  readOnly = false,
   delayMs,
 }: ChipGroupProps) {
   return (
@@ -67,17 +72,27 @@ export function ChipGroup({
       </span>
 
       <div className="mt-[var(--lobby-chip-mt)] flex flex-wrap gap-[clamp(0.25rem,0.7vw,0.5rem)]">
-        {options.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            aria-pressed={option.id === value}
-            onClick={() => onChange(option.id)}
-            className={chipClass(option.id === value)}
-          >
-            {option.name}
-          </button>
-        ))}
+        {options.map((option) =>
+          readOnly ? (
+            <span
+              key={option.id}
+              aria-current={option.id === value ? 'true' : undefined}
+              className={chipClass(option.id === value, true)}
+            >
+              {option.name}
+            </span>
+          ) : (
+            <button
+              key={option.id}
+              type="button"
+              aria-pressed={option.id === value}
+              onClick={() => onChange(option.id)}
+              className={chipClass(option.id === value)}
+            >
+              {option.name}
+            </button>
+          ),
+        )}
       </div>
 
       {children}

@@ -10,6 +10,7 @@ function renderHome() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/solo/:formatId" element={<p>lobby route</p>} />
+        <Route path="/lobby/:code" element={<p>friends lobby</p>} />
       </Routes>
     </MemoryRouter>,
   )
@@ -27,19 +28,34 @@ describe('Home', () => {
     expect(screen.getByText('lobby route')).toBeInTheDocument()
   })
 
-  it('stays honest about the dead ends that are still dead ends', async () => {
+  it('mints a code for a new lobby, then asks for a name before opening it', async () => {
     const user = userEvent.setup()
     renderHome()
 
     await user.click(screen.getByRole('button', { name: /create a lobby/i }))
-    expect(screen.getByText(/nothing to create/i)).toBeInTheDocument()
+    expect(screen.getByText('New lobby')).toBeInTheDocument()
+
+    await user.type(screen.getByPlaceholderText(/alex/i), 'Mert')
+    await user.click(screen.getByRole('button', { name: /open lobby/i }))
+    expect(screen.getByText('friends lobby')).toBeInTheDocument()
+  })
+
+  it('takes a typed code to the same gate', async () => {
+    const user = userEvent.setup()
+    renderHome()
 
     // Joining is gated on a code long enough to be one.
-    const join = screen.getByRole('button', { name: /join lobby/i })
+    const join = screen.getByRole('button', { name: 'Join lobby' })
     expect(join).toBeDisabled()
     await user.type(screen.getByLabelText(/room code/i), 'fd-24')
     expect(join).toBeEnabled()
+
     await user.click(join)
-    expect(screen.getByText(/room code goes nowhere/i)).toBeInTheDocument()
+    expect(screen.getByText('Joining')).toBeInTheDocument()
+    expect(screen.getByText('FD24')).toBeInTheDocument()
+
+    await user.type(screen.getByPlaceholderText(/alex/i), 'Mert')
+    await user.click(screen.getByRole('button', { name: /join lobby →/i }))
+    expect(screen.getByText('friends lobby')).toBeInTheDocument()
   })
 })

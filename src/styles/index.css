@@ -225,6 +225,81 @@
   }
 }
 
+/* The friends lobby's chat sits under the table, in the space the solo lobby
+   leaves empty. It's the first thing to go when the viewport is too short for
+   it to render as more than a sliver — but that point is much lower than the
+   720px the rest of the lobby's spacing collapses at (measured: the seats and
+   four settings groups alone are comfortable well under 600px tall; chat is
+   what needs the room). A first pass reused the 720px spacing breakpoint here
+   too and hid chat on completely ordinary, wide desktop windows that just
+   happened to be under 720px tall — most non-maximized browser windows are.
+   560px is where the chat log itself would drop under ~45px, i.e. useless. */
+.lobby-chat {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .lobby-chat {
+    display: flex;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 560px) {
+  .lobby-chat {
+    display: none;
+  }
+}
+
+/* Chrome text isn't selectable anywhere in the app; what people actually said
+   to each other is. */
+.lobby-chat li {
+  user-select: text;
+}
+
+/* The one scrolling region in the app — the page itself never scrolls, but a
+   conversation has to go somewhere. The default bar is a bright slab against
+   a near-black ground, so it gets the palette like everything else. */
+.chat-log {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+.chat-log::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-log::-webkit-scrollbar-button {
+  display: none;
+}
+
+.chat-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-log::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 3px;
+}
+
+/* ============================================================================
+   THE NAME GATE
+   A real <dialog>, so the page behind it goes inert and Escape closes it
+   without any of that being hand-rolled. The scrim is drawn inside the dialog
+   rather than on ::backdrop, so it survives the non-modal fallback.
+   ============================================================================ */
+.gate {
+  border: 0;
+}
+
+.gate::backdrop {
+  background: transparent;
+}
+
+/* Depth is an offset directional shadow. No halo, no coloured blur. */
+.gate-panel {
+  box-shadow: 14px 14px 0 0 var(--color-shade);
+}
+
 /* Crests render full colour and unfiltered — a recoloured badge is a falsified
    badge. This adds an outline *around* the artwork rather than touching it:
    four 1px offsets in ink, chained so each shadow falls on the last and the

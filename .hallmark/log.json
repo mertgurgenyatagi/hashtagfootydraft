@@ -1,6 +1,24 @@
 [
   {
     "date": "2026-08-17",
+    "macrostructure": "Split Studio",
+    "theme": "custom",
+    "theme_axes": "dark paper band / display-condensed roman / warm accent (~40°)",
+    "vibe": "floodlit, austere, competitive",
+    "enrichment": "E-photographic — stadium.webp cornered into the settings half; full-colour league marks",
+    "brief": "#footydraft multiplayer lobby at /lobby/:code, plus the name gate that both Create and Join pass through. No exhibition — a deliberate re-use of Split Studio from the single-player lobby at different knob values: the room code takes the left half's display slot instead of a heading, a chat fills the dead space under the table, and host/guest are two readings of the same settings panel (interactive vs. static chips). Petrol fixed, Oswald+Inter, crests unfiltered. Project rule changed this session: FAKE THE FUNCTIONALITY — screens simulate the backend they don't have (people arrive on a stagger, chat sends, a handed-over code already has a host behind it) instead of shipping honest dead ends."
+  },
+  {
+    "date": "2026-08-17",
+    "macrostructure": "Long Document, Bento Grid, Map/Diagram, Split Studio, Index-First, Catalogue, Stat-Led, Letter, Marquee Hero, Manifesto, Photographic, Component Playground, Conversational FAQ, Quote-Led, Narrative Workflow",
+    "theme": "custom",
+    "theme_axes": "dark paper band / display-condensed roman / warm accent (~40°)",
+    "vibe": "floodlit, austere, competitive",
+    "enrichment": "E-photographic — stadium.webp, 12 face crops, full-colour club crests and league marks",
+    "brief": "#footydraft single-player lobby — exhibition at mockups/lobby-solo.html. 15 of a planned 20; stopped early because layout 04 'Ready room' (Split Studio) was picked. Palette FIXED to petrol (no switcher, unlike the home exhibition) and type held to Oswald+Inter, so all variety is structural — per-frame voices are case/tracking/weight knobs only. Crests render full colour and unfiltered by explicit instruction. 16-20 (Type Specimen, Ecosystem Index, Portfolio Grid, Workbench, Specimen) never built. RESOLVED → 04 ships."
+  },
+  {
+    "date": "2026-08-17",
     "macrostructure": "Type Specimen",
     "theme": "custom",
     "theme_axes": "dark paper band / display-condensed roman / warm accent (~40°)",

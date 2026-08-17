@@ -7,6 +7,8 @@ interface ScopeDetailProps {
   onLeagueChange: (id: string) => void
   nation: string
   onNationChange: (nation: string) => void
+  /** A guest sees what the host narrowed it to, and can't move it. */
+  readOnly?: boolean
 }
 
 /**
@@ -28,6 +30,7 @@ export function ScopeDetail({
   onLeagueChange,
   nation,
   onNationChange,
+  readOnly = false,
 }: ScopeDetailProps) {
   const showLeagues = scope === 'league'
   const showNations = scope === 'nation'
@@ -37,7 +40,23 @@ export function ScopeDetail({
     <Collapse open={showLeagues || showNations}>
       {/* Inside the collapsing box, so the spacing collapses with the row. */}
       <div className="mt-[var(--lobby-chip-mt)]">
-        {showNations ? (
+        {readOnly ? (
+          <div className="flex items-center gap-[clamp(0.25rem,0.7vw,0.5rem)]">
+            {showLeagues ? (
+              <span className="grid h-[var(--lobby-crest)] w-[clamp(2rem,5vw,3.25rem)] place-items-center rounded-[2px] border border-accent bg-accent-soft">
+                <img
+                  src={`${import.meta.env.BASE_URL}leagues/${league}.svg`}
+                  alt=""
+                  draggable={false}
+                  className="crest h-[64%] w-[64%] object-contain"
+                />
+              </span>
+            ) : null}
+            <span className="ml-1 truncate font-display text-[10px] font-medium uppercase tracking-[0.16em] text-dim">
+              {showLeagues ? selected?.name : nation}
+            </span>
+          </div>
+        ) : showNations ? (
           <>
             <label className="sr-only" htmlFor="lobby-nation">
               Nation

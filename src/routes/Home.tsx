@@ -5,28 +5,24 @@ import { FormatWall } from '../components/home/FormatWall'
 import { MessageRow } from '../components/home/MessageRow'
 import { StadiumPlate } from '../components/home/StadiumPlate'
 import { Wordmark } from '../components/home/Wordmark'
+import { NameGate } from '../components/lobby/NameGate'
+import { makeRoomCode, normaliseRoomCode } from '../lib/roomCode'
 
 /**
  * The front door. One viewport, no scroll: a wall of type with the stadium
  * clipped into it, the four single-player formats under it, and the lobby
  * controls along the bottom.
  *
- * The format tiles now go somewhere — each one opens the single-player lobby
- * on that format. The friends controls are still honest dead ends: nothing is
- * wired to Firebase, so they say so in the status line rather than faking a
- * destination.
+ * Every control on the page goes somewhere now. A format tile opens the
+ * single-player lobby on that format; creating a lobby mints a code and
+ * joining one takes the code typed into the bar. Both stop at the same gate —
+ * a friends lobby needs a name on the seat — and then open the room.
  */
 export function Home() {
   const navigate = useNavigate()
-  const [status, setStatus] = useState('')
-  /** Bumped on every status change so the line re-animates even when the text
-   *  it lands on happens to be identical. */
-  const [statusKey, setStatusKey] = useState(0)
 
-  const report = (message: string) => {
-    setStatus(message)
-    setStatusKey((key) => key + 1)
-  }
+  /** Which room the gate is about to open, and whether we're opening it. */
+  const [gate, setGate] = useState<{ mode: 'create' | 'join'; code: string } | null>(null)
 
   return (
     <div className="relative flex h-[100dvh] flex-col overflow-hidden px-[clamp(1.25rem,4vw,3.5rem)] pb-[clamp(1.25rem,3vh,2.25rem)] pt-[clamp(1.25rem,3vh,2.5rem)]">
@@ -78,20 +74,23 @@ export function Home() {
         <MessageRow />
 
         <ActionBar
-          onCreate={() => report("Lobbies aren't wired up yet — there's nothing to create.")}
-          onJoin={() => report('No lobby to join yet — a room code goes nowhere.')}
+          onCreate={() => setGate({ mode: 'create', code: makeRoomCode() })}
+          onJoin={(code) => setGate({ mode: 'join', code: normaliseRoomCode(code) })}
         />
-
-        {/* Fixed height: the line has to be able to appear without shunting the
-            bar it sits under. */}
-        <p
-          key={statusKey}
-          aria-live="polite"
-          className="fx fx-fade mt-[clamp(0.4rem,1.2vh,0.75rem)] h-5 truncate text-[12px] leading-5 text-muted"
-        >
-          {status}
-        </p>
       </div>
+
+      {gate ? (
+        <NameGate
+          mode={gate.mode}
+          code={gate.code}
+          onCancel={() => setGate(null)}
+          onSubmit={(name) =>
+            navigate(`/lobby/${gate.code}`, {
+              state: { name, host: gate.mode === 'create' },
+            })
+          }
+        />
+      ) : null}
     </div>
   )
 }
