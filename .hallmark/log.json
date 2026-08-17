@@ -1,0 +1,20 @@
+[
+  {
+    "date": "2026-08-17",
+    "macrostructure": "Type Specimen",
+    "theme": "custom",
+    "theme_axes": "dark paper band / display-condensed roman / warm accent (~40°)",
+    "vibe": "floodlit, austere, competitive",
+    "enrichment": "E-photographic — stadium.webp clipped into the wordmark; face-anchored player crops",
+    "brief": "#footydraft home screen, shipped into src/. Layout 04 of the exhibition (\"The wall\") on the petrol palette, picked by Mert. Deliberate re-use of Type Specimen from the exhibition run below at different knob values: real app rather than a frame, motion on (init sequence + ambient plate drift + cycling portrait), formats re-cut as four equal tiles under a titled rule, lobby controls split create-left / join-right. Petrol's four primes are now the app's tokens in src/styles/index.css."
+  },
+  {
+    "date": "2026-08-17",
+    "macrostructure": "Marquee Hero, Index-First, Bento Grid, Type Specimen, Photographic, Long Document, Split Studio, Map/Diagram, Narrative Workflow, Stat-Led, Manifesto, Catalogue, Specimen, Component Playground, Workbench, Conversational FAQ, Letter, Quote-Led, Ecosystem Index, Portfolio Grid",
+    "theme": "custom",
+    "theme_axes": "all three bands / eleven display voices / all four accent-hue families",
+    "vibe": "floodlit terrace, printed programme, chalkboard",
+    "enrichment": "E-photographic — stadium.webp, twenty distinct bleed treatments",
+    "brief": "#footydraft home screen — 20-layout exhibition, mockups/home.html. 20-palette pool (4 primes each), 5 assigned per layout. Only Feature Stack unused (needs scroll; the app never scrolls). Next run: reach for Feature Stack, or re-use a macrostructure only with different knob values."
+  }
+]

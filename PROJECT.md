@@ -14,9 +14,29 @@ they informed (player pool calibration, Auction pricing formula) remain in force
 Player Current Ability calibration and the Derived Price / Auction Opening Bid formula
 are already baked into `player_data.csv`'s columns.
 
-The frontend build began on 2026-08-15 (`frontend` branch). The **home page is
-complete**; see Frontend below. No Firebase wiring and no bot decision logic exist yet
-— both remain deliberately deferred.
+The frontend build began on 2026-08-15 (`frontend` branch). On 2026-08-17 the home
+page's visual direction was reopened on the **`frontend-retry`** branch, a 20-layout
+exhibition was built beside it (`mockups/home.html`), and layout **04 "The wall"** on the
+**petrol** palette was picked. The old home page and the old lobby were then **deleted
+outright** and the home page rebuilt from that layout — see Frontend below. **The home
+page is now the entire site**: there is no lobby, no router and no second route, and every
+control on the page is an honest dead end that says so. No Firebase wiring and no bot
+decision logic exist yet — both remain deliberately deferred.
+
+## Tachyon Mode
+
+A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
+When he says **"Tachyon mode"**:
+
+1. **No brainstorming skill.** Skip straight past it.
+2. **No separate, explicit plan phase** — unless he asks for one.
+3. **No million tests.** Minimal, sensible coverage, not a suite.
+4. **Build unceremoniously.** Pick sensible defaults instead of asking mid-build;
+   state the choices in the summary afterward so he can overrule them.
+5. Usually invoked with **Opus on xhigh** reasoning effort.
+
+This doesn't relax the standing rule against unrequested git operations (add/commit
+only when explicitly asked) — Tachyon mode is about build ceremony, not repo hygiene.
 
 ## Overview
 
@@ -51,24 +71,34 @@ home page's own spec is `docs/superpowers/specs/2026-08-15-home-page-design.md`.
 
 ### Design tokens
 
-Defined once in `src/styles/index.css` as a Tailwind v4 `@theme` block. Lifted from the
-"27 Ledger" dark theme, with roles reassigned for this app.
+**Petrol is the palette. This is settled and project-wide** — not a per-page choice.
 
-| Token | Value | Role |
+Defined once in `src/styles/index.css` as a Tailwind v4 `@theme static` block. The
+palette declares **four primes**; every other colour in the app derives from those four
+through one `color-mix(in oklab, …)` block written once, exactly as the exhibition file
+does it. Nothing anywhere else in `src/` declares a colour.
+
+| Prime | Value | Role |
 |---|---|---|
-| `--color-ground` | `#101613` | page ground — near-black, green next to true black |
-| `--color-surface` | `#182019` | cards, panels, inputs |
-| `--color-line` | `#2a342c` | hairline borders |
-| `--color-ink` | `#ecefe8` | primary text — off-white, faintly green |
-| `--color-muted` | `#93a599` | secondary text — sage, not grey |
-| `--color-accent` | `#d9a54a` | gold — primary CTA fill, the `#` glyph, focus rings |
-| `--color-accent-ink` | `#1b1204` | text on gold |
-| `--color-live` | `#6cc397` | mint — reserved for "secured" states, currently unused |
+| `--color-ground` | `#071414` | page ground — near-black, deep teal |
+| `--color-ink` | `#e2f0ee` | primary text — off-white, faintly green |
+| `--color-accent` | `#ef7a3c` | orange — primary CTA fill, section titles, focus rings |
+| `--color-tint` | `#123030` | the `mix-blend-mode: color` wash over every photograph |
+
+Derived, in the same block: `--color-surface` / `--color-surface-2` (panels, tiles),
+`--color-line` / `--color-line-strong` (hairlines), `--color-muted` / `--color-dim`
+(secondary and tertiary text), `--color-accent-ink` / `--color-accent-soft` /
+`--color-accent-line` (text on orange, hover fills, accent hairlines), and
+`--color-shade` (the one colour darker than the ground).
+
+`@theme static`, not plain `@theme`, matters: Tailwind prunes theme variables no utility
+references, and most of the derived tokens are read by hand-written CSS and inline styles
+rather than by a class.
 
 Standing rules:
 
-- **Exactly one saturated accent** (gold). Mint is functional-only and never decorative
-  — it is reserved for confirmed/secured states (a slot filled, a footballer won).
+- **Exactly one saturated accent** (orange). If a second functional colour is ever
+  needed for "secured" states, derive it from the primes — don't add a fifth.
 - **No glow.** No `box-shadow` as a halo, no coloured blur. Depth comes from an offset
   directional shadow or a flat surface step.
 - **Off-white, never `#fff`.** Use `--color-ink` wherever pure white is tempting.
@@ -77,37 +107,54 @@ Standing rules:
 
 ### Typography
 
-**Oswald** (condensed, mostly uppercase) for the wordmark, buttons, labels, and every
-number — bid amounts, countdowns, position codes — with `tabular-nums` so ticking
-values don't jitter. **Inter** for body copy, inputs, and helper text. No third family.
+**Only Oswald and Inter. Project-wide, no exceptions except logos.**
+
+**Oswald** (condensed, mostly uppercase) for buttons, labels, section titles and every
+number — bid amounts, countdowns, position codes — with `tabular-nums` so ticking values
+don't jitter. **Inter** for body copy, inputs, and helper text.
+
+The one carve-out is the **logo**, where the face is free. The home page's wordmark is
+set in **Bebas Neue** on that basis and is the only element in the app allowed to use it;
+it has its own token (`--font-wordmark`) so nothing else can reach for it by accident.
 
 ### Interaction rules
 
-- **The page never scrolls.** Screens are `100dvh` with `overflow: hidden`; display
-  type uses `clamp()` so a short viewport compresses rather than overflows.
-- **No I-beam over anything non-editable.** Global `cursor: default`, `pointer` on
-  interactives, `text` on real inputs only, plus `user-select: none` on chrome text.
-- **Motion is compositor-only** — `transform` and `opacity`, no per-frame JS — so
-  ambient animation never contends with the real-time updates coming later. Everything
-  is disabled under `prefers-reduced-motion`.
+- **The page never scrolls.** Screens are `100dvh` with `overflow: hidden`; display type
+  is sized with `min()` against both `vw` and `vh` so a short viewport compresses rather
+  than overflows. Verified down to 320×568.
+- **No I-beam over anything non-editable.** Global `cursor: default`, `text` on real
+  inputs only, plus `user-select: none` on chrome text.
+- **`pointer` covers the whole of an interactive, label included.** The global
+  `* { cursor: default }` matches a `<span>` inside a `<button>` just as well as the
+  button, so the cursor rules list descendants explicitly (`button, button *, …`).
+  Without that the cursor flicks back to an arrow the moment it crosses the text.
+- **Motion is abundant but small.** This should feel like a well-made modern site or a
+  game, not a 2004 page: a sequenced initialisation on load, ambient movement that never
+  fully stops, and a considered transition on every state change. All of it is
+  **compositor-only** — `transform`, `opacity` and `clip-path`, no per-frame JS — so it
+  never contends with the real-time updates coming later. Nothing overshoots, nothing
+  bounces, and everything collapses under `prefers-reduced-motion`.
+- **Nothing jumps under the pointer.** Hover states change colour, draw a rule, or slide
+  an affordance in; they don't translate the thing you're about to click.
 - **Dead ends stay honest.** Unbuilt actions say so in a status line; no fake spinners.
   Disabled controls carry a visible reason.
 
 ### Backdrop
 
-Two bands, both inert and painted behind everything (`StadiumBackdrop.tsx`):
+One band, inert and painted behind everything (`StadiumPlate.tsx`): a full-bleed
+monochrome stadium plate at 36% opacity, zoomed past the frame so the pitch and its
+corner flag stay below the fold. It is masked down hard over its top third — which turns
+the blank sky into a roofline silhouette rather than a bright slab behind the wordmark —
+and dissolves at the bottom into the ground colour. A `mix-blend-mode: color` layer tints
+it with `--color-tint`, keeping the photo's own luminance and taking only hue and
+saturation, so it sits in the palette's colour family instead of reading as neutral grey.
 
-- **Top ~42dvh** is a monochrome stadium plate, full-bleed and zoomed past both edges.
-  It is masked down hard over its top third — which turns the blank sky into a roofline
-  silhouette rather than a bright slab behind the wordmark — and dissolves at the bottom
-  into the ground colour. A `mix-blend-mode: color` layer gives it a *barely perceptible*
-  green cast so it sits in the page's colour family without reading as a tinted photo.
-  That blend takes saturation as an absolute RGB spread, not an HSL percentage, so the
-  usable range is tiny: `--color-ground` itself blends to flat grey, while anything past
-  `hsl(150 10% …)` becomes an obvious green wash.
-- **From there down**, a 1px line grid on 64px cells at 8% ink — the exact metrics
-  #irishtable uses (`frontend_inspo.md` §1.4). It masks *in* across the band where the
-  photo fades out, so the two cross over instead of meeting on a seam.
+It **drifts** on a 54-second scale-and-translate loop. Slow enough that you never catch
+it moving, enough that the page is never a still image.
+
+There is **no line grid**. An earlier pass had one (64px cells at 8% ink); it was cut on
+2026-08-17 — with the stadium behind the type doing the texture work, the grid only added
+noise.
 
 ### Art assets
 
@@ -137,6 +184,16 @@ player's own image's pixel space — locating their face, so a later smart-crop 
 on it instead of guessing. Marked by hand against `public/players/`; the tool used to do
 it was a throwaway local HTML page, not worth keeping once the data existed.
 
+**`public/faces/` is the first consumer of that data.** `scripts/make_face_crops.py`
+reads a player's face box, cuts a 4:5 portrait around it such that the face occupies a
+fixed 42% of the crop's height (anchored at 44% from the top, so there's room for
+shoulders), and writes a 256×320 WebP. The point is that a set of them reads as one
+consistent set rather than a dozen photos that happen to contain a person. Twelve are
+shipped, at ~10 KB each against the ~250 KB originals — which is what makes putting them
+on a page that has to paint immediately affordable. The roster lives at the top of the
+script; `src/data/wallFaces.ts` names which of them the home page cycles through, so
+adding a player means editing both and re-running the script.
+
 Player photos are fetched via `save_player_images.py` (`run_save.bat`) — semi-automatic:
 it drives the browser through a Google Images search per player and waits for a manual
 click on the right thumbnail, since no fully-automatic heuristic proved reliable enough
@@ -159,21 +216,106 @@ LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
-- **Home page** (`/`) — full-bleed single viewport, no chrome: stadium/grid backdrop,
-  wordmark, tagline, format strip, guest-nickname field, Create Lobby / Join code / Play
-  solo, and a scrolling player marquee. Nickname persists to `localStorage`. All three
-  entry actions now route to a lobby (Create and Play solo mint a fresh `FD-XXXX` code).
-- **Lobby** (`/lobby/:code`) — drafters compress into a seat strip along the top so the
-  body can say what each of the four formats actually *is*; scope, timer and constraint
-  sit below as segmented pills, with the constraint row disabled-and-explained unless the
-  format is Free Pick. Chat bottom-left, Start draft bottom-right, over a full-bleed
-  version of the stadium plate with a vignette. Host-only controls, bots added by hand,
-  2–5 seats. **All state is local** — no Firebase, and Start draft is an honest dead end.
-  Chosen from a 20-layout gallery kept at `mockups/lobby.html` (layout 16 over 20's
-  backdrop); the other 19 are still there if this one needs revisiting.
+**The home page, and nothing else.** The previous home page and the previous lobby were
+deleted on 2026-08-17 — along with the router, since one page doesn't need one. `App.tsx`
+renders `Home` directly. `react-router-dom` is still in `package.json`, unimported, for
+when the lobby comes back; it brings a `HashRouter` with it when it does, because GitHub
+Pages has no rewrite rules.
 
-Verify with `npm run build` (typecheck + build), `npm test` (Vitest smoke tests), and
+Home is a single `100dvh` viewport, top to bottom:
+
+- A **tagline** left, and `11 slots · 546 in the pool · 4-2-3-1` right.
+- The **wall** — `FOOTY` over `DRAFT`, two five-letter lines stacking into a near-solid
+  rectangle, with the stadium clipped into the letterforms via `background-clip: text`.
+  The same photograph is the fill here and the ground behind it. Sized off image *height*
+  (`background-size: auto 240%`), not width — sizing off width let it fall short
+  vertically and tile, which put a second horizon halfway down DRAFT.
+- A **cycling portrait** in the negative space to its right, moving through twelve
+  players every 3.8s with a hairline ticking down the hold. All twelve are in the DOM and
+  cross-fade on opacity; swapping `src` meant watching each new crop decode. Hidden below
+  `sm`, where the wordmark needs the whole width.
+- **SINGLE PLAYER** in orange over a thin rule, then the **four formats** as four equal
+  tiles. Hovering one fades the title below out and its description in. Clicking one is
+  meant to open the single-player lobby.
+- **PLAY WITH FRIENDS** in the same orange, a hairline, then **Create a lobby** (orange,
+  owning the left edge on its own) against a **room code** field and a quieter **Join
+  lobby** pushed right.
+- A reserved status line under everything.
+
+**Every action is an honest dead end.** No lobby exists, nothing is wired to Firebase, so
+each control reports that in the status line rather than faking a destination.
+
+The page **initialises as one sequenced move**, ~1.3s end to end: the plate scales in, the
+wall is printed left-to-right by a `clip-path` wipe with an accent hairline riding its
+edge, then the portrait, the rules (which draw rather than appear), the tiles and the bar
+stagger in underneath.
+
+Design decisions were run through the **Hallmark** skill (`.claude/skills/hallmark/`);
+the run is logged at `.hallmark/log.json`.
+
+Verify with `npm run build` (typecheck + build), `npm test` (Vitest smoke test), and
 `npm run dev` for the real thing.
+
+### The exhibition it came from (2026-08-17, `frontend-retry`)
+
+The home page's look was reopened from scratch as a first-look exercise: *assume the
+current design doesn't exist, build something else beside it.* The exhibition below is
+what came out, and **layout 04 on the petrol palette is what shipped** — see Built so far
+above. The other nineteen stay in the file, same as the lobby gallery did.
+
+**Where:** `mockups/home.html`. Same self-contained exhibition shell as
+`mockups/lobby.html` — a grid of 1280×800 frames at half scale, click any frame to zoom
+it to full width. Opens straight off disk (`file://`); no build step, no server.
+
+**Twenty layouts**, one per Hallmark macrostructure (all 21 except Feature Stack, which
+needs scroll — and this app never scrolls):
+
+01 Kickoff · Marquee Hero — 02 Team sheet · Index-First — 03 Four ways · Bento Grid —
+04 The wall · Type Specimen — 05 Matchday · Photographic — 06 The programme · Long
+Document — 07 Turnstile · Split Studio — 08 Eleven · Map / Diagram — 09 Draft order ·
+Narrative Workflow — 10 The ledger · Stat-Led — 11 Chalkboard · Manifesto — 12 The pick ·
+Catalogue — 13 Broadsheet · Specimen — 14 Terminal · Component Playground — 15 Tunnel ·
+Workbench — 16 Ask · Conversational FAQ — 17 Note · Letter — 18 Ninety · Quote-Led —
+19 The board · Ecosystem Index — 20 Cutout · Portfolio Grid.
+
+Eleven display faces are rotated across them (Anton, Bebas, Oswald, Archivo, Big
+Shoulders, Instrument Serif, Fraunces, Newsreader, Space Grotesk, Syne, IBM Plex Mono),
+each with its own nav and footer voice. No motion anywhere — first-look only.
+
+**Palettes.** Every frame carries five palette buttons under its caption, plus a header
+row that flips *all twenty* frames to their 1st/2nd/…/5th palette at once (or rolls at
+random). The mechanism: a shared pool of **20 palettes declaring 4 primes each**
+(`--ground --ink --accent --tint`, plus a photo filter on the light and mid grounds);
+every other colour in the file — surfaces, hairlines, muted text, accent-ink, shades —
+derives from those four via one `color-mix(in oklab, …)` block written once. Each layout
+names five palettes from the pool by slug, so 100 distinct looks come out of 20
+definitions. Palettes are defined on the bare `[data-pal='x']` attribute rather than on
+`.frame`, so the swatch buttons carry the attribute themselves and paint *from the same
+rule* — the chips are the palette, not a hand-matched approximation of it.
+
+Pool: 10 dark (floodlight, terrace, astro, vidiprinter, awaystrip, cinder, nightwatch,
+pitchink, copperpot, petrol), 6 light (broadsheet, chalk, kitwhite, sundayleague,
+programme, linen), 4 mid (concrete, grass, claret, tarmac).
+
+**Stadium.** `public/stadium.webp` appears in all twenty and bleeds into the ground in
+twenty different ways — vignette, horizon sliver, `background-clip: text`, dot-matrix
+halftone, scanlines, posterised duotone, mirrored corridor, rotated band, radial
+spotlight, and so on. Four frames also use real player photos from `public/players/`.
+
+**Copy is honest** — 11 slots, four formats, 2–5 drafters, 546 in the pool, 15s default
+turn, auction backfill. No invented metrics anywhere, per the rules in this document.
+
+**Status: resolved.** Layout **04 · The wall** (Type Specimen) on **petrol** was picked
+and ported. What shipped is not a transcription of the frame — the exhibition is
+motionless and has no real controls, so the port re-cut the formats as four equal tiles
+under a titled rule, split the lobby controls create-left / join-right, dropped the
+frame's `⌘K` (there is nothing to search) and its line grid, added the whole motion layer,
+and swapped the frame's Bebas/Space Grotesk pairing for Oswald and Inter — Bebas survives
+on the wordmark alone, as the logo.
+
+Design decisions for this pass were run through the **Hallmark** skill
+(`.claude/skills/hallmark/`); the runs are logged at `.hallmark/log.json` so a future run
+in this repo picks different macrostructures.
 
 ## Configuration Mechanics
 

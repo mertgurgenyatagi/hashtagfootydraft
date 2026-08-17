@@ -1,68 +1,30 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { Home } from './Home'
 
-/** The lobby itself is exercised in the app, not here — this stub only proves
- *  the entry actions route somewhere real. */
-function renderHome() {
-  render(
-    <MemoryRouter initialEntries={['/']}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/lobby/:code" element={<LobbyStub />} />
-      </Routes>
-    </MemoryRouter>,
-  )
-}
-
-function LobbyStub() {
-  return <p>lobby reached</p>
-}
-
 describe('Home', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
-  it('gates the entry actions on a nickname, then opens a lobby', async () => {
+  it('shows the wall and stays honest about the dead ends', async () => {
     const user = userEvent.setup()
-    renderHome()
+    render(<Home />)
 
-    expect(screen.getByRole('heading', { name: /footydraft/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '#footydraft' })).toBeInTheDocument()
+    expect(screen.getByText(/play with friends/i)).toBeInTheDocument()
 
-    const create = screen.getByRole('button', { name: /create lobby/i })
-    expect(create).toBeDisabled()
-    expect(screen.getByText(/enter a name to start/i)).toBeInTheDocument()
+    // Nothing here has a destination yet, and each control says so.
+    const auction = screen.getByRole('button', { name: /auction/i })
+    await user.click(auction)
+    expect(screen.getByText(/single-player lobby isn't built yet/i)).toBeInTheDocument()
 
-    await user.type(screen.getByLabelText(/your name/i), 'Mert')
-    expect(create).toBeEnabled()
+    await user.click(screen.getByRole('button', { name: /create a lobby/i }))
+    expect(screen.getByText(/nothing to create/i)).toBeInTheDocument()
 
-    await user.click(create)
-    expect(await screen.findByText(/lobby reached/i)).toBeInTheDocument()
-  })
-
-  it('toggles the join-code panel and gates submission on a full code', async () => {
-    const user = userEvent.setup()
-    renderHome()
-
-    const toggle = screen.getByRole('button', { name: /join code/i })
-    expect(toggle).toHaveAttribute('aria-expanded', 'false')
-
-    await user.click(toggle)
-    expect(toggle).toHaveAttribute('aria-expanded', 'true')
-
-    const submit = screen.getByRole('button', { name: /^join$/i })
-    expect(submit).toBeDisabled()
-
-    await user.type(screen.getByLabelText(/lobby code/i), 'abc12')
-    expect(submit).toBeDisabled()
-
-    await user.type(screen.getByLabelText(/lobby code/i), '3')
-    expect(submit).toBeEnabled()
-
-    await user.click(submit)
-    expect(await screen.findByText(/lobby reached/i)).toBeInTheDocument()
+    // Joining is gated on a code long enough to be one.
+    const join = screen.getByRole('button', { name: /join lobby/i })
+    expect(join).toBeDisabled()
+    await user.type(screen.getByLabelText(/room code/i), 'fd-24')
+    expect(join).toBeEnabled()
+    await user.click(join)
+    expect(screen.getByText(/room code goes nowhere/i)).toBeInTheDocument()
   })
 })

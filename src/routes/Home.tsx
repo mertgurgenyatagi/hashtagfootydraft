@@ -1,107 +1,83 @@
-import { Fragment, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { EntryPanel } from '../components/home/EntryPanel'
-import { PlayerMarquee } from '../components/home/PlayerMarquee'
-import { StadiumBackdrop } from '../components/home/StadiumBackdrop'
+import { useState } from 'react'
+import { ActionBar } from '../components/home/ActionBar'
+import { FormatWall } from '../components/home/FormatWall'
+import { MessageRow } from '../components/home/MessageRow'
+import { StadiumPlate } from '../components/home/StadiumPlate'
 import { Wordmark } from '../components/home/Wordmark'
+import { formats } from '../data/formats'
 
-const NAME_STORAGE_KEY = 'footydraft.name'
-
-/** The four formats from PROJECT.md. With no nav and no scrolling, this strip is
- *  the only thing telling a first-time visitor what the game actually is. */
-const FORMATS = ['Auction', 'Deal or No Deal', 'Free Pick', 'Spin the Wheel']
-
-/** No I/O/0/1 — these get read aloud and typed in by hand. */
-const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-
-function readStoredName(): string {
-  try {
-    return localStorage.getItem(NAME_STORAGE_KEY) ?? ''
-  } catch {
-    return ''
-  }
-}
-
-function newLobbyCode(): string {
-  let code = ''
-  for (let index = 0; index < 4; index += 1) {
-    code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)]
-  }
-  return `FD-${code}`
-}
-
+/**
+ * The whole site, for now. One viewport, no scroll, no other route: a wall of
+ * type with the stadium clipped into it, the four single-player formats under
+ * it, and the lobby controls along the bottom.
+ *
+ * Every action here is an honest dead end — the lobby isn't built and nothing
+ * is wired to Firebase, so each one says so in the status line instead of
+ * faking a destination.
+ */
 export function Home() {
-  const [name, setName] = useState(readStoredName)
-  const navigate = useNavigate()
+  const [status, setStatus] = useState('')
+  /** Bumped on every status change so the line re-animates even when the text
+   *  it lands on happens to be identical. */
+  const [statusKey, setStatusKey] = useState(0)
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(NAME_STORAGE_KEY, name)
-    } catch {
-      // Private browsing can refuse writes. A forgotten nickname isn't worth failing over.
-    }
-  }, [name])
+  const report = (message: string) => {
+    setStatus(message)
+    setStatusKey((key) => key + 1)
+  }
 
   return (
-    // minmax(0,1fr) column: without it the marquee's max-content track inflates
-    // the implicit column and drags this whole stack off-screen.
-    <div className="grid h-[100dvh] grid-cols-[minmax(0,1fr)] grid-rows-[1fr_auto] overflow-hidden">
-      {/* Fixed, so it sits outside the grid's flow rather than claiming a row. */}
-      <StadiumBackdrop />
+    <div className="relative flex h-[100dvh] flex-col overflow-hidden px-[clamp(1.25rem,4vw,3.5rem)] pb-[clamp(1.25rem,3vh,2.25rem)] pt-[clamp(1.25rem,3vh,2.5rem)]">
+      <StadiumPlate />
 
-      <main className="flex min-h-0 w-full flex-col items-center justify-center px-6 text-center">
-        <div className="rise">
+      <header
+        className="fx fx-rise relative z-10 flex items-baseline justify-between gap-6"
+        style={{ animationDelay: '80ms' }}
+      >
+        <p className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
+          A drafting game for people who argue about squads
+        </p>
+        <p className="tabular hidden shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-dim sm:block">
+          11 slots · 546 in the pool · 4-2-3-1
+        </p>
+      </header>
+
+      {/* The wordmark takes whatever room is left over and centres in it; the
+          formats stay pinned to the bottom of the block, directly above the
+          row that describes them. */}
+      {/* Above the bottom block on purpose: the hover shadow down there spreads
+          wide enough to reach the tiles, and it has to pass behind them. */}
+      <main className="relative z-20 flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 items-center py-[clamp(0.5rem,3vh,2.25rem)]">
           <Wordmark />
         </div>
 
-        <p
-          className="rise mt-4 max-w-[44ch] text-balance text-[clamp(0.92rem,1.5vw,1.05rem)] leading-relaxed text-muted"
-          style={{ animationDelay: '60ms' }}
-        >
-          {/* Two blocks, not one wrapped sentence: left to itself the line broke
-              after "No", which reads as a typo. */}
-          <span className="block text-balance">Draft football&rsquo;s best with your friends.</span>
-          <span className="block text-balance">
-            No scores, no table &mdash; just the eleven you picked.
-          </span>
-        </p>
-
-        <div
-          className="rise mt-5 flex flex-wrap justify-center gap-x-4 gap-y-1 font-display text-[0.68rem] font-medium uppercase tracking-[0.18em] text-muted sm:gap-x-3"
-          style={{ animationDelay: '120ms' }}
-        >
-          {FORMATS.map((format, index) => (
-            <Fragment key={format}>
-              {/* Separators are dropped below sm, where wrapping would otherwise
-                  strand a slash at the end of a line. Spacing carries it instead. */}
-              {index > 0 && (
-                <span aria-hidden="true" className="hidden text-line sm:inline">
-                  /
-                </span>
-              )}
-              <span>{format}</span>
-            </Fragment>
-          ))}
-        </div>
-
-        <div className="rise mt-8 w-full max-w-[26rem]" style={{ animationDelay: '180ms' }}>
-          <EntryPanel
-            name={name}
-            onNameChange={setName}
-            onCreate={() => navigate(`/lobby/${newLobbyCode()}`)}
-            // Solo lands in the same lobby — bots are added by hand there, the
-            // same way a human would be invited.
-            onSolo={() => navigate(`/lobby/${newLobbyCode()}`)}
-            onJoin={(code) => navigate(`/lobby/${code}`)}
-          />
-        </div>
-
-        <p className="mt-3 h-6 text-[0.75rem] text-muted">
-          Lobbies are invite-link only — there&rsquo;s nothing to browse.
-        </p>
+        <FormatWall
+          onPick={(id) => {
+            const format = formats.find((entry) => entry.id === id)
+            report(`${format?.name} — the single-player lobby isn't built yet.`)
+          }}
+        />
       </main>
 
-      <PlayerMarquee />
+      <div className="relative z-10">
+        <MessageRow />
+
+        <ActionBar
+          onCreate={() => report("Lobbies aren't wired up yet — there's nothing to create.")}
+          onJoin={() => report('No lobby to join yet — a room code goes nowhere.')}
+        />
+
+        {/* Fixed height: the line has to be able to appear without shunting the
+            bar it sits under. */}
+        <p
+          key={statusKey}
+          aria-live="polite"
+          className="fx fx-fade mt-[clamp(0.4rem,1.2vh,0.75rem)] h-5 truncate text-[12px] leading-5 text-muted"
+        >
+          {status}
+        </p>
+      </div>
     </div>
   )
 }

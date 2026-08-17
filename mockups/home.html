@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>#footydraft — 20 home screens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Big+Shoulders+Display:wght@400;600;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600&family=Oswald:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Hallmark · exhibition of 20 home screens · genre: atmospheric (editorial secondary)
+       * macrostructures: one per layout, all 21 minus Feature Stack — see each frame's stamp
+       * tone: varies per layout by design · anchor hue: varies per palette
+       * palettes: 20 in the pool, 4 primes each (--ground --ink --accent --tint);
+       *           every other colour derives via color-mix. `black`/`transparent`
+       *           inside mask-image are alpha channels, not design colours.
+       * pre-emit critique: P5 H4 E4 S5 R4 V5
+       */
+
+      /* ============================================================
+         PALETTE POOL — 4 primes each. Nothing else is a hardcoded colour.
+         ============================================================ */
+      [data-pal='floodlight']    { --ground:#0e1310; --ink:#eef1ea; --accent:#d9a54a; --tint:#2c3a31 }
+      [data-pal='terrace']       { --ground:#150e0c; --ink:#f0e6dc; --accent:#e2622e; --tint:#3a251c }
+      [data-pal='astro']         { --ground:#0b1018; --ink:#e6eef7; --accent:#4ce0a4; --tint:#17303f }
+      [data-pal='vidiprinter']   { --ground:#0a0a0b; --ink:#e8e8e4; --accent:#f2d024; --tint:#2a2a26 }
+      [data-pal='awaystrip']     { --ground:#0d1226; --ink:#eef0fb; --accent:#ff5c72; --tint:#23294f }
+      [data-pal='cinder']        { --ground:#171614; --ink:#efe9df; --accent:#cf4b32; --tint:#35302a }
+      [data-pal='nightwatch']    { --ground:#0b0e12; --ink:#dfe7ef; --accent:#ffa62b; --tint:#1d2833 }
+      [data-pal='pitchink']      { --ground:#08120c; --ink:#e9f2e6; --accent:#a8e05f; --tint:#17301f }
+      [data-pal='copperpot']     { --ground:#14100c; --ink:#f2e8d8; --accent:#c67a3e; --tint:#382a1c }
+      [data-pal='petrol']        { --ground:#071414; --ink:#e2f0ee; --accent:#ef7a3c; --tint:#123030 }
+
+      [data-pal='broadsheet']    { --ground:#f4efe6; --ink:#17150f; --accent:#b02a1e; --tint:#7d766a; --ph-f:grayscale(1) contrast(.82) brightness(1.42) }
+      [data-pal='chalk']         { --ground:#f2f4f1; --ink:#1b211d; --accent:#1f6b45; --tint:#7a8a80; --ph-f:grayscale(1) contrast(.82) brightness(1.42) }
+      [data-pal='kitwhite']      { --ground:#f7f6f3; --ink:#131313; --accent:#d92b2b; --tint:#85837d; --ph-f:grayscale(1) contrast(.8)  brightness(1.46) }
+      [data-pal='sundayleague']  { --ground:#eef1e6; --ink:#232a17; --accent:#7d8a00; --tint:#8f9a80; --ph-f:grayscale(1) contrast(.85) brightness(1.38) }
+      [data-pal='programme']     { --ground:#e9dfc9; --ink:#2a2117; --accent:#1f6f74; --tint:#8a7d63; --ph-f:grayscale(1) contrast(.88) brightness(1.34) }
+      [data-pal='linen']         { --ground:#eae7e0; --ink:#26241f; --accent:#b8862b; --tint:#8b8579; --ph-f:grayscale(1) contrast(.85) brightness(1.36) }
+
+      [data-pal='concrete']      { --ground:#7c7d77; --ink:#131409; --accent:#ff6a13; --tint:#5f605b; --ph-f:grayscale(1) contrast(1) brightness(.95);
+                                   --accent-ink:color-mix(in oklab, var(--accent) 12%, var(--ink)) }
+      [data-pal='grass']         { --ground:#1d3a26; --ink:#eef5ea; --accent:#f4e04d; --tint:#2d4a35; --ph-f:grayscale(1) contrast(1.1) brightness(.62) }
+      [data-pal='claret']        { --ground:#3d1220; --ink:#f6e9d6; --accent:#7fc4e8; --tint:#55283a; --ph-f:grayscale(1) contrast(1.1) brightness(.66) }
+      [data-pal='tarmac']        { --ground:#232a30; --ink:#e4eaef; --accent:#b4f000; --tint:#39434b; --ph-f:grayscale(1) contrast(1.1) brightness(.7) }
+
+      /* ============================================================
+         DERIVED — written once, reads from whichever palette is active
+         ============================================================ */
+      .frame, .sw {
+        --surface:      color-mix(in oklab, var(--ground) 92%, var(--ink));
+        --surface-2:    color-mix(in oklab, var(--ground) 84%, var(--ink));
+        --line:         color-mix(in oklab, var(--ground) 76%, var(--ink));
+        --line-strong:  color-mix(in oklab, var(--ground) 55%, var(--ink));
+        --muted:        color-mix(in oklab, var(--ink) 58%, var(--ground));
+        --dim:          color-mix(in oklab, var(--ink) 30%, var(--ground));
+        --grid:         color-mix(in oklab, var(--ink) 9%, transparent);
+        --accent-ink:   color-mix(in oklab, var(--accent) 14%, var(--ground));
+        --accent-soft:  color-mix(in oklab, var(--accent) 20%, var(--ground));
+        --accent-line:  color-mix(in oklab, var(--accent) 50%, var(--ground));
+        --shade:        color-mix(in oklab, var(--ground) 82%, transparent);
+        --shade-hard:   color-mix(in oklab, var(--ground) 96%, transparent);
+      }
+      [data-pal='concrete'].frame, [data-pal='concrete'].sw {
+        --accent-ink: color-mix(in oklab, var(--accent) 12%, var(--ink));
+      }
+
+      /* ============================================================
+         TYPE — per-layout voices, set as tokens so nothing improvises
+         ============================================================ */
+      :root {
+        --ph-f: grayscale(1) contrast(1.25) brightness(.4);
+        --anton:'Anton',Impact,sans-serif;  --bebas:'Bebas Neue',Impact,sans-serif;
+        --oswald:'Oswald',sans-serif;       --archivo:'Archivo',sans-serif;
+        --shoulders:'Big Shoulders Display',sans-serif;
+        --instr:'Instrument Serif',Georgia,serif; --fraunces:'Fraunces',Georgia,serif;
+        --news:'Newsreader',Georgia,serif;  --grotesk:'Space Grotesk',sans-serif;
+        --mono:'IBM Plex Mono',monospace;   --syne:'Syne',sans-serif;
+        --inter:'Inter',system-ui,sans-serif;
+      }
+      .frame { --disp:var(--oswald); --body:var(--inter); --dtr:uppercase; --dls:.06em; --dw:600 }
+
+      .l01 { --disp:var(--anton);     --body:var(--inter);   --dtr:uppercase; --dls:.01em; --dw:400 }
+      .l02 { --disp:var(--oswald);    --body:var(--inter);   --dtr:uppercase; --dls:.07em; --dw:500 }
+      .l03 { --disp:var(--archivo);   --body:var(--inter);   --dtr:none;      --dls:-.02em;--dw:800 }
+      .l04 { --disp:var(--bebas);     --body:var(--grotesk); --dtr:uppercase; --dls:.02em; --dw:400 }
+      .l05 { --disp:var(--instr);     --body:var(--inter);   --dtr:none;      --dls:-.01em;--dw:400 }
+      .l06 { --disp:var(--fraunces);  --body:var(--news);    --dtr:none;      --dls:-.01em;--dw:600 }
+      .l07 { --disp:var(--grotesk);   --body:var(--grotesk); --dtr:none;      --dls:-.03em;--dw:700 }
+      .l08 { --disp:var(--archivo);   --body:var(--inter);   --dtr:uppercase; --dls:.1em;  --dw:700 }
+      .l09 { --disp:var(--shoulders); --body:var(--inter);   --dtr:uppercase; --dls:.02em; --dw:800 }
+      .l10 { --disp:var(--oswald);    --body:var(--inter);   --dtr:uppercase; --dls:.03em; --dw:600 }
+      .l11 { --disp:var(--anton);     --body:var(--archivo); --dtr:uppercase; --dls:-.01em;--dw:400 }
+      .l12 { --disp:var(--grotesk);   --body:var(--inter);   --dtr:uppercase; --dls:.14em; --dw:500 }
+      .l13 { --disp:var(--fraunces);  --body:var(--news);    --dtr:none;      --dls:-.02em;--dw:900 }
+      .l14 { --disp:var(--mono);      --body:var(--mono);    --dtr:uppercase; --dls:.08em; --dw:600 }
+      .l15 { --disp:var(--archivo);   --body:var(--inter);   --dtr:none;      --dls:-.03em;--dw:900 }
+      .l16 { --disp:var(--syne);      --body:var(--inter);   --dtr:none;      --dls:-.02em;--dw:800 }
+      .l17 { --disp:var(--news);      --body:var(--news);    --dtr:none;      --dls:0;     --dw:400 }
+      .l18 { --disp:var(--instr);     --body:var(--grotesk); --dtr:none;      --dls:-.01em;--dw:400 }
+      .l19 { --disp:var(--oswald);    --body:var(--inter);   --dtr:uppercase; --dls:.12em; --dw:500 }
+      .l20 { --disp:var(--bebas);     --body:var(--archivo); --dtr:uppercase; --dls:.04em; --dw:400 }
+
+      /* ============================================================
+         GALLERY CHROME
+         ============================================================ */
+      *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; cursor:default }
+      body {
+        background:#0c0d0c; color:#e8eae5; font-family:var(--inter);
+        -webkit-font-smoothing:antialiased; padding:36px 24px 140px; overflow-x:clip;
+      }
+      html { overflow-x:clip }
+      .gal-head { max-width:1352px; margin:0 auto 30px }
+      .gal-head h1 { font-family:var(--oswald); font-size:32px; font-weight:600; text-transform:uppercase; letter-spacing:.04em }
+      .gal-head h1 b { color:#d9a54a; font-weight:600 }
+      .gal-head p { color:#8e968c; font-size:13px; margin-top:8px; max-width:78ch; line-height:1.65 }
+      .globals { display:flex; gap:8px; align-items:center; margin-top:18px; flex-wrap:wrap }
+      .globals span { font-family:var(--oswald); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#8e968c; margin-right:4px }
+      .gbtn { font-family:var(--oswald); font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:7px 14px;
+              border:1px solid #2b302b; background:transparent; color:#c9cec6; border-radius:3px; cursor:pointer }
+      .gbtn:hover { border-color:#4a524a }
+      .gbtn:focus-visible { outline:2px solid #d9a54a; outline-offset:2px }
+
+      .gal { max-width:1352px; margin:0 auto; display:grid; gap:34px; grid-template-columns:repeat(auto-fill,minmax(640px,1fr)) }
+      .card { --s:.5 }
+      .card.zoom { --s:1; grid-column:1/-1 }
+      .scaler { width:calc(1280px * var(--s)); height:calc(800px * var(--s)); overflow:hidden; border:1px solid #262a26; cursor:zoom-in }
+      .card.zoom .scaler { cursor:zoom-out }
+
+      .cap { margin-top:11px; display:flex; gap:9px; align-items:baseline; flex-wrap:wrap }
+      .cap b { font-family:var(--oswald); font-size:11px; letter-spacing:.2em; color:#d9a54a; font-weight:500 }
+      .cap strong { font-family:var(--oswald); font-size:15px; letter-spacing:.06em; text-transform:uppercase; font-weight:500 }
+      .cap em { font-style:normal; color:#7d857b; font-size:11.5px; font-family:var(--mono) }
+      .cap p { color:#8e968c; font-size:12px; line-height:1.55; flex-basis:100%; max-width:66ch }
+
+      .sws { display:flex; gap:6px; margin-top:9px; flex-wrap:wrap }
+      .sw { width:auto; padding:5px 9px 5px 6px; display:inline-flex; align-items:center; gap:7px; border-radius:3px;
+            border:1px solid var(--line); background:var(--surface); color:var(--muted); cursor:pointer;
+            font-family:var(--oswald); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase }
+      .sw::before { content:''; width:13px; height:13px; border-radius:2px; background:var(--accent); flex:none;
+                    box-shadow:inset 0 0 0 3px var(--ground) }
+      .sw.on { color:var(--ink); border-color:var(--accent-line) }
+      .sw.on::before { box-shadow:none }
+      .sw:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+
+      /* ============================================================
+         THE FRAME + SHARED ATOMS
+         ============================================================ */
+      .frame {
+        width:1280px; height:800px; background:var(--ground); color:var(--ink);
+        position:relative; overflow:hidden; font-size:14px; font-family:var(--body);
+        transform:scale(var(--s)); transform-origin:top left; user-select:none;
+      }
+      .d   { font-family:var(--disp); text-transform:var(--dtr); letter-spacing:var(--dls); font-weight:var(--dw); line-height:.95 }
+      .lbl { font-family:var(--disp); text-transform:uppercase; letter-spacing:.2em; font-size:10px; color:var(--muted); font-weight:500 }
+      .mut { color:var(--muted) } .dimc { color:var(--dim) } .acc { color:var(--accent) }
+      .num { font-variant-numeric:tabular-nums }
+      .row { display:flex; align-items:center; gap:10px } .col { display:flex; flex-direction:column }
+      .sp  { justify-content:space-between } .wrap { flex-wrap:wrap }
+      .panel { background:var(--surface); border:1px solid var(--line) }
+      .hr { height:1px; background:var(--line) }
+      .rel { position:relative; z-index:2; height:100%; display:flex; flex-direction:column }
+
+      .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap;
+             font-family:var(--disp); text-transform:var(--dtr); letter-spacing:var(--dls); font-weight:var(--dw);
+             padding:14px 30px; font-size:14px; border:1px solid transparent; background:transparent; color:inherit; border-radius:2px }
+      .btn.p { background:var(--accent); color:var(--accent-ink) } .btn.g { border-color:var(--line-strong); color:var(--ink) }
+      .btn.sm { padding:9px 17px; font-size:11.5px } .btn.rd { border-radius:999px }
+      .inp { border:1px solid var(--line-strong); background:color-mix(in oklab, var(--ground) 60%, transparent);
+             padding:14px 16px; color:var(--muted); font-size:14px; font-family:var(--body); border-radius:2px }
+      .tag { font-family:var(--disp); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; padding:4px 8px;
+             border:1px solid var(--line-strong); color:var(--muted); border-radius:2px; white-space:nowrap; font-weight:500 }
+      .tag.a { color:var(--accent); border-color:var(--accent-line) }
+
+      /* stadium plate — one element, twenty masks */
+      .ph { position:absolute; overflow:hidden; pointer-events:none; z-index:0 }
+      .ph img { width:100%; height:100%; object-fit:cover; display:block; filter:var(--ph-f) }
+      .ph::after { content:''; position:absolute; inset:0; background:var(--tint); mix-blend-mode:color }
+      .ph.duo::before { content:''; position:absolute; inset:0; z-index:2; background:var(--accent); mix-blend-mode:color }
+      .m-b   { mask-image:linear-gradient(to bottom,black 38%,transparent 100%) }
+      .m-b2  { mask-image:linear-gradient(to bottom,transparent 0,black 26%,black 60%,transparent 100%) }
+      .m-t   { mask-image:linear-gradient(to top,black 42%,transparent 100%) }
+      .m-r   { mask-image:linear-gradient(to right,black 44%,transparent 100%) }
+      .m-l   { mask-image:linear-gradient(to left,black 44%,transparent 100%) }
+      .m-rad { mask-image:radial-gradient(58% 66% at 50% 42%,black 0,transparent 100%) }
+      .m-vig { mask-image:radial-gradient(120% 100% at 50% 30%,black 30%,transparent 100%) }
+      .m-scan{ mask-image:repeating-linear-gradient(to bottom,black 0 2px,transparent 2px 5px) }
+      .m-dot { mask-image:radial-gradient(black 32%,transparent 34%); mask-size:7px 7px }
+      .m-sliv{ mask-image:linear-gradient(to bottom,transparent 0,black 34%,black 62%,transparent 100%) }
+      .grid  { background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px),
+                                linear-gradient(to bottom,var(--grid) 1px,transparent 1px); background-size:64px 64px }
+      .cut { overflow:hidden } .cut img { width:100%; height:100%; object-fit:cover; object-position:50% 14%; display:block }
+      .gr  { filter:grayscale(1) contrast(1.15) }
+
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important } }
+    </style>
+  </head>
+  <body>
+    <header class="gal-head">
+      <h1><b>#</b>footydraft — home screen, 20 layouts</h1>
+      <p>
+        Twenty different page-shapes, not twenty colour-swaps of one. Every frame carries the same
+        job — pick a nickname, create a lobby, join with a code, or play solo — and every frame uses
+        <code>stadium.webp</code> bleeding into its own background a different way. Five palette
+        buttons under each frame. Click a frame to blow it up to full 1280×800, click again to shrink.
+      </p>
+      <div class="globals">
+        <span>set every frame to its</span>
+        <button class="gbtn" data-slot="0">1st palette</button>
+        <button class="gbtn" data-slot="1">2nd</button>
+        <button class="gbtn" data-slot="2">3rd</button>
+        <button class="gbtn" data-slot="3">4th</button>
+        <button class="gbtn" data-slot="4">5th</button>
+        <button class="gbtn" data-slot="r">roll at random</button>
+      </div>
+    </header>
+
+    <div class="gal">
+
+      <!-- ══════════ 01 · KICKOFF — Marquee Hero ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l01" data-pal="floodlight">
+          <div class="ph m-vig" style="inset:0"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 56px 46px">
+            <!-- N9 edge-aligned -->
+            <div class="row sp">
+              <div class="row" style="gap:7px"><span class="d acc" style="font-size:26px">#</span><span class="d" style="font-size:17px;letter-spacing:.1em">footydraft</span></div>
+              <div class="row" style="gap:22px"><span class="lbl">Formats</span><span class="lbl">How it works</span></div>
+            </div>
+            <div style="flex:1"></div>
+            <h2 class="d" style="font-size:132px;line-height:.86;max-width:14ch">Eleven slots.<br />Four ways in.</h2>
+            <p style="margin-top:22px;font-size:17px;max-width:46ch;line-height:1.55;color:var(--muted)">
+              Draft a 4-2-3-1 against your mates or a table of bots. Nobody keeps score — you just
+              end up with a squad, and you compare.
+            </p>
+            <div class="row wrap" style="gap:12px;margin-top:34px">
+              <input class="inp" style="width:250px" placeholder="Pick a nickname" />
+              <button class="btn p">Create a lobby</button>
+              <button class="btn g">Play solo</button>
+              <span class="mut" style="font-size:14px">or</span>
+              <input class="inp num" style="width:150px;letter-spacing:.28em;font-family:var(--disp)" placeholder="FD-••••" />
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>01</b><strong>Kickoff</strong><em>Marquee Hero · Anton</em>
+            <p>The photo is the whole page, vignetted so the type sits in the dark. Everything hangs off the bottom-left; the fold is one statement and the entry row.</p></div>
+          <div class="sws" data-pals="floodlight,terrace,awaystrip,claret,kitwhite"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 02 · TEAM SHEET — Index-First ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l02" data-pal="broadsheet">
+          <div class="ph m-sliv" style="inset:118px 0 auto 0;height:230px"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:30px 0 0">
+            <!-- N6 masthead -->
+            <div style="padding:0 60px 18px;border-bottom:2px solid var(--ink)">
+              <div class="row sp" style="align-items:flex-end">
+                <span class="lbl">Est. 2026 · 546 players</span>
+                <h2 class="d" style="font-size:44px"><span class="acc">#</span>footydraft</h2>
+                <span class="lbl">4-2-3-1 · always</span>
+              </div>
+            </div>
+            <div style="height:196px"></div>
+            <div style="padding:0 60px">
+              <div class="row sp" style="border-bottom:1px solid var(--line-strong);padding-bottom:9px">
+                <span class="lbl">Choose a format</span><span class="lbl">Drafters 2–5</span>
+              </div>
+              <div class="col">
+                <div class="row sp" style="padding:17px 0;border-bottom:1px solid var(--line)">
+                  <div class="row" style="gap:20px"><span class="d dimc num" style="font-size:17px">01</span><span class="d" style="font-size:25px">Auction</span></div>
+                  <span class="mut" style="font-size:13.5px">Bid live. Highest bid takes the player. Losers keep their money.</span>
+                </div>
+                <div class="row sp" style="padding:17px 0;border-bottom:1px solid var(--line)">
+                  <div class="row" style="gap:20px"><span class="d dimc num" style="font-size:17px">02</span><span class="d" style="font-size:25px">Deal or No Deal</span></div>
+                  <span class="mut" style="font-size:13.5px">Open a box, or hear what the proposer is offering.</span>
+                </div>
+                <div class="row sp" style="padding:17px 0;border-bottom:1px solid var(--line)">
+                  <div class="row" style="gap:20px"><span class="d dimc num" style="font-size:17px">03</span><span class="d" style="font-size:25px">Free Pick</span></div>
+                  <span class="mut" style="font-size:13.5px">Snake draft. Take whoever you like, eleven times.</span>
+                </div>
+                <div class="row sp" style="padding:17px 0;border-bottom:1px solid var(--line)">
+                  <div class="row" style="gap:20px"><span class="d dimc num" style="font-size:17px">04</span><span class="d" style="font-size:25px">Spin the Wheel</span></div>
+                  <span class="mut" style="font-size:13.5px">The wheel names a club. You pick from inside it.</span>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <!-- Ft2 inline -->
+            <div class="row sp" style="padding:20px 60px;border-top:2px solid var(--ink)">
+              <div class="row" style="gap:11px">
+                <input class="inp" style="width:210px;padding:11px 14px" placeholder="Pick a nickname" />
+                <button class="btn p sm">Create a lobby</button>
+                <button class="btn g sm">Play solo</button>
+              </div>
+              <div class="row" style="gap:11px"><span class="lbl">Have a code?</span>
+                <input class="inp num" style="width:130px;padding:11px 14px;letter-spacing:.28em;font-family:var(--disp)" placeholder="FD-••••" /></div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>02</b><strong>Team sheet</strong><em>Index-First · Oswald</em>
+            <p>The page is a list and nothing else. A masthead rule up top, the four formats as index rows, entries in a single footer bar. The photo is a horizon sliver bleeding down out of the masthead.</p></div>
+          <div class="sws" data-pals="broadsheet,programme,vidiprinter,floodlight,linen"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 03 · FOUR WAYS — Bento Grid ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l03" data-pal="astro">
+          <div class="ph m-vig" style="inset:0;opacity:.55"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:32px">
+            <div class="row sp" style="padding:0 4px 20px">
+              <div class="row" style="gap:6px"><span class="d acc" style="font-size:24px">#</span><span class="d" style="font-size:19px">footydraft</span></div>
+              <div class="row" style="gap:16px"><span class="lbl">Formats</span><span class="lbl">Scopes</span><span class="lbl">Bots</span>
+                <button class="btn g sm rd">Join with code</button></div>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:1.55fr 1fr .85fr;grid-template-rows:1.5fr 1fr .9fr;gap:14px">
+              <div class="panel" style="grid-row:1/3;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:30px">
+                <div class="ph m-t" style="inset:0"><img src="../public/stadium.webp" alt="" /></div>
+                <div style="position:relative">
+                  <h2 class="d" style="font-size:54px;line-height:.94">Start a<br />lobby</h2>
+                  <p class="mut" style="margin-top:12px;font-size:14px;max-width:34ch;line-height:1.5">Two to five seats. Invite by link, fill the rest with bots, start when the room feels right.</p>
+                  <div class="row" style="gap:10px;margin-top:20px">
+                    <input class="inp" style="width:186px;padding:12px 14px" placeholder="Pick a nickname" />
+                    <button class="btn p sm">Create</button>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="grid-column:2/4;padding:22px 24px">
+                <span class="lbl">Four formats</span>
+                <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px 20px">
+                  <div><div class="d" style="font-size:19px">Auction</div><div class="mut" style="font-size:12px;margin-top:3px">Bid live</div></div>
+                  <div><div class="d" style="font-size:19px">Free Pick</div><div class="mut" style="font-size:12px;margin-top:3px">Snake draft</div></div>
+                  <div><div class="d" style="font-size:19px">Deal or No Deal</div><div class="mut" style="font-size:12px;margin-top:3px">Boxes and offers</div></div>
+                  <div><div class="d" style="font-size:19px">Spin the Wheel</div><div class="mut" style="font-size:12px;margin-top:3px">Club roulette</div></div>
+                </div>
+              </div>
+              <div class="panel" style="padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between">
+                <span class="lbl">Scope</span>
+                <div class="col" style="gap:7px;font-size:13.5px">
+                  <span>All players</span><span class="mut">Top 5 leagues</span><span class="mut">One league</span><span class="mut">One nationality</span>
+                </div>
+              </div>
+              <div class="panel" style="padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between">
+                <span class="lbl">Formation</span>
+                <div class="d" style="font-size:46px">4-2-3-1</div>
+                <span class="mut" style="font-size:12px">Fixed. Eleven slots, no substitutes.</span>
+              </div>
+              <div class="panel" style="grid-column:1/2;padding:20px 24px;display:flex;align-items:center;justify-content:space-between">
+                <div><div class="d" style="font-size:22px">Play solo</div><div class="mut" style="font-size:12px;margin-top:2px">Against bots you add yourself</div></div>
+                <button class="btn g sm rd">Go</button>
+              </div>
+              <div class="panel" style="grid-column:2/4;padding:20px 24px;display:flex;align-items:center;gap:14px">
+                <span class="lbl" style="flex:none">Join a lobby</span>
+                <input class="inp num" style="flex:1;padding:11px 14px;letter-spacing:.3em;font-family:var(--disp)" placeholder="FD-••••" />
+                <button class="btn p sm">Enter</button>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>03</b><strong>Four ways</strong><em>Bento Grid · Archivo</em>
+            <p>Irregular tiles, not a 3-column card row. The photo lives inside the big tile and also runs faintly behind everything, so it bleeds through the gaps between tiles.</p></div>
+          <div class="sws" data-pals="astro,tarmac,nightwatch,petrol,chalk"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 04 · THE WALL — Type Specimen ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l04" data-pal="vidiprinter">
+          <div class="ph m-b" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:40px 50px 44px">
+            <div class="row sp">
+              <span class="lbl">A drafting game for people who argue about squads</span>
+              <!-- N4 hidden ⌘K -->
+              <div class="row" style="gap:8px;border:1px solid var(--line-strong);border-radius:3px;padding:7px 12px">
+                <span class="lbl" style="letter-spacing:.1em">Search formats</span>
+                <span class="tag" style="padding:2px 6px">⌘K</span>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <h2 class="d" style="font-size:212px;line-height:.8;letter-spacing:.005em;
+                     background-image:url('../public/stadium.webp'); background-size:118% auto; background-position:50% 34%;
+                     -webkit-background-clip:text; background-clip:text; color:transparent; filter:contrast(1.5) brightness(1.25)">
+                FOOTY<br />DRAFT
+              </h2>
+              <div class="row wrap" style="gap:0 34px;margin-top:30px;align-items:baseline">
+                <span class="d" style="font-size:38px">Auction</span>
+                <span class="d mut" style="font-size:27px">Deal or No Deal</span>
+                <span class="d" style="font-size:33px">Free Pick</span>
+                <span class="d mut" style="font-size:23px">Spin the Wheel</span>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line-strong);padding-top:22px">
+              <div class="row" style="gap:14px">
+                <input class="inp" style="width:230px" placeholder="Pick a nickname" />
+                <button class="btn p">Create a lobby</button>
+              </div>
+              <div class="row" style="gap:26px">
+                <span class="d" style="font-size:19px;border-bottom:2px solid var(--accent);padding-bottom:2px">Play solo</span>
+                <span class="d mut" style="font-size:19px;border-bottom:1px solid var(--line-strong);padding-bottom:2px">Join with a code</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>04</b><strong>The wall</strong><em>Type Specimen · Bebas Neue</em>
+            <p>The wordmark is the page. The stadium is clipped straight into the letterforms and also washes faintly behind them, so the photo reads as the fill and the ground at once. Formats are set as a specimen scale.</p></div>
+          <div class="sws" data-pals="vidiprinter,cinder,pitchink,kitwhite,tarmac,floodlight,terrace,astro,awaystrip,nightwatch,copperpot,petrol,broadsheet,chalk,sundayleague,programme,linen,concrete,grass,claret"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 05 · MATCHDAY — Photographic ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l05" data-pal="nightwatch">
+          <div class="ph" style="inset:0;filter:none"><img src="../public/stadium.webp" alt=""
+               style="filter:grayscale(.85) contrast(1.1) brightness(.62);object-position:50% 44%" /></div>
+          <div class="rel" style="padding:36px 48px 40px">
+            <div class="row sp">
+              <div class="row" style="gap:6px"><span class="d acc" style="font-size:23px">#</span><span class="d" style="font-size:16px;letter-spacing:.14em;text-transform:uppercase">footydraft</span></div>
+              <span class="lbl" style="letter-spacing:.24em">Kick-off whenever you like</span>
+            </div>
+            <div style="flex:1"></div>
+            <div style="max-width:640px">
+              <div class="hr" style="background:var(--accent);height:2px;width:64px"></div>
+              <h2 class="d" style="font-size:66px;line-height:1.02;margin-top:20px">
+                Somebody is about to pay far too much for a left-back.
+              </h2>
+              <p class="mut" style="margin-top:18px;font-size:15px;line-height:1.6;max-width:52ch;font-family:var(--body)">
+                Four formats, one fixed 4-2-3-1, two to five drafters. No points, no table — at the
+                end you just put the squads side by side and let the room decide.
+              </p>
+            </div>
+            <div class="row sp" style="margin-top:36px;align-items:flex-end">
+              <div class="row" style="gap:12px">
+                <input class="inp" style="width:236px" placeholder="Pick a nickname" />
+                <button class="btn p">Create a lobby</button>
+                <button class="btn g">Play solo</button>
+              </div>
+              <div class="col" style="gap:6px;align-items:flex-end">
+                <span class="lbl">Invited?</span>
+                <input class="inp num" style="width:160px;letter-spacing:.3em;font-family:var(--disp);text-align:center" placeholder="FD-••••" />
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>05</b><strong>Matchday</strong><em>Photographic · Instrument Serif</em>
+            <p>Look before you read. The stadium runs sharp and full-bleed at near-photo brightness — the only frame that doesn't crush it — and every bit of type is annotation sitting on top of it.</p></div>
+          <div class="sws" data-pals="nightwatch,copperpot,terrace,claret,grass"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 06 · THE PROGRAMME — Long Document ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l06" data-pal="programme">
+          <div class="rel" style="padding:34px 0 0">
+            <!-- N6 masthead -->
+            <div class="row sp" style="padding:0 74px 14px">
+              <span class="lbl">Matchday programme</span>
+              <h2 class="d" style="font-size:30px"><span class="acc">#</span>footydraft</h2>
+              <span class="lbl">No. 1 · Free</span>
+            </div>
+            <div class="hr" style="background:var(--ink);height:2px;margin:0 74px"></div>
+            <div style="flex:1;display:grid;grid-template-columns:1.25fr 1fr;gap:0 46px;padding:30px 74px 0;position:relative">
+              <div class="ph m-r" style="left:56%;right:0;top:150px;height:340px;z-index:0"><img src="../public/stadium.webp" alt="" /></div>
+              <div style="position:relative;z-index:2">
+                <h3 class="d" style="font-size:47px;line-height:1.04;max-width:15ch">A note before we let you in</h3>
+                <div style="margin-top:20px;font-size:15.5px;line-height:1.72;color:var(--muted);max-width:46ch;column-count:1">
+                  <p style="margin-bottom:13px">
+                    <span class="d" style="float:left;font-size:52px;line-height:.78;margin:4px 9px 0 0;color:var(--ink)">T</span>his
+                    is a game about arguing. Eleven slots in a 4-2-3-1 that never changes, a pool of
+                    546 footballers, and between two and five of you deciding who deserves what.
+                  </p>
+                  <p style="margin-bottom:13px">
+                    You can bid for them at auction, open boxes for them, snake-draft them, or let a
+                    wheel narrow the field to one club and pick from there. Bots fill any seat you
+                    don't have a friend for.
+                  </p>
+                  <p>
+                    Nothing is scored. When the eleventh slot is filled the squads go side by side and
+                    that's the whole result.
+                  </p>
+                </div>
+              </div>
+              <div style="position:relative;z-index:2;padding-top:6px">
+                <div class="row sp" style="border-bottom:1px solid var(--line-strong);padding-bottom:7px">
+                  <span class="lbl">In this issue</span><span class="lbl num">04</span>
+                </div>
+                <div class="col">
+                  <div class="row sp" style="padding:11px 0;border-bottom:1px solid var(--line)"><span class="d" style="font-size:19px">Auction</span><span class="mut num" style="font-size:13px">Bidding</span></div>
+                  <div class="row sp" style="padding:11px 0;border-bottom:1px solid var(--line)"><span class="d" style="font-size:19px">Deal or No Deal</span><span class="mut num" style="font-size:13px">Boxes</span></div>
+                  <div class="row sp" style="padding:11px 0;border-bottom:1px solid var(--line)"><span class="d" style="font-size:19px">Free Pick</span><span class="mut num" style="font-size:13px">Snake</span></div>
+                  <div class="row sp" style="padding:11px 0;border-bottom:1px solid var(--line)"><span class="d" style="font-size:19px">Spin the Wheel</span><span class="mut num" style="font-size:13px">Roulette</span></div>
+                </div>
+              </div>
+            </div>
+            <!-- Ft6 letter close -->
+            <div style="padding:0 74px 34px;position:relative;z-index:2">
+              <div class="hr" style="background:var(--ink);height:2px;margin-bottom:20px"></div>
+              <div class="row sp" style="align-items:flex-end">
+                <div class="row" style="gap:12px">
+                  <input class="inp" style="width:214px;padding:12px 15px" placeholder="Pick a nickname" />
+                  <button class="btn p sm">Create a lobby</button>
+                  <button class="btn g sm">Play solo</button>
+                </div>
+                <div class="row" style="gap:12px">
+                  <span class="lbl">Been sent a code</span>
+                  <input class="inp num" style="width:136px;padding:12px 15px;letter-spacing:.28em;font-family:var(--disp)" placeholder="FD-••••" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>06</b><strong>The programme</strong><em>Long Document · Fraunces + Newsreader</em>
+            <p>Reads like something printed and handed to you at the turnstile. Running prose with a drop cap instead of marketing blocks; the photo sits in the outer column as a press plate feathering off toward the margin.</p></div>
+          <div class="sws" data-pals="programme,broadsheet,linen,copperpot,claret"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 07 · TURNSTILE — Split Studio ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l07" data-pal="petrol">
+          <div class="ph m-r" style="inset:0 auto 0 0;width:56%"><img src="../public/stadium.webp" alt="" style="object-position:62% 50%" /></div>
+          <div class="rel" style="flex-direction:row">
+            <!-- N3 side-rail -->
+            <div style="width:62px;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column;
+                        align-items:center;justify-content:space-between;padding:26px 0;background:color-mix(in oklab,var(--ground) 55%,transparent)">
+              <span class="d acc" style="font-size:26px">#</span>
+              <span class="lbl" style="writing-mode:vertical-rl;letter-spacing:.4em">footydraft</span>
+              <span class="lbl num">4-2-3-1</span>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:1fr 1fr">
+              <div style="padding:52px 44px;display:flex;flex-direction:column;justify-content:flex-end">
+                <span class="tag a" style="align-self:flex-start">Two to five drafters</span>
+                <h2 class="d" style="font-size:74px;line-height:.92;margin-top:22px">Pick a<br />side of<br />the room.</h2>
+              </div>
+              <div style="padding:52px 44px;display:flex;flex-direction:column;justify-content:center;gap:16px;
+                          background:color-mix(in oklab,var(--ground) 88%,transparent);border-left:1px solid var(--line)">
+                <div class="col" style="gap:9px">
+                  <span class="lbl">Who are you today</span>
+                  <input class="inp" placeholder="Pick a nickname" />
+                </div>
+                <button class="btn p" style="width:100%">Create a lobby</button>
+                <div class="row" style="gap:12px"><div class="hr" style="flex:1"></div><span class="lbl">or</span><div class="hr" style="flex:1"></div></div>
+                <div class="row" style="gap:10px">
+                  <input class="inp num" style="flex:1;letter-spacing:.28em;font-family:var(--disp)" placeholder="FD-••••" />
+                  <button class="btn g" style="padding:14px 20px">Join</button>
+                </div>
+                <button class="btn g" style="width:100%">Play solo against bots</button>
+                <div class="hr" style="margin-top:10px"></div>
+                <div class="row wrap" style="gap:7px">
+                  <span class="tag">Auction</span><span class="tag">Deal or No Deal</span>
+                  <span class="tag">Free Pick</span><span class="tag">Spin the Wheel</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>07</b><strong>Turnstile</strong><em>Split Studio · Space Grotesk</em>
+            <p>A hard diptych. The photo owns the left half outright and feathers across the seam under the right panel, so the split is a fade rather than a line. Vertical side-rail instead of a top nav.</p></div>
+          <div class="sws" data-pals="petrol,astro,awaystrip,cinder,concrete"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 08 · ELEVEN — Map / Diagram ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l08" data-pal="grass">
+          <div class="ph m-rad" style="inset:0"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:26px 44px 34px">
+            <!-- N2 floating chip -->
+            <div class="row" style="justify-content:center">
+              <div class="row panel" style="gap:20px;padding:9px 9px 9px 20px;border-radius:999px">
+                <span class="d" style="font-size:14px"><span class="acc">#</span>footydraft</span>
+                <span class="lbl">Formats</span><span class="lbl">Scopes</span>
+                <button class="btn p sm rd">Create a lobby</button>
+              </div>
+            </div>
+            <div style="flex:1;position:relative;margin-top:14px">
+              <!-- pitch -->
+              <div style="position:absolute;inset:0 240px;border:1px solid var(--line-strong);border-radius:3px">
+                <div style="position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line-strong)"></div>
+                <div style="position:absolute;left:50%;top:50%;width:118px;height:118px;border:1px solid var(--line-strong);border-radius:999px;transform:translate(-50%,-50%)"></div>
+                <div style="position:absolute;left:22%;right:22%;top:0;height:66px;border:1px solid var(--line-strong);border-top:0"></div>
+                <div style="position:absolute;left:22%;right:22%;bottom:0;height:66px;border:1px solid var(--line-strong);border-bottom:0"></div>
+                <!-- 11 slots -->
+                <div style="position:absolute;inset:0;display:grid;grid-template-rows:repeat(5,1fr);place-items:center;padding:14px 0">
+                  <div style="display:flex;gap:170px"><span class="d" style="font-size:22px">ST</span></div>
+                  <div style="display:flex;gap:112px"><span class="d" style="font-size:22px">LW</span><span class="d" style="font-size:22px">AMF</span><span class="d" style="font-size:22px">RW</span></div>
+                  <div style="display:flex;gap:150px"><span class="d" style="font-size:22px">CDM</span><span class="d" style="font-size:22px">CM</span></div>
+                  <div style="display:flex;gap:78px"><span class="d" style="font-size:22px">LB</span><span class="d" style="font-size:22px">CB</span><span class="d" style="font-size:22px">CB</span><span class="d" style="font-size:22px">RB</span></div>
+                  <div style="display:flex"><span class="d acc" style="font-size:22px">GK</span></div>
+                </div>
+              </div>
+              <!-- left annotations -->
+              <div class="col" style="position:absolute;left:0;top:22px;width:206px;gap:20px">
+                <div><span class="lbl">The shape</span><h2 class="d" style="font-size:34px;margin-top:7px;line-height:1">4-2-3-1</h2>
+                  <p class="mut" style="font-size:12.5px;margin-top:7px;line-height:1.55;font-family:var(--body);text-transform:none;letter-spacing:0">Fixed for every format. You fill eleven slots and no more.</p></div>
+                <div><span class="lbl">The pool</span><h2 class="d" style="font-size:34px;margin-top:7px;line-height:1">546</h2>
+                  <p class="mut" style="font-size:12.5px;margin-top:7px;line-height:1.55;font-family:var(--body);text-transform:none;letter-spacing:0">Top five leagues plus a shortlist from everywhere else.</p></div>
+              </div>
+              <!-- right annotations -->
+              <div class="col" style="position:absolute;right:0;top:22px;width:206px;gap:13px;align-items:flex-end">
+                <span class="lbl">How you fill them</span>
+                <div class="col" style="gap:8px;align-items:flex-end;width:100%">
+                  <div class="row sp" style="width:100%;border-bottom:1px solid var(--line);padding-bottom:7px"><span class="d" style="font-size:15px">Auction</span><span class="tag a">Bid</span></div>
+                  <div class="row sp" style="width:100%;border-bottom:1px solid var(--line);padding-bottom:7px"><span class="d" style="font-size:15px">Deal or No Deal</span><span class="tag">Box</span></div>
+                  <div class="row sp" style="width:100%;border-bottom:1px solid var(--line);padding-bottom:7px"><span class="d" style="font-size:15px">Free Pick</span><span class="tag">Snake</span></div>
+                  <div class="row sp" style="width:100%;border-bottom:1px solid var(--line);padding-bottom:7px"><span class="d" style="font-size:15px">Spin the Wheel</span><span class="tag">Wheel</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="margin-top:14px">
+              <div class="row" style="gap:11px">
+                <input class="inp" style="width:206px;padding:12px 15px" placeholder="Pick a nickname" />
+                <button class="btn g sm">Play solo</button>
+              </div>
+              <div class="row" style="gap:11px"><span class="lbl">Join</span>
+                <input class="inp num" style="width:138px;padding:12px 15px;letter-spacing:.28em;font-family:var(--disp)" placeholder="FD-••••" /></div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>08</b><strong>Eleven</strong><em>Map / Diagram · Archivo</em>
+            <p>The formation is the layout. A pitch diagram holds the centre with the eleven slots plotted on it, annotations hang off both margins, and the stadium sits underneath as a radial spotlight centred on the pitch.</p></div>
+          <div class="sws" data-pals="grass,pitchink,floodlight,sundayleague,tarmac"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 09 · DRAFT ORDER — Narrative Workflow ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l09" data-pal="cinder">
+          <div style="position:absolute;inset:-160px -100px;z-index:0;transform:rotate(-7deg)">
+            <div class="ph m-b2" style="position:absolute;left:0;right:0;top:300px;height:330px"><img src="../public/stadium.webp" alt="" /></div>
+          </div>
+          <div class="rel">
+            <!-- N12 banner + retract -->
+            <div class="row sp" style="padding:11px 44px;background:var(--accent);color:var(--accent-ink)">
+              <span class="d" style="font-size:12px;letter-spacing:.18em">Nothing is scored — you just end up with a squad</span>
+              <span class="d" style="font-size:12px;letter-spacing:.18em">2–5 drafters · bots welcome</span>
+            </div>
+            <div class="row sp" style="padding:22px 44px">
+              <div class="row" style="gap:7px"><span class="d acc" style="font-size:26px">#</span><span class="d" style="font-size:20px">footydraft</span></div>
+              <div class="row" style="gap:12px">
+                <input class="inp" style="width:196px;padding:11px 14px" placeholder="Pick a nickname" />
+                <input class="inp num" style="width:126px;padding:11px 14px;letter-spacing:.26em;font-family:var(--disp)" placeholder="FD-••••" />
+                <button class="btn g sm">Join</button>
+              </div>
+            </div>
+            <div style="padding:12px 44px 0">
+              <h2 class="d" style="font-size:60px;line-height:.95;max-width:20ch">From an empty room to eleven names</h2>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:38px 44px 0;align-items:start">
+              <div style="padding-right:26px">
+                <div class="row" style="gap:10px"><span class="d acc num" style="font-size:15px">1.0</span><div class="hr" style="flex:1;background:var(--accent)"></div></div>
+                <h3 class="d" style="font-size:26px;margin-top:14px">Open a lobby</h3>
+                <p class="mut" style="font-size:13px;line-height:1.6;margin-top:9px">Share the link. Between two and five seats, and you can hand any of them to a bot.</p>
+              </div>
+              <div style="padding-right:26px">
+                <div class="row" style="gap:10px"><span class="d num" style="font-size:15px">2.0</span><div class="hr" style="flex:1"></div></div>
+                <h3 class="d" style="font-size:26px;margin-top:14px">Set the rules</h3>
+                <p class="mut" style="font-size:13px;line-height:1.6;margin-top:9px">Format, scope, timer. Host decides; everyone else watches the pills change.</p>
+              </div>
+              <div style="padding-right:26px">
+                <div class="row" style="gap:10px"><span class="d num" style="font-size:15px">3.0</span><div class="hr" style="flex:1"></div></div>
+                <h3 class="d" style="font-size:26px;margin-top:14px">Draft</h3>
+                <p class="mut" style="font-size:13px;line-height:1.6;margin-top:9px">Bid, open a box, snake-pick or spin. Roughly fifteen seconds a turn unless you say otherwise.</p>
+              </div>
+              <div>
+                <div class="row" style="gap:10px"><span class="d num" style="font-size:15px">4.0</span><div class="hr" style="flex:1"></div></div>
+                <h3 class="d" style="font-size:26px;margin-top:14px">Compare</h3>
+                <p class="mut" style="font-size:13px;line-height:1.6;margin-top:9px">Squads go side by side. Export the lineup as an image if you want to gloat properly.</p>
+              </div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="row" style="gap:14px;padding:0 44px 40px">
+              <button class="btn p">Create a lobby</button>
+              <button class="btn g">Play solo</button>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>09</b><strong>Draft order</strong><em>Narrative Workflow · Big Shoulders</em>
+            <p>Four numbered stages left to right — the only frame where numbering is genuinely ordinal. The stadium is a band rotated seven degrees, cutting across the stages so the diagonal fights the strict column grid.</p></div>
+          <div class="sws" data-pals="cinder,terrace,copperpot,vidiprinter,concrete"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 10 · THE LEDGER — Stat-Led ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l10" data-pal="chalk">
+          <div class="ph m-b" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 56px 44px">
+            <!-- N1a minimal -->
+            <div class="row sp">
+              <div class="row" style="gap:6px"><span class="d acc" style="font-size:24px">#</span><span class="d" style="font-size:18px">footydraft</span></div>
+              <div class="row" style="gap:22px"><span class="lbl">How it works</span><button class="btn g sm rd">Join with a code</button></div>
+            </div>
+            <div class="row" style="flex:1;gap:56px;align-items:center">
+              <div style="flex:none">
+                <div class="d" style="font-size:340px;line-height:.74;letter-spacing:-.04em;
+                     background-image:url('../public/stadium.webp'); background-size:150% auto; background-position:44% 40%;
+                     -webkit-background-clip:text; background-clip:text; color:transparent; filter:contrast(1.35) brightness(.85)">11</div>
+              </div>
+              <div style="flex:1">
+                <h2 class="d" style="font-size:52px;line-height:1;max-width:16ch">slots, and not one of them is a substitute</h2>
+                <p class="mut" style="margin-top:18px;font-size:15px;line-height:1.65;max-width:48ch">
+                  Every format ends with a full 4-2-3-1. Run out of money at auction and the cheapest
+                  eligible names get slotted in for you — you finish with a worse squad, never a shorter one.
+                </p>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);margin-top:34px;border-top:1px solid var(--line-strong)">
+                  <div style="padding:16px 14px 0 0;border-right:1px solid var(--line)"><div class="d num" style="font-size:38px">4</div><div class="lbl" style="margin-top:5px">Formats</div></div>
+                  <div style="padding:16px 14px 0;border-right:1px solid var(--line)"><div class="d num" style="font-size:38px">2–5</div><div class="lbl" style="margin-top:5px">Drafters</div></div>
+                  <div style="padding:16px 14px 0;border-right:1px solid var(--line)"><div class="d num" style="font-size:38px">546</div><div class="lbl" style="margin-top:5px">In the pool</div></div>
+                  <div style="padding:16px 0 0 14px"><div class="d num" style="font-size:38px">15s</div><div class="lbl" style="margin-top:5px">Default turn</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line-strong);padding-top:22px">
+              <div class="row" style="gap:12px">
+                <input class="inp" style="width:236px" placeholder="Pick a nickname" />
+                <button class="btn p">Create a lobby</button>
+                <button class="btn g">Play solo</button>
+              </div>
+              <span class="lbl">One formation · four ways to fill it</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>10</b><strong>The ledger</strong><em>Stat-Led · Oswald</em>
+            <p>A 340px numeral with the stadium clipped inside it does the hero's whole job, and the headline finishes the sentence the number starts. Every figure here is real — 4 formats, 2–5 drafters, 546 players, 15-second default turn.</p></div>
+          <div class="sws" data-pals="chalk,kitwhite,linen,floodlight,tarmac"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 11 · CHALKBOARD — Manifesto ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l11" data-pal="pitchink">
+          <div class="ph duo m-b" style="inset:0 0 auto 0;height:64%;--ph-f:grayscale(1) contrast(2.4) brightness(.62)"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel">
+            <!-- N7 brutal slab -->
+            <div class="row sp" style="padding:16px 40px;background:var(--ink);color:var(--ground)">
+              <span class="d" style="font-size:22px">#footydraft</span>
+              <div class="row" style="gap:26px"><span class="d" style="font-size:13px;letter-spacing:.18em">Formats</span><span class="d" style="font-size:13px;letter-spacing:.18em">Scopes</span><span class="d" style="font-size:13px;letter-spacing:.18em">Bots</span></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 40px">
+              <h2 class="d" style="font-size:106px;line-height:.87;max-width:15ch">
+                No points. No table. No manager of the month.
+              </h2>
+              <p style="margin-top:26px;font-size:19px;line-height:1.5;max-width:44ch;color:var(--ink);font-family:var(--body);font-weight:500">
+                Eleven slots, a room full of opinions, and a squad at the end of it that somebody has
+                to defend out loud.
+              </p>
+            </div>
+            <!-- Ft5 statement -->
+            <div style="background:var(--accent);color:var(--accent-ink);padding:26px 40px">
+              <div class="row sp wrap" style="gap:16px">
+                <span class="d" style="font-size:30px">Get eleven names on a page.</span>
+                <div class="row" style="gap:11px">
+                  <input class="inp" style="width:200px;padding:12px 15px;border-color:var(--accent-ink);color:var(--accent-ink);background:transparent" placeholder="Pick a nickname" />
+                  <button class="btn sm" style="background:var(--accent-ink);color:var(--accent);padding:13px 22px">Create a lobby</button>
+                  <button class="btn sm" style="border-color:var(--accent-ink);color:var(--accent-ink)">Play solo</button>
+                  <button class="btn sm" style="border-color:var(--accent-ink);color:var(--accent-ink)">Join with a code</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>11</b><strong>Chalkboard</strong><em>Manifesto · Anton</em>
+            <p>Political-poster energy. The stadium is posterised to two tones and blended with the accent, so it changes character completely between palettes rather than just shifting hue. Slab nav, slab footer, declaration in between.</p></div>
+          <div class="sws" data-pals="pitchink,vidiprinter,awaystrip,kitwhite,concrete"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 12 · THE PICK — Catalogue ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l12" data-pal="tarmac">
+          <div class="ph m-b" style="inset:0;opacity:.5"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="ph m-dot" style="inset:0"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:28px 40px 34px">
+            <!-- N13 inline command pill -->
+            <div class="row sp">
+              <div class="row" style="gap:22px">
+                <span class="d" style="font-size:17px"><span class="acc">#</span>footydraft</span>
+                <div class="row panel" style="gap:9px;padding:7px 12px;border-radius:999px">
+                  <span class="lbl" style="letter-spacing:.1em">Find a player, a club, a league</span><span class="tag">⌘K</span>
+                </div>
+              </div>
+              <div class="row" style="gap:11px">
+                <input class="inp" style="width:186px;padding:10px 13px;font-size:13px" placeholder="Pick a nickname" />
+                <button class="btn p sm">Create a lobby</button>
+              </div>
+            </div>
+            <div class="row sp" style="margin-top:26px;align-items:flex-end">
+              <h2 class="d" style="font-size:30px;letter-spacing:.16em">546 in the pool</h2>
+              <div class="row" style="gap:8px"><span class="tag a">All players</span><span class="tag">Top 5 leagues</span><span class="tag">One league</span><span class="tag">One nationality</span></div>
+            </div>
+            <div style="flex:1;margin-top:18px;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:1fr 1fr;gap:12px">
+              <div class="panel cut" style="position:relative"><img src="../public/players/erling-haaland.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Haaland</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/kylian-mbappe.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Mbappé</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/bukayo-saka.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Saka</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/kevin-de-bruyne.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">De Bruyne</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/virgil-van-dijk.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Van Dijk</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/rodri.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Rodri</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/harry-kane.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Kane</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/vinicius-junior.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Vinícius</span></div>
+              <div class="panel" style="grid-column:3/5;display:flex;flex-direction:column;justify-content:center;padding:20px 24px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)">
+                <span class="d" style="font-size:12px;letter-spacing:.2em;opacity:.75">Nothing is spent yet</span>
+                <span class="d" style="font-size:29px;margin-top:6px;letter-spacing:.03em">Pick a format and the pool narrows</span>
+              </div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/jude-bellingham.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Bellingham</span></div>
+              <div class="panel cut" style="position:relative"><img src="../public/players/thibaut-courtois.webp" class="gr" alt="" /><span class="lbl" style="position:absolute;left:9px;bottom:8px;color:var(--ink)">Courtois</span></div>
+            </div>
+            <div class="row sp" style="margin-top:18px">
+              <div class="row" style="gap:9px"><span class="tag">Auction</span><span class="tag">Deal or No Deal</span><span class="tag">Free Pick</span><span class="tag">Spin the Wheel</span></div>
+              <div class="row" style="gap:11px">
+                <button class="btn g sm">Play solo</button>
+                <input class="inp num" style="width:132px;padding:10px 13px;letter-spacing:.26em;font-family:var(--disp)" placeholder="FD-••••" />
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>12</b><strong>The pick</strong><em>Catalogue · Space Grotesk</em>
+            <p>The pool itself is the page — a uniform index of faces with one accent tile interrupting it. The stadium runs twice: once soft behind everything, once through a dot-matrix mask so it reads as printed halftone over the whole grid.</p></div>
+          <div class="sws" data-pals="tarmac,astro,nightwatch,vidiprinter,petrol"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 13 · BROADSHEET — Specimen ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l13" data-pal="linen">
+          <div class="ph m-l" style="inset:96px 0 auto auto;width:46%;height:400px"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:36px 0 0">
+            <div style="padding:0 68px">
+              <div class="row sp" style="align-items:baseline">
+                <h2 class="d" style="font-size:34px"><span class="acc">#</span>footydraft</h2>
+                <div class="row" style="gap:24px"><span class="lbl">Formats</span><span class="lbl">Scopes</span><span class="lbl">Constraints</span></div>
+              </div>
+              <div class="hr" style="margin-top:14px"></div>
+            </div>
+            <div style="flex:1;padding:40px 68px 0;align-content:start">
+              <div class="lbl num">01</div>
+              <h3 class="d" style="font-size:82px;line-height:.94;max-width:15ch;margin-top:10px">Everybody thinks they can build a better eleven</h3>
+              <p class="mut" style="margin-top:22px;font-size:16px;line-height:1.7;max-width:44ch">
+                So settle it. Pick a format, pick how wide the pool goes, and take turns until the
+                4-2-3-1 is full. Bots take any seat nobody claims.
+              </p>
+              <div class="lbl num" style="margin-top:44px">02</div>
+              <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;max-width:520px">
+                <div class="row sp" style="padding:12px 0;border-top:1px solid var(--line-strong)"><span class="d" style="font-size:17px">Auction</span><span class="mut" style="font-size:12px">Bid live</span></div>
+                <div class="row sp" style="padding:12px 0;border-top:1px solid var(--line-strong)"><span class="d" style="font-size:17px">Free Pick</span><span class="mut" style="font-size:12px">Snake</span></div>
+                <div class="row sp" style="padding:12px 0;border-top:1px solid var(--line)"><span class="d" style="font-size:17px">Deal or No Deal</span><span class="mut" style="font-size:12px">Boxes</span></div>
+                <div class="row sp" style="padding:12px 0;border-top:1px solid var(--line)"><span class="d" style="font-size:17px">Spin the Wheel</span><span class="mut" style="font-size:12px">Roulette</span></div>
+              </div>
+            </div>
+            <!-- Ft4 dense colophon -->
+            <div style="padding:0 68px 30px">
+              <div class="hr" style="margin-bottom:16px"></div>
+              <div class="row sp wrap" style="gap:14px">
+                <div class="row" style="gap:11px">
+                  <input class="inp" style="width:206px;padding:12px 15px" placeholder="Pick a nickname" />
+                  <button class="btn p sm">Create a lobby</button>
+                  <button class="btn g sm">Play solo</button>
+                  <input class="inp num" style="width:128px;padding:12px 15px;letter-spacing:.26em;font-family:var(--disp)" placeholder="FD-••••" />
+                </div>
+                <span class="lbl" style="letter-spacing:.14em">4-2-3-1 · 546 players · 2–5 drafters · no score kept</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>13</b><strong>Broadsheet</strong><em>Specimen · Fraunces 900</em>
+            <p>The one frame that earns numbered left-margin labels, because the content is genuinely sequential. The stadium runs off the right edge like a press photo cropped by the fold, feathering left under the headline.</p></div>
+          <div class="sws" data-pals="linen,broadsheet,programme,kitwhite,claret"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 14 · TERMINAL — Component Playground ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l14" data-pal="pitchink">
+          <div class="ph m-vig" style="inset:0;opacity:.42"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="ph m-scan" style="inset:0;opacity:.6"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:26px 40px 32px">
+            <!-- N8 terminal -->
+            <div class="row sp" style="border-bottom:1px solid var(--line-strong);padding-bottom:12px">
+              <span class="d" style="font-size:14px"><span class="acc">#</span>footydraft <span class="mut">v0.1</span></span>
+              <div class="row" style="gap:18px"><span class="lbl">:formats</span><span class="lbl">:scopes</span><span class="lbl">:bots</span></div>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:26px;padding-top:24px">
+              <div class="col" style="gap:16px">
+                <div><span class="acc">&gt;</span> <span class="d" style="font-size:15px">draft --help</span></div>
+                <div class="panel" style="padding:20px 22px">
+                  <div class="col" style="gap:11px;font-size:13px;line-height:1.5">
+                    <div class="row sp"><span class="acc">--format</span><span class="mut">auction | dond | freepick | wheel</span></div>
+                    <div class="row sp"><span class="acc">--scope</span><span class="mut">all | top5 | league | nation</span></div>
+                    <div class="row sp"><span class="acc">--seats</span><span class="mut">2…5 (bots fill the rest)</span></div>
+                    <div class="row sp"><span class="acc">--timer</span><span class="mut">15s default, or off</span></div>
+                    <div class="row sp"><span class="acc">--shape</span><span class="mut">4-2-3-1 (fixed)</span></div>
+                  </div>
+                </div>
+                <div><span class="acc">&gt;</span> <span class="d" style="font-size:15px">draft --new</span> <span class="mut">_</span></div>
+              </div>
+              <div class="col" style="gap:16px">
+                <div class="panel" style="padding:22px 24px">
+                  <span class="lbl">New lobby</span>
+                  <div class="col" style="gap:11px;margin-top:14px">
+                    <input class="inp" placeholder="nickname" style="font-family:var(--mono)" />
+                    <button class="btn p" style="width:100%">Create a lobby</button>
+                    <button class="btn g" style="width:100%">Play solo</button>
+                  </div>
+                </div>
+                <div class="panel" style="padding:22px 24px">
+                  <span class="lbl">Attach to existing</span>
+                  <div class="row" style="gap:10px;margin-top:14px">
+                    <input class="inp num" style="flex:1;letter-spacing:.26em;font-family:var(--mono)" placeholder="FD-••••" />
+                    <button class="btn g" style="padding:14px 20px">Join</button>
+                  </div>
+                </div>
+                <div style="font-size:12.5px;line-height:1.7;color:var(--muted)">
+                  <div>· eleven slots, filled exactly once</div>
+                  <div>· no score, no table, no ranking</div>
+                  <div>· squads compared side by side at the end</div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line-strong);padding-top:14px">
+              <span class="lbl">546 players indexed</span><span class="lbl">chat stays open the whole draft</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>14</b><strong>Terminal</strong><em>Component Playground · IBM Plex Mono</em>
+            <p>Monospace-only on purpose — the one place a single-font page is the design. The stadium is dragged through a scanline mask so it reads as CRT phosphor rather than photography, with a soft vignette copy underneath it.</p></div>
+          <div class="sws" data-pals="pitchink,vidiprinter,astro,tarmac,nightwatch"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 15 · TUNNEL — Workbench ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l15" data-pal="terrace">
+          <div class="ph m-r" style="inset:0 auto 0 0;width:40%"><img src="../public/stadium.webp" alt="" style="transform:scaleX(-1)" /></div>
+          <div class="ph m-l" style="inset:0 0 0 auto;width:40%"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:26px 0 40px;align-items:center">
+            <!-- N5 floating pill -->
+            <div class="row panel" style="gap:18px;padding:9px 9px 9px 22px;border-radius:999px">
+              <span class="d" style="font-size:15px"><span class="acc">#</span>footydraft</span>
+              <span class="lbl">Formats</span><span class="lbl">Scopes</span><span class="lbl">Bots</span>
+              <button class="btn g sm rd">Join with a code</button>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:660px;text-align:center">
+              <span class="lbl" style="letter-spacing:.3em">Down the tunnel</span>
+              <h2 class="d" style="font-size:78px;line-height:.94;margin-top:16px">Four ways to<br />fill a 4-2-3-1</h2>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:34px;width:100%">
+                <div class="panel" style="padding:18px 20px;text-align:left"><div class="d" style="font-size:21px">Auction</div><div class="mut" style="font-size:12.5px;margin-top:4px">Bid live against everyone at once</div></div>
+                <div class="panel" style="padding:18px 20px;text-align:left"><div class="d" style="font-size:21px">Deal or No Deal</div><div class="mut" style="font-size:12.5px;margin-top:4px">Open a box or hear the offer</div></div>
+                <div class="panel" style="padding:18px 20px;text-align:left"><div class="d" style="font-size:21px">Free Pick</div><div class="mut" style="font-size:12.5px;margin-top:4px">Snake draft, eleven rounds</div></div>
+                <div class="panel" style="padding:18px 20px;text-align:left"><div class="d" style="font-size:21px">Spin the Wheel</div><div class="mut" style="font-size:12.5px;margin-top:4px">The wheel picks a club, you pick a name</div></div>
+              </div>
+              <div class="row" style="gap:11px;margin-top:30px">
+                <input class="inp" style="width:220px" placeholder="Pick a nickname" />
+                <button class="btn p">Create a lobby</button>
+                <button class="btn g">Play solo</button>
+              </div>
+            </div>
+            <span class="lbl">2–5 drafters · 546 players · no score kept</span>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>15</b><strong>Tunnel</strong><em>Workbench · Archivo</em>
+            <p>The stadium is mirrored on both edges and feathered inward, so the walls close on a lit corridor down the middle and the content walks out of it. The only deliberately symmetrical frame in the set.</p></div>
+          <div class="sws" data-pals="terrace,copperpot,claret,cinder,grass"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 16 · ASK — Conversational FAQ ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l16" data-pal="awaystrip">
+          <div class="ph m-t" style="inset:auto 0 0 0;height:58%"><img src="../public/stadium.webp" alt="" style="filter:var(--ph-f) blur(3px);transform:scale(1.06)" /></div>
+          <div class="rel" style="padding:30px 56px 40px">
+            <!-- N1b three-section -->
+            <div class="row sp">
+              <div class="row" style="gap:7px"><span class="d acc" style="font-size:25px">#</span><span class="d" style="font-size:20px">footydraft</span></div>
+              <div class="row" style="gap:26px"><span class="lbl">Formats</span><span class="lbl">Scopes</span><span class="lbl">Constraints</span><span class="lbl">Bots</span></div>
+              <div class="row" style="gap:10px"><button class="btn g sm rd">Join with a code</button><button class="btn p sm rd">Create a lobby</button></div>
+            </div>
+            <div style="margin-top:40px;max-width:840px">
+              <h2 class="d" style="font-size:56px;line-height:1;max-width:20ch">So what actually happens when you press start?</h2>
+            </div>
+            <div style="flex:1;margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:0 56px;align-content:start">
+              <div>
+                <div style="border-top:1px solid var(--line-strong);padding:16px 0">
+                  <div class="d" style="font-size:22px">Do I need friends?</div>
+                  <p class="mut" style="font-size:13.5px;line-height:1.65;margin-top:7px">No. Add bots by hand until the room is as full as you want it, anywhere from two seats to five.</p>
+                </div>
+                <div style="border-top:1px solid var(--line);padding:16px 0">
+                  <div class="d" style="font-size:22px">Who wins?</div>
+                  <p class="mut" style="font-size:13.5px;line-height:1.65;margin-top:7px">Nobody. There is no scoring. The squads go side by side at the end and you argue about them like adults.</p>
+                </div>
+              </div>
+              <div>
+                <div style="border-top:1px solid var(--line-strong);padding:16px 0">
+                  <div class="d" style="font-size:22px">What if I run out of money?</div>
+                  <p class="mut" style="font-size:13.5px;line-height:1.65;margin-top:7px">At auction your empty slots get backfilled with the cheapest eligible names. Worse squad, never a shorter one.</p>
+                </div>
+                <div style="border-top:1px solid var(--line);padding:16px 0">
+                  <div class="d" style="font-size:22px">Can I change formation?</div>
+                  <p class="mut" style="font-size:13.5px;line-height:1.65;margin-top:7px">Never. It is 4-2-3-1 every time. You can move people between slots they're eligible for, right up to the end.</p>
+                </div>
+              </div>
+            </div>
+            <!-- Ft7 entry-first close -->
+            <div class="panel" style="padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+              <div><div class="d" style="font-size:26px">Pick a name and go</div>
+                <div class="mut" style="font-size:12.5px;margin-top:3px">Guest nickname only — nothing to sign up for.</div></div>
+              <div class="row" style="gap:11px">
+                <input class="inp" style="width:230px" placeholder="Pick a nickname" />
+                <button class="btn p">Create a lobby</button>
+                <button class="btn g">Play solo</button>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>16</b><strong>Ask</strong><em>Conversational FAQ · Syne</em>
+            <p>Answers the four things anyone actually asks before joining. The stadium rises from the bottom edge slightly out of focus, so the questions sit on clean ground and the answers sit on atmosphere.</p></div>
+          <div class="sws" data-pals="awaystrip,astro,petrol,chalk,tarmac"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 17 · NOTE — Letter ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l17" data-pal="broadsheet">
+          <div class="ph" style="inset:0;opacity:.35"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:30px 46px 34px">
+            <!-- N9 edge-aligned -->
+            <div class="row sp">
+              <span class="d" style="font-size:19px"><span class="acc">#</span>footydraft</span>
+              <span class="lbl">4-2-3-1 · 2–5 drafters · no score</span>
+            </div>
+            <div style="flex:1;display:flex;align-items:center;justify-content:center">
+              <div class="panel" style="width:700px;padding:46px 54px;background:var(--ground);border-color:var(--line-strong)">
+                <p class="d" style="font-size:26px">Dear whoever gets there first,</p>
+                <div style="margin-top:22px;font-size:16.5px;line-height:1.78;color:var(--muted)">
+                  <p style="margin-bottom:15px">
+                    There is no clever hook here. You and up to four others pick eleven footballers
+                    each into the same 4-2-3-1, and then you look at what everybody ended up with.
+                  </p>
+                  <p style="margin-bottom:15px">
+                    How you pick is the only real decision. Auction if you want the arguing to be
+                    about money. Deal or No Deal if you want it to be about nerve. Free Pick if you
+                    just want to take the best available and be done. Spin the Wheel if you'd rather
+                    the game made things awkward for you.
+                  </p>
+                  <p>
+                    Bring people or bring bots — the room doesn't mind either way.
+                  </p>
+                </div>
+                <!-- Ft6 letter close -->
+                <div style="margin-top:34px;padding-top:22px;border-top:1px solid var(--line)">
+                  <div class="row wrap" style="gap:11px">
+                    <input class="inp" style="width:214px;padding:12px 15px" placeholder="Pick a nickname" />
+                    <button class="btn p sm">Create a lobby</button>
+                    <button class="btn g sm">Play solo</button>
+                    <input class="inp num" style="width:128px;padding:12px 15px;letter-spacing:.26em" placeholder="FD-••••" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp">
+              <span class="lbl">546 players in the pool</span>
+              <span class="lbl">Chat stays open the whole way through</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>17</b><strong>Note</strong><em>Letter · Newsreader</em>
+            <p>First person, no marketing structure, no buttons until you've read it. The stadium runs faintly across the whole frame and the letter card sits on top of it as opaque paper, so the photo shows only in the margins.</p></div>
+          <div class="sws" data-pals="broadsheet,programme,linen,copperpot,cinder"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 18 · NINETY — Quote-Led ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l18" data-pal="claret">
+          <div class="ph m-rad" style="inset:0"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 60px 42px">
+            <div class="row sp">
+              <span class="d" style="font-size:19px"><span class="acc">#</span>footydraft</span>
+              <div class="row" style="gap:22px"><span class="lbl">Formats</span><span class="lbl">Scopes</span><span class="lbl">Bots</span></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:900px">
+              <span class="d acc" style="font-size:150px;line-height:.5;height:70px">&ldquo;</span>
+              <blockquote class="d" style="font-size:64px;line-height:1.06;margin-top:18px">
+                He spent nine hundred million on a goalkeeper and then told us it was a plan.
+              </blockquote>
+              <div class="row" style="gap:13px;margin-top:28px">
+                <div class="cut" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--line-strong)"><img src="../public/players/thibaut-courtois.webp" class="gr" alt="" /></div>
+                <div class="col" style="gap:2px">
+                  <span class="d" style="font-size:15px;font-family:var(--body);font-weight:600;letter-spacing:0">What the auction does to people</span>
+                  <span class="mut" style="font-size:12.5px">One of four formats. The others are calmer.</span>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line-strong);padding-top:24px">
+              <div class="row" style="gap:12px">
+                <input class="inp" style="width:230px" placeholder="Pick a nickname" />
+                <button class="btn p">Create a lobby</button>
+                <button class="btn g">Play solo</button>
+              </div>
+              <div class="row" style="gap:11px"><span class="lbl">Invited</span>
+                <input class="inp num" style="width:150px;letter-spacing:.28em;font-family:var(--disp);text-align:center" placeholder="FD-••••" /></div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>18</b><strong>Ninety</strong><em>Quote-Led · Instrument Serif</em>
+            <p>Leads with the thing the game is actually about rather than a description of it. A radial spotlight pulls the stadium up behind the quote and lets it fall away at the corners, so the mark sits in the brightest part.</p></div>
+          <div class="sws" data-pals="claret,terrace,nightwatch,floodlight,programme"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 19 · THE BOARD — Ecosystem Index ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l19" data-pal="concrete">
+          <div class="ph m-b" style="inset:0 0 auto 0;height:270px"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:24px 40px 30px">
+            <!-- N11 mega bar -->
+            <div class="row sp" style="padding-bottom:14px;border-bottom:2px solid var(--ink)">
+              <span class="d" style="font-size:20px"><span class="acc">#</span>footydraft</span>
+              <div class="row" style="gap:20px">
+                <span class="lbl">Formats ▾</span><span class="lbl">Scopes ▾</span><span class="lbl">Constraints ▾</span><span class="lbl">Bots ▾</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <input class="inp" style="width:170px;padding:9px 12px;font-size:12.5px" placeholder="Pick a nickname" />
+                <button class="btn p sm">Create a lobby</button>
+              </div>
+            </div>
+            <div class="row sp" style="margin-top:22px;align-items:flex-end">
+              <h2 class="d" style="font-size:34px">Everything you can turn a knob on</h2>
+              <div class="row" style="gap:10px"><span class="tag">Play solo</span>
+                <input class="inp num" style="width:126px;padding:9px 12px;letter-spacing:.26em;font-family:var(--disp)" placeholder="FD-••••" /></div>
+            </div>
+            <div style="flex:1;margin-top:20px;display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:22px">
+              <div class="col" style="gap:11px">
+                <span class="lbl" style="border-bottom:1px solid var(--line-strong);padding-bottom:7px">The four formats</span>
+                <div class="panel" style="padding:15px 17px"><div class="d" style="font-size:19px">Auction</div><div class="mut" style="font-size:12.5px;margin-top:4px;letter-spacing:0;text-transform:none;font-family:var(--body)">Everyone bids at once. Opening bid is 70% of a derived market value.</div></div>
+                <div class="panel" style="padding:15px 17px"><div class="d" style="font-size:19px">Deal or No Deal</div><div class="mut" style="font-size:12.5px;margin-top:4px;letter-spacing:0;text-transform:none;font-family:var(--body)">Boxes for one position a round. Stick, or hear the offer.</div></div>
+                <div class="panel" style="padding:15px 17px"><div class="d" style="font-size:19px">Free Pick</div><div class="mut" style="font-size:12.5px;margin-top:4px;letter-spacing:0;text-transform:none;font-family:var(--body)">Snake draft. The only format that takes constraints.</div></div>
+                <div class="panel" style="padding:15px 17px"><div class="d" style="font-size:19px">Spin the Wheel</div><div class="mut" style="font-size:12.5px;margin-top:4px;letter-spacing:0;text-transform:none;font-family:var(--body)">One category all draft — clubs, leagues or nationalities.</div></div>
+              </div>
+              <div class="col" style="gap:11px">
+                <span class="lbl" style="border-bottom:1px solid var(--line-strong);padding-bottom:7px">Scope</span>
+                <div class="col" style="gap:8px">
+                  <div class="row sp panel" style="padding:12px 15px"><span class="d" style="font-size:15px">All players</span><span class="tag a">546</span></div>
+                  <div class="row sp panel" style="padding:12px 15px"><span class="d" style="font-size:15px">Top 5 leagues</span><span class="tag">Default</span></div>
+                  <div class="row sp panel" style="padding:12px 15px"><span class="d" style="font-size:15px">One league</span><span class="tag">Narrow</span></div>
+                  <div class="row sp panel" style="padding:12px 15px"><span class="d" style="font-size:15px">One nationality</span><span class="tag">Narrow</span></div>
+                </div>
+                <span class="lbl" style="border-bottom:1px solid var(--line-strong);padding-bottom:7px;margin-top:6px">Constraints</span>
+                <div class="row wrap" style="gap:7px"><span class="tag">1 per club</span><span class="tag">3 per club</span><span class="tag">1 per nation</span><span class="tag">3 per nation</span></div>
+              </div>
+              <div class="col" style="gap:11px">
+                <span class="lbl" style="border-bottom:1px solid var(--line-strong);padding-bottom:7px">Faces in the pool</span>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  <div class="panel cut" style="height:78px"><img src="../public/players/erling-haaland.webp" class="gr" alt="" /></div>
+                  <div class="panel cut" style="height:78px"><img src="../public/players/kylian-mbappe.webp" class="gr" alt="" /></div>
+                  <div class="panel cut" style="height:78px"><img src="../public/players/jude-bellingham.webp" class="gr" alt="" /></div>
+                  <div class="panel cut" style="height:78px"><img src="../public/players/bukayo-saka.webp" class="gr" alt="" /></div>
+                </div>
+                <span class="lbl" style="border-bottom:1px solid var(--line-strong);padding-bottom:7px;margin-top:6px">The shape</span>
+                <div class="panel" style="padding:15px 17px"><div class="d" style="font-size:26px">4-2-3-1</div>
+                  <div class="mut" style="font-size:12px;margin-top:5px;letter-spacing:0;text-transform:none;font-family:var(--body)">GK · CB CB LB RB · CDM CM · AMF LW RW · ST</div></div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>19</b><strong>The board</strong><em>Ecosystem Index · Oswald</em>
+            <p>Every knob on one screen for people who want to see the whole system before committing. Three discovery columns under a mega bar; the stadium is a hard top band dissolving into the ground behind the first row.</p></div>
+          <div class="sws" data-pals="concrete,tarmac,linen,sundayleague,floodlight"></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 20 · CUTOUT — Portfolio Grid ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l20" data-pal="sundayleague">
+          <div class="ph m-b" style="inset:0"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:26px 44px 0">
+            <!-- N2 floating chip -->
+            <div class="row sp">
+              <div class="row panel" style="gap:18px;padding:8px 8px 8px 18px;border-radius:999px">
+                <span class="d" style="font-size:16px"><span class="acc">#</span>footydraft</span>
+                <span class="lbl">Formats</span><span class="lbl">Scopes</span>
+                <button class="btn p sm rd">Create a lobby</button>
+              </div>
+              <div class="row" style="gap:10px">
+                <input class="inp" style="width:190px;padding:10px 14px" placeholder="Pick a nickname" />
+                <input class="inp num" style="width:126px;padding:10px 14px;letter-spacing:.26em;font-family:var(--disp)" placeholder="FD-••••" />
+                <button class="btn g sm rd">Join</button>
+              </div>
+            </div>
+            <div style="margin-top:36px;max-width:760px">
+              <h2 class="d" style="font-size:92px;line-height:.9">Somebody in this room is<br />getting Haaland</h2>
+              <p class="mut" style="margin-top:16px;font-size:15px;line-height:1.6;max-width:50ch;font-family:var(--body);letter-spacing:0;text-transform:none">
+                It might be you. It might be a bot you added yourself two minutes ago. Four formats,
+                one 4-2-3-1, and 546 names to fight over.
+              </p>
+              <button class="btn p" style="margin-top:26px">Play solo against bots</button>
+            </div>
+            <div style="flex:1"></div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:0;align-items:end;height:224px">
+              <div class="cut" style="height:186px;position:relative"><img src="../public/players/erling-haaland.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+              <div class="cut" style="height:214px;position:relative"><img src="../public/players/kylian-mbappe.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+              <div class="cut" style="height:170px;position:relative"><img src="../public/players/jude-bellingham.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+              <div class="cut" style="height:224px;position:relative"><img src="../public/players/vinicius-junior.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+              <div class="cut" style="height:178px;position:relative"><img src="../public/players/bukayo-saka.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+              <div class="cut" style="height:200px;position:relative"><img src="../public/players/virgil-van-dijk.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+              <div class="cut" style="height:162px;position:relative"><img src="../public/players/harry-kane.webp" class="gr" alt="" style="object-position:50% 8%" /></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:56px;background:var(--accent);color:var(--accent-ink);
+                      display:flex;align-items:center;justify-content:space-between;padding:0 44px;z-index:3">
+            <span class="d" style="font-size:14px;letter-spacing:.2em">Haaland · Mbappé · Bellingham · Vinícius · Saka · Van Dijk · Kane</span>
+            <span class="d" style="font-size:14px;letter-spacing:.2em">…and 539 more</span>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>20</b><strong>Cutout</strong><em>Portfolio Grid · Bebas Neue</em>
+            <p>A ragged row of players standing on the accent strip at different heights, with the stadium behind them dissolving downward so they look lit from the same source. The only frame where the players — not the type — carry the bottom half.</p></div>
+          <div class="sws" data-pals="sundayleague,grass,pitchink,concrete,vidiprinter"></div>
+        </figcaption>
+      </figure>
+
+    </div>
+
+    <script>
+      const NAMES = {
+        floodlight:'Floodlight', terrace:'Terrace', astro:'Astro', vidiprinter:'Vidiprinter',
+        awaystrip:'Away strip', cinder:'Cinder', nightwatch:'Nightwatch', pitchink:'Pitch ink',
+        copperpot:'Copper pot', petrol:'Petrol', broadsheet:'Broadsheet', chalk:'Chalk',
+        kitwhite:'Kit white', sundayleague:'Sunday league', programme:'Programme', linen:'Linen',
+        concrete:'Concrete', grass:'Grass', claret:'Claret', tarmac:'Tarmac',
+      }
+
+      document.querySelectorAll('.card').forEach((card) => {
+        const frame = card.querySelector('.frame')
+        const bar = card.querySelector('.sws')
+        const pals = bar.dataset.pals.split(',')
+        card.pals = pals
+
+        pals.forEach((p, i) => {
+          const b = document.createElement('button')
+          b.className = 'sw' + (i === 0 ? ' on' : '')
+          b.dataset.pal = p
+          b.textContent = NAMES[p] || p
+          b.addEventListener('click', () => {
+            bar.querySelectorAll('.sw').forEach((x) => x.classList.remove('on'))
+            b.classList.add('on')
+            frame.dataset.pal = p
+          })
+          bar.appendChild(b)
+        })
+
+        card.setPal = (i) => {
+          const p = pals[i % pals.length]
+          frame.dataset.pal = p
+          bar.querySelectorAll('.sw').forEach((x) => x.classList.toggle('on', x.dataset.pal === p))
+        }
+
+        card.querySelector('.scaler').addEventListener('click', () => card.classList.toggle('zoom'))
+      })
+
+      document.querySelectorAll('.gbtn').forEach((g) =>
+        g.addEventListener('click', () => {
+          document.querySelectorAll('.card').forEach((c) =>
+            c.setPal(g.dataset.slot === 'r' ? Math.floor(Math.random() * c.pals.length) : +g.dataset.slot),
+          )
+        }),
+      )
+    </script>
+  </body>
+</html>

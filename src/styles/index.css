@@ -1,19 +1,46 @@
 @import 'tailwindcss';
 
-/* Palette lifted from "The 27 Ledger" dark theme. One saturated accent (gold),
-   one reserved functional colour (mint), off-white text — never pure #fff. */
-@theme {
-  --color-ground: #101613;
-  --color-surface: #182019;
-  --color-line: #2a342c;
-  --color-ink: #ecefe8;
-  --color-muted: #93a599;
-  --color-accent: #d9a54a;
-  --color-accent-ink: #1b1204;
-  --color-live: #6cc397;
+/* Hallmark · macrostructure: Type Specimen ("The wall", layout 04 of the exhibition)
+ * theme: custom — "petrol" · genre: atmospheric · tone: floodlit, austere, competitive
+ * primes: ground #071414 · ink #e2f0ee · accent #ef7a3c · tint #123030
+ * axes: dark paper band / display-condensed roman / warm accent (~40°)
+ * enrichment: E-photographic — stadium.webp clipped into the wordmark, plus
+ *             face-anchored player crops (scripts/make_face_crops.py)
+ * pre-emit critique: P5 H5 E4 S5 R4 V4
+ */
 
+/* `static` so the derived tokens below survive Tailwind's unused-variable pruning —
+   most of them are read by hand-written CSS and inline styles, not by a utility. */
+@theme static {
+  /* ---- The four primes. Everything else is mixed from these. ---- */
+  --color-ground: #071414;
+  --color-ink: #e2f0ee;
+  --color-accent: #ef7a3c;
+  --color-tint: #123030;
+
+  /* ---- Derived, once. No other colour is declared anywhere in the app. ---- */
+  --color-surface: color-mix(in oklab, var(--color-ground) 92%, var(--color-ink));
+  --color-surface-2: color-mix(in oklab, var(--color-ground) 84%, var(--color-ink));
+  --color-line: color-mix(in oklab, var(--color-ground) 76%, var(--color-ink));
+  --color-line-strong: color-mix(in oklab, var(--color-ground) 55%, var(--color-ink));
+  --color-muted: color-mix(in oklab, var(--color-ink) 58%, var(--color-ground));
+  --color-dim: color-mix(in oklab, var(--color-ink) 30%, var(--color-ground));
+  --color-accent-ink: color-mix(in oklab, var(--color-accent) 14%, var(--color-ground));
+  --color-accent-soft: color-mix(in oklab, var(--color-accent) 20%, var(--color-ground));
+  --color-accent-line: color-mix(in oklab, var(--color-accent) 50%, var(--color-ground));
+  /* The one colour that goes *below* the ground: the band that swallows the
+     "play with friends" title when a format is hovered. */
+  --color-shade: color-mix(in oklab, var(--color-ground) 12%, black);
+
+  /* ---- Type. Two families only. The wordmark is the logo, and gets the third. ---- */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  --font-wordmark: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+
+  /* ---- Motion. Three curves, no browser default `ease` anywhere. ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @layer base {
@@ -21,6 +48,12 @@
   body,
   #root {
     height: 100%;
+  }
+
+  html {
+    /* clip, never hidden — `hidden` on the root promotes the element to a
+       scroll container and breaks position: sticky further down the tree. */
+    overflow-x: clip;
   }
 
   body {
@@ -36,35 +69,46 @@
     user-select: none;
   }
 
-  /* An I-beam never appears over anything that isn't editable. */
+  /* An I-beam appears over editable text and nowhere else. */
   *,
   *::before,
   *::after {
     cursor: default;
   }
 
+  /* Descendants are listed explicitly: the `*` rule above matches a span inside
+     a button just as well as the button, so without these the cursor flicks
+     back to an arrow the moment it crosses the label. */
   a,
+  a *,
   button,
+  button *,
   [role='button'],
+  [role='button'] *,
   label,
-  summary {
+  label *,
+  summary,
+  summary * {
     cursor: pointer;
   }
 
+  /* After the rules above, which match these at equal specificity. */
   input,
   textarea {
     cursor: text;
     user-select: text;
   }
 
-  button:disabled {
+  button:disabled,
+  button:disabled * {
     cursor: not-allowed;
   }
 
+  /* Never animated — a focus ring that fades in is a focus ring you can miss. */
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-    border-radius: 3px;
+    border-radius: 2px;
   }
 
   :focus:not(:focus-visible) {
@@ -76,86 +120,101 @@
     color: var(--color-accent-ink);
   }
 
-  /* Numbers must not jitter when they tick. */
+  ::placeholder {
+    color: var(--color-dim);
+  }
+
   .tabular {
     font-variant-numeric: tabular-nums;
   }
 }
 
-/* ---- Home backdrop: a stadium band up top, a line grid from there down. ---- */
+/* ============================================================================
+   THE STADIUM PLATE
+   One photograph, faded out downward, sitting under everything. The wordmark
+   clips a second copy of it straight into the letterforms, so the same picture
+   reads as both the ground and the fill.
+   ============================================================================ */
 
-/* Fades at both ends so the plate has no cut edge. The hard pull-back over the
-   top third is doing real work: it drops the blank sky almost to the ground
-   colour, which leaves the roofline reading as a silhouette instead of a bright
+/* Pulled hard over the top third on purpose: that drops the blank sky almost to
+   the ground colour, so the roofline reads as a silhouette rather than a bright
    slab behind the wordmark. The bottom dissolves rather than stopping on a line. */
-.backdrop-photo {
-  isolation: isolate;
+.plate {
+  opacity: 0.36;
   -webkit-mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / 0.2) 0%,
-    rgb(0 0 0 / 0.55) 16%,
-    #000 34%,
-    #000 58%,
-    rgb(0 0 0 / 0.45) 84%,
-    transparent 100%
+    rgb(0 0 0 / 0.08) 0%,
+    rgb(0 0 0 / 0.34) 16%,
+    #000 36%,
+    #000 52%,
+    rgb(0 0 0 / 0.26) 74%,
+    transparent 90%
   );
   mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / 0.2) 0%,
-    rgb(0 0 0 / 0.55) 16%,
-    #000 34%,
-    #000 58%,
-    rgb(0 0 0 / 0.45) 84%,
-    transparent 100%
+    rgb(0 0 0 / 0.08) 0%,
+    rgb(0 0 0 / 0.34) 16%,
+    #000 36%,
+    #000 52%,
+    rgb(0 0 0 / 0.26) 74%,
+    transparent 90%
   );
 }
 
-/* The file already ships greyscale; grayscale() stays so the effect survives
-   someone swapping in a colour photo. Held well under the text either way. */
-.backdrop-photo img {
-  filter: grayscale(1) contrast(1.2) brightness(0.4);
+.plate img {
+  filter: grayscale(1) contrast(1.4) brightness(0.26);
 }
 
-/* `color` blending keeps the photo's own luminance and takes only hue and
-   saturation from the source, so the plate lands in the same colour family as
-   the page rather than sitting on it as neutral grey. The mask above isolates
-   the blend to this band.
-   Deliberately barely there. The blend reads saturation as an absolute RGB
-   spread rather than an HSL percentage, so this is the ground's own hue held at
-   a spread of ~0.045 — a shade off grey, nowhere near a green wash. Raising the
-   `s` here climbs very fast; past ~10% it stops reading as a photo. */
-.backdrop-tint {
-  background: hsl(150 6.5% 35%);
+/* Takes hue and saturation from the tint and keeps the photo's own luminance, so
+   the plate lands in the palette's colour family instead of sitting on top of it
+   as neutral grey. Held deliberately low — the blend reads saturation as an
+   absolute RGB spread, so it climbs fast. */
+.plate-tint {
+  background: var(--color-tint);
   mix-blend-mode: color;
+  opacity: 0.62;
 }
 
-/* 64px cells, 1px lines — the exact metrics #irishtable uses (§1.4). Masked in
-   across the band where the photo fades out, so the two cross over instead of
-   meeting on a seam. */
-.backdrop-grid {
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 32%, #000 48%);
-  mask-image: linear-gradient(to bottom, transparent 32%, #000 48%);
+/* A player portrait inside the letterforms, one of several stacked layers
+   cross-fading by opacity. The crops are portrait-shaped against a wide
+   two-line box — `cover` crushed nearly the whole thing to black — so this
+   tiles the face at a size close to native resolution instead: two rows (one
+   per line) repeating across the width reads as a print pattern rather than
+   one crushed photo. Grayscale because the crops are in colour, unlike
+   stadium.webp which is monochrome at the source. */
+.wordmark-fill {
+  background-image: var(--wordmark-image);
+  background-size: auto 48%;
+  background-position: 0% 2%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: grayscale(1) contrast(1.35) brightness(1.1);
 }
 
-/* ---- Motion. Compositor-only: transform and opacity, no per-frame JS. ---- */
+/* ============================================================================
+   MOTION
+   Compositor-only — transform, opacity and clip-path. Nothing per-frame in JS.
+   The page initialises as one continuous move: plate, then wall, then the
+   controls underneath it.
+   ============================================================================ */
 
-@keyframes fd-marquee {
+@keyframes fd-plate {
   from {
-    transform: translate3d(0, 0, 0);
+    opacity: 0;
+    transform: scale(1.07);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 @keyframes fd-rise {
   from {
     opacity: 0;
-    transform: translate3d(0, 8px, 0);
+    transform: translate3d(0, 12px, 0);
   }
   to {
     opacity: 1;
@@ -163,18 +222,149 @@
   }
 }
 
-.marquee-track {
-  animation: fd-marquee 64s linear infinite;
+@keyframes fd-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The wall gets printed left to right. */
+@keyframes fd-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* A hairline riding the wipe's edge, gone by the time it lands. */
+@keyframes fd-scan {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Rules draw rather than appear. */
+@keyframes fd-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fd-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.84);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Ambient. The backdrop breathes continuously — the scale also keeps the pitch
+   pushed below the fold at every point in the loop. Four stages rather than
+   two so the motion reads as drifting rather than a mechanical back-and-forth. */
+@keyframes fd-plate-drift {
+  0%,
+  100% {
+    transform: scale(1.26) translate3d(0, 0, 0);
+  }
+  25% {
+    transform: scale(1.33) translate3d(-1.6%, -1%, 0);
+  }
+  50% {
+    transform: scale(1.4) translate3d(-2.4%, -1.8%, 0);
+  }
+  75% {
+    transform: scale(1.33) translate3d(-1.1%, -1.3%, 0);
+  }
+}
+
+@keyframes fd-face-drift {
+  0%,
+  100% {
+    transform: scale(1.02);
+  }
+  50% {
+    transform: scale(1.09);
+  }
+}
+
+/* Runs once per portrait, restarted by React keying on the index. */
+@keyframes fd-tick {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.fx {
+  animation-duration: 620ms;
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+}
+
+.fx-plate {
+  animation-name: fd-plate;
+  animation-duration: 1500ms;
+}
+.fx-rise {
+  animation-name: fd-rise;
+}
+.fx-fade {
+  animation-name: fd-fade;
+}
+.fx-wipe {
+  animation-name: fd-wipe;
+  animation-duration: 860ms;
+}
+.fx-scan {
+  animation-name: fd-scan;
+  animation-duration: 860ms;
+}
+.fx-draw {
+  animation-name: fd-draw;
+  animation-duration: 720ms;
+  transform-origin: left center;
+}
+.fx-pop {
+  animation-name: fd-pop;
+  animation-duration: 540ms;
+}
+.plate-drift {
+  transform-origin: top center;
+  animation: fd-plate-drift 20s var(--ease-in-out) infinite;
   will-change: transform;
 }
-
-.marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track {
-  animation-play-state: paused;
+.face-drift {
+  animation: fd-face-drift 16s var(--ease-in-out) infinite;
+  will-change: transform;
 }
-
-.rise {
-  animation: fd-rise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.fx-tick {
+  animation-name: fd-tick;
+  animation-timing-function: linear;
+  transform-origin: left center;
 }
 
 @media (prefers-reduced-motion: reduce) {
