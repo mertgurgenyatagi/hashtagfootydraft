@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { SectionLabel } from '../ui/SectionLabel'
 
 export interface Message {
   id: number
@@ -41,9 +42,7 @@ export function LobbyChat({ messages, onSend, you }: LobbyChatProps) {
       className="lobby-chat fx fx-soft mt-[var(--lobby-gap)] min-h-0 flex-1 flex-col"
       style={{ animationDelay: '620ms' }}
     >
-      <span className="block shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
-        Chat
-      </span>
+      <SectionLabel className="shrink-0">Chat</SectionLabel>
 
       <div
         ref={logRef}

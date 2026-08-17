@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ChipGroup, Collapse } from '../components/lobby/ChipGroup'
 import { LobbyChat, type Message } from '../components/lobby/LobbyChat'
-import { LobbyPlate } from '../components/lobby/LobbyPlate'
+import { LobbyLayout } from '../components/lobby/LobbyLayout'
 import { NameGate } from '../components/lobby/NameGate'
 import { RoomCode } from '../components/lobby/RoomCode'
 import { ScopeDetail } from '../components/lobby/ScopeDetail'
 import { SeatList, type Seat } from '../components/lobby/SeatList'
+import { Button } from '../components/ui/Button'
 import { formats } from '../data/formats'
 import { MAX_SEATS, MIN_SEATS, constraints, leagues, nations, scopes, timers } from '../data/lobbyOptions'
 import { CHATTER_DELAY, arrivalDelays, arrivalLines, people, type Person } from '../data/lobbyPeople'
@@ -51,7 +52,6 @@ export function MultiLobby() {
   if (!session) {
     return (
       <div className="lobby relative h-[100dvh] overflow-hidden">
-        <LobbyPlate />
         <NameGate
           mode="join"
           code={code}
@@ -212,35 +212,19 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
     : `Only ${hostName} can change the draft or start it.`
 
   return (
-    <div className="lobby relative flex h-[100dvh] flex-col overflow-hidden md:flex-row">
-      {/* ══ Who is playing ══ */}
-      <section
-        aria-labelledby="room-heading"
-        className="fx fx-fade flex min-h-0 shrink-0 flex-col bg-surface px-[clamp(1.1rem,3vw,2.75rem)] py-[var(--lobby-pad-y)] md:h-full md:w-1/2"
-      >
-        {/* The first thing to go on a short viewport: the strip of discs under
-            it already carries the count, and the settings half needs the room. */}
-        <div
-          className="fx fx-soft hidden items-baseline justify-between gap-4 md:flex"
-          style={{ animationDelay: '80ms' }}
-        >
-          <span className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
-            Who's playing
-          </span>
-          <span
-            key={seats.length}
-            className="tabular fx fx-fade shrink-0 font-display text-[11px] font-medium uppercase tracking-[0.1em] text-dim"
-          >
-            {seats.length} / {MAX_SEATS} seats
-          </span>
-        </div>
-
-        <h1 id="room-heading" className="sr-only">
-          Lobby {code}
-        </h1>
-
-        <RoomCode code={code} />
-
+    <LobbyLayout
+      leftHeadingId="room-heading"
+      seatCountLabel={`${seats.length} / ${MAX_SEATS} seats`}
+      seatCountKey={seats.length}
+      leftHeaderContent={
+        <>
+          <h1 id="room-heading" className="sr-only">
+            Lobby {code}
+          </h1>
+          <RoomCode code={code} />
+        </>
+      }
+      seatList={
         <SeatList
           seats={seats}
           minSeats={1}
@@ -259,41 +243,17 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
               : undefined
           }
         />
-
+      }
+      leftFooterContent={
         <LobbyChat
           you={session.name}
           messages={messages}
           onSend={(body) => say({ kind: 'said', author: session.name, body })}
         />
-      </section>
-
-      {/* ══ What they're playing ══ */}
-      <section
-        aria-label="Draft settings"
-        className="relative flex min-h-0 flex-1 flex-col px-[clamp(1.1rem,3vw,2.75rem)] py-[var(--lobby-pad-y)] md:h-full md:w-1/2 md:flex-none"
-      >
-        <LobbyPlate />
-
-        <div
-          className="fx fx-soft relative z-10 flex items-baseline justify-between gap-4"
-          style={{ animationDelay: '120ms' }}
-        >
-          <span className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
-            {session.host ? "What you're playing" : `${hostName}'s draft`}
-          </span>
-          <Link
-            to="/"
-            aria-label="#footydraft — back to the home page"
-            className="shrink-0 font-wordmark text-[19px] uppercase leading-none tracking-[0.06em] text-ink transition-opacity duration-150 ease-out hover:opacity-70"
-          >
-            <span className="text-accent">#</span>footydraft
-          </Link>
-        </div>
-
-        {/* No column gap: each group carries its own top spacing, so a group
-            that collapses takes the space above it with it instead of leaving
-            a group-sized hole in the panel. */}
-        <div className="relative z-10 mt-[var(--lobby-gap)] flex flex-col">
+      }
+      rightHeaderLabel={session.host ? "What you're playing" : `${hostName}'s draft`}
+      settingsContent={
+        <>
           <ChipGroup
             label="Format"
             options={formats}
@@ -323,8 +283,6 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
             </ChipGroup>
           </div>
 
-          {/* Free Pick's setting, and nobody else's — it isn't offered
-              elsewhere rather than being shown greyed out. */}
           <Collapse open={takesConstraint}>
             <div className={GROUP_GAP}>
               <ChipGroup
@@ -349,44 +307,27 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
               delayMs={500}
             />
           </div>
-        </div>
-
-        <div className="hidden flex-1 md:block" />
-
-        <div className="relative z-10 mt-[var(--lobby-gap)]">
-          {/* One line, two jobs: the reason a disabled control is disabled, and
-              the report from a control that has nowhere to go yet. Fixed
-              height, so it appears without shunting the row under it. */}
-          <p
-            key={statusKey}
-            aria-live="polite"
-            className="fx fx-fade h-4 truncate text-[11px] leading-4 text-muted md:h-5 md:text-[12px] md:leading-5"
-          >
-            {status || resting}
-          </p>
-
-          <div
-            className="fx fx-soft mt-[clamp(0.35rem,1.2vh,0.75rem)] flex items-center justify-between gap-4"
-            style={{ animationDelay: '600ms' }}
-          >
-            <Link
-              to="/"
-              className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
-            >
-              Leave lobby
-            </Link>
-
-            <button
-              type="button"
-              disabled={!canStart}
-              onClick={() => report('The draft screen isn’t built yet.')}
-              className="shrink-0 rounded-[2px] border border-accent bg-accent px-[clamp(1rem,3vw,2.5rem)] py-[clamp(0.5rem,1.6vh,1.125rem)] font-display text-[clamp(0.75rem,1.1vw,0.9375rem)] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:border-line disabled:bg-transparent disabled:text-faint"
-            >
-              {session.host ? 'Kick off →' : 'Waiting for the host'}
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
+        </>
+      }
+      statusMessage={status || resting}
+      statusKey={statusKey}
+      backControl={
+        <Link
+          to="/"
+          className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
+        >
+          Leave lobby
+        </Link>
+      }
+      actionControl={
+        <Button
+          variant="accent"
+          disabled={!canStart}
+          onClick={() => report('The draft screen isn’t built yet.')}
+        >
+          {session.host ? 'Kick off →' : 'Waiting for the host'}
+        </Button>
+      }
+    />
   )
 }

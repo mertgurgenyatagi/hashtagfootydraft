@@ -32,6 +32,13 @@ was built directly off the single-player screen. It brought the **fake-functiona
 rule** with it (see Interaction rules): with no Firebase behind it, the lobby simulates
 the room rather than announcing the gap. The site has **three routes** now.
 
+The **`seamlessness`** branch, cut from `main` on 2026-08-18, hoisted the ambient stadium
+backdrop into a root `AppShell` (keeping the 30s ambient drift animation continuous across
+page navigation without restarting keyframes), extracted a shared `LobbyLayout` diptych
+organism for solo and multiplayer lobbies, and standardized UI primitives (`Button`,
+`StatusLine`, `SectionLabel`). That branch was committed, pushed and merged to `main` on
+2026-08-18. All work described below is now on `main`.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.

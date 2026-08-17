@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { SectionLabel } from '../ui/SectionLabel'
 
 interface RoomCodeProps {
   code: string
@@ -42,9 +43,7 @@ export function RoomCode({ code }: RoomCodeProps) {
       {/* Below `md` the label goes and the code shrinks onto one row with the
           copy — the seats and four settings groups have to land above the fold
           on a 568px-tall screen, and this block is where the room comes from. */}
-      <span className="hidden font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted md:block">
-        Room code
-      </span>
+      <SectionLabel className="hidden md:block">Room code</SectionLabel>
 
       <div className="flex items-center justify-between gap-4 md:mt-[clamp(0.2rem,0.8vh,0.5rem)]">
         <span className="tabular truncate font-display text-[19px] font-bold uppercase leading-[1.2] tracking-[0.18em] text-ink md:text-[clamp(1.75rem,4.4vw,3rem)] md:leading-[1]">

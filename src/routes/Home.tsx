@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { ActionBar } from '../components/home/ActionBar'
 import { FormatWall } from '../components/home/FormatWall'
 import { MessageRow } from '../components/home/MessageRow'
-import { StadiumPlate } from '../components/home/StadiumPlate'
 import { Wordmark } from '../components/home/Wordmark'
 import { NameGate } from '../components/lobby/NameGate'
 import { makeRoomCode, normaliseRoomCode } from '../lib/roomCode'
@@ -26,7 +25,6 @@ export function Home() {
 
   return (
     <div className="relative flex h-[100dvh] flex-col overflow-hidden px-[clamp(1.25rem,4vw,3.5rem)] pb-[clamp(1.25rem,3vh,2.25rem)] pt-[clamp(1.25rem,3vh,2.5rem)]">
-      <StadiumPlate />
 
       <header
         className="fx fx-rise relative z-10 flex items-baseline justify-between gap-6"

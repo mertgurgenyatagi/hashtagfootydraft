@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { readName } from '../../lib/lobbySession'
+import { Button } from '../ui/Button'
+import { SectionLabel } from '../ui/SectionLabel'
 
 export const NAME_MAX = 14
 const NAME_MIN = 2
@@ -66,9 +68,9 @@ export function NameGate({ mode, code, onSubmit, onCancel }: NameGateProps) {
           className="fx fx-soft gate-panel w-full max-w-[26rem] border border-line-strong bg-surface px-[clamp(1.25rem,4vw,2rem)] py-[clamp(1.25rem,4vw,1.875rem)]"
         >
           <div className="flex items-baseline justify-between gap-4">
-            <span className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
+            <SectionLabel>
               {mode === 'create' ? 'New lobby' : 'Joining'}
-            </span>
+            </SectionLabel>
             <span className="tabular shrink-0 font-display text-[13px] font-medium uppercase tracking-[0.26em] text-accent">
               {code}
             </span>
@@ -100,21 +102,22 @@ export function NameGate({ mode, code, onSubmit, onCancel }: NameGateProps) {
           />
 
           <div className="mt-[clamp(0.875rem,3vh,1.375rem)] flex items-center justify-between gap-4">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={onCancel}
-              className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
             >
               Cancel
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="submit"
+              variant="accent"
+              size="lg"
               disabled={!ready}
-              className="shrink-0 rounded-[2px] border border-accent bg-accent px-7 py-[13px] font-display text-[12px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:border-line disabled:bg-transparent disabled:text-faint"
             >
               {mode === 'create' ? 'Open lobby →' : 'Join lobby →'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

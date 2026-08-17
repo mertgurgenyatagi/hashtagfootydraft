@@ -1,4 +1,4 @@
-# Handover — 2026-08-17 (multiplayer lobby, built)
+# Handover — 2026-08-18 (seamlessness & shared shell, merged to main)
 
 Short note for whoever picks this up in a fresh session. `PROJECT.md` is the source of
 truth for the game rules, the frontend and the design laws; this file only covers *where
@@ -24,72 +24,54 @@ somewhere, so there was nothing left for it to report.
 
 ## State
 
-- **Branch:** `multiplayer-lobby`, cut from `main`. Nothing merged back yet.
-- **Built, and nothing is committed** — `git status` is the full picture. Standing rule:
-  nothing in this repo gets added or committed unless Mert asks.
-- `npm run build` and `npm test` both pass (11 tests, 3 files).
-- **Verified in a browser** at 1280×800, 1280×700, 768×568 and 320×568, as host and as
-  guest, in the tallest possible state (Free Pick + One league, five seats). No scroll,
-  no horizontal overflow, footer always above the fold.
+- **Branch:** `seamlessness` was committed, pushed and merged into `main` on 2026-08-18.
+- `npm run build` and `npm test` both pass (15 tests, 5 files) as of the merge into `main`.
+- **Verified in a browser** at 1280×800, 1280×700, 768×568 and 320×568, across all routes
+  (Home, Solo Lobby, Multi Lobby host & guest). Zero body scroll, zero layout shifts,
+  persistent continuous backdrop animation, footer always above the fold.
 
 ## What's on screen
 
-`src/routes/MultiLobby.tsx` at `/lobby/:code`. New components: `NameGate`, `RoomCode`,
-`LobbyChat`. New data: `src/data/lobbyPeople.ts`. New modules: `src/lib/roomCode.ts`,
-`src/lib/lobbySession.ts`.
-
-The same Split Studio diptych as the solo lobby, re-cut. **Create a lobby** mints a
-five-character code and **Join lobby** takes a typed one; both stop at the same name gate
-and then open the room. The left half leads with the **room code as display type** plus a
-Copy-link control, then the seats, then the chat. The right half is the same four chip
-groups — interactive for the host, static chips carrying the host's choices for everyone
-else.
+- **Persistent Shell & Backdrop:** `src/components/layout/AppShell.tsx` and
+  `src/components/layout/AmbientBackdrop.tsx`. The stadium plate and its 30s ambient
+  zoom/drift animation stay continuously mounted across all routes, smoothly transitioning
+  masks between full-bleed (Home) and corner-anchored (Lobbies).
+- **Shared Split Studio Diptych:** `src/components/lobby/LobbyLayout.tsx`. Both `SoloLobby`
+  and `MultiLobby` now render through this shared organism, guaranteeing identical
+  spatial rhythm, surface steps, and height-query collapses.
+- **UI Primitives:** `src/components/ui/Button.tsx`, `src/components/ui/StatusLine.tsx`,
+  and `src/components/ui/SectionLabel.tsx`.
+- **Routes:** `/` (Home), `/solo` & `/solo/:formatId` (Solo Lobby), `/lobby/:code` (Multi Lobby).
 
 ## Decisions worth not re-litigating
 
+- **Backdrop persistence in `AppShell`:** Image element and drift animation loop live at
+  the root layout level so page transitions never restart the 30-second keyframe timer or
+  flash an unmounted image.
+- **Shared `LobbyLayout`:** Solo and Multi lobbies share a single 50/50 diptych structure
+  rather than duplicate layout trees, keeping spacing tokens and responsive breakpoints
+  perfectly aligned.
 - **The gate is rendered from two places, not one.** Over the home page for create/join,
   and over the lobby itself when the room has no session — which is what makes a pasted
-  `/#/lobby/KX7QD` behave identically to clicking Create. One component, two mount
-  points; the alternative (gate owned solely by the lobby route) flashes the lobby behind
-  it, and the alternative (gate owned solely by Home) breaks invite links.
+  `/#/lobby/KX7QD` behave identically to clicking Create.
 - **A real `<dialog>` with `showModal()`**, not a hand-rolled overlay — inertness, focus
-  trapping and Escape come free. There's a fallback to the plain `open` attribute because
-  jsdom doesn't reliably carry `showModal`, and the scrim is drawn *inside* the dialog
-  rather than on `::backdrop` so it survives that fallback.
-- **The dialog is labelled with `aria-label`, not the `<h2>`.** Pointing `aria-labelledby`
-  at a heading that reads "Your name" gives the dialog the same accessible name as the
-  field inside it, and every by-label query then matches two elements.
-- **Host-ness lives in router state *and* `sessionStorage`**, keyed by code. Router state
-  alone means a refresh silently demotes the host to a guest.
-- **Guest settings are derived from a hash of the code**, not random — the same code has
-  to open the same lobby twice.
-- **`minSeats` is 1 in the friends lobby, 2 in the solo one.** A bot added early has to
-  be removable when a human turns up; the 2-drafter minimum is enforced at kick-off
-  instead, with the reason in the status line.
-- **`SeatList` was generalised rather than duplicated** — it takes a list of typed
-  `Seat`s (`you` / `human` / `bot`) and both lobbies build that list. Bots still get an
-  outlined ring with a number, people get their initial, you get the one filled disc.
-- **Chat is the one scrolling region in the app.** The page never scrolls; a conversation
-  has to go somewhere. Its scrollbar is styled — the default is a bright slab on a
-  near-black ground.
+  trapping and Escape come free.
+- **Host-ness lives in router state *and* `sessionStorage`**, keyed by code.
+- **Guest settings are derived from a hash of the code**, not random.
+- **`minSeats` is 1 in the friends lobby, 2 in the solo one.**
+- **`SeatList` is generalised** for typed `Seat`s (`you` / `human` / `bot`).
+- **Chat is the one scrolling region in the app.**
 
 ## Gotchas worth not rediscovering
 
 - **The height query is still the trap.** Vertical rhythm is `@media (max-height: 720px)`
-  in `index.css`, never `clamp()` against `vh` — a clamp never reaches its minimum at
-  568px tall. The chat's show/hide lives in the same block for that reason.
-- **320×568 has about 2px of slack** in the tallest state. That is why the left half
-  hides its "Who's playing" header below `md`, why the room code collapses onto one row
-  there, and why the seat strip's gap drops to 4px. Any new element on the left half has
-  to pay for itself at that size — measure before adding.
+  in `index.css`, never `clamp()` against `vh`.
+- **320×568 has about 2px of slack** in the tallest state. Measure before adding elements.
 - **`@media (max-height: 720px)` must come *after* the `min-width: 768px` rule** for
-  `.lobby-chat`; equal specificity, so source order decides.
-- **Playwright MCP refuses `file:` URLs.** For the app, `npm run dev`; to smoke-test a
-  mockup, serve the repo root with `python -m http.server 8900 --bind 127.0.0.1`.
+  `.lobby-chat`.
 - **Asset paths in `src/` go through `import.meta.env.BASE_URL`**, never a leading slash.
-- **The page never scrolls.** `100dvh`, `overflow: hidden`. All three routes hold it.
-- **`@theme static`**, not plain `@theme` — Tailwind prunes theme variables no utility
-  references, and most derived tokens are read by hand-written CSS.
+- **The page never scrolls.** `100dvh`, `overflow: hidden`. All routes hold it.
+- **`@theme static`**, not plain `@theme`.
 
 ## Standing laws (project-wide, don't reopen)
 

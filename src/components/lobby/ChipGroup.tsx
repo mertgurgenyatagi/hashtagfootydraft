@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Choice } from '../../data/lobbyOptions'
+import { SectionLabel } from '../ui/SectionLabel'
 
 /**
  * The workhorse of the settings half: one settable value, drawn as a row of
@@ -67,9 +68,7 @@ export function ChipGroup({
 }: ChipGroupProps) {
   return (
     <div className="fx fx-soft" style={{ animationDelay: `${delayMs}ms` }}>
-      <span className="block font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
-        {label}
-      </span>
+      <SectionLabel>{label}</SectionLabel>
 
       <div className="mt-[var(--lobby-chip-mt)] flex flex-wrap gap-[clamp(0.25rem,0.7vw,0.5rem)]">
         {options.map((option) =>
