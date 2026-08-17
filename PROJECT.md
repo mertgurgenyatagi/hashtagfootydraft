@@ -161,8 +161,16 @@ LANCZOS, and save at `quality=76, method=6`.
 
 - **Home page** (`/`) — full-bleed single viewport, no chrome: stadium/grid backdrop,
   wordmark, tagline, format strip, guest-nickname field, Create Lobby / Join code / Play
-  solo, and a scrolling player marquee. Nickname persists to `localStorage`. Nothing
-  routes anywhere yet.
+  solo, and a scrolling player marquee. Nickname persists to `localStorage`. All three
+  entry actions now route to a lobby (Create and Play solo mint a fresh `FD-XXXX` code).
+- **Lobby** (`/lobby/:code`) — drafters compress into a seat strip along the top so the
+  body can say what each of the four formats actually *is*; scope, timer and constraint
+  sit below as segmented pills, with the constraint row disabled-and-explained unless the
+  format is Free Pick. Chat bottom-left, Start draft bottom-right, over a full-bleed
+  version of the stadium plate with a vignette. Host-only controls, bots added by hand,
+  2–5 seats. **All state is local** — no Firebase, and Start draft is an honest dead end.
+  Chosen from a 20-layout gallery kept at `mockups/lobby.html` (layout 16 over 20's
+  backdrop); the other 19 are still there if this one needs revisiting.
 
 Verify with `npm run build` (typecheck + build), `npm test` (Vitest smoke tests), and
 `npm run dev` for the real thing.

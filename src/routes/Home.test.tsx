@@ -1,16 +1,34 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { Home } from './Home'
+
+/** The lobby itself is exercised in the app, not here — this stub only proves
+ *  the entry actions route somewhere real. */
+function renderHome() {
+  render(
+    <MemoryRouter initialEntries={['/']}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/lobby/:code" element={<LobbyStub />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
+function LobbyStub() {
+  return <p>lobby reached</p>
+}
 
 describe('Home', () => {
   beforeEach(() => {
     localStorage.clear()
   })
 
-  it('gates the entry actions on a nickname and is honest about dead ends', async () => {
+  it('gates the entry actions on a nickname, then opens a lobby', async () => {
     const user = userEvent.setup()
-    render(<Home />)
+    renderHome()
 
     expect(screen.getByRole('heading', { name: /footydraft/i })).toBeInTheDocument()
 
@@ -22,12 +40,12 @@ describe('Home', () => {
     expect(create).toBeEnabled()
 
     await user.click(create)
-    expect(await screen.findByText(/lobby screen isn.t built yet/i)).toBeInTheDocument()
+    expect(await screen.findByText(/lobby reached/i)).toBeInTheDocument()
   })
 
   it('toggles the join-code panel and gates submission on a full code', async () => {
     const user = userEvent.setup()
-    render(<Home />)
+    renderHome()
 
     const toggle = screen.getByRole('button', { name: /join code/i })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
@@ -45,6 +63,6 @@ describe('Home', () => {
     expect(submit).toBeEnabled()
 
     await user.click(submit)
-    expect(await screen.findByText(/lobby ABC123 isn.t wired up yet/i)).toBeInTheDocument()
+    expect(await screen.findByText(/lobby reached/i)).toBeInTheDocument()
   })
 })

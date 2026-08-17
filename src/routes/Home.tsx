@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { EntryPanel } from '../components/home/EntryPanel'
 import { PlayerMarquee } from '../components/home/PlayerMarquee'
 import { StadiumBackdrop } from '../components/home/StadiumBackdrop'
@@ -10,6 +11,9 @@ const NAME_STORAGE_KEY = 'footydraft.name'
  *  the only thing telling a first-time visitor what the game actually is. */
 const FORMATS = ['Auction', 'Deal or No Deal', 'Free Pick', 'Spin the Wheel']
 
+/** No I/O/0/1 — these get read aloud and typed in by hand. */
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
 function readStoredName(): string {
   try {
     return localStorage.getItem(NAME_STORAGE_KEY) ?? ''
@@ -18,9 +22,17 @@ function readStoredName(): string {
   }
 }
 
+function newLobbyCode(): string {
+  let code = ''
+  for (let index = 0; index < 4; index += 1) {
+    code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)]
+  }
+  return `FD-${code}`
+}
+
 export function Home() {
   const [name, setName] = useState(readStoredName)
-  const [status, setStatus] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     try {
@@ -76,17 +88,16 @@ export function Home() {
           <EntryPanel
             name={name}
             onNameChange={setName}
-            onCreate={() => setStatus('Lobby screen isn’t built yet — this pass is the home page.')}
-            onSolo={() => setStatus('Solo setup isn’t built yet — this pass is the home page.')}
-            onJoin={(code) =>
-              setStatus(`Lobby ${code} isn’t wired up yet — this pass is the home page.`)
-            }
+            onCreate={() => navigate(`/lobby/${newLobbyCode()}`)}
+            // Solo lands in the same lobby — bots are added by hand there, the
+            // same way a human would be invited.
+            onSolo={() => navigate(`/lobby/${newLobbyCode()}`)}
+            onJoin={(code) => navigate(`/lobby/${code}`)}
           />
         </div>
 
-        {/* Reserved height so an appearing status line can't shift a page that never scrolls. */}
-        <p aria-live="polite" className="mt-3 h-6 text-[0.75rem] text-muted">
-          {status}
+        <p className="mt-3 h-6 text-[0.75rem] text-muted">
+          Lobbies are invite-link only — there&rsquo;s nothing to browse.
         </p>
       </main>
 
