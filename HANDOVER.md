@@ -1,84 +1,103 @@
-# Handover — 2026-08-17 (refresh)
+# Handover — 2026-08-17 (single-player lobby, built)
 
 Short note for whoever picks this up in a fresh session. `PROJECT.md` is the source of
-truth for the game rules and the frontend; this file only covers *where things stand
-right now*.
+truth for the game rules, the frontend and the design laws; this file only covers *where
+things stand right now* and what to do next.
 
 ## State
 
-- **Branch:** `main` (merged from `frontend-retry`).
-- **The home page is the entire site.** No lobby, no router, no second route. Every
-  control is an honest dead end that says so in the status line.
-- `npm run build` and `npm test` both pass. Verified in a browser.
-- **Recent pass (2026-08-17, Tachyon mode):**
-  - Wordmark now cycles player faces directly in the letterforms (grayscale, tiled,
-    cross-fading every 3.8s), replacing the separate portrait carousel.
-  - Background drift is much faster (54s → 20s) and more perceptible (four keyframe
-    stages instead of two).
-  - Hover transitions on format tiles and action bar buttons snappied from 300ms to 100ms;
-    format hovers now pure CSS, not stateful React.
-  - Format descriptions removed: `MessageRow` is now static "Play with friends" title,
-    `Format.blurb` deleted.
-  - Background drift replaced outright: instead of a 4-stage 20s scale-and-translate
-    loop, the plate now does one slow, linear 30s zoom (1.26× → 1.32×) anchored below
-    centre (`transform-origin: 50% 75%`), fading to invisible and back at the loop
-    boundary so the reset to frame one crossfades rather than jumps.
-  - Wordmark face fill switched from a tiled repeating pattern to a single
-    `background-size: cover` image per carousel instance — no more grid-of-faces look.
-  - A short "Draft. Argue. Repeat." blurb now sits to the right of FOOTY, in the space
-    the old portrait carousel used to occupy.
+- **Branch:** `singleplayer-lobby`, cut from `main`. Nothing merged back yet.
+- **The lobby is built.** Layout 04 "Ready room" was picked off `mockups/lobby-solo.html`
+  and ported into `src/`. `npm run build` and `npm test` both pass (7 tests, 2 files).
+- **The router is back.** `App.tsx` is a `HashRouter` over `/`, `/solo`,
+  `/solo/:formatId` and a catch-all home. The home page's format tiles now navigate;
+  Create / Join are still honest dead ends.
+- **Untracked and uncommitted, not mine:** `public/clubs/` (69 SVGs), `public/leagues/`
+  (5 SVGs) and `scripts/process_club_logos.py`, which Mert landed in the previous
+  session. The lobby uses the league marks. Nothing in this repo gets added or committed
+  unless he asks.
+- **Verified in a browser** at 1280×800, 1280×700, 768×568 and 320×568, in the tallest
+  possible state (Free Pick + One league). No scroll anywhere, footer always above the
+  fold.
 
-## Four rules that are now project-wide
+## What's on screen
 
-Set explicitly by Mert, settled — don't reopen them:
+`src/routes/SoloLobby.tsx` and four components in `src/components/lobby/`:
+`SeatList`, `ChipGroup` (which also exports `chipClass` and `Collapse`), `ScopeDetail`,
+`LobbyPlate`. Options live in `src/data/lobbyOptions.ts`.
 
-1. **No I-beam** except in boxes you type into. Buttons take `pointer` across their
-   *entire* span, label text included.
-2. **Motion everywhere, small.** Initialisation sequence on load, ambient movement that
-   never stops, a transition on every state change. Compositor-only, nothing bouncing.
-3. **Only Oswald and Inter** — logos excepted. Bebas Neue is on the wordmark on that
-   basis and nowhere else.
-4. **Petrol is the palette.** Four primes, everything else derived by `color-mix`.
+A hard 50/50 diptych — the table left on `--color-surface`, the settings right on the
+ground, divided by that surface step rather than a rule. Five seat rows (you as an accent
+disc, bots as numbered outline rings, a dashed "add a bot" row while there's room), and
+four chip groups on the right over a stadium plate cornered bottom-right.
 
-`PROJECT.md` → Design tokens / Typography / Interaction rules carries the detail.
+## Four rules Mert set on this build
 
-## Where things live
+Folded into `PROJECT.md` (→ *Copy*, → *Interaction rules*) but worth repeating:
 
-- `src/routes/Home.tsx` owns the status state; the five components are in
-  `src/components/home/`.
-- `Wordmark.tsx` cycles through the faces in `wallFaces.ts` every 3.8s, tiling them
-  grayscale into the letterforms via `background-clip: text`.
-- `src/styles/index.css` holds the four primes, the derivation block, the cursor rules
-  and every keyframe. **`@theme static`**, not plain `@theme` — Tailwind prunes theme
-  variables no utility references, and most of the derived tokens are read by
-  hand-written CSS.
-- `scripts/make_face_crops.py` cuts `public/faces/` from `face_coordinates.json` — 4:5
-  portraits with the face at a fixed 42% of the crop's height, ~10 KB each.
-  `src/data/wallFaces.ts` names which ones cycle through the wordmark.
+1. **No internal data on screen.** Pool counts, per-position depth, the CM gap, the
+   absence of a scoring system — none of it is the user's business. It's implementation
+   state, and showing it makes a to-do look permanent.
+2. **The CM gap is not a problem to design around.** It will be fixed in the CSV. The
+   earlier plan to render "Bundesliga · 0 CM" disabled reasons is dead.
+3. **No format is the default.** All four are equals. A bare `/solo` selects *none* and
+   disables `Kick off` rather than picking one.
+4. **Copy is professional, matter-of-fact, descriptive.** And motion is smooth, fade-y
+   and simple — `fd-soft` is the register, not the home page's wipe.
+
+## Decisions worth not re-litigating
+
+- **The Constraint group collapses rather than dimming.** Reserving its space and fading
+  it leaves a group-sized hole that reads as breakage. Each group carries its own top
+  spacing *inside* the collapsing wrapper so the gap collapses with it. Same for the
+  scope sub-row.
+- **Crests get a 1px ink stroke** (`.crest` in `index.css`) — four chained
+  `drop-shadow`es drawn *around* the artwork, so nothing inside is recoloured. Two of the
+  five league marks are dark and vanish otherwise; the alternative, a light plate behind
+  each, is five bright tiles on a screen with no other bright surface. Mert asked for the
+  stroke directly.
+- **"Turn timer", not "Bid timer"** — it applies to every format.
+- **Vertical rhythm is `@media (max-height: 720px)`, not `clamp()`.** A clamp against
+  `vh` never reaches its minimum at 568px tall (the middle term is still in range), so
+  lowering the min does nothing. The lobby's spacing tokens live in one `.lobby` block in
+  `index.css` and collapse under that query. **This is the trap to remember** — an hour
+  went into rediscovering it.
+- **The route is keyed on the format id.** Without the key React reuses the component
+  instance and the seeded `useState` never re-runs, so `/#/solo/a` → `/#/solo/b` silently
+  keeps the old format.
+- **Two seat renderings.** Ruled rows at `md`+; a strip of discs with `+`/`−` below,
+  because the rows and their captions don't fit a short viewport that also has to hold
+  four settings groups.
+
+## Standing laws (project-wide, don't reopen)
+
+1. **No I-beam** except in boxes you type into. `pointer` across an interactive's *entire*
+   span, label text included.
+2. **Motion everywhere, small** — and in the quiet register: fades with a little travel.
+3. **Only Oswald and Inter** — logos excepted (Bebas Neue is the wordmark, nowhere else).
+4. **Petrol is the palette.** Four primes, everything else via `color-mix`.
+5. **Never recolour a crest.** Full colour, unfiltered; the surface around it stays quiet.
 
 ## Gotchas worth not rediscovering
 
-- **The wordmark face fill is a single `cover` image now, not tiled.** An earlier pass
-  tiled the face at ~native resolution (`background-size: auto 48%` + `repeat`) because
-  `cover` crushed the portrait crop to near-black across the wide two-line box. That was
-  deliberately reversed 2026-08-17 — one image per carousel instance is what's wanted. If
-  the crushed-black problem resurfaces, that's why tiling existed the first time.
-- **Stacking order is load-bearing.** `<main>` is `z-20` and the bottom block `z-10`, not
-  the other way round.
-- **Player photo slugs are full names.** `public/players/erling-haaland.webp`, not
-  `haaland`. Short slugs 404.
+- **Bots get abstract marks, never player faces.** A face implies the bot *is* somebody.
+- **Bots have no personality picker.** One consistent default style, by design.
+- **Nothing auto-fills the lobby.** Bots are added by hand, 2–5 total including you. The
+  empty seat staying visible is the point.
 - **Playwright MCP refuses `file:` URLs.** To smoke-test a mockup, serve the repo root:
-  `python -m http.server 8900 --bind 127.0.0.1`. A browser opens the file fine.
-- **Asset paths in `src/` go through `import.meta.env.BASE_URL`**, never a leading slash
-  — GitHub Pages serves from a subpath.
+  `python -m http.server 8900 --bind 127.0.0.1`. A browser opens the file fine off disk.
+- **Asset paths in `src/` go through `import.meta.env.BASE_URL`**, never a leading slash.
+- **Player photo slugs are full names** — `public/players/erling-haaland.webp`.
+- **The page never scrolls.** `100dvh`, `overflow: hidden`. Both routes hold it.
+- **`@theme static`**, not plain `@theme` — Tailwind prunes theme variables no utility
+  references, and most derived tokens are read by hand-written CSS.
 
 ## Next
 
-The **single-player lobby** is the obvious next build — all four format tiles point at
-it. Then the friends lobby behind Create / Join, which is when `HashRouter` comes back
-(`react-router-dom` is still installed and unimported for exactly that).
+The draft screen is the obvious gap — `Kick off` is currently the only dead end left in
+single player, and the lobby hands it a complete configuration (format, scope, the
+narrowed league/nation, constraint, timer, seat count).
 
-Hallmark note: `.hallmark/log.json` now has two entries. The exhibition consumed 20 of
-the 21 macrostructures and the home page re-used Type Specimen at different knob values,
-so a genuinely new page here means Feature Stack (needs scroll — this app never does) or
-another deliberate re-use at different knobs.
+After that, the friends lobby behind Create / Join — same router, plus the first real
+Firebase wiring. Bot decision logic stays deferred, and there's still no scoring system
+anywhere by design.

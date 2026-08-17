@@ -1,11 +1,24 @@
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import { Home } from './routes/Home'
+import { SoloLobby } from './routes/SoloLobby'
 
 /**
- * One page, so no router. The lobby was removed with the rest of the old
- * frontend; when it comes back it brings a HashRouter with it — GitHub Pages
- * serves static files with no rewrite rules, so deep links have to live in the
- * hash. Nothing until then needs a URL.
+ * Two routes now, so the router is back. `HashRouter` specifically: GitHub
+ * Pages serves static files with no rewrite rules, so a deep link has to live
+ * in the hash or it 404s on refresh.
+ *
+ * The format the lobby opens on is a path segment rather than state, so
+ * /#/solo/free-pick is a real, shareable address.
  */
 export function App() {
-  return <Home />
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/solo" element={<SoloLobby />} />
+        <Route path="/solo/:formatId" element={<SoloLobby />} />
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </HashRouter>
+  )
 }

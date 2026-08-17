@@ -23,6 +23,12 @@ page is now the entire site**: there is no lobby, no router and no second route,
 control on the page is an honest dead end that says so. No Firebase wiring and no bot
 decision logic exist yet — both remain deliberately deferred.
 
+Work on the **single-player lobby** opened on the **`singleplayer-lobby`** branch on
+2026-08-17. Same first-look method as the home page: an exhibition of lobby layouts was
+built beside the app (`mockups/lobby-solo.html`), **layout 04 "Ready room" was picked**,
+and it has since been **ported into `src/`**. The site therefore has two routes now and
+the router is back. See The single-player lobby below.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -117,6 +123,23 @@ The one carve-out is the **logo**, where the face is free. The home page's wordm
 set in **Bebas Neue** on that basis and is the only element in the app allowed to use it;
 it has its own token (`--font-wordmark`) so nothing else can reach for it by accident.
 
+### Copy
+
+**Professional, matter-of-fact, descriptive.** Labels name the thing, helper text
+describes the effect. No voicey microcopy, no winking asides, no invented jargon — the
+interest comes from the structure and the motion, not from the words. *(Set by Mert,
+2026-08-17.)*
+
+**Internal facts about the data model never appear on screen.** No pool counts, no
+per-position depth, no reference to the CM gap, no acknowledgement that there is no
+scoring system. These are implementation state, not product; putting them in the UI turns
+a to-do into a permanent-looking limitation. Design as though the data is complete.
+
+**No format is the default.** Auction, Deal or No Deal, Free Pick and Spin the Wheel carry
+equal weight in every layout, every ordering and every piece of copy. Where a screen needs
+one selected and none was chosen, it selects **none** rather than picking a house
+favourite.
+
 ### Interaction rules
 
 - **The page never scrolls.** Screens are `100dvh` with `overflow: hidden`; display type
@@ -128,12 +151,15 @@ it has its own token (`--font-wordmark`) so nothing else can reach for it by acc
   `* { cursor: default }` matches a `<span>` inside a `<button>` just as well as the
   button, so the cursor rules list descendants explicitly (`button, button *, …`).
   Without that the cursor flicks back to an arrow the moment it crosses the text.
-- **Motion is abundant but small.** This should feel like a well-made modern site or a
-  game, not a 2004 page: a sequenced initialisation on load, ambient movement that never
-  fully stops, and a considered transition on every state change. All of it is
-  **compositor-only** — `transform`, `opacity` and `clip-path`, no per-frame JS — so it
-  never contends with the real-time updates coming later. Nothing overshoots, nothing
-  bounces, and everything collapses under `prefers-reduced-motion`.
+- **Motion is abundant but small, and it stays in the quiet register.** A sequenced
+  initialisation on load, ambient movement that never fully stops, and a considered
+  transition on every state change — rendered as **smooth, simple fades** with a little
+  travel, not as choreography. *(Preference set by Mert, 2026-08-17: the home page's
+  wipe-and-stagger was judged fine but the simpler end of the range is what he wants
+  going forward.)* All of it is **compositor-only** — `transform`, `opacity` and
+  `clip-path`, no per-frame JS — so it never contends with the real-time updates coming
+  later. Nothing overshoots, nothing bounces, and everything collapses under
+  `prefers-reduced-motion`.
 - **Nothing jumps under the pointer.** Hover states change colour, draw a rule, or slide
   an affordance in; they don't translate the thing you're about to click.
 - **Dead ends stay honest.** Unbuilt actions say so in a status line; no fake spinners.
@@ -162,8 +188,34 @@ noise.
 
 ### Art assets
 
-Club and league crests as SVG (`/clubs/{slug}.svg`) don't exist yet and still fall
-through on load error to a generated SVG stand-in (`src/lib/placeholderImage.ts`).
+**Club and league crests are real, as SVG, and they are the one licensed exception to
+the four-prime palette.** 69 club crests at `public/clubs/{slug}.svg` and 5 league marks
+at `public/leagues/{slug}.svg` (`premier-league`, `serie-a`, `la-liga`, `bundesliga`,
+`ligue-1` — 2–8 KB each, 2.5 MB for the clubs).
+
+**Never recolour, grayscale, or silhouette a crest** — settled by Mert on 2026-08-17. A
+recoloured badge is a falsified badge. They render full colour and unfiltered, which
+means the burden falls the other way round: whatever surface a crest sits on stays quiet
+enough that the crest reads as inlay rather than noise. This is the *only* place in the
+app allowed outside the four primes; the one-saturated-accent rule still governs
+everything the app draws itself.
+
+Coverage is the top five leagues only — 69 crests against 112 clubs in
+`player_data.csv`. **Clubs outside the top five have no crest and are not getting one:
+draw a ring (a bordered circle) in the same footprint instead.** League scope maps
+`la-liga.svg` → the CSV's "First Division", `premier-league.svg` → "Premier Division",
+`ligue-1.svg` → "Ligue 1 Uber Eats".
+
+Anything still missing falls through on load error to a generated SVG stand-in
+(`src/lib/placeholderImage.ts`).
+
+`scripts/process_club_logos.py` is what produced them — it imports from an external
+Wikipedia-sourced logo dump (kept outside the repo, like the other raw source art),
+maps CSV club names to Wikipedia article filenames through a hand-built table, and
+compresses in two stages: downsample any embedded raster the export wrapped, then `svgo
+--multipass --precision=1`. Clubs that aren't in the top-five-league rows are left on the
+placeholder deliberately, which also absorbs CSV noise (River Plate filed under "Premier
+Division").
 
 Player photos are real, for 545 of the 546 players in `player_data.csv`, at
 `public/players/{slug}.webp` — `PlayerImage` already points every player at this path,
@@ -220,11 +272,10 @@ LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
-**The home page, and nothing else.** The previous home page and the previous lobby were
-deleted on 2026-08-17 — along with the router, since one page doesn't need one. `App.tsx`
-renders `Home` directly. `react-router-dom` is still in `package.json`, unimported, for
-when the lobby comes back; it brings a `HashRouter` with it when it does, because GitHub
-Pages has no rewrite rules.
+**The home page and the single-player lobby.** `App.tsx` is a `HashRouter` over two
+routes — `/` and `/solo/:formatId` (plus a bare `/solo`, and a catch-all back to home).
+The hash is not a preference: GitHub Pages serves static files with no rewrite rules, so
+a deep link that isn't in the hash 404s on refresh.
 
 Home is a single `100dvh` viewport, top to bottom:
 
@@ -248,8 +299,9 @@ Home is a single `100dvh` viewport, top to bottom:
   lobby** pushed right.
 - A reserved status line under everything.
 
-**Every action is an honest dead end.** No lobby exists, nothing is wired to Firebase, so
-each control reports that in the status line rather than faking a destination.
+**The format tiles now go somewhere** — each opens the lobby on that format. The friends
+controls are still honest dead ends: nothing is wired to Firebase, so they report that in
+the status line rather than faking a destination.
 
 The page **initialises as one sequenced move**, ~1.3s end to end: the plate scales in, the
 wall is printed left-to-right by a `clip-path` wipe with an accent hairline riding its
@@ -322,6 +374,101 @@ on the wordmark alone, as the logo.
 Design decisions for this pass were run through the **Hallmark** skill
 (`.claude/skills/hallmark/`); the runs are logged at `.hallmark/log.json` so a future run
 in this repo picks different macrostructures.
+
+**On re-using macrostructures:** exhibitions are Mert's own picking tool, not production,
+and only one layout per exhibition is ever ported. Hallmark's diversification rule is
+therefore **relaxed in this repo** — a later exhibition may re-use macrostructures the
+earlier ones consumed. Don't burn effort inventing a shape to satisfy the rotation. *(Set
+by Mert, 2026-08-17.)*
+
+### The single-player lobby exhibition (2026-08-17, `singleplayer-lobby`)
+
+**Where:** `mockups/lobby-solo.html`. Same self-contained gallery shell as the other two —
+1280×800 frames at half scale, click one to zoom to full width, opens straight off disk,
+no build step and no server.
+
+**Two deliberate differences from the home exhibition**, both because that run proved the
+point already:
+
+- **The palette is fixed.** Petrol only, no swatch buttons, no global palette row. The
+  palette question is settled project-wide, so re-asking it per frame was noise.
+- **Type is held to Oswald + Inter**, with Bebas Neue only where a frame draws the
+  wordmark — i.e. the production law, not the eleven rotating display faces the home
+  exhibition used. That made the home run harder to judge: the face had to be mentally
+  stripped out of every frame before comparing shapes, and it got swapped for
+  Oswald/Inter on the port anyway. Here per-frame voice comes from case, tracking, weight
+  and scale knobs (`.l01`–`.l15`), so **every difference between frames is structural** and
+  whatever gets picked ports without a type swap.
+
+**Fifteen layouts, not twenty.** Twenty were planned, one per macrostructure; the run was
+stopped at fifteen because the winner was already obvious. 01 Team sheet · Long Document —
+02 Four doors · Bento Grid — 03 The pitch · Map/Diagram — **04 Ready room · Split
+Studio** — 05 The board · Index-First — 06 The card index · Catalogue — 07 Five four six ·
+Stat-Led — 08 Note · Letter — 09 Turnstile · Marquee Hero — 10 Chalkboard · Manifesto —
+11 Dugout · Photographic — 12 The console · Component Playground — 13 Rulebook ·
+Conversational FAQ — 14 Ninety · Quote-Led — 15 Order of play · Narrative Workflow. Layouts
+16–20 (Type Specimen, Ecosystem Index, Portfolio Grid, Workbench, Specimen) were never
+built and are not a TODO.
+
+**Copy is honest throughout** and worth mining when the screen gets built — every number
+came out of `player_data.csv` or this document: 546 in the pool, 463 in the top five,
+Haaland's real 140M opening bid, the +1/+5/+10 bid steps, the 2–5 cap, the 15s default.
+Several frames also put per-position counts and the CM shortage on screen; **that part
+did not survive the port** and shouldn't be mined — see Copy below.
+
+**Status: resolved.** Layout **04 · Ready room** (Split Studio) is what gets built.
+
+**What 04 is:** a hard 50/50 diptych — *who is playing* on the left, *what they're
+playing* on the right — divided by a surface step rather than a rule (left half sits on
+`--color-surface`, right half on the ground).
+
+- **Left:** "Your table", `4 / 5 SEATS`, then five ruled rows — you (an accent disc, host,
+  labelled as the one who sets everything on the right), three bots as outlined rings
+  numbered 1–3 each captioned "Default style — bots don't have personalities", and a fifth
+  dashed row "Add a bot · One seat left. Nothing fills it for you." Rendering the empty
+  seat is what makes the 2–5 cap and the no-auto-fill rule legible without prose. Bots get
+  abstract rings, never player faces — a face would imply a bot *is* somebody.
+- **Right:** four labelled chip groups — Format, Scope, Constraint, Bid timer — over a
+  stadium plate cornered into the bottom-right at ~42%. Constraint's four chips are
+  present, dashed and dimmed, under "Free Pick only. Auction doesn't take a constraint."
+- **Bottom:** back-to-home as a quiet label, `Kick off →` as the accent button.
+
+### The single-player lobby (built)
+
+`src/routes/SoloLobby.tsx` plus four components in `src/components/lobby/`. What shipped
+follows the frame's composition and departs from it where a live screen has to:
+
+- **Format is carried on the URL**, seeded from whichever home tile was clicked. Landing
+  on a bare `/solo` leaves **every format unpicked** rather than defaulting to one — the
+  four formats are equals and none of them is the house default. `Kick off` is disabled
+  until one is chosen and the status line says why. The route component is keyed on the
+  format id so arriving at a *different* one rebuilds the screen instead of reusing the
+  instance and keeping stale state.
+- **The Constraint group collapses** when the format isn't Free Pick, rather than sitting
+  there dimmed. Reserving its space and fading it leaves a group-sized hole that reads as
+  breakage; each group therefore carries its own top spacing *inside* a collapsing
+  wrapper, so the gap goes with the group. Same mechanism for the scope's sub-row.
+- **Scope narrows in place.** "One league" reveals the five league crests, "One nation" a
+  select of every nation in the pool. Crests are unfiltered and full colour, with a 1px
+  ink stroke drawn *around* the artwork (`.crest`) — two of the five marks are dark and
+  would otherwise vanish into the ground, and the alternative (a light plate behind each)
+  is five bright tiles on a screen with no other bright surface.
+- **The timer is "Turn timer", not "Bid timer".** It applies to every format; naming it
+  after bidding privileges Auction.
+- **Motion is the quiet register** — `fd-soft`, a fade with 7px of travel, staggered
+  across the two halves; the plate keeps drifting on the shared 30s loop; every state
+  change is a colour transition or a collapse. No wipes, no choreography.
+- **Two seat renderings.** Ruled rows from `md` up; below it the seats compress to a strip
+  of discs with `+` / `−` on the end, because the rows and their captions cannot fit a
+  short viewport that also has to hold four settings groups.
+- **Vertical rhythm is a height query, not a clamp.** `clamp()` against `vh` never reaches
+  its minimum at 568px tall — the middle term is still inside the range — so the lobby's
+  spacing tokens (`--lobby-gap`, `--lobby-pad-y`, `--lobby-chip-py`, `--lobby-chip-mt`,
+  `--lobby-crest`) collapse under `@media (max-height: 720px)`. Verified with the tallest
+  possible state (Free Pick + One league) at 320×568, 768×568 and 1280×700.
+
+**Kicking off is an honest dead end** — the draft screen doesn't exist, so the status line
+says so. That line does double duty: it carries the disabled control's reason too.
 
 ## Configuration Mechanics
 
@@ -586,10 +733,35 @@ of high-ability players from other leagues (Saudi Pro League, MLS, Eredivisie, S
 Championship, etc.).
 
 **Known gap — CM depth.** Only 10 footballers in the whole file list CM as an eligible
-position (8 of them inside the top 5 leagues); every other position has 39–146. CM is
-therefore the binding constraint on which Scopes can support a draft at all — a single
-league or nationality rarely has enough CMs for a 3+ drafter lobby, so those Scope
-options are mostly unusable until more CMs are added to the data.
+position (8 of them inside the top 5 leagues); every other position has 39–146. Full
+per-position counts: AMF 146, LW 140, RW 138, CDM 125, CB 120, ST 119, LB 73, RB 59, GK 39,
+LM 14, RM 12, **CM 10**.
+
+**This is a data hole, not a product limitation, and the UI does not mention it.** Set by
+Mert, 2026-08-17: it will be fixed by adding CMs to the CSV, and until then no screen
+surfaces pool counts, per-position depth, or Scopes disabled on account of them. An
+earlier plan to render "Bundesliga · 0 CM" style disabled reasons in the lobby was
+dropped — it turns a to-do into something that looks permanent. Design as though the data
+is complete. The numbers below are for whoever fills the gap.
+
+Every drafter needs exactly one CM, so a Scope's CM count is its drafter ceiling:
+
+| League (CSV name) | Players | CMs | Max drafters |
+|---|---|---|---|
+| Serie A | 110 | 4 | 4 |
+| Premier Division | 167 | 3 | 3 |
+| First Division (La Liga) | 104 | 1 | **unusable** — below the 2-drafter minimum |
+| Bundesliga | 50 | 0 | **unusable** |
+| Ligue 1 Uber Eats | 32 | 0 | **unusable** |
+
+So **three of the five single-league Scopes cannot seat a draft at all**, and the other two
+cap below the 5-drafter maximum. Nationality Scope has a related problem from a different
+direction: only 10 nations have 11+ players in the pool at all (Spain 73, England 61,
+France 45, Italy 43, Brazil 37, Germany 32, Portugal 26, Argentina 25, Netherlands 25,
+Uruguay 11), so most nationalities can't fill even one XI. No club reaches 11 either
+(Arsenal tops out at 20 players but a single club was never a Scope option).
+
+Fixed by adding CMs to `player_data.csv`. Nothing about it belongs on screen.
 
 ## Open Questions Log
 

@@ -1,0 +1,91 @@
+import type { ReactNode } from 'react'
+import type { Choice } from '../../data/lobbyOptions'
+
+/**
+ * The workhorse of the settings half: one settable value, drawn as a row of
+ * chips. Nothing moves on hover — the border and the fill change, which is the
+ * same promise the format tiles on the home page make.
+ */
+export function chipClass(selected: boolean) {
+  return [
+    'rounded-[2px] border px-[clamp(0.5rem,1.2vw,1rem)] py-[var(--lobby-chip-py)]',
+    'font-display text-[clamp(0.625rem,1vw,0.8125rem)] font-medium uppercase tracking-[0.08em]',
+    'whitespace-nowrap transition-colors duration-150 ease-out',
+    selected
+      ? 'border-accent bg-accent-soft text-ink'
+      : 'border-line text-muted hover:border-line-strong hover:text-ink',
+  ].join(' ')
+}
+
+/**
+ * Height-collapsing wrapper for the settings that only some states offer.
+ *
+ * The alternative — reserving the space and fading the contents — leaves a
+ * hole in the column the size of a whole group, which reads as something
+ * broken rather than something not offered. So this collapses instead, and
+ * carries its own top spacing *inside* the collapsing box so the gap goes with
+ * it. `grid-template-rows` is the one non-compositor thing on the screen; it's
+ * a one-off on a small subtree, not an ambient loop.
+ */
+export function Collapse({ open, children }: { open: boolean; children: ReactNode }) {
+  return (
+    <div
+      inert={!open}
+      className="grid transition-[grid-template-rows,opacity] duration-300 ease-out"
+      style={{ gridTemplateRows: open ? '1fr' : '0fr', opacity: open ? 1 : 0 }}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
+  )
+}
+
+interface ChipGroupProps {
+  label: string
+  options: Choice[]
+  value: string | null
+  onChange: (id: string) => void
+  /** Rendered under the chips — what the setting does, never a count. */
+  note?: string
+  /** Sub-selection revealed by the chosen chip. */
+  children?: ReactNode
+  delayMs: number
+}
+
+export function ChipGroup({
+  label,
+  options,
+  value,
+  onChange,
+  note,
+  children,
+  delayMs,
+}: ChipGroupProps) {
+  return (
+    <div className="fx fx-soft" style={{ animationDelay: `${delayMs}ms` }}>
+      <span className="block font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted">
+        {label}
+      </span>
+
+      <div className="mt-[var(--lobby-chip-mt)] flex flex-wrap gap-[clamp(0.25rem,0.7vw,0.5rem)]">
+        {options.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={option.id === value}
+            onClick={() => onChange(option.id)}
+            className={chipClass(option.id === value)}
+          >
+            {option.name}
+          </button>
+        ))}
+      </div>
+
+      {children}
+
+      {/* Hidden on a short viewport — the chips have to fit first. */}
+      {note ? (
+        <p className="mt-[9px] hidden text-[10.5px] leading-[1.4] text-dim md:block">{note}</p>
+      ) : null}
+    </div>
+  )
+}

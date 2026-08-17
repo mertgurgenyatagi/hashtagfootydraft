@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>#footydraft — single-player lobbies, 15 layouts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Hallmark · exhibition of single-player lobby screens — 15 of a planned 20
+       * STOPPED EARLY, deliberately: Mert picked layout 04 "Ready room" off the
+       *   first fifteen, so 16–20 (Type Specimen, Ecosystem Index, Portfolio Grid,
+       *   Workbench, Specimen) were never built. Not a bug, not a TODO.
+       * genre: atmospheric · macrostructures: one per frame — see each frame's
+       *   caption. Feature Stack was excluded by design (needs scroll; app never
+       *   scrolls).
+       * theme: custom — petrol, FIXED. One palette, four primes, no switcher:
+       *   --ground #071414 · --ink #e2f0ee · --accent #ef7a3c · --tint #123030.
+       *   Everything else derives via one color-mix block. `black`/`transparent`
+       *   inside mask-image are alpha channels, not design colours.
+       * theme_axes: dark paper band / display-condensed roman / warm accent (~40°)
+       * type: Oswald + Inter only, per project law. Bebas Neue appears solely where
+       *   a frame draws the wordmark. Per-frame variety comes from case/tracking/
+       *   weight/scale knobs (.l01–.l20), never from a different face.
+       * tone: floodlit, austere, competitive · anchor hue: 40°
+       * enrichment: E-photographic — stadium.webp, 12 face crops, 69 club crests,
+       *   5 league marks. Crests render FULL COLOUR and unfiltered, by explicit
+       *   instruction: they are the one licensed exception to the four primes,
+       *   because a recoloured badge is a falsified badge. Every surface they sit
+       *   on is therefore kept quiet so they read as inlay, not as noise. Clubs
+       *   outside the top five leagues have no crest and get a ring instead.
+       * copy: every number is real — player_data.csv (546 players, per-league and
+       *   per-position counts, opening bids) and PROJECT.md. Nothing invented.
+       * nav/footer: page-scope archetypes are N/A on an in-app screen; top-bar
+       *   treatments and the action/status bar rotate in their place.
+       * pre-emit critique: P5 H5 E4 S5 R4 V5
+       */
+
+      /* ============================================================
+         PETROL — the four primes. Fixed. Nothing else is a raw colour.
+         ============================================================ */
+      :root {
+        --ground: #071414;
+        --ink: #e2f0ee;
+        --accent: #ef7a3c;
+        --tint: #123030;
+
+        --oswald: 'Oswald', sans-serif;
+        --inter: 'Inter', system-ui, sans-serif;
+        --bebas: 'Bebas Neue', Impact, sans-serif;
+        --ph-f: grayscale(1) contrast(1.25) brightness(0.4);
+      }
+
+      /* ============================================================
+         DERIVED — written once
+         ============================================================ */
+      .frame {
+        --surface: color-mix(in oklab, var(--ground) 92%, var(--ink));
+        --surface-2: color-mix(in oklab, var(--ground) 84%, var(--ink));
+        --line: color-mix(in oklab, var(--ground) 76%, var(--ink));
+        --line-strong: color-mix(in oklab, var(--ground) 55%, var(--ink));
+        --muted: color-mix(in oklab, var(--ink) 58%, var(--ground));
+        --dim: color-mix(in oklab, var(--ink) 30%, var(--ground));
+        --faint: color-mix(in oklab, var(--ink) 16%, var(--ground));
+        --accent-ink: color-mix(in oklab, var(--accent) 14%, var(--ground));
+        --accent-soft: color-mix(in oklab, var(--accent) 20%, var(--ground));
+        --accent-line: color-mix(in oklab, var(--accent) 50%, var(--ground));
+        --shade: color-mix(in oklab, var(--ground) 82%, transparent);
+        --shade-hard: color-mix(in oklab, var(--ground) 96%, transparent);
+      }
+
+      /* ============================================================
+         TYPE KNOBS — one face family, twenty voices
+         ============================================================ */
+      .frame { --disp: var(--oswald); --body: var(--inter); --dtr: uppercase; --dls: .06em; --dw: 600 }
+
+      .l01 { --dtr:none;      --dls:.005em; --dw:500 }
+      .l02 { --dtr:uppercase; --dls:.05em;  --dw:600 }
+      .l03 { --dtr:uppercase; --dls:.14em;  --dw:400 }
+      .l04 { --dtr:uppercase; --dls:.02em;  --dw:700 }
+      .l05 { --dtr:uppercase; --dls:.01em;  --dw:500 }
+      .l06 { --dtr:uppercase; --dls:.16em;  --dw:400 }
+      .l07 { --dtr:uppercase; --dls:-.01em; --dw:700 }
+      .l08 { --dtr:none;      --dls:.01em;  --dw:400 }
+      .l09 { --dtr:uppercase; --dls:-.02em; --dw:700 }
+      .l10 { --dtr:uppercase; --dls:.03em;  --dw:700 }
+      .l11 { --dtr:uppercase; --dls:.2em;   --dw:400 }
+      .l12 { --dtr:uppercase; --dls:.11em;  --dw:500 }
+      .l13 { --dtr:none;      --dls:-.01em; --dw:600 }
+      .l14 { --dtr:none;      --dls:-.02em; --dw:300 }
+      .l15 { --dtr:uppercase; --dls:.04em;  --dw:600 }
+
+      /* ============================================================
+         GALLERY CHROME
+         ============================================================ */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; cursor: default }
+      html { overflow-x: clip }
+      body {
+        background: #050b0b; color: #dce8e6; font-family: var(--inter);
+        -webkit-font-smoothing: antialiased; padding: 36px 24px 140px; overflow-x: clip;
+      }
+      .gal-head { max-width: 1352px; margin: 0 auto 30px }
+      .gal-head h1 { font-family: var(--oswald); font-size: 32px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em }
+      .gal-head h1 b { color: #ef7a3c; font-weight: 600 }
+      .gal-head p { color: #7f918e; font-size: 13px; margin-top: 10px; max-width: 84ch; line-height: 1.65 }
+      .gal-head p + p { margin-top: 7px }
+      .gal-head code { font-family: var(--oswald); letter-spacing: .04em; color: #a9bab7 }
+
+      .gal { max-width: 1352px; margin: 0 auto; display: grid; gap: 34px; grid-template-columns: repeat(auto-fill, minmax(640px, 1fr)) }
+      .card { --s: .5 }
+      .card.zoom { --s: 1; grid-column: 1/-1 }
+      .scaler { width: calc(1280px * var(--s)); height: calc(800px * var(--s)); overflow: hidden; border: 1px solid #1b2626; cursor: zoom-in }
+      .card.zoom .scaler { cursor: zoom-out }
+
+      .cap { margin-top: 11px; display: flex; gap: 9px; align-items: baseline; flex-wrap: wrap }
+      .cap b { font-family: var(--oswald); font-size: 11px; letter-spacing: .2em; color: #ef7a3c; font-weight: 500 }
+      .cap strong { font-family: var(--oswald); font-size: 15px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500 }
+      .cap em { font-style: normal; color: #6d807d; font-size: 11.5px; font-family: var(--oswald); letter-spacing: .05em }
+      .cap p { color: #7f918e; font-size: 12px; line-height: 1.55; flex-basis: 100%; max-width: 70ch }
+
+      /* ============================================================
+         THE FRAME + SHARED ATOMS
+         ============================================================ */
+      .frame {
+        width: 1280px; height: 800px; background: var(--ground); color: var(--ink);
+        position: relative; overflow: hidden; font-size: 14px; font-family: var(--body);
+        transform: scale(var(--s)); transform-origin: top left; user-select: none;
+      }
+      .d { font-family: var(--disp); text-transform: var(--dtr); letter-spacing: var(--dls); font-weight: var(--dw); line-height: .95 }
+      .lbl { font-family: var(--oswald); text-transform: uppercase; letter-spacing: .2em; font-size: 10px; color: var(--muted); font-weight: 500 }
+      .mut { color: var(--muted) } .dimc { color: var(--dim) } .fnt { color: var(--faint) } .acc { color: var(--accent) }
+      .num { font-variant-numeric: tabular-nums }
+      .row { display: flex; align-items: center; gap: 10px } .col { display: flex; flex-direction: column }
+      .sp { justify-content: space-between } .wrap { flex-wrap: wrap }
+      .panel { background: var(--surface); border: 1px solid var(--line) }
+      .hr { height: 1px; background: var(--line) } .hrs { height: 1px; background: var(--line-strong) }
+      .rel { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column }
+
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
+             font-family: var(--oswald); text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+             padding: 14px 30px; font-size: 13px; border: 1px solid transparent; background: transparent; color: inherit; border-radius: 2px }
+      .btn.p { background: var(--accent); color: var(--accent-ink) }
+      .btn.g { border-color: var(--line-strong); color: var(--ink) }
+      .btn.q { border-color: var(--line); color: var(--muted) }
+      .btn.sm { padding: 9px 17px; font-size: 11px } .btn.lg { padding: 18px 40px; font-size: 15px }
+      .btn.off { border-color: var(--line); color: var(--faint) }
+
+      /* option chip — the workhorse: a settable value in one of three states */
+      .op { font-family: var(--oswald); text-transform: uppercase; letter-spacing: .08em; font-weight: 500; font-size: 12px;
+            padding: 9px 14px; border: 1px solid var(--line); color: var(--muted); border-radius: 2px; white-space: nowrap }
+      .op.on { border-color: var(--accent); background: var(--accent-soft); color: var(--ink) }
+      .op.off { color: var(--faint); border-style: dashed; border-color: var(--line) }
+      .tag { font-family: var(--oswald); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; padding: 4px 8px;
+             border: 1px solid var(--line-strong); color: var(--muted); border-radius: 2px; white-space: nowrap; font-weight: 500 }
+      .tag.a { color: var(--accent); border-color: var(--accent-line) }
+      .why { font-size: 10.5px; color: var(--dim); font-style: normal; line-height: 1.4 }
+
+      /* stadium plate — one element, twenty treatments */
+      .ph { position: absolute; overflow: hidden; pointer-events: none; z-index: 0 }
+      .ph img { width: 100%; height: 100%; object-fit: cover; display: block; filter: var(--ph-f) }
+      .ph::after { content: ''; position: absolute; inset: 0; background: var(--tint); mix-blend-mode: color }
+      .m-b { mask-image: linear-gradient(to bottom, black 38%, transparent 100%) }
+      .m-t { mask-image: linear-gradient(to top, black 42%, transparent 100%) }
+      .m-r { mask-image: linear-gradient(to right, black 44%, transparent 100%) }
+      .m-l { mask-image: linear-gradient(to left, black 40%, transparent 100%) }
+      .m-rad { mask-image: radial-gradient(58% 66% at 50% 42%, black 0, transparent 100%) }
+      .m-vig { mask-image: radial-gradient(120% 100% at 50% 28%, black 30%, transparent 100%) }
+      .m-sliv { mask-image: linear-gradient(to bottom, transparent 0, black 34%, black 62%, transparent 100%) }
+      .m-scan { mask-image: repeating-linear-gradient(to bottom, black 0 2px, transparent 2px 5px) }
+      .m-dot { mask-image: radial-gradient(black 32%, transparent 34%); mask-size: 7px 7px }
+      .m-corner { mask-image: radial-gradient(90% 90% at 100% 100%, black 10%, transparent 100%) }
+
+      /* crests — full colour, unfiltered. They are the one thing on these frames
+         allowed outside the four primes: a club badge recoloured is a club badge
+         falsified. Clubs outside the top five leagues have no crest — they get a ring. */
+      .crest { flex: none; display: block; object-fit: contain }
+      .ring { border: 1px solid var(--line-strong); border-radius: 50%; flex: none }
+
+      /* face crops */
+      .fc { overflow: hidden; flex: none; background: var(--surface-2) }
+      .fc img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 34%; display: block;
+                filter: grayscale(1) contrast(1.12) brightness(.88) }
+
+      /* the 4-2-3-1, drawn */
+      .pip { width: 9px; height: 9px; border: 1px solid var(--line-strong); border-radius: 50%; flex: none }
+      .pip.f { background: var(--accent); border-color: var(--accent) }
+
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important } }
+    </style>
+  </head>
+  <body>
+    <header class="gal-head">
+      <h1><b>#</b>footydraft — single-player lobby, 15 layouts</h1>
+      <p>
+        <strong style="color:#ef7a3c">Resolved: layout 04 · Ready room was picked and is what gets
+        built.</strong> The run stopped at fifteen of a planned twenty once that was settled — 16–20
+        were never coded, on purpose.
+      </p>
+      <p>
+        Fifteen page-shapes for one screen, not fifteen dressings of one shape. Every frame does the
+        same job: choose a <strong>format</strong>, a <strong>scope</strong>, a
+        <strong>constraint</strong> (Free&nbsp;Pick only — hidden or disabled everywhere else),
+        how many <strong>bots</strong> sit at the table, a <strong>turn timer</strong>, and then kick
+        off. The palette is <code>petrol</code> and it does not change; type is Oswald and Inter.
+        All the variety is structural.
+      </p>
+      <p>
+        Every number on these frames is real, out of <code>player_data.csv</code> and
+        <code>PROJECT.md</code> — 546 in the pool, the per-position counts, the opening bids, and the
+        CM shortage that makes three of the five league scopes genuinely unusable. Nothing is
+        invented. Click a frame to blow it up to full 1280×800, click again to shrink.
+      </p>
+    </header>
+
+    <div class="gal">
+      <!-- ══════════ 01 · TEAM SHEET — Long Document ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l01">
+          <div class="ph m-sliv" style="inset:0 0 auto 0;height:112px;opacity:.5"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:30px 96px 34px">
+            <!-- masthead rule -->
+            <div class="row sp" style="padding-bottom:11px">
+              <div class="row" style="gap:7px">
+                <span style="font-family:var(--bebas);font-size:23px;color:var(--accent)">#</span>
+                <span style="font-family:var(--bebas);font-size:23px;letter-spacing:.06em">footydraft</span>
+              </div>
+              <span class="lbl">Team sheet · solo draft · no. 001</span>
+            </div>
+            <div class="hrs"></div>
+            <div class="hr" style="margin-top:2px"></div>
+
+            <p style="margin-top:34px;font-size:23px;line-height:1.62;max-width:56ch;color:var(--muted)">
+              Tonight you draft <em style="font-style:normal;color:var(--ink);border-bottom:1px solid var(--accent)">alone</em>,
+              against <em style="font-style:normal;color:var(--ink);border-bottom:1px solid var(--accent)">three&nbsp;bots</em>,
+              into a <em style="font-style:normal;color:var(--ink);border-bottom:1px solid var(--line-strong)">4-2-3-1</em>
+              you cannot change, under <em style="font-style:normal;color:var(--ink);border-bottom:1px solid var(--accent)">Auction</em>
+              rules, from <em style="font-style:normal;color:var(--ink);border-bottom:1px solid var(--accent)">all 546</em>
+              players, with <em style="font-style:normal;color:var(--ink);border-bottom:1px solid var(--accent)">fifteen seconds</em>
+              on every bid.
+            </p>
+
+            <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;column-gap:64px;row-gap:0">
+              <div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:13px 0 12px;align-items:flex-start">
+                  <div class="col" style="gap:4px">
+                    <span class="lbl">§1 · Format</span>
+                    <span class="dimc" style="font-size:11px">Deal or No Deal · Free Pick · Spin the Wheel</span>
+                  </div>
+                  <span class="d acc" style="font-size:20px;text-transform:uppercase;letter-spacing:.04em">Auction</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:13px 0 12px;align-items:flex-start">
+                  <div class="col" style="gap:4px">
+                    <span class="lbl">§2 · Scope</span>
+                    <span class="dimc" style="font-size:11px">Top 5 leagues · one league · one nation</span>
+                  </div>
+                  <span class="d" style="font-size:20px;text-transform:uppercase;letter-spacing:.04em">All players</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:13px 0 12px;align-items:flex-start">
+                  <div class="col" style="gap:4px">
+                    <span class="lbl" style="color:var(--faint)">§3 · Constraint</span>
+                    <span class="fnt" style="font-size:11px">Free Pick only — not offered under Auction</span>
+                  </div>
+                  <span class="d fnt" style="font-size:20px;text-transform:uppercase;letter-spacing:.04em">—</span>
+                </div>
+                <div class="hr"></div>
+              </div>
+              <div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:13px 0 12px;align-items:flex-start">
+                  <div class="col" style="gap:4px">
+                    <span class="lbl">§4 · The table</span>
+                    <span class="dimc" style="font-size:11px">You, plus bots you add by hand. Caps at five.</span>
+                  </div>
+                  <span class="d acc num" style="font-size:20px">4 seats</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:13px 0 12px;align-items:flex-start">
+                  <div class="col" style="gap:4px">
+                    <span class="lbl">§5 · Bid timer</span>
+                    <span class="dimc" style="font-size:11px">Adjustable, or off entirely</span>
+                  </div>
+                  <span class="d num" style="font-size:20px">15 s</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:13px 0 12px;align-items:flex-start">
+                  <div class="col" style="gap:4px">
+                    <span class="lbl">§6 · Budget</span>
+                    <span class="dimc" style="font-size:11px">Opening bids run 5M (Kabak) to 140M (Haaland)</span>
+                  </div>
+                  <span class="d num" style="font-size:20px">1.00 B</span>
+                </div>
+                <div class="hr"></div>
+              </div>
+            </div>
+
+            <div style="flex:1"></div>
+            <div class="row sp" style="align-items:flex-end">
+              <p class="dimc" style="font-size:11.5px;line-height:1.6;max-width:44ch">
+                Unsold slots are backfilled with the cheapest eligible player left, so the sheet
+                always comes back with eleven names on it.
+              </p>
+              <div class="row" style="gap:22px">
+                <span class="lbl">Cancel</span>
+                <span class="btn p lg">Kick off →</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>01</b><strong>Team sheet</strong><em>Long Document</em>
+            <p>The lobby as a filled-in document rather than a control panel. One sentence states the whole configuration in prose with the settable words ruled underneath; six numbered sections below carry the same settings as a filing, not as widgets. §3 is present but struck through — Constraints exist and this format doesn't take them.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 02 · FOUR DOORS — Bento Grid ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l02">
+          <div class="rel" style="padding:26px 34px 30px;gap:14px">
+            <div class="row sp">
+              <div class="row" style="gap:9px">
+                <span style="font-family:var(--bebas);font-size:20px;color:var(--accent)">#</span>
+                <span class="lbl" style="color:var(--ink)">Single player</span>
+                <span class="tag">Solo · 1 human</span>
+              </div>
+              <span class="lbl">Pick a door · everything else has a default</span>
+            </div>
+
+            <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1.15fr 1.15fr .85fr .5fr;gap:13px">
+              <!-- AUCTION 2x2 -->
+              <div class="panel" style="grid-column:span 2;grid-row:span 2;position:relative;overflow:hidden;border-color:var(--accent);background:var(--accent-soft)">
+                <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);align-content:end;opacity:.5;padding:14px;gap:12px">
+                  <img class="crest" src="../public/clubs/arsenal.svg" alt="" style="width:100%;height:34px" />
+                  <img class="crest" src="../public/clubs/real-madrid.svg" alt="" style="width:100%;height:34px" />
+                  <img class="crest" src="../public/clubs/inter.svg" alt="" style="width:100%;height:34px" />
+                  <img class="crest" src="../public/clubs/bayern-munich.svg" alt="" style="width:100%;height:34px" />
+                  <img class="crest" src="../public/clubs/psg.svg" alt="" style="width:100%;height:34px" />
+                  <img class="crest" src="../public/clubs/napoli.svg" alt="" style="width:100%;height:34px" />
+                </div>
+                <div style="position:relative;z-index:2;padding:22px 24px;height:100%;display:flex;flex-direction:column">
+                  <div class="row sp"><span class="lbl acc">Format · chosen</span><span class="tag a">Graveyard on</span></div>
+                  <div style="flex:1"></div>
+                  <h3 class="d" style="font-size:62px;line-height:.9">Auction</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.55;margin-top:10px;max-width:36ch">
+                    Bid in real time against three bots. Opening bid is 70% of derived value —
+                    Haaland starts at 140M. Buy more than you can field; the surplus sits in your
+                    graveyard, unlimited, and blocks the table.
+                  </p>
+                </div>
+              </div>
+              <!-- 3 alternates + constraint -->
+              <div class="panel" style="padding:16px 18px;display:flex;flex-direction:column">
+                <span class="lbl">Format</span><div style="flex:1"></div>
+                <h4 class="d" style="font-size:24px;line-height:1">Deal or<br />No Deal</h4>
+                <span class="dimc" style="font-size:11px;margin-top:7px">8 boxes · 11 rounds</span>
+              </div>
+              <div class="panel" style="padding:16px 18px;display:flex;flex-direction:column">
+                <span class="lbl">Format</span><div style="flex:1"></div>
+                <h4 class="d" style="font-size:24px;line-height:1">Free<br />Pick</h4>
+                <span class="dimc" style="font-size:11px;margin-top:7px">Snake · takes constraints</span>
+              </div>
+              <div class="panel" style="padding:16px 18px;display:flex;flex-direction:column">
+                <span class="lbl">Format</span><div style="flex:1"></div>
+                <h4 class="d" style="font-size:24px;line-height:1">Spin the<br />Wheel</h4>
+                <span class="dimc" style="font-size:11px;margin-top:7px">One category, all draft</span>
+              </div>
+              <div class="panel" style="padding:16px 18px;display:flex;flex-direction:column;border-style:dashed">
+                <span class="lbl" style="color:var(--faint)">Constraint</span><div style="flex:1"></div>
+                <h4 class="d fnt" style="font-size:24px;line-height:1">Not on<br />Auction</h4>
+                <span class="fnt" style="font-size:11px;margin-top:7px">Free Pick only</span>
+              </div>
+              <!-- TABLE 2x1 -->
+              <div class="panel" style="grid-column:span 2;padding:16px 20px;display:flex;flex-direction:column">
+                <div class="row sp"><span class="lbl">The table</span><span class="dimc" style="font-size:10.5px">Bots are added by hand — nothing auto-fills</span></div>
+                <div style="flex:1"></div>
+                <div class="row" style="gap:9px">
+                  <span class="op on" style="padding:11px 15px">You</span>
+                  <span class="op" style="padding:11px 15px">Bot 1</span>
+                  <span class="op" style="padding:11px 15px">Bot 2</span>
+                  <span class="op" style="padding:11px 15px">Bot 3</span>
+                  <span class="op off" style="padding:11px 15px">+ add</span>
+                  <span class="why" style="margin-left:2px">1 seat<br />left of 5</span>
+                </div>
+              </div>
+              <!-- SCOPE 2x1 -->
+              <div class="panel" style="grid-column:span 2;padding:16px 20px;display:flex;flex-direction:column">
+                <div class="row sp"><span class="lbl">Scope &amp; clock</span><span class="dimc num" style="font-size:10.5px">546 eligible</span></div>
+                <div style="flex:1"></div>
+                <div class="row wrap" style="gap:8px">
+                  <span class="op on">All players</span>
+                  <span class="op">Top 5</span>
+                  <span class="op">One league</span>
+                  <span class="op">One nation</span>
+                  <span class="op" style="margin-left:6px">15 s</span>
+                </div>
+              </div>
+              <!-- START 4x -->
+              <div style="grid-column:span 4;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-radius:2px">
+                <span class="d" style="font-size:19px">Kick off · Auction · 4 at the table</span>
+                <span class="d" style="font-size:19px">→</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>02</b><strong>Four doors</strong><em>Bento Grid</em>
+            <p>Size carries the hierarchy: the chosen format is a 2×2 block with a crest wall standing on its floor, the three alternates are quarter-size, and Constraints is a dashed tile that states why it's inert instead of hiding. Rhythm comes from the block sizes, so no tile needs a border treatment to earn attention.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 03 · THE PITCH — Map / Diagram ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l03">
+          <div class="ph m-l" style="inset:0 0 0 46%;opacity:.5"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="flex-direction:row">
+            <!-- left: settings -->
+            <div style="width:46%;padding:36px 40px 34px;display:flex;flex-direction:column;border-right:1px solid var(--line)">
+              <div class="row" style="gap:9px">
+                <span style="font-family:var(--bebas);font-size:20px;color:var(--accent)">#</span>
+                <span class="lbl" style="color:var(--ink)">Solo lobby</span>
+              </div>
+              <h2 class="d" style="font-size:33px;margin-top:26px;line-height:1.1">Eleven slots,<br />fixed</h2>
+              <p class="mut" style="font-size:12.5px;line-height:1.6;margin-top:12px;max-width:40ch">
+                The shape never changes. What changes is how you fill it, who you fill it against,
+                and how much of the pool is on the table.
+              </p>
+              <div style="margin-top:26px;display:flex;flex-direction:column;gap:0">
+                <div class="hr"></div>
+                <div class="row sp" style="padding:12px 0"><span class="lbl">Format</span><span class="d" style="font-size:15px">Free Pick · snake</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:12px 0"><span class="lbl">Scope</span><span class="d" style="font-size:15px">Top 5 leagues · 463</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:12px 0"><span class="lbl acc">Constraint</span><span class="d acc" style="font-size:15px">3 per club</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:12px 0"><span class="lbl">Table</span><span class="d" style="font-size:15px">You + 2 bots</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:12px 0"><span class="lbl">Turn timer</span><span class="d num" style="font-size:15px">15 s</span></div>
+                <div class="hr"></div>
+              </div>
+              <div style="flex:1"></div>
+              <p class="why" style="max-width:42ch;margin-bottom:14px">
+                Constraints are filtered at the point of picking — ineligible players never appear
+                in your list, so you can't break the rule by accident.
+              </p>
+              <span class="btn p" style="align-self:flex-start">Kick off →</span>
+            </div>
+
+            <!-- right: the diagram -->
+            <div style="flex:1;padding:36px 44px;display:flex;flex-direction:column">
+              <div class="row sp">
+                <span class="lbl">4-2-3-1 · what each slot draws from</span>
+                <span class="tag a">CM is the bottleneck</span>
+              </div>
+              <div style="flex:1;position:relative;margin-top:18px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;padding:26px 22px">
+                <div style="position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)"></div>
+                <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)"></div>
+                <div style="position:absolute;left:50%;top:50%;width:104px;height:104px;border:1px solid var(--line);border-radius:50%;transform:translate(-50%,-50%)"></div>
+
+                <!-- ST -->
+                <div class="row" style="justify-content:center;position:relative;z-index:2">
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">ST</span><span class="dimc num" style="font-size:10px">119</span></div>
+                </div>
+                <!-- LW AMF RW -->
+                <div class="row" style="justify-content:space-around;position:relative;z-index:2">
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">LW</span><span class="dimc num" style="font-size:10px">140</span></div>
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">AMF</span><span class="dimc num" style="font-size:10px">146</span></div>
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">RW</span><span class="dimc num" style="font-size:10px">138</span></div>
+                </div>
+                <!-- CDM CM -->
+                <div class="row" style="justify-content:center;gap:150px;position:relative;z-index:2">
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">CDM</span><span class="dimc num" style="font-size:10px">125</span></div>
+                  <div class="col" style="align-items:center;gap:5px">
+                    <span class="pip f"></span><span class="d acc" style="font-size:13px">CM</span><span class="acc num" style="font-size:10px;font-family:var(--oswald)">10</span>
+                  </div>
+                </div>
+                <!-- LB CB CB RB -->
+                <div class="row" style="justify-content:space-around;position:relative;z-index:2">
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">LB</span><span class="dimc num" style="font-size:10px">73</span></div>
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">CB</span><span class="dimc num" style="font-size:10px">120</span></div>
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">CB</span><span class="dimc num" style="font-size:10px">120</span></div>
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">RB</span><span class="dimc num" style="font-size:10px">59</span></div>
+                </div>
+                <!-- GK -->
+                <div class="row" style="justify-content:center;position:relative;z-index:2">
+                  <div class="col" style="align-items:center;gap:5px"><span class="pip f"></span><span class="d" style="font-size:13px">GK</span><span class="dimc num" style="font-size:10px">39</span></div>
+                </div>
+              </div>
+              <p class="why" style="margin-top:14px">
+                Counts are eligible players per slot across the whole pool. Only ten players list CM
+                at all, which is why a single-league scope tops out at four drafters.
+              </p>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>03</b><strong>The pitch</strong><em>Map / Diagram</em>
+            <p>The formation is drawn spatially rather than listed, and each node carries how many players in the pool can actually fill it — which turns the CM shortage into something you can see instead of something you find out later. Settings sit in a column to the left of the diagram, weighted as caption to its subject.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 04 · READY ROOM — Split Studio ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l04">
+          <div class="rel" style="flex-direction:row">
+            <!-- left: the table -->
+            <div style="width:50%;padding:38px 44px;display:flex;flex-direction:column;background:var(--surface)">
+              <div class="row sp">
+                <span class="lbl">Who's playing</span>
+                <span class="dimc num" style="font-size:11px;font-family:var(--oswald);letter-spacing:.1em">4 / 5 SEATS</span>
+              </div>
+              <h2 class="d" style="font-size:44px;margin-top:16px">Your table</h2>
+
+              <div style="margin-top:26px;display:flex;flex-direction:column">
+                <div class="hrs"></div>
+                <div class="row sp" style="padding:16px 2px">
+                  <div class="row" style="gap:14px">
+                    <span style="width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--oswald);font-weight:700;font-size:14px">Y</span>
+                    <div class="col" style="gap:3px"><span class="d" style="font-size:17px">You</span><span class="dimc" style="font-size:11px">Host · sets everything on the right</span></div>
+                  </div>
+                  <span class="tag a">Seat 1</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:16px 2px">
+                  <div class="row" style="gap:14px">
+                    <span class="ring" style="width:38px;height:38px;display:grid;place-items:center;font-family:var(--oswald);font-weight:500;font-size:13px;color:var(--muted)">1</span>
+                    <div class="col" style="gap:3px"><span class="d" style="font-size:17px">Bot 1</span><span class="dimc" style="font-size:11px">Default style — bots don't have personalities</span></div>
+                  </div>
+                  <span class="lbl">Remove</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:16px 2px">
+                  <div class="row" style="gap:14px">
+                    <span class="ring" style="width:38px;height:38px;display:grid;place-items:center;font-family:var(--oswald);font-weight:500;font-size:13px;color:var(--muted)">2</span>
+                    <div class="col" style="gap:3px"><span class="d" style="font-size:17px">Bot 2</span><span class="dimc" style="font-size:11px">Default style</span></div>
+                  </div>
+                  <span class="lbl">Remove</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:16px 2px">
+                  <div class="row" style="gap:14px">
+                    <span class="ring" style="width:38px;height:38px;display:grid;place-items:center;font-family:var(--oswald);font-weight:500;font-size:13px;color:var(--muted)">3</span>
+                    <div class="col" style="gap:3px"><span class="d" style="font-size:17px">Bot 3</span><span class="dimc" style="font-size:11px">Default style</span></div>
+                  </div>
+                  <span class="lbl">Remove</span>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:16px 2px">
+                  <div class="row" style="gap:14px">
+                    <span class="ring" style="width:38px;height:38px;border-style:dashed;display:grid;place-items:center;color:var(--dim);font-size:15px">+</span>
+                    <div class="col" style="gap:3px"><span class="d dimc" style="font-size:17px">Add a bot</span><span class="fnt" style="font-size:11px">One seat left. Nothing fills it for you.</span></div>
+                  </div>
+                </div>
+                <div class="hrs"></div>
+              </div>
+
+              <div style="flex:1"></div>
+              <p class="why" style="max-width:46ch">
+                Two to five at the table, you included. Bots always play the one default style —
+                there's no aggression dial, by design.
+              </p>
+            </div>
+
+            <!-- right: the settings -->
+            <div style="width:50%;padding:38px 44px;display:flex;flex-direction:column;position:relative">
+              <div class="ph m-corner" style="inset:auto -60px -70px auto;width:420px;height:340px;opacity:.42"><img src="../public/stadium.webp" alt="" /></div>
+              <div class="row sp" style="position:relative;z-index:2">
+                <span class="lbl">What you're playing</span>
+                <span style="font-family:var(--bebas);font-size:19px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              </div>
+
+              <div style="margin-top:32px;position:relative;z-index:2;display:flex;flex-direction:column;gap:24px">
+                <div class="col" style="gap:10px">
+                  <span class="lbl">Format</span>
+                  <div class="row wrap" style="gap:7px">
+                    <span class="op on">Auction</span><span class="op">Deal or No Deal</span>
+                    <span class="op">Free Pick</span><span class="op">Spin the Wheel</span>
+                  </div>
+                </div>
+                <div class="col" style="gap:10px">
+                  <span class="lbl">Scope</span>
+                  <div class="row wrap" style="gap:7px">
+                    <span class="op">All 546</span><span class="op on">Top 5 leagues</span>
+                    <span class="op">One league</span><span class="op">One nation</span>
+                  </div>
+                </div>
+                <div class="col" style="gap:10px">
+                  <span class="lbl" style="color:var(--faint)">Constraint</span>
+                  <div class="row wrap" style="gap:7px">
+                    <span class="op off">1 per club</span><span class="op off">3 per club</span>
+                    <span class="op off">1 per nation</span><span class="op off">3 per nation</span>
+                  </div>
+                  <span class="why">Free Pick only. Auction doesn't take a constraint.</span>
+                </div>
+                <div class="col" style="gap:10px">
+                  <span class="lbl">Bid timer</span>
+                  <div class="row wrap" style="gap:7px">
+                    <span class="op">10 s</span><span class="op on">15 s</span><span class="op">30 s</span>
+                    <span class="op">60 s</span><span class="op">Off</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="flex:1"></div>
+              <div class="row sp" style="position:relative;z-index:2">
+                <span class="lbl">Back to home</span>
+                <span class="btn p lg">Kick off →</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>04</b><strong>Ready room</strong><em>Split Studio</em>
+            <p>A hard diptych: who is playing on one side, what they're playing on the other, divided by a surface step rather than a rule. The roster reads as five physical seats with the empty one still visible, which makes the 2–5 cap and the no-auto-fill rule legible without a sentence explaining either.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 05 · THE BOARD — Index-First ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l05">
+          <div class="ph m-r" style="inset:0 44% 0 0;opacity:.34"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 56px 30px">
+            <div class="row sp">
+              <span class="lbl">Single player · configure &amp; go</span>
+              <span class="lbl">Six lines, then you're in</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;margin-top:8px">
+              <div class="hr"></div>
+              <div class="row sp" style="padding:19px 4px">
+                <span class="d" style="font-size:40px;color:var(--muted)">Format</span>
+                <div class="row" style="gap:20px">
+                  <span class="dimc" style="font-size:12px;font-family:var(--oswald);letter-spacing:.14em;text-transform:uppercase">Real-time bidding</span>
+                  <span class="d acc" style="font-size:40px">Auction</span>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div class="row sp" style="padding:19px 4px">
+                <span class="d" style="font-size:40px;color:var(--muted)">Scope</span>
+                <div class="row" style="gap:20px">
+                  <span class="dimc num" style="font-size:12px;font-family:var(--oswald);letter-spacing:.14em;text-transform:uppercase">546 eligible</span>
+                  <span class="d" style="font-size:40px">All players</span>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div class="row sp" style="padding:19px 4px">
+                <span class="d" style="font-size:40px;color:var(--faint)">Constraint</span>
+                <div class="row" style="gap:20px">
+                  <span class="fnt" style="font-size:12px;font-family:var(--oswald);letter-spacing:.14em;text-transform:uppercase">Free Pick only</span>
+                  <span class="d fnt" style="font-size:40px">Not offered</span>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div class="row sp" style="padding:19px 4px">
+                <span class="d" style="font-size:40px;color:var(--muted)">Table</span>
+                <div class="row" style="gap:20px">
+                  <span class="dimc" style="font-size:12px;font-family:var(--oswald);letter-spacing:.14em;text-transform:uppercase">You + 3 bots · caps at 5</span>
+                  <span class="d" style="font-size:40px">Four</span>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div class="row sp" style="padding:19px 4px">
+                <span class="d" style="font-size:40px;color:var(--muted)">Timer</span>
+                <div class="row" style="gap:20px">
+                  <span class="dimc" style="font-size:12px;font-family:var(--oswald);letter-spacing:.14em;text-transform:uppercase">Per bid · can be off</span>
+                  <span class="d num" style="font-size:40px">15 s</span>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div class="row sp" style="padding:19px 4px">
+                <span class="d" style="font-size:40px;color:var(--muted)">Formation</span>
+                <div class="row" style="gap:20px">
+                  <span class="dimc" style="font-size:12px;font-family:var(--oswald);letter-spacing:.14em;text-transform:uppercase">Cannot be changed</span>
+                  <span class="d" style="font-size:40px">4-2-3-1</span>
+                </div>
+              </div>
+              <div class="hrs"></div>
+              <div class="row sp" style="padding:22px 4px 0">
+                <span class="d acc" style="font-size:40px">Kick off</span>
+                <span class="d acc" style="font-size:40px">→</span>
+              </div>
+            </div>
+            <div class="row sp" style="margin-top:6px">
+              <span class="why">Nothing here is a menu you go into and come back from — the value is the control.</span>
+              <span style="font-family:var(--bebas);font-size:19px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>05</b><strong>The board</strong><em>Index-First</em>
+            <p>No panels, no cards — seven ruled lines at departure-board scale, setting on the left and value on the right, with Kick off as the last line rather than a button parked elsewhere. The stadium is pushed into the left third so the type reads against ground on the side that carries the values.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 06 · THE CARD INDEX — Catalogue ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l06">
+          <div class="rel" style="padding:26px 34px 26px">
+            <div class="row sp" style="padding-bottom:12px;border-bottom:1px solid var(--line-strong)">
+              <div class="row" style="gap:9px">
+                <span style="font-family:var(--bebas);font-size:19px;color:var(--accent)">#</span>
+                <span class="d" style="font-size:14px">Every setting, on one card index</span>
+              </div>
+              <span class="lbl">Solo · filled cards are live</span>
+            </div>
+
+            <div style="flex:1;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:min-content;gap:9px;align-content:space-between;padding:14px 0">
+              <span class="lbl" style="grid-column:span 6">Format</span>
+              <div class="op on" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">Auction</span><span class="dimc" style="font-size:9.5px;letter-spacing:.06em">Bids · graveyard</span></div>
+              <div class="op" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">Deal or No Deal</span><span class="dimc" style="font-size:9.5px;letter-spacing:.06em">8 boxes · 11 rounds</span></div>
+              <div class="op" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">Free Pick</span><span class="dimc" style="font-size:9.5px;letter-spacing:.06em">Snake · 11 picks</span></div>
+              <div class="op" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">Spin the Wheel</span><span class="dimc" style="font-size:9.5px;letter-spacing:.06em">One category</span></div>
+
+              <span class="lbl" style="grid-column:span 6;margin-top:4px">Scope</span>
+              <div class="op on" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">All players</span><span class="dimc num" style="font-size:9.5px;letter-spacing:.06em">546</span></div>
+              <div class="op" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">Top 5 leagues</span><span class="dimc num" style="font-size:9.5px;letter-spacing:.06em">463</span></div>
+              <div class="op" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">One nation</span><span class="dimc num" style="font-size:9.5px;letter-spacing:.06em">10 clear 11 players</span></div>
+              <div class="op" style="padding:12px 13px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;height:74px;justify-content:space-between">
+                <span style="font-size:13px">One club</span><span class="dimc num" style="font-size:9.5px;letter-spacing:.06em">112 · none reach 11</span></div>
+
+              <span class="lbl" style="grid-column:span 6;margin-top:4px">Scope · one league</span>
+              <div class="op" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;height:74px;justify-content:space-between">
+                <img class="crest" src="../public/leagues/premier-league.svg" alt="" style="height:22px;width:auto" />
+                <span style="font-size:11px">Premier · 167</span></div>
+              <div class="op" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;height:74px;justify-content:space-between">
+                <img class="crest" src="../public/leagues/serie-a.svg" alt="" style="height:22px;width:auto" />
+                <span style="font-size:11px">Serie A · 110</span></div>
+              <div class="op off" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;height:74px;justify-content:space-between">
+                <img class="crest" src="../public/leagues/la-liga.svg" alt="" style="height:22px;width:auto;opacity:.4" />
+                <span style="font-size:11px">La Liga · 1 CM</span></div>
+              <div class="op off" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;height:74px;justify-content:space-between">
+                <img class="crest" src="../public/leagues/bundesliga.svg" alt="" style="height:22px;width:auto;opacity:.4" />
+                <span style="font-size:11px">Bundesliga · 0 CM</span></div>
+              <div class="op off" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;height:74px;justify-content:space-between">
+                <img class="crest" src="../public/leagues/ligue-1.svg" alt="" style="height:22px;width:auto;opacity:.4" />
+                <span style="font-size:11px">Ligue 1 · 0 CM</span></div>
+              <div style="height:74px;display:flex;align-items:center"><span class="why">A dashed card is a real option the data can't serve yet — every squad needs a CM.</span></div>
+
+              <span class="lbl" style="grid-column:span 6;margin-top:4px;color:var(--faint)">Constraint — Free Pick only</span>
+              <div class="op off" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">1 per club</span></div>
+              <div class="op off" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">3 per club</span></div>
+              <div class="op off" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">1 per nation</span></div>
+              <div class="op off" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">3 per nation</span></div>
+
+              <span class="lbl" style="grid-column:span 6;margin-top:4px">The table &amp; the clock</span>
+              <div class="op" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">2 · you + 1 bot</span></div>
+              <div class="op" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">3 · you + 2</span></div>
+              <div class="op on" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">4 · you + 3</span></div>
+              <div class="op" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">5 · you + 4</span></div>
+              <div class="op on" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">15 s a bid</span></div>
+              <div class="op" style="padding:12px 13px;height:52px;display:flex;align-items:center"><span style="font-size:12px">No timer</span></div>
+            </div>
+
+            <div class="row sp" style="border-top:1px solid var(--line-strong);padding-top:14px">
+              <span class="why">Auction · all 546 · four at the table · 15 s — six cards lit out of thirty-one.</span>
+              <span class="btn p">Kick off →</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>06</b><strong>The card index</strong><em>Catalogue</em>
+            <p>Every value the lobby can take, laid out at once as one uniform inventory — nothing is behind a dropdown, so the whole decision space is visible and the lit cards are the configuration. The five real league marks sit in their own row, three of them dashed with the exact CM count that rules them out.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 07 · FIVE FOUR SIX — Stat-Led ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l07">
+          <div class="ph m-t" style="inset:auto 0 0 0;height:340px;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:32px 60px 34px">
+            <div class="row sp">
+              <span style="font-family:var(--bebas);font-size:21px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <span class="lbl">Single player · the arithmetic</span>
+            </div>
+
+            <div class="row" style="margin-top:14px;align-items:flex-start;gap:44px">
+              <div class="col">
+                <span class="d num" style="font-size:236px;line-height:.8;letter-spacing:-.03em">546</span>
+                <span class="lbl" style="margin-top:12px">Players in the pool tonight</span>
+              </div>
+              <div class="col" style="gap:0;padding-top:24px;flex:1;max-width:38ch">
+                <div class="hrs"></div>
+                <div class="row sp" style="padding:11px 0"><span class="mut" style="font-size:12.5px">Your scope keeps</span><span class="d num" style="font-size:22px">546</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:11px 0"><span class="mut" style="font-size:12.5px">Eleven slots × four drafters</span><span class="d num" style="font-size:22px">44</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:11px 0"><span class="mut" style="font-size:12.5px">Leave the board unsold</span><span class="d num" style="font-size:22px">502</span></div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding:11px 0"><span class="acc" style="font-size:12.5px">Players listing CM at all</span><span class="d acc num" style="font-size:22px">10</span></div>
+                <div class="hrs"></div>
+                <p class="why" style="margin-top:12px">
+                  Which is the one number that limits the rest: a squad needs a CM, so ten is the
+                  ceiling on how many drafters any narrow scope can seat.
+                </p>
+              </div>
+            </div>
+
+            <div style="flex:1"></div>
+
+            <div class="row wrap" style="gap:0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line)">
+              <div class="col" style="gap:6px;padding:16px 30px 16px 0;border-right:1px solid var(--line)">
+                <span class="lbl">Format</span><span class="d acc" style="font-size:20px">Auction</span></div>
+              <div class="col" style="gap:6px;padding:16px 30px;border-right:1px solid var(--line)">
+                <span class="lbl">Scope</span><span class="d" style="font-size:20px">All players</span></div>
+              <div class="col" style="gap:6px;padding:16px 30px;border-right:1px solid var(--line)">
+                <span class="lbl" style="color:var(--faint)">Constraint</span><span class="d fnt" style="font-size:20px">n/a</span></div>
+              <div class="col" style="gap:6px;padding:16px 30px;border-right:1px solid var(--line)">
+                <span class="lbl">Table</span><span class="d num" style="font-size:20px">4</span></div>
+              <div class="col" style="gap:6px;padding:16px 30px;border-right:1px solid var(--line)">
+                <span class="lbl">Timer</span><span class="d num" style="font-size:20px">15 s</span></div>
+              <div class="col" style="gap:6px;padding:16px 0 16px 30px">
+                <span class="lbl">Shape</span><span class="d num" style="font-size:20px">4-2-3-1</span></div>
+            </div>
+
+            <div class="row sp" style="margin-top:22px">
+              <span class="why">No scoring, no leaderboard. You finish with a squad and you compare it.</span>
+              <span class="btn p lg">Kick off →</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>07</b><strong>Five four six</strong><em>Stat-Led</em>
+            <p>The pool size is the hero and the settings are demoted to a tabular strip along the bottom, because the interesting thing about a scope choice is what it does to the count. The ledger beside the number does the subtraction out loud and lands on 10 — the CM figure that quietly governs everything else.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 08 · NOTE — Letter ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l08">
+          <div class="ph m-rad" style="inset:-90px -140px auto auto;width:620px;height:520px;opacity:.3"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:44px 120px 40px">
+            <div class="row sp">
+              <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <span class="lbl">Solo</span>
+            </div>
+
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:60ch">
+              <p class="d" style="font-size:26px;color:var(--muted)">Right then —</p>
+              <h2 class="d" style="font-size:52px;margin-top:18px;line-height:1.08;max-width:22ch">
+                It's you and three bots.
+              </h2>
+              <p style="font-size:16.5px;line-height:1.72;color:var(--muted);margin-top:22px">
+                They don't get personalities and they don't get easier. They play the one default
+                style, they bid when they can afford to, and they will happily buy a striker they
+                can't field purely so you can't have him.
+              </p>
+              <p style="font-size:16.5px;line-height:1.72;color:var(--muted);margin-top:15px">
+                Nobody keeps score at the end of this. You'll have eleven players in a 4-2-3-1,
+                they'll have eleven each, and you can put the sheets next to each other and argue
+                about it. That's the whole game.
+              </p>
+
+              <div style="margin-top:30px;border-left:2px solid var(--accent);padding-left:20px">
+                <span class="lbl acc">Set for tonight</span>
+                <p style="font-size:14.5px;line-height:1.85;margin-top:9px;color:var(--muted)">
+                  <span style="color:var(--ink)">Auction</span>, from
+                  <span style="color:var(--ink)">all 546</span> players, four at the table,
+                  <span style="color:var(--ink)">15 seconds</span> a bid, a
+                  <span style="color:var(--ink)">1.00 B</span> budget each. No constraint — Auction
+                  doesn't take one.
+                </p>
+              </div>
+            </div>
+
+            <div class="row sp" style="align-items:flex-end">
+              <div class="col" style="gap:7px">
+                <span class="d acc" style="font-size:22px;border-bottom:1px solid var(--accent);padding-bottom:3px;align-self:flex-start">Deal me in →</span>
+                <span class="why">or change any of it first</span>
+              </div>
+              <span class="lbl" style="text-align:right;line-height:1.7">Eleven slots<br />Four-two-three-one<br />No score</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>08</b><strong>Note</strong><em>Letter</em>
+            <p>The only frame that explains the game in the first person before it offers a single control — useful precisely because bots-with-no-personality and no-scoring are the two things a new solo player will find strange. The configuration arrives last, as a ruled aside, and the call to action is set type rather than a button.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 09 · TURNSTILE — Marquee Hero ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l09">
+          <div class="ph m-vig" style="inset:0;opacity:.6"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:30px 44px 28px">
+            <div class="row sp">
+              <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <div class="row" style="gap:26px">
+                <span class="lbl">You + 3 bots</span><span class="lbl">All 546</span><span class="lbl num">15 s</span>
+                <span class="lbl acc">Change</span>
+              </div>
+            </div>
+
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;margin-left:-14px">
+              <span class="lbl acc" style="margin-left:16px">Tonight's format</span>
+              <h2 class="d" style="font-size:214px;line-height:.84;margin-top:6px;white-space:nowrap">Auction</h2>
+              <p class="mut" style="font-size:16px;line-height:1.6;max-width:52ch;margin:20px 0 0 16px">
+                Every player in the pool comes up one at a time, in a random order, and anyone can
+                bid the moment they appear. It ends when nobody left can afford anything.
+              </p>
+            </div>
+
+            <div class="row sp" style="align-items:flex-end">
+              <div class="col" style="gap:9px">
+                <span class="lbl">Or one of these instead</span>
+                <div class="row" style="gap:0;border-top:1px solid var(--line-strong)">
+                  <span class="d mut" style="font-size:17px;padding:13px 22px 0 0">Deal or No Deal</span>
+                  <span class="d mut" style="font-size:17px;padding:13px 22px 0;border-left:1px solid var(--line)">Free Pick</span>
+                  <span class="d mut" style="font-size:17px;padding:13px 0 0 22px;border-left:1px solid var(--line)">Spin the Wheel</span>
+                </div>
+              </div>
+              <span class="btn p lg">Kick off →</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>09</b><strong>Turnstile</strong><em>Marquee Hero</em>
+            <p>The chosen format at 214px is the entire screen; every other decision is compressed to a single 10px line at the top and a hairline rail of alternates at the bottom. It suits solo play, where the format is the only choice that genuinely changes the evening and the rest can sit at defaults.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 10 · CHALKBOARD — Manifesto ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l10">
+          <div class="ph m-dot" style="inset:0;opacity:.3"><img src="../public/stadium.webp" alt="" /></div>
+          <div style="position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--accent);z-index:1"></div>
+          <div class="rel" style="padding:34px 60px 30px 74px;align-items:center;text-align:center">
+            <div class="row sp" style="width:100%">
+              <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <span class="lbl">Single player</span>
+            </div>
+
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center">
+              <h2 class="d" style="font-size:112px;line-height:.92">Nobody<br />keeps<br /><span class="acc">score.</span></h2>
+              <p style="font-size:17px;line-height:1.6;color:var(--muted);margin-top:28px;max-width:44ch">
+                You draft eleven, the bots draft eleven each, and then the sheets go side by side.
+                No points, no table, no rating out of ten. Just a squad you have to defend.
+              </p>
+            </div>
+
+            <div style="width:100%">
+              <div class="hrs"></div>
+              <div class="row sp" style="padding:16px 0 0;flex-wrap:wrap;gap:14px">
+                <span class="lbl" style="letter-spacing:.16em">
+                  Auction · all 546 · you + 3 bots · 15 s a bid · 4-2-3-1 · no constraint
+                </span>
+                <div class="row" style="gap:24px">
+                  <span class="lbl">Change any of it</span>
+                  <span class="d acc" style="font-size:15px;letter-spacing:.14em">Kick off →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>10</b><strong>Chalkboard</strong><em>Manifesto</em>
+            <p>A poster that argues the premise before it offers the controls, on the theory that "no scoring" is the hardest thing about this game to accept. The entire configuration is one 10px line of small print at the foot — legible, complete, and deliberately outranked by the claim above it.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 11 · DUGOUT — Photographic ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l11">
+          <div class="ph" style="inset:0;opacity:.9"><img src="../public/stadium.webp" alt="" style="filter:grayscale(1) contrast(1.15) brightness(.62)" /></div>
+          <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(105deg,var(--shade-hard) 0,var(--shade) 34%,transparent 62%)"></div>
+          <div style="position:absolute;inset:auto 0 0 0;height:200px;z-index:1;background:linear-gradient(to top,var(--shade-hard),transparent)"></div>
+
+          <div class="rel" style="padding:34px 48px 34px">
+            <div class="row sp">
+              <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <span class="lbl">Single player · ready when you are</span>
+            </div>
+
+            <div style="flex:1"></div>
+
+            <div class="row sp" style="align-items:flex-end">
+              <div class="col" style="max-width:430px">
+                <span class="lbl acc">Format</span>
+                <h2 class="d" style="font-size:56px;margin-top:10px;letter-spacing:.12em">Spin the<br />Wheel</h2>
+                <p class="mut" style="font-size:13px;line-height:1.62;margin-top:16px">
+                  One category is drawn at the start and holds all draft. Tonight it's clubs — the
+                  wheel gives you a club, you pick freely from it, snake order.
+                </p>
+                <div style="margin-top:20px;display:flex;gap:0;flex-direction:column;max-width:330px">
+                  <div class="hr"></div>
+                  <div class="row sp" style="padding:9px 0"><span class="lbl">Category</span><span class="d" style="font-size:12px;letter-spacing:.1em">Clubs · 112 in pool</span></div>
+                  <div class="hr"></div>
+                  <div class="row sp" style="padding:9px 0"><span class="lbl">Scope</span><span class="d" style="font-size:12px;letter-spacing:.1em">Top 5 leagues</span></div>
+                  <div class="hr"></div>
+                  <div class="row sp" style="padding:9px 0"><span class="lbl">Table</span><span class="d" style="font-size:12px;letter-spacing:.1em">You + 4 bots</span></div>
+                  <div class="hr"></div>
+                  <div class="row sp" style="padding:9px 0"><span class="lbl">Turn</span><span class="d num" style="font-size:12px;letter-spacing:.1em">15 s</span></div>
+                  <div class="hr"></div>
+                </div>
+              </div>
+
+              <div class="col" style="align-items:flex-end;gap:20px">
+                <div class="row" style="gap:12px">
+                  <img class="crest" src="../public/clubs/manchester-city.svg" alt="" style="height:38px;width:auto" />
+                  <img class="crest" src="../public/clubs/barcelona.svg" alt="" style="height:38px;width:auto" />
+                  <img class="crest" src="../public/clubs/juventus.svg" alt="" style="height:38px;width:auto" />
+                  <img class="crest" src="../public/clubs/borussia-dortmund.svg" alt="" style="height:38px;width:auto" />
+                  <img class="crest" src="../public/clubs/marseille.svg" alt="" style="height:38px;width:auto" />
+                  <span class="ring" style="width:38px;height:38px;display:grid;place-items:center;font-size:10px;color:var(--dim);font-family:var(--oswald)">+107</span>
+                </div>
+                <span class="btn p lg">Kick off →</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>11</b><strong>Dugout</strong><em>Photographic</em>
+            <p>The photograph is the design and the interface is annotation over it — everything is pushed into the bottom band where a gradient scrim buys the contrast back. Crests do the work a paragraph would otherwise do: the wheel's category is clubs, and here are five of the hundred and twelve it can land on.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 12 · THE CONSOLE — Component Playground ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l12">
+          <div class="rel" style="flex-direction:row">
+            <!-- side rail -->
+            <div style="width:196px;border-right:1px solid var(--line);padding:28px 0;display:flex;flex-direction:column;background:var(--surface)">
+              <div class="row" style="gap:8px;padding:0 22px 24px">
+                <span style="font-family:var(--bebas);font-size:19px;color:var(--accent)">#</span>
+                <span style="font-family:var(--bebas);font-size:19px;letter-spacing:.06em">footydraft</span>
+              </div>
+              <span class="lbl" style="padding:0 22px 12px">Set up</span>
+              <div style="padding:11px 22px;border-left:2px solid var(--accent);background:var(--accent-soft)"><span class="d" style="font-size:12px">Format</span></div>
+              <div style="padding:11px 22px;border-left:2px solid transparent"><span class="d mut" style="font-size:12px">Scope</span></div>
+              <div style="padding:11px 22px;border-left:2px solid transparent"><span class="d fnt" style="font-size:12px">Constraint</span></div>
+              <div style="padding:11px 22px;border-left:2px solid transparent"><span class="d mut" style="font-size:12px">The table</span></div>
+              <div style="padding:11px 22px;border-left:2px solid transparent"><span class="d mut" style="font-size:12px">Clock</span></div>
+              <div style="flex:1"></div>
+              <div style="padding:0 22px"><span class="btn p sm" style="width:100%">Kick off →</span></div>
+            </div>
+
+            <!-- preview blocks -->
+            <div style="flex:1;padding:28px 34px;display:flex;flex-direction:column;gap:13px">
+              <div class="row sp">
+                <span class="d" style="font-size:15px">Solo lobby · every setting previewed</span>
+                <span class="lbl">Nothing here is a guess — this is what it does</span>
+              </div>
+
+              <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:13px">
+                <!-- FORMAT -->
+                <figure class="panel" style="padding:15px 17px;display:flex;flex-direction:column">
+                  <div class="row sp"><span class="lbl">Format</span><span class="tag a">Auction</span></div>
+                  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:12px 0">
+                    <div class="row sp" style="padding:9px 12px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:2px">
+                      <span class="d" style="font-size:13px">Haaland · ST · Man City</span>
+                      <span class="d num acc" style="font-size:14px">140 M</span>
+                    </div>
+                    <div class="row" style="gap:7px">
+                      <span class="op" style="font-size:11px;padding:7px 11px">+1 M</span>
+                      <span class="op" style="font-size:11px;padding:7px 11px">+5 M</span>
+                      <span class="op" style="font-size:11px;padding:7px 11px">+10 M</span>
+                      <span class="dimc" style="font-size:10.5px;margin-left:4px">flat steps, same at every price</span>
+                    </div>
+                  </div>
+                  <figcaption class="why">Opening bid is 70% of derived value, to the nearest 5 M.</figcaption>
+                </figure>
+
+                <!-- CLOCK -->
+                <figure class="panel" style="padding:15px 17px;display:flex;flex-direction:column">
+                  <div class="row sp"><span class="lbl">Clock</span><span class="tag">15 s · default</span></div>
+                  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:12px 0">
+                    <div class="row" style="gap:0;height:34px;align-items:stretch;border:1px solid var(--line-strong);border-radius:2px;overflow:hidden">
+                      <div style="width:62%;background:var(--accent)"></div>
+                      <div style="flex:1;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 12px)"></div>
+                    </div>
+                    <div class="row wrap" style="gap:6px">
+                      <span class="op" style="font-size:10.5px;padding:6px 10px">10</span>
+                      <span class="op on" style="font-size:10.5px;padding:6px 10px">15</span>
+                      <span class="op" style="font-size:10.5px;padding:6px 10px">30</span>
+                      <span class="op" style="font-size:10.5px;padding:6px 10px">60</span>
+                      <span class="op" style="font-size:10.5px;padding:6px 10px">Off</span>
+                    </div>
+                  </div>
+                  <figcaption class="why">Run out and bidding just closes without you — no auto-bid.</figcaption>
+                </figure>
+
+                <!-- SCOPE -->
+                <figure class="panel" style="padding:15px 17px;display:flex;flex-direction:column">
+                  <div class="row sp"><span class="lbl">Scope</span><span class="tag">All 546</span></div>
+                  <div style="flex:1;display:flex;align-items:center;padding:12px 0">
+                    <div class="row wrap" style="gap:13px">
+                      <img class="crest" src="../public/leagues/premier-league.svg" alt="" style="height:26px;width:auto" />
+                      <img class="crest" src="../public/leagues/serie-a.svg" alt="" style="height:26px;width:auto" />
+                      <img class="crest" src="../public/leagues/la-liga.svg" alt="" style="height:26px;width:auto" />
+                      <img class="crest" src="../public/leagues/bundesliga.svg" alt="" style="height:26px;width:auto" />
+                      <img class="crest" src="../public/leagues/ligue-1.svg" alt="" style="height:26px;width:auto" />
+                      <span class="ring" style="width:26px;height:26px;display:grid;place-items:center;font-size:9px;color:var(--dim);font-family:var(--oswald)">+12</span>
+                    </div>
+                  </div>
+                  <figcaption class="why">463 from the top five, plus 83 from twelve other leagues.</figcaption>
+                </figure>
+
+                <!-- TABLE -->
+                <figure class="panel" style="padding:15px 17px;display:flex;flex-direction:column">
+                  <div class="row sp"><span class="lbl">The table</span><span class="tag">4 of 5</span></div>
+                  <div style="flex:1;display:flex;align-items:center;padding:12px 0">
+                    <div class="row" style="gap:10px">
+                      <span style="width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--oswald);font-weight:700;font-size:13px">Y</span>
+                      <span class="ring" style="width:40px;height:40px;display:grid;place-items:center;font-family:var(--oswald);font-size:12px;color:var(--muted)">1</span>
+                      <span class="ring" style="width:40px;height:40px;display:grid;place-items:center;font-family:var(--oswald);font-size:12px;color:var(--muted)">2</span>
+                      <span class="ring" style="width:40px;height:40px;display:grid;place-items:center;font-family:var(--oswald);font-size:12px;color:var(--muted)">3</span>
+                      <span class="ring" style="width:40px;height:40px;border-style:dashed;display:grid;place-items:center;font-size:15px;color:var(--dim)">+</span>
+                    </div>
+                  </div>
+                  <figcaption class="why">Constraint panel stays greyed in the rail — Auction won't take one.</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>12</b><strong>The console</strong><em>Component Playground</em>
+            <p>Each setting gets a framed block that shows the thing it produces rather than describing it: the format block is an actual bid row with the real 140 M opening on Haaland, the clock block is a countdown mid-run. A plain hairline figure with a caption underneath, deliberately not a fake window.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 13 · RULEBOOK — Conversational FAQ ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l13">
+          <div class="ph m-b" style="inset:0 0 auto 0;height:150px;opacity:.28"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:32px 56px 30px">
+            <div class="row sp">
+              <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <span class="lbl">Solo setup · answers are the controls</span>
+            </div>
+
+            <h2 class="d" style="font-size:38px;margin-top:22px">Six questions, then we play</h2>
+
+            <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;column-gap:56px;row-gap:0;margin-top:20px;align-content:start">
+              <div>
+                <div class="hrs"></div>
+                <div style="padding:16px 0 17px">
+                  <h3 class="d" style="font-size:21px">What are we playing?</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.6;margin-top:8px">Auction. Bids in real time, and you can keep buying past a full eleven to block the bots.</p>
+                  <div class="row wrap" style="gap:6px;margin-top:11px">
+                    <span class="op on" style="font-size:11px;padding:7px 11px">Auction</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">Deal or No Deal</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">Free Pick</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">Spin the Wheel</span>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <div style="padding:16px 0 17px">
+                  <h3 class="d" style="font-size:21px">How many bots?</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.6;margin-top:8px">Three, so four at the table. Five is the cap, and the last seat stays empty unless you add it yourself.</p>
+                  <div class="row wrap" style="gap:6px;margin-top:11px">
+                    <span class="op" style="font-size:11px;padding:7px 11px">1</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">2</span>
+                    <span class="op on" style="font-size:11px;padding:7px 11px">3</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">4</span>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <div style="padding:16px 0 17px">
+                  <h3 class="d" style="font-size:21px">How long have I got?</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.6;margin-top:8px">Fifteen seconds a bid. Turn it off if you'd rather think.</p>
+                  <div class="row wrap" style="gap:6px;margin-top:11px">
+                    <span class="op" style="font-size:11px;padding:7px 11px">10 s</span>
+                    <span class="op on" style="font-size:11px;padding:7px 11px">15 s</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">30 s</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">Off</span>
+                  </div>
+                </div>
+                <div class="hrs"></div>
+              </div>
+
+              <div>
+                <div class="hrs"></div>
+                <div style="padding:16px 0 17px">
+                  <h3 class="d" style="font-size:21px">Can I narrow it to one league?</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.6;margin-top:8px">Two of the five. Serie&nbsp;A and the Premier have enough central midfielders to fill four squads; the others don't.</p>
+                  <div class="row wrap" style="gap:6px;margin-top:11px">
+                    <span class="op" style="font-size:11px;padding:7px 11px">Premier · 3 CM</span>
+                    <span class="op" style="font-size:11px;padding:7px 11px">Serie A · 4 CM</span>
+                    <span class="op off" style="font-size:11px;padding:7px 11px">La Liga · 1</span>
+                    <span class="op off" style="font-size:11px;padding:7px 11px">Bundesliga · 0</span>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <div style="padding:16px 0 17px">
+                  <h3 class="d" style="font-size:21px">Do I get a constraint?</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.6;margin-top:8px">Not tonight. One-per-club and the rest only exist for Free Pick — switch format and they turn on.</p>
+                  <div class="row wrap" style="gap:6px;margin-top:11px">
+                    <span class="op off" style="font-size:11px;padding:7px 11px">1 per club</span>
+                    <span class="op off" style="font-size:11px;padding:7px 11px">3 per club</span>
+                    <span class="op off" style="font-size:11px;padding:7px 11px">1 per nation</span>
+                    <span class="op off" style="font-size:11px;padding:7px 11px">3 per nation</span>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <div style="padding:16px 0 17px">
+                  <h3 class="d" style="font-size:21px">What if I run out of money?</h3>
+                  <p class="mut" style="font-size:13px;line-height:1.6;margin-top:8px">You still finish with eleven. Whatever's still empty gets backfilled with the cheapest eligible player left on the board.</p>
+                  <div class="row wrap" style="gap:6px;margin-top:11px">
+                    <span class="tag">Budget · 1.00 B</span>
+                    <span class="tag">Graveyard · unlimited</span>
+                  </div>
+                </div>
+                <div class="hrs"></div>
+              </div>
+            </div>
+
+            <div class="row sp" style="margin-top:14px">
+              <span class="why">Every answer above is the setting. Change one and the answer changes.</span>
+              <span class="btn p">Kick off →</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>13</b><strong>Rulebook</strong><em>Conversational FAQ</em>
+            <p>The setup is written as the six questions a first-time solo player would actually ask, with the control sitting directly under each answer so reading and choosing are the same motion. It's the frame that handles the awkward answers best — the league question gets to say "two of the five, and here's why".</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 14 · NINETY — Quote-Led ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l14">
+          <div class="ph m-r" style="inset:0 62% 0 0;opacity:.3"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="flex-direction:row">
+            <div style="flex:1;padding:40px 52px 34px;display:flex;flex-direction:column">
+              <div class="row" style="gap:9px">
+                <span style="font-family:var(--bebas);font-size:20px;color:var(--accent)">#</span>
+                <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em">footydraft</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:30ch">
+                <span class="acc" style="font-family:var(--oswald);font-size:88px;line-height:.5;font-weight:300">“</span>
+                <blockquote class="d" style="font-size:54px;line-height:1.12;margin-top:14px">
+                  A draft can never end with an unfilled slot.
+                </blockquote>
+                <div class="row" style="gap:12px;margin-top:26px">
+                  <span style="width:26px;height:1px;background:var(--accent)"></span>
+                  <span class="lbl" style="letter-spacing:.14em">Project rules · squad completion guarantee</span>
+                </div>
+                <p class="mut" style="font-size:14px;line-height:1.65;margin-top:24px">
+                  Which is why the Auction backfills. Bid badly and you end up with worse players,
+                  never fewer — eleven names come back regardless.
+                </p>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="pip f"></span><span class="pip f"></span><span class="pip f"></span><span class="pip f"></span>
+                <span class="pip f"></span><span class="pip f"></span><span class="pip f"></span><span class="pip f"></span>
+                <span class="pip f"></span><span class="pip f"></span><span class="pip f"></span>
+                <span class="lbl" style="margin-left:8px">Eleven, always</span>
+              </div>
+            </div>
+
+            <!-- right rail -->
+            <div style="width:322px;border-left:1px solid var(--line);padding:40px 36px 34px;display:flex;flex-direction:column;background:var(--surface)">
+              <span class="lbl">Tonight's lobby</span>
+              <div style="margin-top:22px;display:flex;flex-direction:column">
+                <div class="hr"></div>
+                <div class="col" style="gap:5px;padding:14px 0"><span class="lbl">Format</span><span class="d acc" style="font-size:19px">Auction</span></div>
+                <div class="hr"></div>
+                <div class="col" style="gap:5px;padding:14px 0"><span class="lbl">Scope</span><span class="d" style="font-size:19px">All 546</span></div>
+                <div class="hr"></div>
+                <div class="col" style="gap:5px;padding:14px 0"><span class="lbl" style="color:var(--faint)">Constraint</span><span class="d fnt" style="font-size:19px">Free Pick only</span></div>
+                <div class="hr"></div>
+                <div class="col" style="gap:5px;padding:14px 0"><span class="lbl">Table</span><span class="d" style="font-size:19px">You + 3 bots</span></div>
+                <div class="hr"></div>
+                <div class="col" style="gap:5px;padding:14px 0"><span class="lbl">Bid clock</span><span class="d num" style="font-size:19px">15 s</span></div>
+                <div class="hr"></div>
+              </div>
+              <div style="flex:1"></div>
+              <span class="btn p" style="width:100%">Kick off →</span>
+              <span class="why" style="margin-top:12px;text-align:center">Change any of it first</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>14</b><strong>Ninety</strong><em>Quote-Led</em>
+            <p>Leads on borrowed authority, but honestly — the quote is a line from this project's own rulebook, attributed to it, not an invented testimonial. It earns the position because it answers the question a solo player is most likely to worry about, and the eleven filled pips underneath restate it without words.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 15 · ORDER OF PLAY — Narrative Workflow ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l15">
+          <div class="ph m-sliv" style="inset:auto 0 0 0;height:190px;opacity:.32"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 46px 32px">
+            <div class="row sp">
+              <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.06em"><span style="color:var(--accent)">#</span>footydraft</span>
+              <span class="lbl">Single player · order of play</span>
+            </div>
+
+            <h2 class="d" style="font-size:36px;margin-top:20px;max-width:26ch">Five decisions,<br />in this order</h2>
+
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <div style="position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:0">
+                <div style="position:absolute;left:0;right:0;top:23px;height:1px;background:var(--line-strong)"></div>
+                <div style="position:absolute;left:0;width:60%;top:23px;height:1px;background:var(--accent)"></div>
+
+                <div style="padding-right:26px;position:relative">
+                  <span class="d acc num" style="font-size:13px;letter-spacing:.2em;display:block;position:relative;z-index:2;background:var(--ground);padding-right:12px;line-height:46px">1.0</span>
+                  <span class="lbl" style="display:block;margin-top:6px">Format</span>
+                  <span class="d" style="font-size:26px;display:block;margin-top:9px">Free<br />Pick</span>
+                  <p class="dimc" style="font-size:11px;line-height:1.5;margin-top:11px">The only one that takes a constraint. Snake order, eleven picks.</p>
+                </div>
+                <div style="padding:0 26px;position:relative;border-left:1px solid var(--line)">
+                  <span class="d acc num" style="font-size:13px;letter-spacing:.2em;display:block;position:relative;z-index:2;background:var(--ground);padding-right:12px;line-height:46px">2.0</span>
+                  <span class="lbl" style="display:block;margin-top:6px">Scope</span>
+                  <span class="d" style="font-size:26px;display:block;margin-top:9px">Top 5<br />leagues</span>
+                  <p class="dimc" style="font-size:11px;line-height:1.5;margin-top:11px">463 of the 546. Narrower than this and the CM count starts to bite.</p>
+                </div>
+                <div style="padding:0 26px;position:relative;border-left:1px solid var(--line)">
+                  <span class="d acc num" style="font-size:13px;letter-spacing:.2em;display:block;position:relative;z-index:2;background:var(--ground);padding-right:12px;line-height:46px">3.0</span>
+                  <span class="lbl acc" style="display:block;margin-top:6px">Constraint</span>
+                  <span class="d acc" style="font-size:26px;display:block;margin-top:9px">3 per<br />club</span>
+                  <p class="dimc" style="font-size:11px;line-height:1.5;margin-top:11px">Yours only — it says nothing about what the bots end up with.</p>
+                </div>
+                <div style="padding:0 26px;position:relative;border-left:1px solid var(--line)">
+                  <span class="d num mut" style="font-size:13px;letter-spacing:.2em;display:block;position:relative;z-index:2;background:var(--ground);padding-right:12px;line-height:46px">4.0</span>
+                  <span class="lbl" style="display:block;margin-top:6px">The table</span>
+                  <span class="d mut" style="font-size:26px;display:block;margin-top:9px">You<br />+ 2 bots</span>
+                  <p class="dimc" style="font-size:11px;line-height:1.5;margin-top:11px">Add them by hand. Two to five, and nothing pads the lobby for you.</p>
+                </div>
+                <div style="padding-left:26px;position:relative;border-left:1px solid var(--line)">
+                  <span class="d num mut" style="font-size:13px;letter-spacing:.2em;display:block;position:relative;z-index:2;background:var(--ground);padding-right:12px;line-height:46px">5.0</span>
+                  <span class="lbl" style="display:block;margin-top:6px">Turn clock</span>
+                  <span class="d mut" style="font-size:26px;display:block;margin-top:9px">15<br />seconds</span>
+                  <p class="dimc" style="font-size:11px;line-height:1.5;margin-top:11px">Time out and it picks the cheapest eligible player for that slot.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row sp" style="border-top:1px solid var(--line-strong);padding-top:18px">
+              <span class="why">Three set, two on defaults. You can kick off from here or keep going.</span>
+              <span class="btn p lg">Kick off →</span>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>15</b><strong>Order of play</strong><em>Narrative Workflow</em>
+            <p>Setup as a timeline, which is the one reading where Constraints stops being an odd exception: it's stage three, live because stage one chose Free Pick. The accent runs along the spine as far as you've got, so progress and remaining defaults are one glance rather than a count.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- Layouts 16–20 (Type Specimen · Ecosystem Index · Portfolio Grid · Workbench ·
+           Specimen) were planned and never built — 04 won before the run finished. -->
+
+    </div>
+
+    <script>
+      document.querySelectorAll('.card').forEach((card) => {
+        card.querySelector('.scaler').addEventListener('click', () => card.classList.toggle('zoom'))
+      })
+    </script>
+  </body>
+</html>

@@ -1,21 +1,23 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ActionBar } from '../components/home/ActionBar'
 import { FormatWall } from '../components/home/FormatWall'
 import { MessageRow } from '../components/home/MessageRow'
 import { StadiumPlate } from '../components/home/StadiumPlate'
 import { Wordmark } from '../components/home/Wordmark'
-import { formats } from '../data/formats'
 
 /**
- * The whole site, for now. One viewport, no scroll, no other route: a wall of
- * type with the stadium clipped into it, the four single-player formats under
- * it, and the lobby controls along the bottom.
+ * The front door. One viewport, no scroll: a wall of type with the stadium
+ * clipped into it, the four single-player formats under it, and the lobby
+ * controls along the bottom.
  *
- * Every action here is an honest dead end — the lobby isn't built and nothing
- * is wired to Firebase, so each one says so in the status line instead of
- * faking a destination.
+ * The format tiles now go somewhere — each one opens the single-player lobby
+ * on that format. The friends controls are still honest dead ends: nothing is
+ * wired to Firebase, so they say so in the status line rather than faking a
+ * destination.
  */
 export function Home() {
+  const navigate = useNavigate()
   const [status, setStatus] = useState('')
   /** Bumped on every status change so the line re-animates even when the text
    *  it lands on happens to be identical. */
@@ -68,12 +70,8 @@ export function Home() {
           </div>
         </div>
 
-        <FormatWall
-          onPick={(id) => {
-            const format = formats.find((entry) => entry.id === id)
-            report(`${format?.name} — the single-player lobby isn't built yet.`)
-          }}
-        />
+        {/* The tile picks the format; the lobby opens on it. */}
+        <FormatWall onPick={(id) => navigate(`/solo/${id}`)} />
       </main>
 
       <div className="relative z-10">

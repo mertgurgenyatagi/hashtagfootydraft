@@ -25,6 +25,7 @@
   --color-line-strong: color-mix(in oklab, var(--color-ground) 55%, var(--color-ink));
   --color-muted: color-mix(in oklab, var(--color-ink) 58%, var(--color-ground));
   --color-dim: color-mix(in oklab, var(--color-ink) 30%, var(--color-ground));
+  --color-faint: color-mix(in oklab, var(--color-ink) 16%, var(--color-ground));
   --color-accent-ink: color-mix(in oklab, var(--color-accent) 14%, var(--color-ground));
   --color-accent-soft: color-mix(in oklab, var(--color-accent) 20%, var(--color-ground));
   --color-accent-line: color-mix(in oklab, var(--color-accent) 50%, var(--color-ground));
@@ -175,6 +176,65 @@
   opacity: 0.62;
 }
 
+/* The lobby's copy of the same photograph: cornered into the bottom-right of
+   the settings half instead of running full bleed, dissolving toward the top
+   left so the chip groups always sit on flat ground. */
+.plate-corner {
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(
+    125% 125% at 100% 100%,
+    #000 14%,
+    rgb(0 0 0 / 0.55) 48%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(
+    125% 125% at 100% 100%,
+    #000 14%,
+    rgb(0 0 0 / 0.55) 48%,
+    transparent 82%
+  );
+}
+
+.plate-corner img {
+  filter: grayscale(1) contrast(1.25) brightness(0.44);
+}
+
+/* ============================================================================
+   THE LOBBY'S VERTICAL RHYTHM
+   Four settings groups, a table and a footer all have to land above the fold,
+   and this page doesn't scroll. A `clamp()` against `vh` can't do it: at 568px
+   tall the middle term is still comfortably inside the range, so the spacing
+   never actually reaches its minimum. Height is the real constraint, so it's
+   a height query — one place that says what "short" means for this screen.
+   ============================================================================ */
+.lobby {
+  --lobby-gap: clamp(1rem, 4.6vh, 2.75rem);
+  --lobby-pad-y: clamp(1rem, 2.6vh, 2.4rem);
+  --lobby-chip-py: clamp(0.45rem, 1.2vh, 0.6875rem);
+  --lobby-chip-mt: clamp(0.4rem, 1.25vh, 0.625rem);
+  --lobby-crest: clamp(2.25rem, 5.4vh, 3rem);
+}
+
+@media (max-height: 720px) {
+  .lobby {
+    --lobby-gap: 0.8rem;
+    --lobby-pad-y: 0.7rem;
+    --lobby-chip-py: 0.35rem;
+    --lobby-chip-mt: 0.3rem;
+    --lobby-crest: 2rem;
+  }
+}
+
+/* Crests render full colour and unfiltered — a recoloured badge is a falsified
+   badge. This adds an outline *around* the artwork rather than touching it:
+   four 1px offsets in ink, chained so each shadow falls on the last and the
+   corners close up. It exists because two of the five league marks are dark
+   and would otherwise disappear into the ground. Ink, not #fff. */
+.crest {
+  filter: drop-shadow(0 1px 0 var(--color-ink)) drop-shadow(0 -1px 0 var(--color-ink))
+    drop-shadow(1px 0 0 var(--color-ink)) drop-shadow(-1px 0 0 var(--color-ink));
+}
+
 /* A player portrait inside the letterforms, one of several stacked layers
    cross-fading by opacity. One image per instance, sized to cover the whole
    two-line box — no tiling. Grayscale because the crops are in colour,
@@ -225,6 +285,20 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+/* The quiet register: mostly a fade, with just enough travel to give it a
+   direction. The lobby initialises out of this one rather than the wall's
+   wipe — nothing there needs announcing. */
+@keyframes fd-soft {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 7px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -333,6 +407,10 @@
 }
 .fx-fade {
   animation-name: fd-fade;
+}
+.fx-soft {
+  animation-name: fd-soft;
+  animation-duration: 780ms;
 }
 .fx-wipe {
   animation-name: fd-wipe;
