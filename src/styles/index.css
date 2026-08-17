@@ -176,17 +176,14 @@
 }
 
 /* A player portrait inside the letterforms, one of several stacked layers
-   cross-fading by opacity. The crops are portrait-shaped against a wide
-   two-line box — `cover` crushed nearly the whole thing to black — so this
-   tiles the face at a size close to native resolution instead: two rows (one
-   per line) repeating across the width reads as a print pattern rather than
-   one crushed photo. Grayscale because the crops are in colour, unlike
-   stadium.webp which is monochrome at the source. */
+   cross-fading by opacity. One image per instance, sized to cover the whole
+   two-line box — no tiling. Grayscale because the crops are in colour,
+   unlike stadium.webp which is monochrome at the source. */
 .wordmark-fill {
   background-image: var(--wordmark-image);
-  background-size: auto 48%;
-  background-position: 0% 2%;
-  background-repeat: repeat;
+  background-size: cover;
+  background-position: center 30%;
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -280,22 +277,24 @@
   }
 }
 
-/* Ambient. The backdrop breathes continuously — the scale also keeps the pitch
-   pushed below the fold at every point in the loop. Four stages rather than
-   two so the motion reads as drifting rather than a mechanical back-and-forth. */
+/* Ambient. A slow, almost unnoticeable zoom over 30s, anchored a bit below
+   centre (not straight-on) so it reads as pushing into the stand rather than
+   zooming on a fixed point. Fades out and back in at the loop boundary so the
+   reset to frame one is a crossfade, not a jump. */
 @keyframes fd-plate-drift {
-  0%,
+  0% {
+    transform: scale(1.26);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
   100% {
-    transform: scale(1.26) translate3d(0, 0, 0);
-  }
-  25% {
-    transform: scale(1.33) translate3d(-1.6%, -1%, 0);
-  }
-  50% {
-    transform: scale(1.4) translate3d(-2.4%, -1.8%, 0);
-  }
-  75% {
-    transform: scale(1.33) translate3d(-1.1%, -1.3%, 0);
+    transform: scale(1.32);
+    opacity: 0;
   }
 }
 
@@ -353,9 +352,9 @@
   animation-duration: 540ms;
 }
 .plate-drift {
-  transform-origin: top center;
-  animation: fd-plate-drift 20s var(--ease-in-out) infinite;
-  will-change: transform;
+  transform-origin: 50% 75%;
+  animation: fd-plate-drift 30s linear infinite;
+  will-change: transform, opacity;
 }
 .face-drift {
   animation: fd-face-drift 16s var(--ease-in-out) infinite;

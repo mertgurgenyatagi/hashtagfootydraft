@@ -19,6 +19,14 @@ right now*.
     format hovers now pure CSS, not stateful React.
   - Format descriptions removed: `MessageRow` is now static "Play with friends" title,
     `Format.blurb` deleted.
+  - Background drift replaced outright: instead of a 4-stage 20s scale-and-translate
+    loop, the plate now does one slow, linear 30s zoom (1.26× → 1.32×) anchored below
+    centre (`transform-origin: 50% 75%`), fading to invisible and back at the loop
+    boundary so the reset to frame one crossfades rather than jumps.
+  - Wordmark face fill switched from a tiled repeating pattern to a single
+    `background-size: cover` image per carousel instance — no more grid-of-faces look.
+  - A short "Draft. Argue. Repeat." blurb now sits to the right of FOOTY, in the space
+    the old portrait carousel used to occupy.
 
 ## Four rules that are now project-wide
 
@@ -50,10 +58,11 @@ Set explicitly by Mert, settled — don't reopen them:
 
 ## Gotchas worth not rediscovering
 
-- **The wordmark face fill is tiled, not stretched.** Portrait crops against a wide
-  two-line box: `cover` crushes nearly all of it to black. Instead, `background-size:
-  auto 48%` with `repeat` tiles the face at ~native resolution, reading as a print
-  pattern across the letters — much sharper than a single crushed image.
+- **The wordmark face fill is a single `cover` image now, not tiled.** An earlier pass
+  tiled the face at ~native resolution (`background-size: auto 48%` + `repeat`) because
+  `cover` crushed the portrait crop to near-black across the wide two-line box. That was
+  deliberately reversed 2026-08-17 — one image per carousel instance is what's wanted. If
+  the crushed-black problem resurfaces, that's why tiling existed the first time.
 - **Stacking order is load-bearing.** `<main>` is `z-20` and the bottom block `z-10`, not
   the other way round.
 - **Player photo slugs are full names.** `public/players/erling-haaland.webp`, not

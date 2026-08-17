@@ -149,8 +149,12 @@ and dissolves at the bottom into the ground colour. A `mix-blend-mode: color` la
 it with `--color-tint`, keeping the photo's own luminance and taking only hue and
 saturation, so it sits in the palette's colour family instead of reading as neutral grey.
 
-It **drifts** on a 54-second scale-and-translate loop. Slow enough that you never catch
-it moving, enough that the page is never a still image.
+It **zooms**, slowly, on a 30-second loop — scale only, anchored a little below centre
+(the 3/4 point, not dead-on) rather than translating around, growing just enough
+(1.26× → 1.32×) to read as a slow push rather than a static shot. It fades to invisible
+and back in right at the loop's boundary, so the reset to frame one crossfades instead of
+jumping. *(An earlier 54s/20s scale-and-translate version was replaced with this
+single-axis zoom-crossfade on 2026-08-17.)*
 
 There is **no line grid**. An earlier pass had one (64px cells at 8% ink); it was cut on
 2026-08-17 — with the stadium behind the type doing the texture work, the grid only added
@@ -226,17 +230,19 @@ Home is a single `100dvh` viewport, top to bottom:
 
 - A **tagline** left, and `11 slots · 546 in the pool · 4-2-3-1` right.
 - The **wall** — `FOOTY` over `DRAFT`, two five-letter lines stacking into a near-solid
-  rectangle, with the stadium clipped into the letterforms via `background-clip: text`.
-  The same photograph is the fill here and the ground behind it. Sized off image *height*
-  (`background-size: auto 240%`), not width — sizing off width let it fall short
-  vertically and tile, which put a second horizon halfway down DRAFT.
-- A **cycling portrait** in the negative space to its right, moving through twelve
-  players every 3.8s with a hairline ticking down the hold. All twelve are in the DOM and
-  cross-fade on opacity; swapping `src` meant watching each new crop decode. Hidden below
-  `sm`, where the wordmark needs the whole width.
+  rectangle. The letterforms are filled via `background-clip: text` with a player face
+  crop from `public/faces/` (named in `src/data/wallFaces.ts`), cycling through twelve
+  players every 3.8s, cross-fading between them — grayscale, one `background-size: cover`
+  image per instance, no tiling. The stadium plate is a separate layer behind everything,
+  not the wordmark's fill.
+- A short **description** — "Draft. Argue. Repeat." plus a two-sentence blurb — in the
+  negative space to the wordmark's right, where an earlier cycling-portrait carousel used
+  to live before the face-cycling moved into the wordmark itself. Hidden below `sm`,
+  where the wordmark needs the whole width.
 - **SINGLE PLAYER** in orange over a thin rule, then the **four formats** as four equal
-  tiles. Hovering one fades the title below out and its description in. Clicking one is
-  meant to open the single-player lobby.
+  tiles. Hovering one changes its border/fill colour and grows a rule along its bottom
+  edge — no title/description swap; per-format descriptions were dropped in an earlier
+  pass. Clicking one is meant to open the single-player lobby.
 - **PLAY WITH FRIENDS** in the same orange, a hairline, then **Create a lobby** (orange,
   owning the left edge on its own) against a **room code** field and a quieter **Join
   lobby** pushed right.
@@ -247,8 +253,8 @@ each control reports that in the status line rather than faking a destination.
 
 The page **initialises as one sequenced move**, ~1.3s end to end: the plate scales in, the
 wall is printed left-to-right by a `clip-path` wipe with an accent hairline riding its
-edge, then the portrait, the rules (which draw rather than appear), the tiles and the bar
-stagger in underneath.
+edge, then the description, the rules (which draw rather than appear), the tiles and the
+bar stagger in underneath.
 
 Design decisions were run through the **Hallmark** skill (`.claude/skills/hallmark/`);
 the run is logged at `.hallmark/log.json`.

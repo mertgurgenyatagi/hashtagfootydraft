@@ -49,7 +49,23 @@ export function Home() {
           wide enough to reach the tiles, and it has to pass behind them. */}
       <main className="relative z-20 flex min-h-0 flex-1 flex-col">
         <div className="flex min-h-0 flex-1 items-center py-[clamp(0.5rem,3vh,2.25rem)]">
-          <Wordmark />
+          <div className="flex w-full items-start justify-between gap-8">
+            <Wordmark />
+
+            <div
+              className="fx fx-rise hidden max-w-[19rem] flex-col gap-2 pt-[clamp(0.25rem,1vh,0.75rem)] sm:flex"
+              style={{ animationDelay: '260ms' }}
+            >
+              <p className="font-display text-[11px] font-medium uppercase tracking-[0.22em] text-accent">
+                Draft. Argue. Repeat.
+              </p>
+              <p className="font-sans text-sm leading-relaxed text-muted">
+                Build a 4-2-3-1 out of real footballers, four different ways — auction,
+                snake draft, deal-or-no-deal, spin the wheel. Then hold it up next to your
+                mates' squads. No stats, no leaderboard, just bragging rights.
+              </p>
+            </div>
+          </div>
         </div>
 
         <FormatWall
