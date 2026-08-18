@@ -1,34 +1,52 @@
-# Handover — 2026-08-18 (seamlessness & shared shell, merged to main)
+# Handover — 2026-08-18 (position reform: single-position data model, merged to main)
 
 Short note for whoever picks this up in a fresh session. `PROJECT.md` is the source of
 truth for the game rules, the frontend and the design laws; this file only covers *where
 things stand right now* and what to do next.
 
-## The rule that changed this session
+## What changed this session
 
-**Fake the functionality.** Project-wide, set by Mert mid-build, replacing the old "dead
-ends stay honest" rule. Where a screen needs a backend that doesn't exist, **the screen
-simulates it** rather than announcing the gap. In this lobby that means people arrive on
-a stagger and take real seats, chat sends, and a room code you were handed already has a
-host and settings behind it. The reasoning: the screen should reach its real states now,
-so the Firebase wiring drops in behind a UI that already behaves — and so the thing can
-be judged as a product rather than as a scaffold.
+**Position Reform (PROJECT.md, Round 7).** Every player's multi-position tag in
+`player_data.csv` (e.g. "AMF, RW, LW") was replaced with exactly one canonical position,
+decided across three questionnaire rounds and applied in a single 546-player delivery —
+not the batched rollout originally expected. Key rule changes, all folded into
+PROJECT.md:
 
-Disabled controls still carry a visible reason (a disabled control is a real state, not a
-confession). The one thing not faked is a **destination that doesn't exist**: `Kick off`
-can't navigate to a draft screen nobody has built, so it says so. That is the only
-remaining dead end in the app.
+- **Positions are now a hard gate.** A footballer only ever fills the one slot they're
+  listed for — in any format, at draft time or after. Not a default, no override.
+- **Auction purchases go straight into an open slot by default.** A purchase only lands
+  in the graveyard if every slot for that position is already full — overflow, not the
+  universal landing zone an earlier pass at this rule described — and it's a straight
+  two-way swap: whoever gets bumped out goes into the graveyard in turn. The
+  end-of-auction backfill always places directly, since it only ever targets empty
+  slots and can't overflow.
+- **Free Pick / Spin the Wheel filter out a footballer whose slot is already full** from
+  what's selectable that turn — the same mechanism as the existing Constraint filter,
+  since neither format has a graveyard to catch an overflow pick the way Auction does.
+- **Multi-Position Eligibility and Post-Draft Editing were narrowed or retired** —
+  there's nothing left to reassign once a player has exactly one position. What
+  survives post-draft is graveyard swapping, and that's Auction-only: Free Pick, Spin
+  the Wheel and Deal or No Deal have no graveyard, and whether any of them get a
+  post-draft equivalent is still an open question.
+- **The CM depth data hole is resolved.** CM went from 10 to 93 pool-wide, which flipped
+  the Scope max-drafter ceiling table — 4 of 5 single-league Scopes can now seat a
+  draft (only Ligue 1 Uber Eats stays unusable, now CB-limited instead of CM-limited).
 
-The home page's status line went with the rule — every control down there now goes
-somewhere, so there was nothing left for it to report.
+**No frontend code changed.** `src/` doesn't read `player_data.csv` yet — that's the
+draft screen, which isn't built. Two files ride along with the reform:
+`player_single_position.csv` (the source delivery, `Name,Nation,Position`) and
+`player_data_multiposition_backup.csv` (the pre-reform CSV, kept as a record).
+`player_names_clubs.csv` and `player_names_nations.csv` are unrelated ad-hoc convenience
+exports Mert asked for mid-session — not load-bearing, not referenced by anything.
 
 ## State
 
-- **Branch:** `seamlessness` was committed, pushed and merged into `main` on 2026-08-18.
-- `npm run build` and `npm test` both pass (15 tests, 5 files) as of the merge into `main`.
-- **Verified in a browser** at 1280×800, 1280×700, 768×568 and 320×568, across all routes
-  (Home, Solo Lobby, Multi Lobby host & guest). Zero body scroll, zero layout shifts,
-  persistent continuous backdrop animation, footer always above the fold.
+- **Branch:** `position-reform` was committed, pushed and merged into `main` on
+  2026-08-18.
+- `npm run build` and `npm test` both pass (15 tests, 5 files) — unaffected, since this
+  branch touched data and docs only, no `src/`.
+- Frontend state (routes, verified viewports, standing laws) is unchanged from the
+  `seamlessness` merge — see below.
 
 ## What's on screen
 
@@ -61,6 +79,9 @@ somewhere, so there was nothing left for it to report.
 - **`minSeats` is 1 in the friends lobby, 2 in the solo one.**
 - **`SeatList` is generalised** for typed `Seat`s (`you` / `human` / `bot`).
 - **Chat is the one scrolling region in the app.**
+- **Player positions are a hard gate** (new this session) — a footballer only ever fills
+  the one slot in `player_data.csv`'s Position column, no reassignment, no exceptions.
+  Relevant the moment the draft screen starts reading that column.
 
 ## Gotchas worth not rediscovering
 
@@ -72,6 +93,8 @@ somewhere, so there was nothing left for it to report.
 - **Asset paths in `src/` go through `import.meta.env.BASE_URL`**, never a leading slash.
 - **The page never scrolls.** `100dvh`, `overflow: hidden`. All routes hold it.
 - **`@theme static`**, not plain `@theme`.
+- **`player_data.csv`'s Position column is now a single unquoted value**, not a quoted
+  comma list — any future parser should expect e.g. `ST`, not `"RW, LW, ST"`.
 
 ## Standing laws (project-wide, don't reopen)
 
@@ -81,21 +104,29 @@ somewhere, so there was nothing left for it to report.
 3. **Only Oswald and Inter** — logos excepted (Bebas Neue is the wordmark, nowhere else).
 4. **Petrol is the palette.** Four primes, everything else via `color-mix`.
 5. **Never recolour a crest.** Full colour, unfiltered; the surface around it stays quiet.
-6. **No internal data on screen.** Pool counts, per-position depth, the CM gap, the
-   absence of a scoring system — none of it is the user's business.
+6. **No internal data on screen.** Pool counts, per-position depth, the absence of a
+   scoring system — none of it is the user's business, regardless of how healthy the
+   underlying data is.
 7. **No format is the default.** All four are equals; a screen with none chosen selects
    none.
 8. **Copy is professional, matter-of-fact, descriptive.**
-9. **Fake the functionality** — see the top of this file.
+9. **Fake the functionality** — see HANDOVER history; still governs the lobby screens.
 
 ## Next
 
-**The draft screen.** It is now the only thing in the app that says it doesn't exist, and
-both lobbies hand it a complete configuration — format, scope, the narrowed
-league/nation, constraint, timer, and the full table of seats with who's a human, who's a
-bot and who's the host.
+Two independent threads:
 
-After that, the real Firebase wiring behind the simulation: `lobbyPeople.ts` and the
-arrival timers in `MultiLobby.tsx` are the seam — replace them with a subscription and
-the rest of the screen shouldn't have to change. Bot decision logic stays deferred, and
-there's still no scoring system anywhere by design.
+1. **The draft screen** (frontend). Still the only thing in the app that says it doesn't
+   exist, and both lobbies hand it a complete configuration — format, scope, the
+   narrowed league/nation, constraint, timer, and the full table of seats with who's a
+   human, who's a bot and who's the host. This is also the first code that will actually
+   read `player_data.csv`'s Position column, so the hard-gate rule above becomes load-bearing
+   the moment it's built.
+2. **Position Reform, Round 4** (data/rules, whenever Mert wants it). Open: whether Free
+   Pick, Spin the Wheel, or Deal or No Deal — none of which have a graveyard — get any
+   post-draft-editing equivalent. Open Question #21 (Free Pick constraint deadlock) stays
+   flagged as unlikely-but-undefined; revisit if it turns out to matter.
+
+After the draft screen: real Firebase wiring behind the simulation — `lobbyPeople.ts` and
+the arrival timers in `MultiLobby.tsx` are the seam. Bot decision logic stays deferred,
+and there's still no scoring system anywhere by design.

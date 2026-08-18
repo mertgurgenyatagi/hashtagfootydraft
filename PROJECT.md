@@ -14,6 +14,11 @@ they informed (player pool calibration, Auction pricing formula) remain in force
 Player Current Ability calibration and the Derived Price / Auction Opening Bid formula
 are already baked into `player_data.csv`'s columns.
 
+Round 7 ran 2026-08-18 on the **`position-reform`** branch: every player's
+multi-position tag was replaced with a single canonical position, decided across two
+questionnaire rounds and applied to `player_data.csv` in one delivery. See Position
+Reform under Multi-Position Eligibility below.
+
 The frontend build began on 2026-08-15 (`frontend` branch). On 2026-08-17 the home
 page's visual direction was reopened on the **`frontend-retry`** branch, a 20-layout
 exhibition was built beside it (`mockups/home.html`), and layout **04 "The wall"** on the
@@ -551,17 +556,23 @@ Every draft is configured along three independent axes: **Format**, **Scope**, a
 #### Auction
 3 example players: John, Paul, Ringo. Each starts with a budget (e.g. 1B euros). A
 footballer comes up starting at a predetermined starting value (not 0). Players bid in
-real time; if no one bids, the footballer is gone. Highest bidder wins and can slot the
-footballer anywhere they're eligible in their current 11, and can rearrange their
-formation in real time.
+real time; if no one bids, the footballer is gone. Highest bidder wins. If the buyer has
+an open slot for that footballer's position, it fills the slot directly. If every slot
+for that position is already occupied, the purchase **overflows into the buyer's
+graveyard** instead — a holding area for purchased-but-unplaced footballers that only
+becomes relevant, and visible, once a buyer has an overflow purchase sitting in it. From
+there the buyer can swap it into that slot in place of whoever currently holds it,
+whenever they like. *(R7.2-Q1, overturning the graveyard-always framing settled in
+R7-Q5 — Mert changed his mind one round later)* It's a straight two-way swap: the
+footballer bumped out of the slot goes into the graveyard in turn. *(R7.3-Q2)* Since
+positions are a hard gate *(R7.3-Q1)*, "rearrange their formation" now means exactly
+this — swapping the graveyard against a slot — not moving a footballer to a slot
+they're not listed for.
 
-Every purchased footballer goes into the buyer's **graveyard** — a holding area of
-purchased-but-unused players, not substitutes, not part of the final list. Players
-place footballers from their graveyard into their formation as desired. The graveyard
-lets a player upgrade their lineup or block opponents from getting certain footballers.
-The graveyard is **unlimited** — no cap on how many footballers can sit in it, no extra
-cost beyond the winning bid. *(R1-Q7)* Bidding is **not gated by slot status** — a
-player with an already-full XI can keep bidding for graveyard upgrades or purely to
+The graveyard lets a player upgrade their lineup or block opponents from getting certain
+footballers, and is **unlimited** — no cap on how many footballers can sit in it, no
+extra cost beyond the winning bid. *(R1-Q7)* Bidding is **not gated by slot status** — a
+player with an already-full XI can keep bidding for graveyard overflow or purely to
 block opponents, right up until the auction ends. *(R5-Q6)*
 
 **Running low on money — backfill, not a reserve** *(R1-Q1 → overturned by R2-Q4)*: no
@@ -644,16 +655,26 @@ Footballers that would break a player's constraint are **filtered out of what th
 even select** during their turn, not just blocked on attempt. *(R5-Q2, R5-Q9)* A
 constraint is checked **per player's own squad only** — "1 per club" means *you*
 personally can't have two from the same club, it says nothing about what anyone else
-in the lobby ends up with. *(R6-Q3)* Whether the filter could ever leave a player with
-zero legal options for a position they still need is believed unlikely to happen in
-practice (given the pool's guaranteed position coverage); no explicit fallback rule is
-defined for that edge case yet. *(R6-Q4)*
+in the lobby ends up with. *(R6-Q3)*
+
+Since the position reform made positions a **hard gate** — a footballer only ever fills
+their one listed slot, no exceptions *(R7.3-Q1)* — the same filtering mechanism also
+removes any footballer whose designated slot is already full in the picker's own XI.
+There's no graveyard here to catch an overflow pick the way Auction does, so it's simply
+not offered. *(R7.3-Q3)* Whether the combination of that filter and the Constraint
+filter could ever leave a player with zero legal options for a position they still need
+is believed unlikely to happen in practice (given the pool's guaranteed position
+coverage) — reconsidered after the position reform removed the flexibility that
+judgment originally leaned on, and reconfirmed unchanged: still no explicit fallback
+rule defined for that edge case. *(R6-Q4, revisited and held at R7.3-Q4)*
 
 #### Spin the Wheel
 The wheel is **never mixed** — no single wheel has club slices next to league slices
 next to nationality slices. Every spin's wheel is entirely one category: all clubs, all
 leagues, or all nationalities. *(R4-Q6, overturning the mixed-wheel reading of R3-Q3)*
-Whichever single category is in play, the pick itself is a free pick in a snake draft.
+Whichever single category is in play, the pick itself is a free pick in a snake draft —
+including Free Pick's slot-full filtering above, since it's the same underlying pick.
+*(R7.3-Q3)*
 
 Which one category applies is still governed by Scope — whichever of **league / club /
 nationality** the current Scope *hasn't already fixed* is eligible to be the wheel's
@@ -713,7 +734,9 @@ produce a complete XI. *(R1-Q5)* This is already true by construction for Deal o
 Deal, Free Pick, and Spin the Wheel (each cycles exactly 11 times, one slot per turn).
 Auction is the only format that could otherwise leave gaps — it's covered by the
 backfill-with-cheapest-eligible-footballers rule above, not by preventing low-money
-bidding in the first place.
+bidding in the first place. Backfill targets empty slots by definition, so it always
+places directly into the 11 — it can't overflow into the graveyard the way a live
+purchase can. *(R7.2-Q1)*
 
 ### Turns & Timers
 Host-configurable per-turn/bid timer (a length can be set, or timers can be turned off
@@ -783,16 +806,86 @@ producing a **Derived Price (EURm)** for every player. **Auction opening bids** 
 `Derived Price × 0.7`, rounded to the nearest 5M, stored as **Opening Bid (EURm)**.
 
 ### Post-Draft Editing
-Once a draft ends, the **roster is locked** but players can still rearrange which
-already-drafted footballer sits in which formation slot (positioning only, no
-swapping/adding footballers). *(R1-Q10)*
+~~Once a draft ends, the roster is locked but players can still rearrange which
+already-drafted footballer sits in which formation slot.~~ **Narrowed 2026-08-18**: with
+positions a hard gate, no footballer can ever occupy a slot other than the one they're
+listed for, so there's nothing left to rearrange between slots. What survives is
+**graveyard swapping** — a player can keep swapping their own graveyard footballers
+against their XI after the draft ends, the same bump-swap mechanic as during Auction
+(above), just no longer time-limited by the draft being live. *(R1-Q10, narrowed by
+R7.3-Q5)* Free Pick, Spin the Wheel and Deal or No Deal have no graveyard, so it's
+unclear yet whether anything analogous to Post-Draft Editing exists for them at all —
+open, see Position Reform below.
 
-### Multi-Position Eligibility
-A footballer listed with several eligible positions (e.g. "AMF, RW, LW") still only
-fills **one slot**, and only counts as one pick — but which of their listed positions
-they occupy is **freely reassignable** afterward, consistent with the general
-real-time-reformation and post-draft-positioning rules above (not locked in at draft
-time). *(R3-Q8)*
+### Multi-Position Eligibility — retired
+
+~~A footballer listed with several eligible positions (e.g. "AMF, RW, LW") still only
+fills one slot, and only counts as one pick — but which of their listed positions they
+occupy is freely reassignable afterward.~~ **Retired 2026-08-18** by the Position Reform
+below (R7-Q4) — every player in `player_data.csv` now carries exactly one position, so
+there's nothing left to reassign among. Kept here, struck, as a record of what used to
+be true. *(R3-Q8, superseded)*
+
+### Position Reform (Round 7 — data complete, rule fallout still being worked out)
+
+`player_data.csv`'s Position column was rebuilt from multi-position tags to one
+canonical position per player, decided across three questionnaire rounds on 2026-08-18.
+All 546 players were replaced in a single delivery — the "however many batches it takes"
+possibility from R7-Q2 never materialized; Mert handed over the full pool at once as
+`player_single_position.csv` (`Name,Nation,Position`; ten formation-slot labels only,
+validated against the live data with zero invalid values). The original multi-position
+file is preserved at `player_data_multiposition_backup.csv`.
+
+Settled, Round 1 (R7):
+- **Destructive replacement** — the single listed position is now each player's only
+  Position value; no multi-tag data survives alongside it. *(R7-Q1)*
+- **Full remap was the goal and is what happened** — all 546 players got a canonical
+  position in this one delivery. *(R7-Q2)*
+- **Multi-Position Eligibility is retired outright** — see above. *(R7-Q4)*
+- Whether the reform specifically targeted the CM depth gap **was never answered** —
+  moot now the data's in: CM went from 10 to 93 either way. *(R7-Q3, declined)*
+
+Settled, Round 2 (R7.2) — the first bullet **supersedes R7-Q5**, decided one round
+earlier, which Mert reversed:
+- **Auction purchases go straight into an open slot by default.** A purchase only lands
+  in the graveyard if every slot for that position is already full — the graveyard is a
+  holding area for overflow, not the universal landing zone R7-Q5 first described. From
+  the graveyard, the buyer can swap a footballer into that slot in place of whoever's
+  holding it, whenever they like. *(R7.2-Q1)*
+- **The end-of-auction backfill (Squad Completion Guarantee) always places directly** —
+  it only ever targets empty slots, so it can never overflow. *(R7.2-Q1)*
+- **The graveyard-overflow rule stays Auction-specific** — Free Pick and Spin the Wheel
+  keep placing straight into a slot, no graveyard. *(R7.2-Q2)*
+- Whether the overflow rule was already live independent of the remap **went
+  unanswered** — moot now that every player has one position; there's no "unmapped"
+  state left for it to be conditional on. *(R7.2-Q3, unanswered, moot)*
+- Incoming positions matched the ten formation slots exactly, as promised — no
+  out-of-formation tags (LM/RM/LWB/RWB/CF) needed mapping. *(R7.2-Q4, confirmed against
+  the actual data)*
+- The "player nobody sends a position for" fallback (keep their multi-position tag
+  permanently) was **decided but never triggered** — every player arrived in this one
+  batch. *(R7.2-Q5)*
+- Scope/CM-table recomputation: Mert didn't care either way, so it was just done — see
+  the rebuilt table in Player Data below. *(R7.2-Q6)*
+
+Settled, Round 3 (R7.3) — what the reform actually does to placement, now that the data
+is in:
+- **Positions are a hard gate.** A footballer only ever fills the one slot they're
+  listed for — in any format, at draft time or after. Not a default a human can
+  override. *(R7.3-Q1)*
+- **Auction's graveyard swap is a straight two-way swap** — the footballer bumped out of
+  a slot goes into the graveyard, same as the one that displaced them once did. Folded
+  into the Auction rules above. *(R7.3-Q2)*
+- **Free Pick / Spin the Wheel filter out a footballer whose slot is already full**, the
+  same mechanism as the Constraint filter — there's no graveyard to catch it as an
+  overflow the way Auction does. *(R7.3-Q3)*
+- **Open Question #21 (constraint deadlock) was revisited and held** — the "unlikely in
+  practice" judgment survives the reform unchanged; still no fallback defined. *(R7.3-Q4)*
+- **Post-Draft Editing narrows to graveyard swapping** — rearranging which footballer
+  sits in which slot is impossible under a hard gate, so what survives is continuing to
+  swap graveyard footballers against the XI after the draft ends. Whether Free Pick,
+  Spin the Wheel or Deal or No Deal — none of which have a graveyard — get any
+  equivalent is **open**, carried to the next round. *(R7.3-Q5)*
 
 ## Player Data
 
@@ -803,36 +896,42 @@ leagues (Premier Division, Serie A, First Division, Bundesliga, Ligue 1) plus a 
 of high-ability players from other leagues (Saudi Pro League, MLS, Eredivisie, Sky Bet
 Championship, etc.).
 
-**Known gap — CM depth.** Only 10 footballers in the whole file list CM as an eligible
-position (8 of them inside the top 5 leagues); every other position has 39–146. Full
-per-position counts: AMF 146, LW 140, RW 138, CDM 125, CB 120, ST 119, LB 73, RB 59, GK 39,
-LM 14, RM 12, **CM 10**.
+**CM depth gap: resolved by the position reform.** Under the old multi-position tags,
+only 10 footballers listed CM as one of several eligible positions — a data hole that
+made three of the five single-league Scopes unseatable outright. The 2026-08-18 full
+remap to single positions (see Position Reform above) folded a lot of previously
+CDM/AMF-tagged players into CM, taking the pool-wide count from 10 to **93**. Full
+per-position counts now: CB 100, CM 93, ST 75, RW 48, LW 44, AMF 39, GK 39, RB 37,
+CDM 36, LB 35 (546 total). **The UI still does not surface any of this** — pool counts,
+per-position depth and Scope availability stay off screen regardless of how healthy the
+data is, per the standing no-internal-data-on-screen rule.
 
-**This is a data hole, not a product limitation, and the UI does not mention it.** Set by
-Mert, 2026-08-17: it will be fixed by adding CMs to the CSV, and until then no screen
-surfaces pool counts, per-position depth, or Scopes disabled on account of them. An
-earlier plan to render "Bundesliga · 0 CM" style disabled reasons in the lobby was
-dropped — it turns a to-do into something that looks permanent. Design as though the data
-is complete. The numbers below are for whoever fills the gap.
+The Scope max-drafter ceiling below used to be governed by CM everywhere; it no longer
+is. Recomputed per league across all ten slots (CB needs two per drafter, so its cap is
+`floor(count / 2)`):
 
-Every drafter needs exactly one CM, so a Scope's CM count is its drafter ceiling:
-
-| League (CSV name) | Players | CMs | Max drafters |
+| League (CSV name) | Players | Bottleneck slot | Max drafters |
 |---|---|---|---|
-| Serie A | 110 | 4 | 4 |
-| Premier Division | 167 | 3 | 3 |
-| First Division (La Liga) | 104 | 1 | **unusable** — below the 2-drafter minimum |
-| Bundesliga | 50 | 0 | **unusable** |
-| Ligue 1 Uber Eats | 32 | 0 | **unusable** |
+| Premier Division | 167 | LB (7) | 7 |
+| Serie A | 110 | LW (5) | 5 |
+| First Division (La Liga) | 104 | CDM (3) | 3 |
+| Bundesliga | 50 | GK (2) | 2 |
+| Ligue 1 Uber Eats | 32 | CB (3 → 1 pair) | **unusable** — below the 2-drafter minimum |
 
-So **three of the five single-league Scopes cannot seat a draft at all**, and the other two
-cap below the 5-drafter maximum. Nationality Scope has a related problem from a different
-direction: only 10 nations have 11+ players in the pool at all (Spain 73, England 61,
-France 45, Italy 43, Brazil 37, Germany 32, Portugal 26, Argentina 25, Netherlands 25,
-Uruguay 11), so most nationalities can't fill even one XI. No club reaches 11 either
-(Arsenal tops out at 20 players but a single club was never a Scope option).
+**Four of the five single-league Scopes can now seat a draft** — and Premier Division's
+and Serie A's ceilings sit above the game's own 2–5 lobby cap anyway, so neither is
+actually binding. Only **Ligue 1 Uber Eats stays unusable**: CB, its scarcest slot,
+clears just one drafter's worth. *(Recomputed here since the reform made the old table
+false; not something Mert asked for by name — R7.2-Q6 came back "I don't know and I
+don't care," read here as license to just fix it rather than open another round.)*
 
-Fixed by adding CMs to `player_data.csv`. Nothing about it belongs on screen.
+Nationality Scope's headcount problem is untouched by the reform — position tags don't
+change how many players carry a given nationality: still only 10 nations reach 11+
+players (Spain 73, England 61, France 45, Italy 43, Brazil 37, Germany 32, Portugal 26,
+Argentina 25, Netherlands 25, Uruguay 11), so most nationalities can't fill even one XI,
+and no club reaches 11 either (Arsenal tops out at 20, but a single club was never a
+Scope option). Per-position depth within those ten nations hasn't been checked and could
+narrow this further — nobody's asked for that pass yet.
 
 ## Open Questions Log
 
@@ -886,14 +985,26 @@ questionnaire is answered.
 ~~20. Constraint scope (per-squad vs. global)~~ Resolved R6-Q3: per-squad only.
 21. Free Pick constraint deadlock (filter leaves zero legal options for a needed slot)
     — believed unlikely in practice (R6-Q4), but no fallback rule is actually defined.
-    Revisit if it turns out to matter once pool-selection details (item 16) are nailed
-    down.
+    Revisited at R7.3-Q4 after the position reform removed the pool's positional
+    flexibility (the thing R6-Q4's "unlikely" leaned on) — judgment held unchanged,
+    still no fallback defined. Revisit again if it turns out to matter in practice.
 ~~22. Host transfer on disconnect~~ Resolved R6-Q6: auto-passes to next-earliest joiner.
 ~~23. Indefinite blocking bids in Auction~~ Resolved R6-Q7: intended, no cap.
 ~~24. AI proposer offer targeting~~ Resolved R6-Q8: flat/position-based, not per-player.
 ~~25. Squad-share export timing~~ Resolved R6-Q9: manually triggered.
 ~~26. Lobby carryover between back-to-back drafts~~ Resolved R6-Q10: nothing carries
     over, clean slate every time.
+27. Position Reform (R7): data applied 2026-08-18, destructive full remap to one
+    position per player in a single delivery (R7-Q1/Q2); Multi-Position Eligibility
+    retired (R7-Q4); Auction purchases direct-to-slot by default, graveyard only on
+    overflow as a straight two-way swap, Auction-specific, backfill always direct
+    (R7.2-Q1/Q2, R7.3-Q2, superseding R7-Q5); positions are a hard gate (R7.3-Q1); Free
+    Pick/Spin the Wheel filter a full-slot footballer out of selection (R7.3-Q3);
+    constraint-deadlock judgment reconfirmed (R6-Q4, R7.3-Q4); Post-Draft Editing
+    narrowed to graveyard swapping (R1-Q10, R7.3-Q5). CM-targeting (R7-Q3) and pre-remap
+    timing (R7.2-Q3) were never answered but are moot now the pool is fully remapped.
+    **Still open:** whether Free Pick, Spin the Wheel, or Deal or No Deal — none of which
+    have a graveyard — get any post-draft equivalent.
 
 ## Questionnaire Log
 
@@ -909,7 +1020,7 @@ This table is kept as a historical index of what each round covered.
 | 4 | Constraint enforcement, disconnect/reconnect timing, share image contents, wheel odds, lobby chat/privacy/spectators, pool freshness | Answered |
 | 5 | Wheel category timing, constraint scope clarification, share-image asset, format/scope selection, bot auto-fill, Auction bidding-after-full-XI, D-o-N-D rotation, graveyard visibility, lobby lifecycle | Answered |
 | 6 | Auction/D-o-N-D reveal-quality ordering, constraint scope (per-squad vs global), Free Pick constraint deadlocks, default timer length, host transfer, indefinite-blocking bidding, AI proposer targeting, share-image timing | Answered |
-| 7 | TBD | Pending |
+| 7 | Position reform: full remap to single positions, Multi-Position Eligibility retirement, Auction overflow-to-graveyard mechanic, hard-gate placement, Post-Draft Editing narrowed | In progress (3 rounds; Free Pick/Spin the Wheel/D-o-N-D post-draft equivalent still open) |
 | 8 | TBD | Not started |
 | 9 | TBD | Not started |
 | 10 | TBD | Not started |
