@@ -7,16 +7,28 @@ import { SectionLabel } from '../ui/SectionLabel'
  * chips. Nothing moves on hover — the border and the fill change, which is the
  * same promise the format tiles on the home page make.
  */
-export function chipClass(selected: boolean, readOnly = false) {
+/**
+ * `unavailable` is the table-too-big state: the option exists, this many
+ * drafters can't play it. It's drawn as a dashed hairline rather than a
+ * removed chip, so the row keeps its shape and the option stays legible as
+ * something you could have with fewer seats. A selection that *became*
+ * unavailable keeps its accent so it still reads as your choice — dashed, to
+ * show the choice no longer stands.
+ */
+export function chipClass(selected: boolean, readOnly = false, unavailable = false) {
   return [
     'rounded-[2px] border px-[clamp(0.5rem,1.2vw,1rem)] py-[var(--lobby-chip-py)]',
     'font-display text-[clamp(0.625rem,1vw,0.8125rem)] font-medium uppercase tracking-[0.08em]',
     'whitespace-nowrap transition-colors duration-150 ease-out',
-    selected
-      ? 'border-accent bg-accent-soft text-ink'
-      : readOnly
-        ? 'border-line text-faint'
-        : 'border-line text-muted hover:border-line-strong hover:text-ink',
+    unavailable
+      ? selected
+        ? 'border-dashed border-accent-line text-faint'
+        : 'border-dashed border-line text-faint'
+      : selected
+        ? 'border-accent bg-accent-soft text-ink'
+        : readOnly
+          ? 'border-line text-faint'
+          : 'border-line text-muted hover:border-line-strong hover:text-ink',
   ].join(' ')
 }
 
@@ -53,6 +65,10 @@ interface ChipGroupProps {
   children?: ReactNode
   /** The host's settings, seen from a guest's seat: shown, not offered. */
   readOnly?: boolean
+  /** Options this many drafters can't play. Shown, dashed, and not selectable. */
+  isUnavailable?: (id: string) => boolean
+  /** Appended to an unavailable chip's accessible name, e.g. "five at the table". */
+  unavailableHint?: string
   delayMs: number
 }
 
@@ -64,6 +80,8 @@ export function ChipGroup({
   note,
   children,
   readOnly = false,
+  isUnavailable,
+  unavailableHint,
   delayMs,
 }: ChipGroupProps) {
   return (
@@ -71,12 +89,18 @@ export function ChipGroup({
       <SectionLabel>{label}</SectionLabel>
 
       <div className="mt-[var(--lobby-chip-mt)] flex flex-wrap gap-[clamp(0.25rem,0.7vw,0.5rem)]">
-        {options.map((option) =>
-          readOnly ? (
+        {options.map((option) => {
+          const unavailable = isUnavailable?.(option.id) ?? false
+          const label = unavailable && unavailableHint
+            ? `${option.name} — not available with ${unavailableHint}`
+            : undefined
+
+          return readOnly ? (
             <span
               key={option.id}
               aria-current={option.id === value ? 'true' : undefined}
-              className={chipClass(option.id === value, true)}
+              aria-label={label}
+              className={chipClass(option.id === value, true, unavailable)}
             >
               {option.name}
             </span>
@@ -85,13 +109,15 @@ export function ChipGroup({
               key={option.id}
               type="button"
               aria-pressed={option.id === value}
+              aria-label={label}
+              disabled={unavailable}
               onClick={() => onChange(option.id)}
-              className={chipClass(option.id === value)}
+              className={chipClass(option.id === value, false, unavailable)}
             >
               {option.name}
             </button>
-          ),
-        )}
+          )
+        })}
       </div>
 
       {children}

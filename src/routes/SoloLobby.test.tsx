@@ -71,6 +71,41 @@ describe('SoloLobby', () => {
     expect(screen.getByRole('button', { name: 'Remove' })).toBeDisabled()
   })
 
+  it('withdraws options the table is too big for, and re-offers them when a seat is freed', async () => {
+    const user = userEvent.setup()
+    // Opens at four seats. No single league is deep enough to run Deal or No
+    // Deal for four drafters, so narrowing to one isn't on offer yet.
+    renderLobby('/solo/deal-or-no-deal')
+
+    expect(screen.getByRole('button', { name: /^One league/ })).toBeDisabled()
+
+    // Free two seats and it comes back — at two, a single league can seat it.
+    await user.click(screen.getAllByRole('button', { name: 'Remove' })[0])
+    await user.click(screen.getAllByRole('button', { name: 'Remove' })[0])
+
+    expect(screen.getByText('2 / 5 seats')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'One league' })).toBeEnabled()
+  })
+
+  it('names the setting that does not fit, and will not kick off while it stands', async () => {
+    const user = userEvent.setup()
+    renderLobby('/solo/free-pick')
+
+    // Top 5 leagues seats four under any constraint, so this starts playable.
+    expect(screen.getByRole('button', { name: /kick off/i })).toBeEnabled()
+
+    // One league, though, only seats four under the looser constraints — and
+    // the one already selected isn't one of them.
+    await user.click(screen.getByRole('button', { name: 'One league' }))
+
+    expect(screen.getByText(/1 per club doesn.t support four at the table/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /kick off/i })).toBeDisabled()
+
+    // Switching to a constraint that does fit clears it.
+    await user.click(screen.getByRole('button', { name: '3 per club' }))
+    expect(screen.getByRole('button', { name: /kick off/i })).toBeEnabled()
+  })
+
   it('is an honest dead end at kick off', async () => {
     const user = userEvent.setup()
     renderLobby('/solo/free-pick')

@@ -7,6 +7,18 @@ import { SeatList, type Seat } from '../components/lobby/SeatList'
 import { Button } from '../components/ui/Button'
 import { formats } from '../data/formats'
 import { MAX_SEATS, constraints, scopes, timers } from '../data/lobbyOptions'
+import {
+  effectiveSize,
+  hasDimmedOptions,
+  isConfigViable,
+  isConstraintAvailable,
+  isFormatAvailable,
+  isLeagueAvailable,
+  isScopeAvailable,
+  scopeKeyOf,
+  seatsPhrase,
+  unavailableReason,
+} from '../lib/draftViability'
 
 /** The space above a settings group, applied inside it so it collapses with it. */
 const GROUP_GAP = 'pt-[var(--lobby-gap)]'
@@ -38,7 +50,6 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
   )
   const [scope, setScope] = useState('top-5')
   const [league, setLeague] = useState('premier-league')
-  const [nation, setNation] = useState('England')
   const [constraint, setConstraint] = useState('club-1')
   const [timer, setTimer] = useState('15')
 
@@ -74,6 +85,26 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
 
   /** Constraints exist for Free Pick and are not offered anywhere else. */
   const takesConstraint = format === 'free-pick'
+
+  /**
+   * How many drafters the settings have to seat. Every option below is
+   * measured against this, so adding or removing a bot re-reads the panel.
+   */
+  const size = effectiveSize(seats.length)
+  const key = scopeKeyOf(scope, league)
+  const seatsHint = seatsPhrase(size)
+
+  const viable = isConfigViable(format, scope, league, constraint, size)
+  const reason = unavailableReason(format, scope, league, constraint, size)
+  const dimmed = hasDimmedOptions(format, scope, league, size)
+
+  const resting = !format
+    ? 'Pick a format to start.'
+    : reason
+      ? reason
+      : dimmed
+        ? `Dimmed options don’t support ${seatsHint}.`
+        : ''
 
   return (
     <LobbyLayout
@@ -120,6 +151,8 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
             options={formats}
             value={format}
             onChange={setFormat}
+            isUnavailable={(id) => !isFormatAvailable(id, size)}
+            unavailableHint={seatsHint}
             delayMs={260}
           />
 
@@ -129,14 +162,16 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
               options={scopes}
               value={scope}
               onChange={setScope}
+              isUnavailable={(id) => !isScopeAvailable(format, id, size)}
+              unavailableHint={seatsHint}
               delayMs={340}
             >
               <ScopeDetail
                 scope={scope}
                 league={league}
                 onLeagueChange={setLeague}
-                nation={nation}
-                onNationChange={setNation}
+                isLeagueUnavailable={(id) => !isLeagueAvailable(format, id, size)}
+                unavailableHint={seatsHint}
               />
             </ChipGroup>
           </div>
@@ -148,6 +183,8 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
                 options={constraints}
                 value={constraint}
                 onChange={setConstraint}
+                isUnavailable={(id) => !isConstraintAvailable(format, key, id, size)}
+                unavailableHint={seatsHint}
                 note="One per draft — constraints don't stack."
                 delayMs={420}
               />
@@ -165,7 +202,7 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
           </div>
         </>
       }
-      statusMessage={status || (format ? '' : 'Pick a format to start.')}
+      statusMessage={status || resting}
       statusKey={statusKey}
       backControl={
         <Link
@@ -178,7 +215,7 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
       actionControl={
         <Button
           variant="accent"
-          disabled={!format}
+          disabled={!viable}
           onClick={() => report('The draft screen isn’t built yet.')}
         >
           Kick off →

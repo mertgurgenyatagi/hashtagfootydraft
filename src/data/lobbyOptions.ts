@@ -8,12 +8,24 @@ export interface Choice {
   name: string
 }
 
-/** Four values, per the configuration rules. Two of them narrow further below. */
+/**
+ * Three values. The configuration rules also describe a fourth — one specific
+ * nationality — which was **withdrawn on 2026-08-18** rather than shipped
+ * disabled: simulating every configuration against the real pool showed no
+ * nationality can seat three drafters, and only one can seat two. A scope that
+ * is unusable at every table size worth offering isn't a narrowing, it's a
+ * dead end, so it isn't drawn at all.
+ *
+ * The per-nationality *constraints* are unaffected and still offered — those
+ * cap how many of one nationality a squad may hold, which is a different
+ * setting from scoping the whole pool to one country.
+ *
+ * Only `league` narrows further below.
+ */
 export const scopes: Choice[] = [
   { id: 'all', name: 'All players' },
   { id: 'top-5', name: 'Top 5 leagues' },
   { id: 'league', name: 'One league' },
-  { id: 'nation', name: 'One nation' },
 ]
 
 /**
@@ -45,74 +57,6 @@ export const timers: Choice[] = [
   { id: '30', name: '30 s' },
   { id: '60', name: '60 s' },
   { id: 'off', name: 'Off' },
-]
-
-/**
- * A select rather than chips: sixty-one of them is a list, not a row of
- * buttons. Alphabetical, straight out of the pool.
- */
-export const nations: string[] = [
-  'Algeria',
-  'Argentina',
-  'Armenia',
-  'Austria',
-  'Belgium',
-  'Bosnia & Herzegovina',
-  'Brazil',
-  'Burkina Faso',
-  'Cameroon',
-  'Canada',
-  'Central African Rep.',
-  'Colombia',
-  'Costa Rica',
-  'Croatia',
-  'Czechia',
-  'Denmark',
-  'Ecuador',
-  'Egypt',
-  'England',
-  'France',
-  'Georgia',
-  'Germany',
-  'Ghana',
-  'Greece',
-  'Guinea',
-  'Guinea-Bissau',
-  'Hungary',
-  'Iceland',
-  'Italy',
-  'Ivory Coast',
-  'Jamaica',
-  'Japan',
-  'Kosovo',
-  'Mali',
-  'Mexico',
-  'Montenegro',
-  'Morocco',
-  'Mozambique',
-  'Netherlands',
-  'Nigeria',
-  'North Macedonia',
-  'Norway',
-  'Poland',
-  'Portugal',
-  'Russia',
-  'Scotland',
-  'Senegal',
-  'Serbia',
-  'Slovakia',
-  'Slovenia',
-  'South Korea',
-  'Spain',
-  'Sweden',
-  'Switzerland',
-  'Tunisia',
-  'Türkiye',
-  'U.S.A.',
-  'Ukraine',
-  'Uruguay',
-  'Venezuela',
-  'Wales',
 ]
 
 /** Humans plus bots. The empty seats stay on screen either way. */

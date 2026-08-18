@@ -9,10 +9,22 @@ import { ScopeDetail } from '../components/lobby/ScopeDetail'
 import { SeatList, type Seat } from '../components/lobby/SeatList'
 import { Button } from '../components/ui/Button'
 import { formats } from '../data/formats'
-import { MAX_SEATS, MIN_SEATS, constraints, leagues, nations, scopes, timers } from '../data/lobbyOptions'
+import { MAX_SEATS, MIN_SEATS, constraints, leagues, scopes, timers } from '../data/lobbyOptions'
 import { CHATTER_DELAY, arrivalDelays, arrivalLines, people, type Person } from '../data/lobbyPeople'
 import { codeSeed, normaliseRoomCode } from '../lib/roomCode'
 import { readSession, writeSession, type LobbySession } from '../lib/lobbySession'
+import {
+  effectiveSize,
+  hasDimmedOptions,
+  isConfigViable,
+  isConstraintAvailable,
+  isFormatAvailable,
+  isLeagueAvailable,
+  isScopeAvailable,
+  scopeKeyOf,
+  seatsPhrase,
+  unavailableReason,
+} from '../lib/draftViability'
 
 /** The space above a settings group, applied inside it so it collapses with it. */
 const GROUP_GAP = 'pt-[var(--lobby-gap)]'
@@ -87,9 +99,6 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
   )
   const [league, setLeague] = useState(() =>
     session.host ? 'premier-league' : leagues[(seed >> 6) % leagues.length].id,
-  )
-  const [nation, setNation] = useState(() =>
-    session.host ? 'England' : nations[(seed >> 9) % nations.length],
   )
   const [constraint, setConstraint] = useState(() =>
     session.host ? 'club-1' : constraints[(seed >> 12) % constraints.length].id,
@@ -201,14 +210,32 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
   /** Constraints exist for Free Pick and are not offered anywhere else. */
   const takesConstraint = format === 'free-pick'
   const enoughSeats = seats.length >= MIN_SEATS
-  const canStart = session.host && Boolean(format) && enoughSeats
+
+  /**
+   * How many drafters the settings have to seat. People arrive on their own
+   * here, so a draft that was playable a moment ago can stop being playable
+   * when someone sits down — the panel re-reads itself as the table fills.
+   */
+  const size = effectiveSize(seats.length)
+  const key = scopeKeyOf(scope, league)
+  const seatsHint = seatsPhrase(size)
+
+  const viable = isConfigViable(format, scope, league, constraint, size)
+  const reason = unavailableReason(format, scope, league, constraint, size)
+  const dimmed = hasDimmedOptions(format, scope, league, size)
+
+  const canStart = session.host && enoughSeats && viable
 
   const resting = session.host
     ? !format
       ? 'Pick a format to start.'
       : !enoughSeats
         ? 'Two at the table to start — invite someone, or add a bot.'
-        : ''
+        : reason
+          ? reason
+          : dimmed
+            ? `Dimmed options don’t support ${seatsHint}.`
+            : ''
     : `Only ${hostName} can change the draft or start it.`
 
   return (
@@ -260,6 +287,8 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
             value={format}
             onChange={setFormat}
             readOnly={!session.host}
+            isUnavailable={(id) => !isFormatAvailable(id, size)}
+            unavailableHint={seatsHint}
             delayMs={260}
           />
 
@@ -270,15 +299,17 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
               value={scope}
               onChange={setScope}
               readOnly={!session.host}
+              isUnavailable={(id) => !isScopeAvailable(format, id, size)}
+              unavailableHint={seatsHint}
               delayMs={340}
             >
               <ScopeDetail
                 scope={scope}
                 league={league}
                 onLeagueChange={setLeague}
-                nation={nation}
-                onNationChange={setNation}
                 readOnly={!session.host}
+                isLeagueUnavailable={(id) => !isLeagueAvailable(format, id, size)}
+                unavailableHint={seatsHint}
               />
             </ChipGroup>
           </div>
@@ -291,6 +322,8 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
                 value={constraint}
                 onChange={setConstraint}
                 readOnly={!session.host}
+                isUnavailable={(id) => !isConstraintAvailable(format, key, id, size)}
+                unavailableHint={seatsHint}
                 note="One per draft — constraints don't stack."
                 delayMs={420}
               />

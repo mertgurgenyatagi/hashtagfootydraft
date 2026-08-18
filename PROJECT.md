@@ -15,9 +15,15 @@ Player Current Ability calibration and the Derived Price / Auction Opening Bid f
 are already baked into `player_data.csv`'s columns.
 
 Round 7 ran 2026-08-18 on the **`position-reform`** branch: every player's
-multi-position tag was replaced with a single canonical position, decided across two
+multi-position tag was replaced with a single canonical position, decided across three
 questionnaire rounds and applied to `player_data.csv` in one delivery. See Position
 Reform under Multi-Position Eligibility below.
+
+That reform made positions a hard gate, which in turn made it worth measuring which
+draft configurations can still be played at all. The **`draft-viability`** branch
+(2026-08-18) simulated every configuration against the real pool, withdrew the
+nationality Scope on the strength of it, and gated both lobby panels on the result —
+see **Draft Viability** below.
 
 The frontend build began on 2026-08-15 (`frontend` branch). On 2026-08-17 the home
 page's visual direction was reopened on the **`frontend-retry`** branch, a 20-layout
@@ -546,6 +552,33 @@ Verified in a browser at 1280×800, 1280×700, 768×568 and 320×568, host and g
 tallest possible state (Free Pick + One league, five seats). No scroll anywhere, no
 horizontal overflow, footer always above the fold.
 
+### Both lobbies: viability gating (2026-08-18)
+
+Both settings panels are now gated by what the table can actually seat — see Draft
+Viability below for the measurement behind it. Shared between the two screens:
+
+- `ChipGroup` takes `isUnavailable` / `unavailableHint`; an unavailable chip is dashed,
+  faint, `disabled`, and carries the seat count in its accessible name.
+- `ScopeDetail` does the same for the league crests. **Unavailability is drawn on the
+  chip *and* as a whole-control opacity** — the crest is dimmed with its chip rather
+  than treated on its own, so nothing is greyed, filtered or silhouetted and the badge
+  keeps every colour it has. A dashed hairline alone was tested and was far too quiet
+  at that size to read as "not on offer".
+- The seat count drives everything live, so a bot added or a person arriving
+  re-evaluates the panel. A selection that becomes unplayable keeps its accent but goes
+  dashed rather than snapping to something valid, and `Kick off` disables while it
+  stands.
+- The nation `<select>` is gone with the nationality Scope.
+
+**Gotcha worth not rediscovering:** the crest images need `min-h-0 min-w-0`. A grid
+item's automatic minimum size (`min-height: auto`) is content-based and, for a replaced
+element, clamps the height back *up* past an explicit `h-[64%]` using the image's
+intrinsic aspect ratio. Landscape and square marks are width-constrained so it never
+bites; the two portrait lockups (Serie A, Ligue 1) grew past the chip and clipped along
+its bottom edge. `mockups/crest-chip.html` reproduces it before/after at 6× with a
+measured readout, and `mockups/logo-centre.html` is the throwaway that ruled out the
+artwork itself being off-centre.
+
 ## Configuration Mechanics
 
 Every draft is configured along three independent axes: **Format**, **Scope**, and
@@ -679,10 +712,14 @@ including Free Pick's slot-full filtering above, since it's the same underlying 
 Which one category applies is still governed by Scope — whichever of **league / club /
 nationality** the current Scope *hasn't already fixed* is eligible to be the wheel's
 category: Scope = All players or Top 5 Leagues leaves all three eligible; one specific
-league fixes league, leaving clubs or nationalities as options; one specific nationality
-fixes nationality, leaving leagues or clubs. *(R3-Q3)* That category is picked **once,
-at the very start of the draft** — the whole draft uses that one category type
-throughout, it doesn't change between spins. *(R5-Q1)*
+league fixes league, leaving clubs or nationalities as options. *(R3-Q3)* That category
+is picked **once, at the very start of the draft** — the whole draft uses that one
+category type throughout, it doesn't change between spins. *(R5-Q1)*
+
+R3-Q3's fourth case — "one specific nationality fixes nationality, leaving leagues or
+clubs" — is **moot since the nationality Scope was withdrawn** (see Scope below). No
+Scope now fixes nationality, so the wheel's category is only ever narrowed by the
+single-league Scope.
 
 The wheel is spun before every pick. If the wheel lands on a category with no eligible
 footballers left, that turn **falls back to a free pick from the full remaining pool**
@@ -694,8 +731,16 @@ First pick order is a **random draw**, same as Free Pick. *(R2-Q6)* **No Constra
 support — that's Free Pick only. *(R5-Q2)*
 
 ### Scope
-Four values: **All players**, **Top 5 leagues**, **one specific league**, **one
-specific nationality**.
+~~Four values: **All players**, **Top 5 leagues**, **one specific league**, **one
+specific nationality**.~~
+
+**Three values as of 2026-08-18: All players, Top 5 leagues, one specific league.**
+One specific nationality was **withdrawn** — see Draft Viability below. Simulating
+every configuration against the real pool showed no nationality can seat three
+drafters and only one (Spain) can seat two, so it was cut rather than shipped
+permanently dimmed: a scope that fails at every table size worth offering is a dead
+end, not a narrowing. The per-nationality **constraints** are a different setting and
+are unaffected.
 
 ### Constraints
 Four possible values: **1 per club**, **3 per club**, **1 per nationality**, **3 per
@@ -930,8 +975,104 @@ change how many players carry a given nationality: still only 10 nations reach 1
 players (Spain 73, England 61, France 45, Italy 43, Brazil 37, Germany 32, Portugal 26,
 Argentina 25, Netherlands 25, Uruguay 11), so most nationalities can't fill even one XI,
 and no club reaches 11 either (Arsenal tops out at 20, but a single club was never a
-Scope option). Per-position depth within those ten nations hasn't been checked and could
-narrow this further — nobody's asked for that pass yet.
+Scope option). **That per-position pass has since been done — see Draft Viability
+below, and it was much worse than the headcounts suggested.**
+
+## Draft Viability
+
+**Not every configuration can actually be played.** Established 2026-08-18, after the
+position reform, by simulating every configuration against the real pool rather than
+reasoning about it. Both lobbies now offer only what the table in front of them can
+seat.
+
+### Why it needed measuring
+
+Headcount was never the real constraint, and the old per-league table in Player Data
+above was wrong about which position binds. Two things decide whether a draft can
+finish:
+
+1. **Supply at the scarcest position.** With every footballer now filling exactly one
+   slot, a Scope needs `lobbySize` players at each of the ten slots (two per drafter at
+   CB). The binding slot differs per Scope and is rarely the one you'd guess.
+2. **Constraint deadlock.** Under Free Pick a per-squad constraint can strand a drafter
+   partway through — their own earlier picks leave them with no legal footballer for a
+   slot they still need, even while the pool still holds players at that position.
+   This is Open Question #21, and it is **not** the theoretical edge case R6-Q4 and
+   R7.3-Q4 both judged it to be.
+
+### The simulation
+
+`scripts/simulate_draft_configs.mjs` runs every configuration in
+`draft_config_permutations.csv` (2,176 rows: 4 formats × 68 scopes × constraints ×
+lobby sizes 2–5) against `player_data.csv`, up to 50,000 simulated drafts each,
+flagging and skipping a configuration the moment one run hits a shortage. Results land
+in `draft_config_simulation_results.csv`.
+
+The script's header comments record exactly what each format models and — more
+importantly — what it deliberately doesn't invent: Auction has no bidding strategy
+(bot decision logic is still deferred), so it's a neutral direct-to-slot baseline and
+comes out fully deterministic; Spin the Wheel is modelled as an unrestricted free pick,
+which its dry-category fallback makes a fair, slightly conservative proxy; Deal or No
+Deal doesn't model the AI proposer's offered player, because its resourcing isn't
+specced. **Don't read those parts as rules** — they're stand-ins chosen so the
+simulation doesn't fabricate mechanics.
+
+Run depth mattered: 500 runs proved deadlocks exist, 5,000 caught two more
+configurations that 500 had missed. **5,000 is the authoritative pass**; the 500-run
+results are kept alongside as `draft_config_simulation_results_500.csv` for comparison.
+
+### What it found
+
+- **114 of 2,176 configurations survive** (5.2%).
+- **Viability is strictly monotonic in lobby size** — a configuration that fails at N
+  fails at every size above N. Verified at generation time, and it's what lets the
+  shipped data compress to one number per configuration.
+- **Constraint deadlocks are real.** Several configurations pass 500/500 with no
+  constraint but fail with one — and fail dozens of runs in, not on the first, which is
+  what distinguishes a genuine deadlock from plain insufficient supply (e.g. First
+  Division · 3 per club · 2 drafters failed on run 96; Premier Division · 1 per club ·
+  2 drafters on run 47). Open Question #21 should be considered **demonstrated, not
+  hypothetical**.
+- **Nationality Scope is unusable** — no nationality seats three drafters; only Spain
+  seats two. This is what got the Scope withdrawn.
+- **Four of five single-league Scopes fail at five drafters.** Only Premier Division
+  and Serie A hold at a full table.
+- **All four formats survive at every lobby size**, so the no-house-favourite rule is
+  never broken by availability.
+
+### What ships
+
+`scripts/generate_viability_data.mjs` turns the results CSV into
+`src/data/draftViability.ts` — one number per `format|scope|constraint` triple: the
+largest table it still completes at, absent meaning never. It drops the nationality
+rows (unreachable now the Scope is gone) and re-verifies monotonicity, throwing if it
+ever breaks. 34 entries.
+
+`src/lib/draftViability.ts` is the lookup the lobbies use. Regenerate with
+`node scripts/generate_viability_data.mjs` after any re-run of the simulation, and note
+that **`player_data.csv` changing invalidates all of it** — the whole chain has to be
+re-run.
+
+Two things the data deliberately does not cover: **Free Pick with no constraint at
+all** is simulated (and is more permissive than any of the four constraints — it's the
+only thing that makes Serie A work at five) but the lobby has no chip for it, so
+availability maths ignores it rather than advertising room a host can't reach. And
+lobby sizes below two aren't modelled, so the lobby judges a one-seat table as if it
+were two.
+
+### On screen
+
+The rule from Copy still holds: **none of the above reaches the user.** No pool counts,
+no per-position depth, no talk of simulations. A configuration the table can't seat is
+drawn dashed and faint and can't be selected; the status line names the one setting
+that doesn't fit ("1 per club doesn't support four at the table") or, failing that,
+says dimmed options don't support this many. That's the whole vocabulary — how many
+seats an option supports, never why.
+
+Everything re-reads live off the seat count, so adding a bot or somebody arriving in
+the friends lobby re-evaluates the panel. A selection that *becomes* unplayable keeps
+its accent but goes dashed rather than silently snapping to something valid, and
+`Kick off` is disabled while it stands.
 
 ## Open Questions Log
 
@@ -983,11 +1124,17 @@ questionnaire is answered.
 ~~18. Auction reveal ordering~~ Resolved R6-Q1: fully random.
 ~~19. D-o-N-D box quality~~ Resolved R6-Q2: follows the same pool-wide skew.
 ~~20. Constraint scope (per-squad vs. global)~~ Resolved R6-Q3: per-squad only.
-21. Free Pick constraint deadlock (filter leaves zero legal options for a needed slot)
-    — believed unlikely in practice (R6-Q4), but no fallback rule is actually defined.
-    Revisited at R7.3-Q4 after the position reform removed the pool's positional
-    flexibility (the thing R6-Q4's "unlikely" leaned on) — judgment held unchanged,
-    still no fallback defined. Revisit again if it turns out to matter in practice.
+21. **Free Pick constraint deadlock — OPEN, and no longer hypothetical.** A drafter's
+    own earlier picks can leave them with zero legal options for a slot they still
+    need. Judged "unlikely in practice" twice (R6-Q4, and again at R7.3-Q4 after the
+    position reform), both times without measuring it. The viability simulation
+    (Draft Viability above) then **demonstrated it**: configurations that pass 500/500
+    unconstrained fail with a constraint, dozens of runs in.
+    The lobby currently sidesteps this by refusing to offer the configurations where it
+    was observed, which is containment, not a rule — **there is still no defined
+    in-draft fallback for a deadlock that happens anyway**, and the simulation only
+    covers the configurations the lobby offers. Worth a decision: auto-waive the
+    constraint for one pick, pause for the host, or something else.
 ~~22. Host transfer on disconnect~~ Resolved R6-Q6: auto-passes to next-earliest joiner.
 ~~23. Indefinite blocking bids in Auction~~ Resolved R6-Q7: intended, no cap.
 ~~24. AI proposer offer targeting~~ Resolved R6-Q8: flat/position-based, not per-player.
