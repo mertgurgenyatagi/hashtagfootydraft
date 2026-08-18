@@ -1171,7 +1171,7 @@ questionnaire is answered.
 ~~26. Lobby carryover between back-to-back drafts~~ Resolved R6-Q10: nothing carries
     over, clean slate every time.
 ~~27. Post-Draft Editing for graveyard-less formats~~ Resolved R8-Q2: Free Pick, Spin the Wheel, and Deal or No Deal squads are permanently locked upon draft completion — no post-draft player changes.
-28. AI Bot ML Architecture & Training Specification: Model design, state representation, action space, and self-play RL training protocol. (In progress, Round 8+).
+28. AI Bot ML Architecture & Training Specification: Training for Deal or No Deal, Spin the Wheel, and Free Pick is fully complete, and models are exported. Auction training is pending a complete implementation from scratch. (In progress).
 
 ## Questionnaire Log
 

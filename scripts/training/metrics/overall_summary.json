@@ -1,0 +1,3674 @@
+{
+  "formats": {
+    "auction": {
+      "format": "auction",
+      "completed_drafts": 29952,
+      "total_drafts": 100000000,
+      "progress_pct": 0.03,
+      "drafts_per_sec": 3.8,
+      "avg_squad_score": 1648.4,
+      "champion_generation": 17,
+      "challenger_win_rate": 31.0,
+      "loss": -0.0525,
+      "entropy": 0.9374,
+      "status": "training",
+      "timestamp": 1787073703.2388277,
+      "history": [
+        {
+          "drafts": 32500,
+          "score": 1635.9,
+          "win_rate": 33.0,
+          "loss": -0.0473,
+          "entropy": 0.9839,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 33000,
+          "score": 1645.8,
+          "win_rate": 27.0,
+          "loss": -0.0479,
+          "entropy": 0.988,
+          "champ_gen": 17,
+          "speed": 4.1
+        },
+        {
+          "drafts": 33500,
+          "score": 1647.4,
+          "win_rate": 21.0,
+          "loss": -0.0478,
+          "entropy": 0.9789,
+          "champ_gen": 17,
+          "speed": 4.1
+        },
+        {
+          "drafts": 34000,
+          "score": 1638.7,
+          "win_rate": 27.0,
+          "loss": -0.0467,
+          "entropy": 1.0056,
+          "champ_gen": 17,
+          "speed": 4.1
+        },
+        {
+          "drafts": 34500,
+          "score": 1644.9,
+          "win_rate": 18.0,
+          "loss": -0.0482,
+          "entropy": 0.9794,
+          "champ_gen": 17,
+          "speed": 4.1
+        },
+        {
+          "drafts": 500,
+          "score": 1618.8,
+          "win_rate": 2.0,
+          "loss": -0.0616,
+          "entropy": 1.2422,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 1000,
+          "score": 1620.4,
+          "win_rate": 2.0,
+          "loss": -0.0498,
+          "entropy": 1.1847,
+          "champ_gen": 17,
+          "speed": 3.4
+        },
+        {
+          "drafts": 1500,
+          "score": 1636.0,
+          "win_rate": 5.0,
+          "loss": -0.0527,
+          "entropy": 1.0819,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 2000,
+          "score": 1641.0,
+          "win_rate": 10.0,
+          "loss": -0.0471,
+          "entropy": 1.0064,
+          "champ_gen": 17,
+          "speed": 3.9
+        },
+        {
+          "drafts": 2500,
+          "score": 1649.1,
+          "win_rate": 7.0,
+          "loss": -0.044,
+          "entropy": 0.9918,
+          "champ_gen": 17,
+          "speed": 4.0
+        },
+        {
+          "drafts": 3000,
+          "score": 1647.2,
+          "win_rate": 9.0,
+          "loss": -0.0461,
+          "entropy": 0.9518,
+          "champ_gen": 17,
+          "speed": 4.1
+        },
+        {
+          "drafts": 3500,
+          "score": 1655.4,
+          "win_rate": 6.0,
+          "loss": -0.043,
+          "entropy": 0.9141,
+          "champ_gen": 17,
+          "speed": 4.1
+        },
+        {
+          "drafts": 4000,
+          "score": 1649.4,
+          "win_rate": 8.0,
+          "loss": -0.0417,
+          "entropy": 0.9502,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 4500,
+          "score": 1654.4,
+          "win_rate": 6.0,
+          "loss": -0.0418,
+          "entropy": 0.953,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 5000,
+          "score": 1659.6,
+          "win_rate": 5.0,
+          "loss": -0.0464,
+          "entropy": 0.9156,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 5500,
+          "score": 1654.6,
+          "win_rate": 6.0,
+          "loss": -0.0413,
+          "entropy": 0.9547,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 6000,
+          "score": 1655.3,
+          "win_rate": 5.0,
+          "loss": -0.0462,
+          "entropy": 0.9401,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 6500,
+          "score": 1658.4,
+          "win_rate": 8.0,
+          "loss": -0.0466,
+          "entropy": 0.9136,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 7000,
+          "score": 1654.2,
+          "win_rate": 13.0,
+          "loss": -0.0453,
+          "entropy": 0.9109,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 7500,
+          "score": 1659.5,
+          "win_rate": 7.0,
+          "loss": -0.0433,
+          "entropy": 0.906,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 8000,
+          "score": 1656.7,
+          "win_rate": 3.0,
+          "loss": -0.0462,
+          "entropy": 0.8863,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 8500,
+          "score": 1652.5,
+          "win_rate": 6.0,
+          "loss": -0.0441,
+          "entropy": 0.9327,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 9000,
+          "score": 1642.2,
+          "win_rate": 5.0,
+          "loss": -0.0402,
+          "entropy": 0.9654,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 9500,
+          "score": 1650.5,
+          "win_rate": 7.0,
+          "loss": -0.0471,
+          "entropy": 0.9575,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 10000,
+          "score": 1650.0,
+          "win_rate": 10.0,
+          "loss": -0.0438,
+          "entropy": 0.9577,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 10500,
+          "score": 1647.6,
+          "win_rate": 5.0,
+          "loss": -0.0427,
+          "entropy": 0.927,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 11000,
+          "score": 1656.5,
+          "win_rate": 2.0,
+          "loss": -0.0424,
+          "entropy": 0.926,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 11500,
+          "score": 1653.1,
+          "win_rate": 3.0,
+          "loss": -0.0424,
+          "entropy": 0.9326,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 12000,
+          "score": 1654.7,
+          "win_rate": 5.0,
+          "loss": -0.0406,
+          "entropy": 0.9371,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 12500,
+          "score": 1660.3,
+          "win_rate": 8.0,
+          "loss": -0.0463,
+          "entropy": 0.9309,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 13000,
+          "score": 1659.1,
+          "win_rate": 6.0,
+          "loss": -0.0453,
+          "entropy": 0.9247,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 13500,
+          "score": 1651.1,
+          "win_rate": 5.0,
+          "loss": -0.0401,
+          "entropy": 0.9187,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 14000,
+          "score": 1656.2,
+          "win_rate": 6.0,
+          "loss": -0.0433,
+          "entropy": 0.8998,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 14500,
+          "score": 1658.3,
+          "win_rate": 6.0,
+          "loss": -0.0414,
+          "entropy": 0.9028,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 15000,
+          "score": 1654.1,
+          "win_rate": 9.0,
+          "loss": -0.0433,
+          "entropy": 0.8794,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 15500,
+          "score": 1658.8,
+          "win_rate": 9.0,
+          "loss": -0.0442,
+          "entropy": 0.9124,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 16000,
+          "score": 1654.6,
+          "win_rate": 12.0,
+          "loss": -0.0439,
+          "entropy": 0.9054,
+          "champ_gen": 17,
+          "speed": 4.2
+        },
+        {
+          "drafts": 16500,
+          "score": 1653.6,
+          "win_rate": 5.0,
+          "loss": -0.044,
+          "entropy": 0.9387,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 17000,
+          "score": 1656.3,
+          "win_rate": 8.0,
+          "loss": -0.0464,
+          "entropy": 0.9354,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 17500,
+          "score": 1654.5,
+          "win_rate": 5.0,
+          "loss": -0.0422,
+          "entropy": 0.9445,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 18000,
+          "score": 1658.5,
+          "win_rate": 3.0,
+          "loss": -0.0454,
+          "entropy": 0.8985,
+          "champ_gen": 17,
+          "speed": 4.3
+        },
+        {
+          "drafts": 500,
+          "score": 1609.1,
+          "win_rate": 10.0,
+          "loss": -0.057,
+          "entropy": 1.2126,
+          "champ_gen": 17,
+          "speed": 3.9
+        },
+        {
+          "drafts": 1000,
+          "score": 1625.1,
+          "win_rate": 24.0,
+          "loss": -0.0615,
+          "entropy": 1.1781,
+          "champ_gen": 17,
+          "speed": 4.0
+        },
+        {
+          "drafts": 1500,
+          "score": 1629.7,
+          "win_rate": 23.0,
+          "loss": -0.0552,
+          "entropy": 1.1026,
+          "champ_gen": 17,
+          "speed": 3.9
+        },
+        {
+          "drafts": 2000,
+          "score": 1646.1,
+          "win_rate": 12.0,
+          "loss": -0.0492,
+          "entropy": 0.9958,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 2500,
+          "score": 1655.6,
+          "win_rate": 2.0,
+          "loss": -0.0465,
+          "entropy": 0.9418,
+          "champ_gen": 17,
+          "speed": 3.4
+        },
+        {
+          "drafts": 3000,
+          "score": 1644.1,
+          "win_rate": 17.0,
+          "loss": -0.0397,
+          "entropy": 0.9616,
+          "champ_gen": 17,
+          "speed": 3.3
+        },
+        {
+          "drafts": 3500,
+          "score": 1647.0,
+          "win_rate": 33.0,
+          "loss": -0.045,
+          "entropy": 0.9664,
+          "champ_gen": 17,
+          "speed": 3.3
+        },
+        {
+          "drafts": 4000,
+          "score": 1652.1,
+          "win_rate": 38.0,
+          "loss": -0.0448,
+          "entropy": 0.9658,
+          "champ_gen": 17,
+          "speed": 3.3
+        },
+        {
+          "drafts": 4500,
+          "score": 1640.5,
+          "win_rate": 40.0,
+          "loss": -0.0455,
+          "entropy": 0.978,
+          "champ_gen": 17,
+          "speed": 3.4
+        },
+        {
+          "drafts": 5000,
+          "score": 1650.8,
+          "win_rate": 30.0,
+          "loss": -0.0455,
+          "entropy": 0.974,
+          "champ_gen": 17,
+          "speed": 3.4
+        },
+        {
+          "drafts": 5500,
+          "score": 1650.5,
+          "win_rate": 27.0,
+          "loss": -0.0459,
+          "entropy": 0.9664,
+          "champ_gen": 17,
+          "speed": 3.5
+        },
+        {
+          "drafts": 6000,
+          "score": 1658.5,
+          "win_rate": 39.0,
+          "loss": -0.0476,
+          "entropy": 0.9532,
+          "champ_gen": 17,
+          "speed": 3.5
+        },
+        {
+          "drafts": 6500,
+          "score": 1653.0,
+          "win_rate": 47.0,
+          "loss": -0.0417,
+          "entropy": 0.9686,
+          "champ_gen": 17,
+          "speed": 3.5
+        },
+        {
+          "drafts": 7000,
+          "score": 1648.8,
+          "win_rate": 42.0,
+          "loss": -0.0475,
+          "entropy": 0.994,
+          "champ_gen": 17,
+          "speed": 3.5
+        },
+        {
+          "drafts": 7500,
+          "score": 1649.0,
+          "win_rate": 37.0,
+          "loss": -0.0459,
+          "entropy": 0.977,
+          "champ_gen": 17,
+          "speed": 3.6
+        },
+        {
+          "drafts": 8000,
+          "score": 1645.5,
+          "win_rate": 31.0,
+          "loss": -0.0394,
+          "entropy": 0.9896,
+          "champ_gen": 17,
+          "speed": 3.6
+        },
+        {
+          "drafts": 8500,
+          "score": 1650.1,
+          "win_rate": 44.0,
+          "loss": -0.0465,
+          "entropy": 0.9601,
+          "champ_gen": 17,
+          "speed": 3.6
+        },
+        {
+          "drafts": 9000,
+          "score": 1649.4,
+          "win_rate": 27.0,
+          "loss": -0.0466,
+          "entropy": 0.9573,
+          "champ_gen": 17,
+          "speed": 3.6
+        },
+        {
+          "drafts": 9500,
+          "score": 1649.2,
+          "win_rate": 32.0,
+          "loss": -0.0429,
+          "entropy": 0.9552,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 10000,
+          "score": 1648.7,
+          "win_rate": 45.0,
+          "loss": -0.0438,
+          "entropy": 0.9685,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 10500,
+          "score": 1649.8,
+          "win_rate": 22.0,
+          "loss": -0.041,
+          "entropy": 0.9535,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 11000,
+          "score": 1660.3,
+          "win_rate": 31.0,
+          "loss": -0.0442,
+          "entropy": 0.9372,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 11500,
+          "score": 1652.4,
+          "win_rate": 20.0,
+          "loss": -0.0442,
+          "entropy": 0.9084,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 12000,
+          "score": 1650.7,
+          "win_rate": 23.0,
+          "loss": -0.0452,
+          "entropy": 0.9224,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 12500,
+          "score": 1658.5,
+          "win_rate": 20.0,
+          "loss": -0.0446,
+          "entropy": 0.9441,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 13000,
+          "score": 1652.3,
+          "win_rate": 17.0,
+          "loss": -0.0435,
+          "entropy": 0.9311,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 13500,
+          "score": 1649.9,
+          "win_rate": 10.0,
+          "loss": -0.0436,
+          "entropy": 0.9667,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 14000,
+          "score": 1647.0,
+          "win_rate": 16.0,
+          "loss": -0.0458,
+          "entropy": 0.9547,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 14500,
+          "score": 1646.9,
+          "win_rate": 24.0,
+          "loss": -0.0435,
+          "entropy": 0.963,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 15000,
+          "score": 1645.6,
+          "win_rate": 15.0,
+          "loss": -0.0417,
+          "entropy": 0.9605,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 15500,
+          "score": 1653.8,
+          "win_rate": 29.0,
+          "loss": -0.0437,
+          "entropy": 0.9423,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 16000,
+          "score": 1653.3,
+          "win_rate": 24.0,
+          "loss": -0.0429,
+          "entropy": 0.9099,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 16500,
+          "score": 1650.0,
+          "win_rate": 19.0,
+          "loss": -0.0445,
+          "entropy": 0.9144,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 17000,
+          "score": 1655.8,
+          "win_rate": 20.0,
+          "loss": -0.0446,
+          "entropy": 0.9078,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 17500,
+          "score": 1663.6,
+          "win_rate": 24.0,
+          "loss": -0.0464,
+          "entropy": 0.8676,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 18000,
+          "score": 1660.2,
+          "win_rate": 17.0,
+          "loss": -0.0418,
+          "entropy": 0.8956,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 18500,
+          "score": 1657.9,
+          "win_rate": 10.0,
+          "loss": -0.0437,
+          "entropy": 0.8973,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 19000,
+          "score": 1653.4,
+          "win_rate": 15.0,
+          "loss": -0.0443,
+          "entropy": 0.9021,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 19500,
+          "score": 1644.0,
+          "win_rate": 14.0,
+          "loss": -0.0399,
+          "entropy": 0.9374,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 20000,
+          "score": 1653.8,
+          "win_rate": 19.0,
+          "loss": -0.0442,
+          "entropy": 0.8873,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 20500,
+          "score": 1650.7,
+          "win_rate": 16.0,
+          "loss": -0.0517,
+          "entropy": 0.9315,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 21000,
+          "score": 1648.9,
+          "win_rate": 25.0,
+          "loss": -0.0558,
+          "entropy": 0.9377,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 21500,
+          "score": 1654.7,
+          "win_rate": 5.0,
+          "loss": -0.0539,
+          "entropy": 0.9324,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 22000,
+          "score": 1651.5,
+          "win_rate": 23.0,
+          "loss": -0.0525,
+          "entropy": 0.9422,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 22500,
+          "score": 1648.3,
+          "win_rate": 13.0,
+          "loss": -0.0524,
+          "entropy": 0.942,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 23000,
+          "score": 1650.8,
+          "win_rate": 22.0,
+          "loss": -0.0553,
+          "entropy": 0.9398,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 23500,
+          "score": 1652.0,
+          "win_rate": 32.0,
+          "loss": -0.0532,
+          "entropy": 0.9226,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 24000,
+          "score": 1649.1,
+          "win_rate": 28.0,
+          "loss": -0.0538,
+          "entropy": 0.935,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 24500,
+          "score": 1655.3,
+          "win_rate": 34.0,
+          "loss": -0.0536,
+          "entropy": 0.916,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 25000,
+          "score": 1650.0,
+          "win_rate": 18.0,
+          "loss": -0.0518,
+          "entropy": 0.9105,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 25500,
+          "score": 1648.6,
+          "win_rate": 23.0,
+          "loss": -0.0501,
+          "entropy": 0.9004,
+          "champ_gen": 17,
+          "speed": 3.7
+        },
+        {
+          "drafts": 26000,
+          "score": 1651.9,
+          "win_rate": 24.0,
+          "loss": -0.0517,
+          "entropy": 0.9301,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 26500,
+          "score": 1657.7,
+          "win_rate": 19.0,
+          "loss": -0.0551,
+          "entropy": 0.9194,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 27000,
+          "score": 1645.6,
+          "win_rate": 15.0,
+          "loss": -0.0524,
+          "entropy": 0.9584,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 27500,
+          "score": 1649.3,
+          "win_rate": 21.0,
+          "loss": -0.057,
+          "entropy": 0.9526,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 28000,
+          "score": 1645.8,
+          "win_rate": 21.0,
+          "loss": -0.055,
+          "entropy": 0.9516,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 28500,
+          "score": 1656.2,
+          "win_rate": 10.0,
+          "loss": -0.0549,
+          "entropy": 0.9389,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 29000,
+          "score": 1657.1,
+          "win_rate": 26.0,
+          "loss": -0.0548,
+          "entropy": 0.9227,
+          "champ_gen": 17,
+          "speed": 3.8
+        },
+        {
+          "drafts": 29500,
+          "score": 1645.9,
+          "win_rate": 31.0,
+          "loss": -0.0542,
+          "entropy": 0.9149,
+          "champ_gen": 17,
+          "speed": 3.8
+        }
+      ]
+    },
+    "dond": {
+      "format": "dond",
+      "completed_drafts": 75008,
+      "total_drafts": 100000000,
+      "progress_pct": 0.08,
+      "drafts_per_sec": 9.5,
+      "avg_squad_score": 1679.8,
+      "champion_generation": 70,
+      "challenger_win_rate": 56.0,
+      "loss": 1.1498,
+      "entropy": 0.2498,
+      "status": "training",
+      "timestamp": 1787073734.622693,
+      "history": [
+        {
+          "drafts": 25500,
+          "score": 1678.9,
+          "win_rate": 56.0,
+          "loss": 1.0383,
+          "entropy": 0.284,
+          "champ_gen": 57,
+          "speed": 10.0
+        },
+        {
+          "drafts": 26000,
+          "score": 1678.4,
+          "win_rate": 54.0,
+          "loss": 0.8122,
+          "entropy": 0.3241,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 26500,
+          "score": 1677.3,
+          "win_rate": 45.0,
+          "loss": 0.8996,
+          "entropy": 0.2843,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 27000,
+          "score": 1679.1,
+          "win_rate": 44.0,
+          "loss": 1.003,
+          "entropy": 0.2741,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 27500,
+          "score": 1677.9,
+          "win_rate": 47.0,
+          "loss": 0.9173,
+          "entropy": 0.2831,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 28000,
+          "score": 1678.8,
+          "win_rate": 42.0,
+          "loss": 1.0102,
+          "entropy": 0.2612,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 28500,
+          "score": 1680.4,
+          "win_rate": 47.0,
+          "loss": 0.9401,
+          "entropy": 0.2653,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 29000,
+          "score": 1677.5,
+          "win_rate": 48.0,
+          "loss": 0.8734,
+          "entropy": 0.2869,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 29500,
+          "score": 1680.4,
+          "win_rate": 48.0,
+          "loss": 1.0752,
+          "entropy": 0.294,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 30000,
+          "score": 1678.4,
+          "win_rate": 51.0,
+          "loss": 0.9571,
+          "entropy": 0.2868,
+          "champ_gen": 58,
+          "speed": 10.0
+        },
+        {
+          "drafts": 30500,
+          "score": 1677.4,
+          "win_rate": 62.0,
+          "loss": 0.8758,
+          "entropy": 0.3733,
+          "champ_gen": 59,
+          "speed": 10.0
+        },
+        {
+          "drafts": 31000,
+          "score": 1677.0,
+          "win_rate": 47.0,
+          "loss": 0.912,
+          "entropy": 0.258,
+          "champ_gen": 59,
+          "speed": 10.0
+        },
+        {
+          "drafts": 31500,
+          "score": 1678.6,
+          "win_rate": 48.0,
+          "loss": 1.0756,
+          "entropy": 0.2921,
+          "champ_gen": 59,
+          "speed": 10.0
+        },
+        {
+          "drafts": 32000,
+          "score": 1678.9,
+          "win_rate": 52.0,
+          "loss": 0.973,
+          "entropy": 0.2449,
+          "champ_gen": 59,
+          "speed": 10.0
+        },
+        {
+          "drafts": 32500,
+          "score": 1678.7,
+          "win_rate": 53.0,
+          "loss": 0.9152,
+          "entropy": 0.2845,
+          "champ_gen": 59,
+          "speed": 10.0
+        },
+        {
+          "drafts": 33000,
+          "score": 1678.8,
+          "win_rate": 50.0,
+          "loss": 0.9662,
+          "entropy": 0.2788,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 33500,
+          "score": 1680.3,
+          "win_rate": 55.0,
+          "loss": 0.9838,
+          "entropy": 0.2577,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 34000,
+          "score": 1677.1,
+          "win_rate": 52.0,
+          "loss": 1.0534,
+          "entropy": 0.3019,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 34500,
+          "score": 1678.1,
+          "win_rate": 53.0,
+          "loss": 0.8804,
+          "entropy": 0.2723,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 35000,
+          "score": 1679.8,
+          "win_rate": 49.0,
+          "loss": 0.97,
+          "entropy": 0.2809,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 35500,
+          "score": 1676.6,
+          "win_rate": 47.0,
+          "loss": 0.9692,
+          "entropy": 0.3226,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 36000,
+          "score": 1678.2,
+          "win_rate": 41.0,
+          "loss": 0.9821,
+          "entropy": 0.2927,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 36500,
+          "score": 1678.6,
+          "win_rate": 50.0,
+          "loss": 0.7979,
+          "entropy": 0.3082,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 37000,
+          "score": 1679.3,
+          "win_rate": 50.0,
+          "loss": 0.9665,
+          "entropy": 0.3167,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 37500,
+          "score": 1679.8,
+          "win_rate": 44.0,
+          "loss": 0.8156,
+          "entropy": 0.2557,
+          "champ_gen": 59,
+          "speed": 9.8
+        },
+        {
+          "drafts": 38000,
+          "score": 1677.3,
+          "win_rate": 45.0,
+          "loss": 1.0867,
+          "entropy": 0.277,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 38500,
+          "score": 1678.1,
+          "win_rate": 47.0,
+          "loss": 0.9872,
+          "entropy": 0.2721,
+          "champ_gen": 59,
+          "speed": 9.9
+        },
+        {
+          "drafts": 39000,
+          "score": 1677.5,
+          "win_rate": 38.0,
+          "loss": 0.9789,
+          "entropy": 0.2291,
+          "champ_gen": 59,
+          "speed": 9.8
+        },
+        {
+          "drafts": 39500,
+          "score": 1679.4,
+          "win_rate": 50.0,
+          "loss": 0.9342,
+          "entropy": 0.2827,
+          "champ_gen": 59,
+          "speed": 9.8
+        },
+        {
+          "drafts": 40000,
+          "score": 1679.7,
+          "win_rate": 46.0,
+          "loss": 0.9181,
+          "entropy": 0.3108,
+          "champ_gen": 59,
+          "speed": 9.8
+        },
+        {
+          "drafts": 40500,
+          "score": 1678.6,
+          "win_rate": 53.0,
+          "loss": 0.9845,
+          "entropy": 0.2881,
+          "champ_gen": 59,
+          "speed": 9.8
+        },
+        {
+          "drafts": 41000,
+          "score": 1678.8,
+          "win_rate": 43.0,
+          "loss": 0.917,
+          "entropy": 0.2714,
+          "champ_gen": 59,
+          "speed": 9.8
+        },
+        {
+          "drafts": 41500,
+          "score": 1679.5,
+          "win_rate": 56.0,
+          "loss": 1.1138,
+          "entropy": 0.2964,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 42000,
+          "score": 1677.7,
+          "win_rate": 35.0,
+          "loss": 1.1176,
+          "entropy": 0.281,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 42500,
+          "score": 1676.5,
+          "win_rate": 53.0,
+          "loss": 1.0178,
+          "entropy": 0.28,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 43000,
+          "score": 1677.9,
+          "win_rate": 50.0,
+          "loss": 0.9001,
+          "entropy": 0.284,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 43500,
+          "score": 1675.7,
+          "win_rate": 48.0,
+          "loss": 1.0147,
+          "entropy": 0.3175,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 44000,
+          "score": 1677.1,
+          "win_rate": 43.0,
+          "loss": 0.9425,
+          "entropy": 0.3077,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 44500,
+          "score": 1676.5,
+          "win_rate": 53.0,
+          "loss": 0.8855,
+          "entropy": 0.3056,
+          "champ_gen": 60,
+          "speed": 9.8
+        },
+        {
+          "drafts": 45000,
+          "score": 1677.2,
+          "win_rate": 57.0,
+          "loss": 0.8554,
+          "entropy": 0.3004,
+          "champ_gen": 61,
+          "speed": 9.7
+        },
+        {
+          "drafts": 45500,
+          "score": 1680.0,
+          "win_rate": 53.0,
+          "loss": 0.8196,
+          "entropy": 0.2656,
+          "champ_gen": 61,
+          "speed": 9.8
+        },
+        {
+          "drafts": 46000,
+          "score": 1678.2,
+          "win_rate": 51.0,
+          "loss": 0.96,
+          "entropy": 0.2882,
+          "champ_gen": 61,
+          "speed": 9.7
+        },
+        {
+          "drafts": 46500,
+          "score": 1680.5,
+          "win_rate": 51.0,
+          "loss": 0.997,
+          "entropy": 0.2617,
+          "champ_gen": 61,
+          "speed": 9.7
+        },
+        {
+          "drafts": 47000,
+          "score": 1678.7,
+          "win_rate": 53.0,
+          "loss": 0.9353,
+          "entropy": 0.3014,
+          "champ_gen": 61,
+          "speed": 9.7
+        },
+        {
+          "drafts": 47500,
+          "score": 1677.9,
+          "win_rate": 55.0,
+          "loss": 0.956,
+          "entropy": 0.2849,
+          "champ_gen": 62,
+          "speed": 9.7
+        },
+        {
+          "drafts": 48000,
+          "score": 1676.5,
+          "win_rate": 58.0,
+          "loss": 1.0348,
+          "entropy": 0.2882,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 48500,
+          "score": 1678.5,
+          "win_rate": 48.0,
+          "loss": 1.0116,
+          "entropy": 0.2423,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 49000,
+          "score": 1677.2,
+          "win_rate": 50.0,
+          "loss": 0.9642,
+          "entropy": 0.2713,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 49500,
+          "score": 1676.8,
+          "win_rate": 47.0,
+          "loss": 0.8476,
+          "entropy": 0.3034,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 50000,
+          "score": 1678.8,
+          "win_rate": 42.0,
+          "loss": 0.8623,
+          "entropy": 0.3038,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 50500,
+          "score": 1676.9,
+          "win_rate": 49.0,
+          "loss": 0.9462,
+          "entropy": 0.3203,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 51000,
+          "score": 1681.0,
+          "win_rate": 51.0,
+          "loss": 0.9216,
+          "entropy": 0.2735,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 51500,
+          "score": 1679.3,
+          "win_rate": 40.0,
+          "loss": 0.8727,
+          "entropy": 0.3205,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 52000,
+          "score": 1676.8,
+          "win_rate": 53.0,
+          "loss": 0.9627,
+          "entropy": 0.3088,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 52500,
+          "score": 1677.4,
+          "win_rate": 47.0,
+          "loss": 0.8545,
+          "entropy": 0.3026,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 53000,
+          "score": 1680.4,
+          "win_rate": 51.0,
+          "loss": 1.024,
+          "entropy": 0.2536,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 53500,
+          "score": 1677.4,
+          "win_rate": 50.0,
+          "loss": 0.9923,
+          "entropy": 0.2529,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 54000,
+          "score": 1680.5,
+          "win_rate": 45.0,
+          "loss": 1.0849,
+          "entropy": 0.2653,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 54500,
+          "score": 1677.3,
+          "win_rate": 45.0,
+          "loss": 0.9516,
+          "entropy": 0.2892,
+          "champ_gen": 63,
+          "speed": 9.7
+        },
+        {
+          "drafts": 55000,
+          "score": 1678.9,
+          "win_rate": 54.0,
+          "loss": 0.9717,
+          "entropy": 0.3109,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 55500,
+          "score": 1678.5,
+          "win_rate": 46.0,
+          "loss": 0.9084,
+          "entropy": 0.277,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 56000,
+          "score": 1679.6,
+          "win_rate": 45.0,
+          "loss": 0.7979,
+          "entropy": 0.3109,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 56500,
+          "score": 1679.1,
+          "win_rate": 52.0,
+          "loss": 1.0141,
+          "entropy": 0.3019,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 57000,
+          "score": 1680.0,
+          "win_rate": 45.0,
+          "loss": 0.8701,
+          "entropy": 0.244,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 57500,
+          "score": 1677.7,
+          "win_rate": 51.0,
+          "loss": 0.9043,
+          "entropy": 0.2962,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 58000,
+          "score": 1677.8,
+          "win_rate": 52.0,
+          "loss": 0.9768,
+          "entropy": 0.2969,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 58500,
+          "score": 1678.4,
+          "win_rate": 41.0,
+          "loss": 0.8268,
+          "entropy": 0.275,
+          "champ_gen": 64,
+          "speed": 9.7
+        },
+        {
+          "drafts": 59000,
+          "score": 1679.4,
+          "win_rate": 59.0,
+          "loss": 1.0146,
+          "entropy": 0.2665,
+          "champ_gen": 65,
+          "speed": 9.7
+        },
+        {
+          "drafts": 59500,
+          "score": 1680.6,
+          "win_rate": 44.0,
+          "loss": 0.9437,
+          "entropy": 0.2498,
+          "champ_gen": 65,
+          "speed": 9.7
+        },
+        {
+          "drafts": 60000,
+          "score": 1678.1,
+          "win_rate": 56.0,
+          "loss": 1.0969,
+          "entropy": 0.294,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 60500,
+          "score": 1680.6,
+          "win_rate": 51.0,
+          "loss": 0.9173,
+          "entropy": 0.2548,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 61000,
+          "score": 1679.4,
+          "win_rate": 48.0,
+          "loss": 0.8107,
+          "entropy": 0.2461,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 61500,
+          "score": 1680.2,
+          "win_rate": 40.0,
+          "loss": 0.9853,
+          "entropy": 0.2737,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 62000,
+          "score": 1676.7,
+          "win_rate": 48.0,
+          "loss": 0.992,
+          "entropy": 0.2852,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 62500,
+          "score": 1679.3,
+          "win_rate": 49.0,
+          "loss": 1.0753,
+          "entropy": 0.2709,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 63000,
+          "score": 1677.7,
+          "win_rate": 35.0,
+          "loss": 1.0726,
+          "entropy": 0.3348,
+          "champ_gen": 66,
+          "speed": 9.7
+        },
+        {
+          "drafts": 63500,
+          "score": 1675.0,
+          "win_rate": 45.0,
+          "loss": 1.0468,
+          "entropy": 0.3502,
+          "champ_gen": 66,
+          "speed": 9.6
+        },
+        {
+          "drafts": 64000,
+          "score": 1679.1,
+          "win_rate": 52.0,
+          "loss": 0.9804,
+          "entropy": 0.2378,
+          "champ_gen": 66,
+          "speed": 9.6
+        },
+        {
+          "drafts": 64500,
+          "score": 1679.3,
+          "win_rate": 52.0,
+          "loss": 0.9489,
+          "entropy": 0.253,
+          "champ_gen": 66,
+          "speed": 9.6
+        },
+        {
+          "drafts": 65000,
+          "score": 1679.6,
+          "win_rate": 45.0,
+          "loss": 0.8613,
+          "entropy": 0.256,
+          "champ_gen": 66,
+          "speed": 9.6
+        },
+        {
+          "drafts": 65500,
+          "score": 1677.9,
+          "win_rate": 46.0,
+          "loss": 1.0171,
+          "entropy": 0.2945,
+          "champ_gen": 66,
+          "speed": 9.6
+        },
+        {
+          "drafts": 66000,
+          "score": 1677.4,
+          "win_rate": 56.0,
+          "loss": 0.8736,
+          "entropy": 0.3081,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 66500,
+          "score": 1677.9,
+          "win_rate": 44.0,
+          "loss": 0.7512,
+          "entropy": 0.2931,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 67000,
+          "score": 1675.7,
+          "win_rate": 52.0,
+          "loss": 0.752,
+          "entropy": 0.2661,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 67500,
+          "score": 1678.8,
+          "win_rate": 54.0,
+          "loss": 1.0354,
+          "entropy": 0.2658,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 68000,
+          "score": 1676.0,
+          "win_rate": 50.0,
+          "loss": 0.8569,
+          "entropy": 0.3183,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 68500,
+          "score": 1676.1,
+          "win_rate": 50.0,
+          "loss": 0.8793,
+          "entropy": 0.3206,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 69000,
+          "score": 1679.2,
+          "win_rate": 47.0,
+          "loss": 1.0212,
+          "entropy": 0.3048,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 69500,
+          "score": 1677.6,
+          "win_rate": 44.0,
+          "loss": 0.9912,
+          "entropy": 0.3207,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 70000,
+          "score": 1677.1,
+          "win_rate": 48.0,
+          "loss": 0.9882,
+          "entropy": 0.2886,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 70500,
+          "score": 1680.5,
+          "win_rate": 46.0,
+          "loss": 0.8399,
+          "entropy": 0.2927,
+          "champ_gen": 67,
+          "speed": 9.6
+        },
+        {
+          "drafts": 71000,
+          "score": 1678.3,
+          "win_rate": 60.0,
+          "loss": 0.9219,
+          "entropy": 0.3229,
+          "champ_gen": 68,
+          "speed": 9.6
+        },
+        {
+          "drafts": 71500,
+          "score": 1679.1,
+          "win_rate": 58.0,
+          "loss": 1.1046,
+          "entropy": 0.255,
+          "champ_gen": 69,
+          "speed": 9.6
+        },
+        {
+          "drafts": 72000,
+          "score": 1678.7,
+          "win_rate": 51.0,
+          "loss": 1.029,
+          "entropy": 0.2969,
+          "champ_gen": 69,
+          "speed": 9.6
+        },
+        {
+          "drafts": 72500,
+          "score": 1679.4,
+          "win_rate": 54.0,
+          "loss": 1.0073,
+          "entropy": 0.254,
+          "champ_gen": 69,
+          "speed": 9.6
+        },
+        {
+          "drafts": 73000,
+          "score": 1679.2,
+          "win_rate": 43.0,
+          "loss": 1.0021,
+          "entropy": 0.2718,
+          "champ_gen": 69,
+          "speed": 9.6
+        },
+        {
+          "drafts": 73500,
+          "score": 1679.3,
+          "win_rate": 44.0,
+          "loss": 0.9963,
+          "entropy": 0.2758,
+          "champ_gen": 69,
+          "speed": 9.6
+        },
+        {
+          "drafts": 74000,
+          "score": 1676.0,
+          "win_rate": 46.0,
+          "loss": 0.9678,
+          "entropy": 0.2793,
+          "champ_gen": 69,
+          "speed": 9.5
+        },
+        {
+          "drafts": 74500,
+          "score": 1680.3,
+          "win_rate": 52.0,
+          "loss": 0.9964,
+          "entropy": 0.2508,
+          "champ_gen": 69,
+          "speed": 9.5
+        },
+        {
+          "drafts": 75000,
+          "score": 1679.8,
+          "win_rate": 56.0,
+          "loss": 0.8906,
+          "entropy": 0.257,
+          "champ_gen": 70,
+          "speed": 9.5
+        }
+      ]
+    },
+    "free_pick": {
+      "format": "free_pick",
+      "completed_drafts": 70976,
+      "total_drafts": 100000000,
+      "progress_pct": 0.07,
+      "drafts_per_sec": 9.0,
+      "avg_squad_score": 1801.1,
+      "champion_generation": 11,
+      "challenger_win_rate": 62.0,
+      "loss": 0.1792,
+      "entropy": 0.6594,
+      "status": "training",
+      "timestamp": 1787073730.91122,
+      "history": [
+        {
+          "drafts": 21000,
+          "score": 1787.5,
+          "win_rate": 42.0,
+          "loss": 2.5026,
+          "entropy": 0.9322,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 21500,
+          "score": 1798.4,
+          "win_rate": 46.0,
+          "loss": 1.2113,
+          "entropy": 0.9687,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 22000,
+          "score": 1788.0,
+          "win_rate": 48.0,
+          "loss": 0.8879,
+          "entropy": 0.9814,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 22500,
+          "score": 1796.4,
+          "win_rate": 41.0,
+          "loss": 0.9424,
+          "entropy": 0.9594,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 23000,
+          "score": 1797.5,
+          "win_rate": 44.0,
+          "loss": 1.1533,
+          "entropy": 0.9367,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 23500,
+          "score": 1786.5,
+          "win_rate": 41.0,
+          "loss": 0.496,
+          "entropy": 0.9433,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 24000,
+          "score": 1783.9,
+          "win_rate": 47.0,
+          "loss": 0.98,
+          "entropy": 0.8934,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 24500,
+          "score": 1808.6,
+          "win_rate": 29.0,
+          "loss": 0.3457,
+          "entropy": 0.94,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 25000,
+          "score": 1784.8,
+          "win_rate": 35.0,
+          "loss": 0.3175,
+          "entropy": 0.8977,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 25500,
+          "score": 1798.4,
+          "win_rate": 37.0,
+          "loss": 0.1933,
+          "entropy": 0.9058,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 26000,
+          "score": 1798.7,
+          "win_rate": 42.0,
+          "loss": 0.61,
+          "entropy": 0.9123,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 26500,
+          "score": 1789.1,
+          "win_rate": 45.0,
+          "loss": 1.6066,
+          "entropy": 0.922,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 27000,
+          "score": 1793.4,
+          "win_rate": 49.0,
+          "loss": 0.5614,
+          "entropy": 0.9574,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 27500,
+          "score": 1813.8,
+          "win_rate": 56.0,
+          "loss": 0.2172,
+          "entropy": 0.9469,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 28000,
+          "score": 1799.5,
+          "win_rate": 38.0,
+          "loss": 0.7812,
+          "entropy": 0.9182,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 28500,
+          "score": 1795.9,
+          "win_rate": 54.0,
+          "loss": 0.5676,
+          "entropy": 0.8772,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 29000,
+          "score": 1783.5,
+          "win_rate": 41.0,
+          "loss": 0.5777,
+          "entropy": 0.8365,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 29500,
+          "score": 1782.7,
+          "win_rate": 59.0,
+          "loss": 0.9734,
+          "entropy": 0.8749,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 30000,
+          "score": 1785.5,
+          "win_rate": 48.0,
+          "loss": 1.3038,
+          "entropy": 0.8886,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 30500,
+          "score": 1809.3,
+          "win_rate": 40.0,
+          "loss": 0.3276,
+          "entropy": 0.8865,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 31000,
+          "score": 1803.3,
+          "win_rate": 40.0,
+          "loss": 0.4639,
+          "entropy": 0.8598,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 31500,
+          "score": 1800.3,
+          "win_rate": 42.0,
+          "loss": 0.649,
+          "entropy": 0.9132,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 32000,
+          "score": 1797.9,
+          "win_rate": 42.0,
+          "loss": 0.3835,
+          "entropy": 0.8496,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 32500,
+          "score": 1793.6,
+          "win_rate": 55.0,
+          "loss": 1.3818,
+          "entropy": 0.8385,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 33000,
+          "score": 1790.0,
+          "win_rate": 52.0,
+          "loss": 0.6941,
+          "entropy": 0.8719,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 33500,
+          "score": 1801.0,
+          "win_rate": 65.0,
+          "loss": 0.9356,
+          "entropy": 0.8417,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 34000,
+          "score": 1791.4,
+          "win_rate": 61.0,
+          "loss": 1.3034,
+          "entropy": 0.8014,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 34500,
+          "score": 1799.2,
+          "win_rate": 70.0,
+          "loss": 0.5196,
+          "entropy": 0.8417,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 35000,
+          "score": 1795.9,
+          "win_rate": 56.0,
+          "loss": 0.3203,
+          "entropy": 0.8093,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 35500,
+          "score": 1799.0,
+          "win_rate": 56.0,
+          "loss": 0.2835,
+          "entropy": 0.8491,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 36000,
+          "score": 1786.0,
+          "win_rate": 55.0,
+          "loss": 1.3072,
+          "entropy": 0.7866,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 36500,
+          "score": 1791.2,
+          "win_rate": 58.0,
+          "loss": 0.4106,
+          "entropy": 0.7933,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 37000,
+          "score": 1793.5,
+          "win_rate": 49.0,
+          "loss": 0.1481,
+          "entropy": 0.8442,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 37500,
+          "score": 1792.0,
+          "win_rate": 50.0,
+          "loss": 2.1467,
+          "entropy": 0.752,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 38000,
+          "score": 1793.9,
+          "win_rate": 48.0,
+          "loss": 0.5245,
+          "entropy": 0.7953,
+          "champ_gen": 11,
+          "speed": 9.2
+        },
+        {
+          "drafts": 38500,
+          "score": 1795.7,
+          "win_rate": 50.0,
+          "loss": 1.7583,
+          "entropy": 0.7999,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 39000,
+          "score": 1792.2,
+          "win_rate": 61.0,
+          "loss": 0.5711,
+          "entropy": 0.7753,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 39500,
+          "score": 1806.4,
+          "win_rate": 52.0,
+          "loss": 0.9381,
+          "entropy": 0.8134,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 40000,
+          "score": 1805.7,
+          "win_rate": 60.0,
+          "loss": 0.27,
+          "entropy": 0.7574,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 40500,
+          "score": 1787.9,
+          "win_rate": 68.0,
+          "loss": 0.3916,
+          "entropy": 0.7735,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 41000,
+          "score": 1798.3,
+          "win_rate": 53.0,
+          "loss": 0.7274,
+          "entropy": 0.8234,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 41500,
+          "score": 1791.0,
+          "win_rate": 25.0,
+          "loss": 0.9165,
+          "entropy": 0.7918,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 42000,
+          "score": 1793.6,
+          "win_rate": 58.0,
+          "loss": 0.7499,
+          "entropy": 0.7508,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 42500,
+          "score": 1782.5,
+          "win_rate": 54.0,
+          "loss": 0.2876,
+          "entropy": 0.7533,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 43000,
+          "score": 1787.0,
+          "win_rate": 41.0,
+          "loss": 0.7335,
+          "entropy": 0.7711,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 43500,
+          "score": 1791.6,
+          "win_rate": 39.0,
+          "loss": 0.5197,
+          "entropy": 0.7848,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 44000,
+          "score": 1789.7,
+          "win_rate": 49.0,
+          "loss": 1.1092,
+          "entropy": 0.7408,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 44500,
+          "score": 1799.6,
+          "win_rate": 57.0,
+          "loss": 0.9652,
+          "entropy": 0.7731,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 45000,
+          "score": 1791.7,
+          "win_rate": 53.0,
+          "loss": 0.813,
+          "entropy": 0.7682,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 45500,
+          "score": 1789.8,
+          "win_rate": 60.0,
+          "loss": 1.5022,
+          "entropy": 0.7645,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 46000,
+          "score": 1792.6,
+          "win_rate": 38.0,
+          "loss": 0.6716,
+          "entropy": 0.7918,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 46500,
+          "score": 1791.5,
+          "win_rate": 43.0,
+          "loss": 1.4103,
+          "entropy": 0.7783,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 47000,
+          "score": 1794.9,
+          "win_rate": 53.0,
+          "loss": 0.6697,
+          "entropy": 0.7364,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 47500,
+          "score": 1803.2,
+          "win_rate": 67.0,
+          "loss": 0.8756,
+          "entropy": 0.7992,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 48000,
+          "score": 1809.4,
+          "win_rate": 55.0,
+          "loss": 0.2136,
+          "entropy": 0.7775,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 48500,
+          "score": 1803.6,
+          "win_rate": 58.0,
+          "loss": 0.3052,
+          "entropy": 0.7596,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 49000,
+          "score": 1804.8,
+          "win_rate": 50.0,
+          "loss": 1.3066,
+          "entropy": 0.7455,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 49500,
+          "score": 1805.0,
+          "win_rate": 59.0,
+          "loss": 0.6158,
+          "entropy": 0.716,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 50000,
+          "score": 1782.1,
+          "win_rate": 61.0,
+          "loss": 1.1822,
+          "entropy": 0.7436,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 50500,
+          "score": 1784.1,
+          "win_rate": 56.0,
+          "loss": 0.5363,
+          "entropy": 0.7441,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 51000,
+          "score": 1797.1,
+          "win_rate": 62.0,
+          "loss": 0.4819,
+          "entropy": 0.7445,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 51500,
+          "score": 1806.0,
+          "win_rate": 65.0,
+          "loss": 0.5171,
+          "entropy": 0.7327,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 52000,
+          "score": 1801.5,
+          "win_rate": 59.0,
+          "loss": 0.7028,
+          "entropy": 0.7169,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 52500,
+          "score": 1783.9,
+          "win_rate": 69.0,
+          "loss": 1.1353,
+          "entropy": 0.7118,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 53000,
+          "score": 1803.4,
+          "win_rate": 58.0,
+          "loss": 0.2987,
+          "entropy": 0.7449,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 53500,
+          "score": 1792.2,
+          "win_rate": 60.0,
+          "loss": 0.3838,
+          "entropy": 0.757,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 54000,
+          "score": 1787.2,
+          "win_rate": 63.0,
+          "loss": 0.8295,
+          "entropy": 0.7096,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 54500,
+          "score": 1804.7,
+          "win_rate": 58.0,
+          "loss": 0.125,
+          "entropy": 0.7548,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 55000,
+          "score": 1794.4,
+          "win_rate": 53.0,
+          "loss": 1.0515,
+          "entropy": 0.7487,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 55500,
+          "score": 1798.3,
+          "win_rate": 67.0,
+          "loss": 0.6432,
+          "entropy": 0.7039,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 56000,
+          "score": 1795.5,
+          "win_rate": 65.0,
+          "loss": 1.1821,
+          "entropy": 0.7339,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 56500,
+          "score": 1793.7,
+          "win_rate": 64.0,
+          "loss": 0.8441,
+          "entropy": 0.7284,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 57000,
+          "score": 1783.2,
+          "win_rate": 51.0,
+          "loss": 1.0413,
+          "entropy": 0.7785,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 57500,
+          "score": 1795.6,
+          "win_rate": 51.0,
+          "loss": 0.6592,
+          "entropy": 0.7375,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 58000,
+          "score": 1804.2,
+          "win_rate": 51.0,
+          "loss": 0.128,
+          "entropy": 0.7245,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 58500,
+          "score": 1794.0,
+          "win_rate": 67.0,
+          "loss": 0.8657,
+          "entropy": 0.7405,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 59000,
+          "score": 1784.8,
+          "win_rate": 61.0,
+          "loss": 0.5641,
+          "entropy": 0.7408,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 59500,
+          "score": 1796.0,
+          "win_rate": 59.0,
+          "loss": 0.6519,
+          "entropy": 0.7309,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 60000,
+          "score": 1784.5,
+          "win_rate": 56.0,
+          "loss": 1.4246,
+          "entropy": 0.7708,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 60500,
+          "score": 1794.5,
+          "win_rate": 63.0,
+          "loss": 1.2667,
+          "entropy": 0.8024,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 61000,
+          "score": 1786.1,
+          "win_rate": 61.0,
+          "loss": 0.7898,
+          "entropy": 0.7395,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 61500,
+          "score": 1810.0,
+          "win_rate": 67.0,
+          "loss": 0.8455,
+          "entropy": 0.745,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 62000,
+          "score": 1794.6,
+          "win_rate": 59.0,
+          "loss": 1.385,
+          "entropy": 0.7712,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 62500,
+          "score": 1790.3,
+          "win_rate": 54.0,
+          "loss": 0.8836,
+          "entropy": 0.7526,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 63000,
+          "score": 1797.7,
+          "win_rate": 54.0,
+          "loss": 1.6992,
+          "entropy": 0.6974,
+          "champ_gen": 11,
+          "speed": 9.1
+        },
+        {
+          "drafts": 63500,
+          "score": 1807.1,
+          "win_rate": 66.0,
+          "loss": 0.6038,
+          "entropy": 0.7357,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 64000,
+          "score": 1804.3,
+          "win_rate": 58.0,
+          "loss": 1.2762,
+          "entropy": 0.7166,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 64500,
+          "score": 1785.9,
+          "win_rate": 53.0,
+          "loss": 0.9148,
+          "entropy": 0.6849,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 65000,
+          "score": 1779.2,
+          "win_rate": 70.0,
+          "loss": 0.8894,
+          "entropy": 0.7059,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 65500,
+          "score": 1809.8,
+          "win_rate": 64.0,
+          "loss": 0.1904,
+          "entropy": 0.727,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 66000,
+          "score": 1783.4,
+          "win_rate": 55.0,
+          "loss": 0.2757,
+          "entropy": 0.709,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 66500,
+          "score": 1795.4,
+          "win_rate": 70.0,
+          "loss": 0.5401,
+          "entropy": 0.7052,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 67000,
+          "score": 1792.9,
+          "win_rate": 57.0,
+          "loss": 0.5581,
+          "entropy": 0.6768,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 67500,
+          "score": 1798.7,
+          "win_rate": 60.0,
+          "loss": 0.515,
+          "entropy": 0.7136,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 68000,
+          "score": 1808.3,
+          "win_rate": 60.0,
+          "loss": 1.1186,
+          "entropy": 0.6754,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 68500,
+          "score": 1799.3,
+          "win_rate": 62.0,
+          "loss": 0.3825,
+          "entropy": 0.6955,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 69000,
+          "score": 1795.4,
+          "win_rate": 61.0,
+          "loss": 1.8075,
+          "entropy": 0.6849,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 69500,
+          "score": 1777.8,
+          "win_rate": 60.0,
+          "loss": 1.6593,
+          "entropy": 0.6619,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 70000,
+          "score": 1779.4,
+          "win_rate": 52.0,
+          "loss": 0.529,
+          "entropy": 0.7071,
+          "champ_gen": 11,
+          "speed": 9.0
+        },
+        {
+          "drafts": 70500,
+          "score": 1784.0,
+          "win_rate": 62.0,
+          "loss": 1.5055,
+          "entropy": 0.6868,
+          "champ_gen": 11,
+          "speed": 9.0
+        }
+      ]
+    },
+    "spin_wheel": {
+      "format": "spin_wheel",
+      "completed_drafts": 78144,
+      "total_drafts": 100000000,
+      "progress_pct": 0.08,
+      "drafts_per_sec": 9.9,
+      "avg_squad_score": 1696.6,
+      "champion_generation": 86,
+      "challenger_win_rate": 49.0,
+      "loss": 3.7143,
+      "entropy": 0.3256,
+      "status": "training",
+      "timestamp": 1787073741.24875,
+      "history": [
+        {
+          "drafts": 28500,
+          "score": 1702.6,
+          "win_rate": 43.0,
+          "loss": 3.108,
+          "entropy": 0.3793,
+          "champ_gen": 62,
+          "speed": 10.0
+        },
+        {
+          "drafts": 29000,
+          "score": 1692.4,
+          "win_rate": 61.0,
+          "loss": 3.5865,
+          "entropy": 0.2987,
+          "champ_gen": 63,
+          "speed": 10.0
+        },
+        {
+          "drafts": 29500,
+          "score": 1697.0,
+          "win_rate": 43.0,
+          "loss": 2.7439,
+          "entropy": 0.3264,
+          "champ_gen": 63,
+          "speed": 10.0
+        },
+        {
+          "drafts": 30000,
+          "score": 1697.9,
+          "win_rate": 46.0,
+          "loss": 2.3721,
+          "entropy": 0.3451,
+          "champ_gen": 63,
+          "speed": 10.0
+        },
+        {
+          "drafts": 30500,
+          "score": 1696.8,
+          "win_rate": 53.0,
+          "loss": 2.9589,
+          "entropy": 0.3696,
+          "champ_gen": 63,
+          "speed": 10.0
+        },
+        {
+          "drafts": 31000,
+          "score": 1701.0,
+          "win_rate": 46.0,
+          "loss": 2.7259,
+          "entropy": 0.3975,
+          "champ_gen": 63,
+          "speed": 10.0
+        },
+        {
+          "drafts": 31500,
+          "score": 1697.5,
+          "win_rate": 59.0,
+          "loss": 3.2115,
+          "entropy": 0.3539,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 32000,
+          "score": 1697.5,
+          "win_rate": 43.0,
+          "loss": 2.6383,
+          "entropy": 0.3466,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 32500,
+          "score": 1704.3,
+          "win_rate": 49.0,
+          "loss": 2.8472,
+          "entropy": 0.3169,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 33000,
+          "score": 1698.0,
+          "win_rate": 44.0,
+          "loss": 2.8863,
+          "entropy": 0.3676,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 33500,
+          "score": 1699.9,
+          "win_rate": 51.0,
+          "loss": 2.0834,
+          "entropy": 0.3356,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 34000,
+          "score": 1698.0,
+          "win_rate": 44.0,
+          "loss": 2.9047,
+          "entropy": 0.3465,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 34500,
+          "score": 1700.4,
+          "win_rate": 48.0,
+          "loss": 2.1918,
+          "entropy": 0.3352,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 35000,
+          "score": 1691.8,
+          "win_rate": 43.0,
+          "loss": 2.1695,
+          "entropy": 0.3269,
+          "champ_gen": 64,
+          "speed": 10.0
+        },
+        {
+          "drafts": 35500,
+          "score": 1695.4,
+          "win_rate": 56.0,
+          "loss": 2.865,
+          "entropy": 0.3793,
+          "champ_gen": 65,
+          "speed": 10.0
+        },
+        {
+          "drafts": 36000,
+          "score": 1696.5,
+          "win_rate": 46.0,
+          "loss": 3.6825,
+          "entropy": 0.3593,
+          "champ_gen": 65,
+          "speed": 10.0
+        },
+        {
+          "drafts": 36500,
+          "score": 1700.8,
+          "win_rate": 60.0,
+          "loss": 2.1474,
+          "entropy": 0.3522,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 37000,
+          "score": 1701.5,
+          "win_rate": 50.0,
+          "loss": 2.627,
+          "entropy": 0.385,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 37500,
+          "score": 1696.6,
+          "win_rate": 51.0,
+          "loss": 3.6219,
+          "entropy": 0.3332,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 38000,
+          "score": 1693.4,
+          "win_rate": 42.0,
+          "loss": 3.6398,
+          "entropy": 0.3144,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 38500,
+          "score": 1698.1,
+          "win_rate": 52.0,
+          "loss": 3.9014,
+          "entropy": 0.3688,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 39000,
+          "score": 1701.1,
+          "win_rate": 49.0,
+          "loss": 3.0041,
+          "entropy": 0.326,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 39500,
+          "score": 1706.8,
+          "win_rate": 45.0,
+          "loss": 2.414,
+          "entropy": 0.3503,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 40000,
+          "score": 1691.9,
+          "win_rate": 50.0,
+          "loss": 1.9209,
+          "entropy": 0.3581,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 40500,
+          "score": 1695.9,
+          "win_rate": 51.0,
+          "loss": 2.2784,
+          "entropy": 0.3917,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 41000,
+          "score": 1697.0,
+          "win_rate": 51.0,
+          "loss": 2.3402,
+          "entropy": 0.3358,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 41500,
+          "score": 1698.6,
+          "win_rate": 53.0,
+          "loss": 3.6757,
+          "entropy": 0.3764,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 42000,
+          "score": 1702.3,
+          "win_rate": 47.0,
+          "loss": 2.8974,
+          "entropy": 0.406,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 42500,
+          "score": 1693.1,
+          "win_rate": 50.0,
+          "loss": 2.2782,
+          "entropy": 0.3645,
+          "champ_gen": 66,
+          "speed": 10.0
+        },
+        {
+          "drafts": 43000,
+          "score": 1689.3,
+          "win_rate": 58.0,
+          "loss": 3.9134,
+          "entropy": 0.3382,
+          "champ_gen": 67,
+          "speed": 10.0
+        },
+        {
+          "drafts": 43500,
+          "score": 1699.3,
+          "win_rate": 54.0,
+          "loss": 2.3406,
+          "entropy": 0.38,
+          "champ_gen": 68,
+          "speed": 10.0
+        },
+        {
+          "drafts": 44000,
+          "score": 1700.4,
+          "win_rate": 56.0,
+          "loss": 2.5854,
+          "entropy": 0.3602,
+          "champ_gen": 69,
+          "speed": 10.0
+        },
+        {
+          "drafts": 44500,
+          "score": 1699.8,
+          "win_rate": 56.0,
+          "loss": 2.2679,
+          "entropy": 0.348,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 45000,
+          "score": 1695.5,
+          "win_rate": 35.0,
+          "loss": 4.2873,
+          "entropy": 0.3649,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 45500,
+          "score": 1701.9,
+          "win_rate": 46.0,
+          "loss": 2.2318,
+          "entropy": 0.3651,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 46000,
+          "score": 1691.0,
+          "win_rate": 52.0,
+          "loss": 2.4002,
+          "entropy": 0.3339,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 46500,
+          "score": 1698.4,
+          "win_rate": 49.0,
+          "loss": 3.2417,
+          "entropy": 0.3088,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 47000,
+          "score": 1696.5,
+          "win_rate": 48.0,
+          "loss": 2.2374,
+          "entropy": 0.3246,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 47500,
+          "score": 1694.5,
+          "win_rate": 49.0,
+          "loss": 4.2388,
+          "entropy": 0.3443,
+          "champ_gen": 70,
+          "speed": 10.0
+        },
+        {
+          "drafts": 48000,
+          "score": 1694.4,
+          "win_rate": 56.0,
+          "loss": 2.8129,
+          "entropy": 0.3011,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 48500,
+          "score": 1695.2,
+          "win_rate": 48.0,
+          "loss": 2.3112,
+          "entropy": 0.3843,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 49000,
+          "score": 1702.0,
+          "win_rate": 43.0,
+          "loss": 2.4727,
+          "entropy": 0.3605,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 49500,
+          "score": 1702.3,
+          "win_rate": 52.0,
+          "loss": 2.2099,
+          "entropy": 0.3464,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 50000,
+          "score": 1700.3,
+          "win_rate": 40.0,
+          "loss": 5.2134,
+          "entropy": 0.2903,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 50500,
+          "score": 1696.3,
+          "win_rate": 57.0,
+          "loss": 3.6047,
+          "entropy": 0.3607,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 51000,
+          "score": 1701.5,
+          "win_rate": 45.0,
+          "loss": 2.83,
+          "entropy": 0.4096,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 51500,
+          "score": 1700.0,
+          "win_rate": 56.0,
+          "loss": 1.9022,
+          "entropy": 0.332,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 52000,
+          "score": 1695.5,
+          "win_rate": 50.0,
+          "loss": 2.4338,
+          "entropy": 0.3827,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 52500,
+          "score": 1702.0,
+          "win_rate": 56.0,
+          "loss": 2.2598,
+          "entropy": 0.3658,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 53000,
+          "score": 1696.2,
+          "win_rate": 48.0,
+          "loss": 3.2234,
+          "entropy": 0.4268,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 53500,
+          "score": 1689.2,
+          "win_rate": 47.0,
+          "loss": 2.1408,
+          "entropy": 0.3923,
+          "champ_gen": 71,
+          "speed": 10.0
+        },
+        {
+          "drafts": 54000,
+          "score": 1700.3,
+          "win_rate": 55.0,
+          "loss": 3.5678,
+          "entropy": 0.3604,
+          "champ_gen": 72,
+          "speed": 10.0
+        },
+        {
+          "drafts": 54500,
+          "score": 1702.8,
+          "win_rate": 51.0,
+          "loss": 2.0507,
+          "entropy": 0.4138,
+          "champ_gen": 72,
+          "speed": 10.0
+        },
+        {
+          "drafts": 55000,
+          "score": 1704.5,
+          "win_rate": 34.0,
+          "loss": 2.2684,
+          "entropy": 0.3355,
+          "champ_gen": 72,
+          "speed": 10.0
+        },
+        {
+          "drafts": 55500,
+          "score": 1692.7,
+          "win_rate": 47.0,
+          "loss": 2.7002,
+          "entropy": 0.3182,
+          "champ_gen": 72,
+          "speed": 9.9
+        },
+        {
+          "drafts": 56000,
+          "score": 1697.4,
+          "win_rate": 47.0,
+          "loss": 3.4603,
+          "entropy": 0.344,
+          "champ_gen": 72,
+          "speed": 9.9
+        },
+        {
+          "drafts": 56500,
+          "score": 1690.6,
+          "win_rate": 58.0,
+          "loss": 4.469,
+          "entropy": 0.3197,
+          "champ_gen": 73,
+          "speed": 9.9
+        },
+        {
+          "drafts": 57000,
+          "score": 1695.1,
+          "win_rate": 52.0,
+          "loss": 3.7582,
+          "entropy": 0.3198,
+          "champ_gen": 73,
+          "speed": 10.0
+        },
+        {
+          "drafts": 57500,
+          "score": 1695.4,
+          "win_rate": 49.0,
+          "loss": 3.8278,
+          "entropy": 0.3059,
+          "champ_gen": 73,
+          "speed": 10.0
+        },
+        {
+          "drafts": 58000,
+          "score": 1694.3,
+          "win_rate": 50.0,
+          "loss": 3.6273,
+          "entropy": 0.3132,
+          "champ_gen": 73,
+          "speed": 10.0
+        },
+        {
+          "drafts": 58500,
+          "score": 1693.7,
+          "win_rate": 53.0,
+          "loss": 3.9575,
+          "entropy": 0.2909,
+          "champ_gen": 73,
+          "speed": 10.0
+        },
+        {
+          "drafts": 59000,
+          "score": 1710.7,
+          "win_rate": 51.0,
+          "loss": 2.6692,
+          "entropy": 0.3383,
+          "champ_gen": 73,
+          "speed": 10.0
+        },
+        {
+          "drafts": 59500,
+          "score": 1692.9,
+          "win_rate": 55.0,
+          "loss": 3.1816,
+          "entropy": 0.2765,
+          "champ_gen": 74,
+          "speed": 9.9
+        },
+        {
+          "drafts": 60000,
+          "score": 1693.1,
+          "win_rate": 51.0,
+          "loss": 4.3151,
+          "entropy": 0.3562,
+          "champ_gen": 74,
+          "speed": 10.0
+        },
+        {
+          "drafts": 60500,
+          "score": 1699.6,
+          "win_rate": 58.0,
+          "loss": 3.0809,
+          "entropy": 0.3746,
+          "champ_gen": 75,
+          "speed": 9.9
+        },
+        {
+          "drafts": 61000,
+          "score": 1699.7,
+          "win_rate": 49.0,
+          "loss": 2.8625,
+          "entropy": 0.3687,
+          "champ_gen": 75,
+          "speed": 9.9
+        },
+        {
+          "drafts": 61500,
+          "score": 1697.6,
+          "win_rate": 60.0,
+          "loss": 2.5505,
+          "entropy": 0.3065,
+          "champ_gen": 76,
+          "speed": 9.9
+        },
+        {
+          "drafts": 62000,
+          "score": 1699.1,
+          "win_rate": 41.0,
+          "loss": 2.8439,
+          "entropy": 0.366,
+          "champ_gen": 76,
+          "speed": 9.9
+        },
+        {
+          "drafts": 62500,
+          "score": 1694.5,
+          "win_rate": 45.0,
+          "loss": 3.0465,
+          "entropy": 0.3412,
+          "champ_gen": 76,
+          "speed": 10.0
+        },
+        {
+          "drafts": 63000,
+          "score": 1704.4,
+          "win_rate": 51.0,
+          "loss": 3.6539,
+          "entropy": 0.3763,
+          "champ_gen": 76,
+          "speed": 9.9
+        },
+        {
+          "drafts": 63500,
+          "score": 1699.0,
+          "win_rate": 52.0,
+          "loss": 3.7701,
+          "entropy": 0.3618,
+          "champ_gen": 76,
+          "speed": 9.9
+        },
+        {
+          "drafts": 64000,
+          "score": 1702.4,
+          "win_rate": 49.0,
+          "loss": 2.9322,
+          "entropy": 0.3344,
+          "champ_gen": 76,
+          "speed": 9.9
+        },
+        {
+          "drafts": 64500,
+          "score": 1695.4,
+          "win_rate": 64.0,
+          "loss": 4.359,
+          "entropy": 0.353,
+          "champ_gen": 77,
+          "speed": 9.9
+        },
+        {
+          "drafts": 65000,
+          "score": 1694.7,
+          "win_rate": 52.0,
+          "loss": 4.0862,
+          "entropy": 0.3426,
+          "champ_gen": 77,
+          "speed": 10.0
+        },
+        {
+          "drafts": 65500,
+          "score": 1694.3,
+          "win_rate": 51.0,
+          "loss": 2.4101,
+          "entropy": 0.3398,
+          "champ_gen": 77,
+          "speed": 9.9
+        },
+        {
+          "drafts": 66000,
+          "score": 1693.4,
+          "win_rate": 54.0,
+          "loss": 3.8903,
+          "entropy": 0.3489,
+          "champ_gen": 78,
+          "speed": 9.9
+        },
+        {
+          "drafts": 66500,
+          "score": 1696.3,
+          "win_rate": 63.0,
+          "loss": 4.6684,
+          "entropy": 0.3884,
+          "champ_gen": 79,
+          "speed": 9.9
+        },
+        {
+          "drafts": 67000,
+          "score": 1698.0,
+          "win_rate": 55.0,
+          "loss": 2.8001,
+          "entropy": 0.3789,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 67500,
+          "score": 1692.6,
+          "win_rate": 48.0,
+          "loss": 2.9801,
+          "entropy": 0.3148,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 68000,
+          "score": 1696.2,
+          "win_rate": 45.0,
+          "loss": 3.0289,
+          "entropy": 0.3407,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 68500,
+          "score": 1690.6,
+          "win_rate": 46.0,
+          "loss": 4.2137,
+          "entropy": 0.3107,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 69000,
+          "score": 1699.9,
+          "win_rate": 49.0,
+          "loss": 3.0727,
+          "entropy": 0.3593,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 69500,
+          "score": 1702.4,
+          "win_rate": 50.0,
+          "loss": 2.4626,
+          "entropy": 0.3071,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 70000,
+          "score": 1701.8,
+          "win_rate": 48.0,
+          "loss": 1.931,
+          "entropy": 0.3824,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 70500,
+          "score": 1705.5,
+          "win_rate": 45.0,
+          "loss": 2.9632,
+          "entropy": 0.3365,
+          "champ_gen": 80,
+          "speed": 9.9
+        },
+        {
+          "drafts": 71000,
+          "score": 1689.3,
+          "win_rate": 57.0,
+          "loss": 3.7284,
+          "entropy": 0.3075,
+          "champ_gen": 81,
+          "speed": 9.9
+        },
+        {
+          "drafts": 71500,
+          "score": 1701.3,
+          "win_rate": 55.0,
+          "loss": 3.2281,
+          "entropy": 0.3301,
+          "champ_gen": 82,
+          "speed": 9.9
+        },
+        {
+          "drafts": 72000,
+          "score": 1700.6,
+          "win_rate": 49.0,
+          "loss": 2.7945,
+          "entropy": 0.325,
+          "champ_gen": 82,
+          "speed": 9.9
+        },
+        {
+          "drafts": 72500,
+          "score": 1699.4,
+          "win_rate": 38.0,
+          "loss": 3.0729,
+          "entropy": 0.3188,
+          "champ_gen": 82,
+          "speed": 9.9
+        },
+        {
+          "drafts": 73000,
+          "score": 1702.1,
+          "win_rate": 58.0,
+          "loss": 3.3706,
+          "entropy": 0.3753,
+          "champ_gen": 83,
+          "speed": 9.9
+        },
+        {
+          "drafts": 73500,
+          "score": 1697.6,
+          "win_rate": 60.0,
+          "loss": 2.4973,
+          "entropy": 0.3087,
+          "champ_gen": 84,
+          "speed": 9.9
+        },
+        {
+          "drafts": 74000,
+          "score": 1697.5,
+          "win_rate": 46.0,
+          "loss": 3.2181,
+          "entropy": 0.3247,
+          "champ_gen": 84,
+          "speed": 9.9
+        },
+        {
+          "drafts": 74500,
+          "score": 1696.4,
+          "win_rate": 63.0,
+          "loss": 4.5155,
+          "entropy": 0.3056,
+          "champ_gen": 85,
+          "speed": 9.9
+        },
+        {
+          "drafts": 75000,
+          "score": 1696.1,
+          "win_rate": 55.0,
+          "loss": 2.1769,
+          "entropy": 0.3058,
+          "champ_gen": 86,
+          "speed": 9.9
+        },
+        {
+          "drafts": 75500,
+          "score": 1693.2,
+          "win_rate": 51.0,
+          "loss": 3.6596,
+          "entropy": 0.2801,
+          "champ_gen": 86,
+          "speed": 9.9
+        },
+        {
+          "drafts": 76000,
+          "score": 1701.5,
+          "win_rate": 48.0,
+          "loss": 1.9643,
+          "entropy": 0.3433,
+          "champ_gen": 86,
+          "speed": 9.9
+        },
+        {
+          "drafts": 76500,
+          "score": 1691.9,
+          "win_rate": 51.0,
+          "loss": 2.9644,
+          "entropy": 0.3093,
+          "champ_gen": 86,
+          "speed": 9.9
+        },
+        {
+          "drafts": 77000,
+          "score": 1691.8,
+          "win_rate": 48.0,
+          "loss": 4.6364,
+          "entropy": 0.3338,
+          "champ_gen": 86,
+          "speed": 9.9
+        },
+        {
+          "drafts": 77500,
+          "score": 1697.7,
+          "win_rate": 48.0,
+          "loss": 2.5015,
+          "entropy": 0.3052,
+          "champ_gen": 86,
+          "speed": 9.9
+        },
+        {
+          "drafts": 78000,
+          "score": 1705.1,
+          "win_rate": 49.0,
+          "loss": 3.0572,
+          "entropy": 0.3943,
+          "champ_gen": 86,
+          "speed": 9.9
+        }
+      ]
+    }
+  },
+  "total_drafts_completed": 254080,
+  "overall_progress_pct": 0.06,
+  "combined_drafts_per_sec": 32.2,
+  "uptime_seconds": 7896,
+  "uptime_str": "02h 11m 36s",
+  "timestamp": 1787073743.237399
+}

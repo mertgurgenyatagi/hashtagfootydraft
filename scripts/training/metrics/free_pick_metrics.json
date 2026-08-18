@@ -1,0 +1,3507 @@
+{
+  "format": "free_pick",
+  "champion_generation": 11,
+  "champion_reign_drafts": 10336000,
+  "history": [
+    {
+      "draft_count": 500,
+      "challenger_win_rate": 1.0,
+      "score_margin": 145.3905029296875,
+      "avg_challenger_score": 1791.67333984375,
+      "avg_champion_score": 1646.2828369140625,
+      "is_new_champion": true,
+      "champion_generation": 1,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 1000,
+      "challenger_win_rate": 1.0,
+      "score_margin": 104.8463134765625,
+      "avg_challenger_score": 1840.6910400390625,
+      "avg_champion_score": 1735.8447265625,
+      "is_new_champion": true,
+      "champion_generation": 2,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 1500,
+      "challenger_win_rate": 0.97,
+      "score_margin": 40.4620361328125,
+      "avg_challenger_score": 1833.38427734375,
+      "avg_champion_score": 1792.9222412109375,
+      "is_new_champion": true,
+      "champion_generation": 3,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 2000,
+      "challenger_win_rate": 1.0,
+      "score_margin": 32.399658203125,
+      "avg_challenger_score": 1842.782470703125,
+      "avg_champion_score": 1810.3828125,
+      "is_new_champion": true,
+      "champion_generation": 4,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 2500,
+      "challenger_win_rate": 0.81,
+      "score_margin": 13.22314453125,
+      "avg_challenger_score": 1836.3577880859375,
+      "avg_champion_score": 1823.1346435546875,
+      "is_new_champion": true,
+      "champion_generation": 5,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 3000,
+      "challenger_win_rate": 0.78,
+      "score_margin": 6.9739990234375,
+      "avg_challenger_score": 1832.9608154296875,
+      "avg_champion_score": 1825.98681640625,
+      "is_new_champion": true,
+      "champion_generation": 6,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 3500,
+      "challenger_win_rate": 0.49,
+      "score_margin": 2.2196044921875,
+      "avg_challenger_score": 1831.4508056640625,
+      "avg_champion_score": 1829.231201171875,
+      "is_new_champion": false,
+      "champion_generation": 6,
+      "champion_reign_drafts": 3500
+    },
+    {
+      "draft_count": 4000,
+      "challenger_win_rate": 0.76,
+      "score_margin": 7.8663330078125,
+      "avg_challenger_score": 1833.1502685546875,
+      "avg_champion_score": 1825.283935546875,
+      "is_new_champion": true,
+      "champion_generation": 7,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 4500,
+      "challenger_win_rate": 0.55,
+      "score_margin": 2.0001220703125,
+      "avg_challenger_score": 1831.9688720703125,
+      "avg_champion_score": 1829.96875,
+      "is_new_champion": true,
+      "champion_generation": 8,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 5000,
+      "challenger_win_rate": 0.56,
+      "score_margin": 0.776611328125,
+      "avg_challenger_score": 1834.0462646484375,
+      "avg_champion_score": 1833.2696533203125,
+      "is_new_champion": false,
+      "champion_generation": 8,
+      "champion_reign_drafts": 5000
+    },
+    {
+      "draft_count": 5500,
+      "challenger_win_rate": 0.53,
+      "score_margin": 1.0028076171875,
+      "avg_challenger_score": 1831.76416015625,
+      "avg_champion_score": 1830.7613525390625,
+      "is_new_champion": false,
+      "champion_generation": 8,
+      "champion_reign_drafts": 10500
+    },
+    {
+      "draft_count": 6000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -1.24755859375,
+      "avg_challenger_score": 1833.23046875,
+      "avg_champion_score": 1834.47802734375,
+      "is_new_champion": false,
+      "champion_generation": 8,
+      "champion_reign_drafts": 16500
+    },
+    {
+      "draft_count": 6500,
+      "challenger_win_rate": 0.57,
+      "score_margin": 0.8646240234375,
+      "avg_challenger_score": 1835.1680908203125,
+      "avg_champion_score": 1834.303466796875,
+      "is_new_champion": false,
+      "champion_generation": 8,
+      "champion_reign_drafts": 23000
+    },
+    {
+      "draft_count": 7000,
+      "challenger_win_rate": 0.53,
+      "score_margin": 1.660888671875,
+      "avg_challenger_score": 1833.2740478515625,
+      "avg_champion_score": 1831.6131591796875,
+      "is_new_champion": false,
+      "champion_generation": 8,
+      "champion_reign_drafts": 30000
+    },
+    {
+      "draft_count": 7500,
+      "challenger_win_rate": 0.57,
+      "score_margin": 1.1829833984375,
+      "avg_challenger_score": 1832.29833984375,
+      "avg_champion_score": 1831.1153564453125,
+      "is_new_champion": false,
+      "champion_generation": 8,
+      "champion_reign_drafts": 37500
+    },
+    {
+      "draft_count": 8000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 2.3011474609375,
+      "avg_challenger_score": 1835.4683837890625,
+      "avg_champion_score": 1833.167236328125,
+      "is_new_champion": true,
+      "champion_generation": 9,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 8500,
+      "challenger_win_rate": 0.67,
+      "score_margin": 2.2589111328125,
+      "avg_challenger_score": 1836.8271484375,
+      "avg_champion_score": 1834.5682373046875,
+      "is_new_champion": true,
+      "champion_generation": 10,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 9000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -0.98388671875,
+      "avg_challenger_score": 1833.79443359375,
+      "avg_champion_score": 1834.7783203125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 9000
+    },
+    {
+      "draft_count": 9500,
+      "challenger_win_rate": 0.47,
+      "score_margin": -0.312744140625,
+      "avg_challenger_score": 1833.8408203125,
+      "avg_champion_score": 1834.153564453125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 18500
+    },
+    {
+      "draft_count": 10000,
+      "challenger_win_rate": 0.58,
+      "score_margin": 0.6082763671875,
+      "avg_challenger_score": 1834.087646484375,
+      "avg_champion_score": 1833.4793701171875,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 28500
+    },
+    {
+      "draft_count": 10500,
+      "challenger_win_rate": 0.55,
+      "score_margin": 0.2752685546875,
+      "avg_challenger_score": 1835.090576171875,
+      "avg_champion_score": 1834.8153076171875,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 39000
+    },
+    {
+      "draft_count": 11000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -1.0338134765625,
+      "avg_challenger_score": 1834.6116943359375,
+      "avg_champion_score": 1835.6455078125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 50000
+    },
+    {
+      "draft_count": 11500,
+      "challenger_win_rate": 0.42,
+      "score_margin": -0.657958984375,
+      "avg_challenger_score": 1836.3868408203125,
+      "avg_champion_score": 1837.0447998046875,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 61500
+    },
+    {
+      "draft_count": 12000,
+      "challenger_win_rate": 0.62,
+      "score_margin": 1.4022216796875,
+      "avg_challenger_score": 1837.26611328125,
+      "avg_champion_score": 1835.8638916015625,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 73500
+    },
+    {
+      "draft_count": 12500,
+      "challenger_win_rate": 0.6,
+      "score_margin": 1.3563232421875,
+      "avg_challenger_score": 1831.6578369140625,
+      "avg_champion_score": 1830.301513671875,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 86000
+    },
+    {
+      "draft_count": 13000,
+      "challenger_win_rate": 0.57,
+      "score_margin": 0.4471435546875,
+      "avg_challenger_score": 1832.9598388671875,
+      "avg_champion_score": 1832.5126953125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 99000
+    },
+    {
+      "draft_count": 13500,
+      "challenger_win_rate": 0.53,
+      "score_margin": 0.1256103515625,
+      "avg_challenger_score": 1834.498779296875,
+      "avg_champion_score": 1834.3731689453125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 112500
+    },
+    {
+      "draft_count": 14000,
+      "challenger_win_rate": 0.52,
+      "score_margin": 0.467041015625,
+      "avg_challenger_score": 1834.3804931640625,
+      "avg_champion_score": 1833.9134521484375,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 126500
+    },
+    {
+      "draft_count": 14500,
+      "challenger_win_rate": 0.45,
+      "score_margin": -0.5399169921875,
+      "avg_challenger_score": 1836.335205078125,
+      "avg_champion_score": 1836.8751220703125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 141000
+    },
+    {
+      "draft_count": 15000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -1.0618896484375,
+      "avg_challenger_score": 1833.9403076171875,
+      "avg_champion_score": 1835.002197265625,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 156000
+    },
+    {
+      "draft_count": 15500,
+      "challenger_win_rate": 0.45,
+      "score_margin": -1.08251953125,
+      "avg_challenger_score": 1834.872314453125,
+      "avg_champion_score": 1835.954833984375,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 171500
+    },
+    {
+      "draft_count": 16000,
+      "challenger_win_rate": 0.63,
+      "score_margin": 0.61181640625,
+      "avg_challenger_score": 1833.61962890625,
+      "avg_champion_score": 1833.0078125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 187500
+    },
+    {
+      "draft_count": 16500,
+      "challenger_win_rate": 0.47,
+      "score_margin": -0.2412109375,
+      "avg_challenger_score": 1834.1875,
+      "avg_champion_score": 1834.4287109375,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 204000
+    },
+    {
+      "draft_count": 17000,
+      "challenger_win_rate": 0.57,
+      "score_margin": 0.2738037109375,
+      "avg_challenger_score": 1833.46337890625,
+      "avg_champion_score": 1833.1895751953125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 221000
+    },
+    {
+      "draft_count": 17500,
+      "challenger_win_rate": 0.48,
+      "score_margin": -0.2110595703125,
+      "avg_challenger_score": 1832.6259765625,
+      "avg_champion_score": 1832.8370361328125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 238500
+    },
+    {
+      "draft_count": 18000,
+      "challenger_win_rate": 0.47,
+      "score_margin": -0.4698486328125,
+      "avg_challenger_score": 1835.0791015625,
+      "avg_champion_score": 1835.5489501953125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 256500
+    },
+    {
+      "draft_count": 18500,
+      "challenger_win_rate": 0.34,
+      "score_margin": -1.8800048828125,
+      "avg_challenger_score": 1834.7098388671875,
+      "avg_champion_score": 1836.58984375,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 275000
+    },
+    {
+      "draft_count": 19000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -1.553955078125,
+      "avg_challenger_score": 1834.7901611328125,
+      "avg_champion_score": 1836.3441162109375,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 294000
+    },
+    {
+      "draft_count": 19500,
+      "challenger_win_rate": 0.54,
+      "score_margin": 0.274169921875,
+      "avg_challenger_score": 1834.578125,
+      "avg_champion_score": 1834.303955078125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 313500
+    },
+    {
+      "draft_count": 20000,
+      "challenger_win_rate": 0.54,
+      "score_margin": 0.527587890625,
+      "avg_challenger_score": 1835.0302734375,
+      "avg_champion_score": 1834.502685546875,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 333500
+    },
+    {
+      "draft_count": 20500,
+      "challenger_win_rate": 0.54,
+      "score_margin": -0.1429443359375,
+      "avg_challenger_score": 1833.0391845703125,
+      "avg_champion_score": 1833.18212890625,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 354000
+    },
+    {
+      "draft_count": 21000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -1.423583984375,
+      "avg_challenger_score": 1835.4886474609375,
+      "avg_champion_score": 1836.9122314453125,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 375000
+    },
+    {
+      "draft_count": 21500,
+      "challenger_win_rate": 0.42,
+      "score_margin": -1.22802734375,
+      "avg_challenger_score": 1833.660888671875,
+      "avg_champion_score": 1834.888916015625,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 396500
+    },
+    {
+      "draft_count": 22000,
+      "challenger_win_rate": 0.5,
+      "score_margin": 0.4200439453125,
+      "avg_challenger_score": 1834.9302978515625,
+      "avg_champion_score": 1834.51025390625,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 418500
+    },
+    {
+      "draft_count": 22500,
+      "challenger_win_rate": 0.61,
+      "score_margin": 1.3885498046875,
+      "avg_challenger_score": 1831.13525390625,
+      "avg_champion_score": 1829.7467041015625,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 441000
+    },
+    {
+      "draft_count": 23000,
+      "challenger_win_rate": 0.63,
+      "score_margin": 1.7271728515625,
+      "avg_challenger_score": 1835.7626953125,
+      "avg_champion_score": 1834.0355224609375,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 464000
+    },
+    {
+      "draft_count": 23500,
+      "challenger_win_rate": 0.58,
+      "score_margin": 1.5531005859375,
+      "avg_challenger_score": 1838.8292236328125,
+      "avg_champion_score": 1837.276123046875,
+      "is_new_champion": false,
+      "champion_generation": 10,
+      "champion_reign_drafts": 487500
+    },
+    {
+      "draft_count": 24000,
+      "challenger_win_rate": 0.57,
+      "score_margin": 2.468994140625,
+      "avg_challenger_score": 1837.0003662109375,
+      "avg_champion_score": 1834.5313720703125,
+      "is_new_champion": true,
+      "champion_generation": 11,
+      "champion_reign_drafts": 0
+    },
+    {
+      "draft_count": 24500,
+      "challenger_win_rate": 0.37,
+      "score_margin": -0.8360595703125,
+      "avg_challenger_score": 1833.0445556640625,
+      "avg_champion_score": 1833.880615234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 24500
+    },
+    {
+      "draft_count": 25000,
+      "challenger_win_rate": 0.57,
+      "score_margin": 0.27783203125,
+      "avg_challenger_score": 1836.5396728515625,
+      "avg_champion_score": 1836.2618408203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 49500
+    },
+    {
+      "draft_count": 25500,
+      "challenger_win_rate": 0.57,
+      "score_margin": 0.736572265625,
+      "avg_challenger_score": 1833.041748046875,
+      "avg_champion_score": 1832.30517578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 75000
+    },
+    {
+      "draft_count": 26000,
+      "challenger_win_rate": 0.58,
+      "score_margin": 0.1702880859375,
+      "avg_challenger_score": 1835.0357666015625,
+      "avg_champion_score": 1834.865478515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 101000
+    },
+    {
+      "draft_count": 26500,
+      "challenger_win_rate": 0.47,
+      "score_margin": -2.6142578125,
+      "avg_challenger_score": 1833.5440673828125,
+      "avg_champion_score": 1836.1583251953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 127500
+    },
+    {
+      "draft_count": 27000,
+      "challenger_win_rate": 0.43,
+      "score_margin": -2.252197265625,
+      "avg_challenger_score": 1835.76123046875,
+      "avg_champion_score": 1838.013427734375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 154500
+    },
+    {
+      "draft_count": 27500,
+      "challenger_win_rate": 0.51,
+      "score_margin": -0.640869140625,
+      "avg_challenger_score": 1834.2462158203125,
+      "avg_champion_score": 1834.8870849609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 182000
+    },
+    {
+      "draft_count": 28000,
+      "challenger_win_rate": 0.48,
+      "score_margin": -1.45263671875,
+      "avg_challenger_score": 1833.756591796875,
+      "avg_champion_score": 1835.209228515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 210000
+    },
+    {
+      "draft_count": 28500,
+      "challenger_win_rate": 0.48,
+      "score_margin": -1.127685546875,
+      "avg_challenger_score": 1832.9052734375,
+      "avg_champion_score": 1834.032958984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 238500
+    },
+    {
+      "draft_count": 29000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -1.6689453125,
+      "avg_challenger_score": 1831.5682373046875,
+      "avg_champion_score": 1833.2371826171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 267500
+    },
+    {
+      "draft_count": 29500,
+      "challenger_win_rate": 0.52,
+      "score_margin": -1.0909423828125,
+      "avg_challenger_score": 1836.438720703125,
+      "avg_champion_score": 1837.5296630859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 297000
+    },
+    {
+      "draft_count": 30000,
+      "challenger_win_rate": 0.45,
+      "score_margin": -1.2413330078125,
+      "avg_challenger_score": 1833.526123046875,
+      "avg_champion_score": 1834.7674560546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 327000
+    },
+    {
+      "draft_count": 30500,
+      "challenger_win_rate": 0.47,
+      "score_margin": -1.2857666015625,
+      "avg_challenger_score": 1835.9798583984375,
+      "avg_champion_score": 1837.265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 357500
+    },
+    {
+      "draft_count": 31000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -3.0819091796875,
+      "avg_challenger_score": 1832.260009765625,
+      "avg_champion_score": 1835.3419189453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 388500
+    },
+    {
+      "draft_count": 31500,
+      "challenger_win_rate": 0.37,
+      "score_margin": -3.485595703125,
+      "avg_challenger_score": 1831.10595703125,
+      "avg_champion_score": 1834.591552734375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 420000
+    },
+    {
+      "draft_count": 32000,
+      "challenger_win_rate": 0.54,
+      "score_margin": -0.2181396484375,
+      "avg_challenger_score": 1835.619873046875,
+      "avg_champion_score": 1835.8380126953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 452000
+    },
+    {
+      "draft_count": 32500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -3.049072265625,
+      "avg_challenger_score": 1832.4892578125,
+      "avg_champion_score": 1835.538330078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 484500
+    },
+    {
+      "draft_count": 33000,
+      "challenger_win_rate": 0.52,
+      "score_margin": -1.298095703125,
+      "avg_challenger_score": 1833.6605224609375,
+      "avg_champion_score": 1834.9586181640625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 517500
+    },
+    {
+      "draft_count": 33500,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.5277099609375,
+      "avg_challenger_score": 1832.34228515625,
+      "avg_champion_score": 1835.8699951171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 551000
+    },
+    {
+      "draft_count": 34000,
+      "challenger_win_rate": 0.41,
+      "score_margin": -3.3221435546875,
+      "avg_challenger_score": 1832.986572265625,
+      "avg_champion_score": 1836.3087158203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 585000
+    },
+    {
+      "draft_count": 34500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.63134765625,
+      "avg_challenger_score": 1835.7066650390625,
+      "avg_champion_score": 1838.3380126953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 619500
+    },
+    {
+      "draft_count": 35000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -2.0853271484375,
+      "avg_challenger_score": 1838.2177734375,
+      "avg_champion_score": 1840.3031005859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 654500
+    },
+    {
+      "draft_count": 35500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.4066162109375,
+      "avg_challenger_score": 1832.68310546875,
+      "avg_champion_score": 1835.0897216796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 690000
+    },
+    {
+      "draft_count": 36000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -3.4591064453125,
+      "avg_challenger_score": 1829.8701171875,
+      "avg_champion_score": 1833.3292236328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 726000
+    },
+    {
+      "draft_count": 36500,
+      "challenger_win_rate": 0.34,
+      "score_margin": -3.8533935546875,
+      "avg_challenger_score": 1836.8291015625,
+      "avg_champion_score": 1840.6824951171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 762500
+    },
+    {
+      "draft_count": 37000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.6739501953125,
+      "avg_challenger_score": 1832.161865234375,
+      "avg_champion_score": 1834.8358154296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 799500
+    },
+    {
+      "draft_count": 37500,
+      "challenger_win_rate": 0.37,
+      "score_margin": -2.8768310546875,
+      "avg_challenger_score": 1831.98583984375,
+      "avg_champion_score": 1834.8626708984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 837000
+    },
+    {
+      "draft_count": 38000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.7109375,
+      "avg_challenger_score": 1833.8941650390625,
+      "avg_champion_score": 1836.6051025390625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 875000
+    },
+    {
+      "draft_count": 38500,
+      "challenger_win_rate": 0.22,
+      "score_margin": -4.4520263671875,
+      "avg_challenger_score": 1834.0909423828125,
+      "avg_champion_score": 1838.54296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 913500
+    },
+    {
+      "draft_count": 39000,
+      "challenger_win_rate": 0.34,
+      "score_margin": -4.5223388671875,
+      "avg_challenger_score": 1834.4063720703125,
+      "avg_champion_score": 1838.9287109375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 952500
+    },
+    {
+      "draft_count": 39500,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.9012451171875,
+      "avg_challenger_score": 1833.2784423828125,
+      "avg_champion_score": 1837.1796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 992000
+    },
+    {
+      "draft_count": 40000,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.782958984375,
+      "avg_challenger_score": 1834.674072265625,
+      "avg_champion_score": 1838.45703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1032000
+    },
+    {
+      "draft_count": 40500,
+      "challenger_win_rate": 0.27,
+      "score_margin": -4.2825927734375,
+      "avg_challenger_score": 1834.779541015625,
+      "avg_champion_score": 1839.0621337890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1072500
+    },
+    {
+      "draft_count": 41000,
+      "challenger_win_rate": 0.29,
+      "score_margin": -3.30908203125,
+      "avg_challenger_score": 1834.0155029296875,
+      "avg_champion_score": 1837.3245849609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1113500
+    },
+    {
+      "draft_count": 41500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -3.6864013671875,
+      "avg_challenger_score": 1832.5418701171875,
+      "avg_champion_score": 1836.228271484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1155000
+    },
+    {
+      "draft_count": 42000,
+      "challenger_win_rate": 0.34,
+      "score_margin": -4.3150634765625,
+      "avg_challenger_score": 1834.926513671875,
+      "avg_champion_score": 1839.2415771484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1197000
+    },
+    {
+      "draft_count": 42500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.448974609375,
+      "avg_challenger_score": 1832.9224853515625,
+      "avg_champion_score": 1835.3714599609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1239500
+    },
+    {
+      "draft_count": 43000,
+      "challenger_win_rate": 0.21,
+      "score_margin": -6.832275390625,
+      "avg_challenger_score": 1835.983642578125,
+      "avg_champion_score": 1842.81591796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1282500
+    },
+    {
+      "draft_count": 43500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -4.51123046875,
+      "avg_challenger_score": 1833.3209228515625,
+      "avg_champion_score": 1837.8321533203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1326000
+    },
+    {
+      "draft_count": 44000,
+      "challenger_win_rate": 0.25,
+      "score_margin": -4.3599853515625,
+      "avg_challenger_score": 1833.4676513671875,
+      "avg_champion_score": 1837.82763671875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1370000
+    },
+    {
+      "draft_count": 44500,
+      "challenger_win_rate": 0.34,
+      "score_margin": -4.345458984375,
+      "avg_challenger_score": 1833.15185546875,
+      "avg_champion_score": 1837.497314453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1414500
+    },
+    {
+      "draft_count": 45000,
+      "challenger_win_rate": 0.24,
+      "score_margin": -5.6044921875,
+      "avg_challenger_score": 1835.514892578125,
+      "avg_champion_score": 1841.119384765625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1459500
+    },
+    {
+      "draft_count": 45500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -3.8643798828125,
+      "avg_challenger_score": 1832.2442626953125,
+      "avg_champion_score": 1836.108642578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1505000
+    },
+    {
+      "draft_count": 46000,
+      "challenger_win_rate": 0.45,
+      "score_margin": -2.3912353515625,
+      "avg_challenger_score": 1833.545654296875,
+      "avg_champion_score": 1835.9368896484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1551000
+    },
+    {
+      "draft_count": 46500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -3.58544921875,
+      "avg_challenger_score": 1836.2684326171875,
+      "avg_champion_score": 1839.8538818359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1597500
+    },
+    {
+      "draft_count": 47000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.3433837890625,
+      "avg_challenger_score": 1831.8096923828125,
+      "avg_champion_score": 1834.153076171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1644500
+    },
+    {
+      "draft_count": 47500,
+      "challenger_win_rate": 0.25,
+      "score_margin": -3.8193359375,
+      "avg_challenger_score": 1834.4503173828125,
+      "avg_champion_score": 1838.2696533203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1692000
+    },
+    {
+      "draft_count": 48000,
+      "challenger_win_rate": 0.29,
+      "score_margin": -3.751220703125,
+      "avg_challenger_score": 1833.881103515625,
+      "avg_champion_score": 1837.63232421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1740000
+    },
+    {
+      "draft_count": 48500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -3.4390869140625,
+      "avg_challenger_score": 1831.7862548828125,
+      "avg_champion_score": 1835.225341796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1788500
+    },
+    {
+      "draft_count": 49000,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.5966796875,
+      "avg_challenger_score": 1832.681884765625,
+      "avg_champion_score": 1835.278564453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1837500
+    },
+    {
+      "draft_count": 49500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.400390625,
+      "avg_challenger_score": 1833.46142578125,
+      "avg_champion_score": 1835.86181640625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1887000
+    },
+    {
+      "draft_count": 50000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -3.940673828125,
+      "avg_challenger_score": 1834.81982421875,
+      "avg_champion_score": 1838.760498046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1937000
+    },
+    {
+      "draft_count": 50500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -3.1636962890625,
+      "avg_challenger_score": 1834.244384765625,
+      "avg_champion_score": 1837.4080810546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 1987500
+    },
+    {
+      "draft_count": 51000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.3975830078125,
+      "avg_challenger_score": 1837.0093994140625,
+      "avg_champion_score": 1839.406982421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2038500
+    },
+    {
+      "draft_count": 51500,
+      "challenger_win_rate": 0.36,
+      "score_margin": -2.1475830078125,
+      "avg_challenger_score": 1836.217529296875,
+      "avg_champion_score": 1838.3651123046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2090000
+    },
+    {
+      "draft_count": 52000,
+      "challenger_win_rate": 0.45,
+      "score_margin": -1.62158203125,
+      "avg_challenger_score": 1831.4039306640625,
+      "avg_champion_score": 1833.0255126953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2142000
+    },
+    {
+      "draft_count": 52500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -2.48486328125,
+      "avg_challenger_score": 1836.14794921875,
+      "avg_champion_score": 1838.6328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2194500
+    },
+    {
+      "draft_count": 53000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.2476806640625,
+      "avg_challenger_score": 1835.5804443359375,
+      "avg_champion_score": 1837.828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2247500
+    },
+    {
+      "draft_count": 53500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.2470703125,
+      "avg_challenger_score": 1837.5574951171875,
+      "avg_champion_score": 1839.8045654296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2301000
+    },
+    {
+      "draft_count": 54000,
+      "challenger_win_rate": 0.35,
+      "score_margin": -1.9105224609375,
+      "avg_challenger_score": 1832.9287109375,
+      "avg_champion_score": 1834.8392333984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2355000
+    },
+    {
+      "draft_count": 54500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.012939453125,
+      "avg_challenger_score": 1832.3778076171875,
+      "avg_champion_score": 1834.3907470703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2409500
+    },
+    {
+      "draft_count": 55000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.841064453125,
+      "avg_challenger_score": 1832.6138916015625,
+      "avg_champion_score": 1835.4549560546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2464500
+    },
+    {
+      "draft_count": 55500,
+      "challenger_win_rate": 0.32,
+      "score_margin": -2.8724365234375,
+      "avg_challenger_score": 1831.56103515625,
+      "avg_champion_score": 1834.4334716796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2520000
+    },
+    {
+      "draft_count": 56000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -1.5823974609375,
+      "avg_challenger_score": 1834.1373291015625,
+      "avg_champion_score": 1835.7197265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2576000
+    },
+    {
+      "draft_count": 56500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -1.43505859375,
+      "avg_challenger_score": 1829.477294921875,
+      "avg_champion_score": 1830.912353515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2632500
+    },
+    {
+      "draft_count": 57000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -2.5526123046875,
+      "avg_challenger_score": 1834.4964599609375,
+      "avg_champion_score": 1837.049072265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2689500
+    },
+    {
+      "draft_count": 57500,
+      "challenger_win_rate": 0.32,
+      "score_margin": -3.2340087890625,
+      "avg_challenger_score": 1835.6484375,
+      "avg_champion_score": 1838.8824462890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2747000
+    },
+    {
+      "draft_count": 58000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -2.7322998046875,
+      "avg_challenger_score": 1835.1461181640625,
+      "avg_champion_score": 1837.87841796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2805000
+    },
+    {
+      "draft_count": 58500,
+      "challenger_win_rate": 0.46,
+      "score_margin": -1.1024169921875,
+      "avg_challenger_score": 1834.843017578125,
+      "avg_champion_score": 1835.9454345703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2863500
+    },
+    {
+      "draft_count": 59000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.3531494140625,
+      "avg_challenger_score": 1833.6112060546875,
+      "avg_champion_score": 1835.96435546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2922500
+    },
+    {
+      "draft_count": 59500,
+      "challenger_win_rate": 0.36,
+      "score_margin": -2.0146484375,
+      "avg_challenger_score": 1837.43408203125,
+      "avg_champion_score": 1839.44873046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 2982000
+    },
+    {
+      "draft_count": 60000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -1.519287109375,
+      "avg_challenger_score": 1835.4200439453125,
+      "avg_champion_score": 1836.9393310546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3042000
+    },
+    {
+      "draft_count": 60500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -1.6383056640625,
+      "avg_challenger_score": 1834.173583984375,
+      "avg_champion_score": 1835.8118896484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3102500
+    },
+    {
+      "draft_count": 61000,
+      "challenger_win_rate": 0.51,
+      "score_margin": -0.5013427734375,
+      "avg_challenger_score": 1835.0863037109375,
+      "avg_champion_score": 1835.587646484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3163500
+    },
+    {
+      "draft_count": 61500,
+      "challenger_win_rate": 0.46,
+      "score_margin": -1.186279296875,
+      "avg_challenger_score": 1835.6109619140625,
+      "avg_champion_score": 1836.7972412109375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3225000
+    },
+    {
+      "draft_count": 62000,
+      "challenger_win_rate": 0.46,
+      "score_margin": -0.91796875,
+      "avg_challenger_score": 1832.86181640625,
+      "avg_champion_score": 1833.77978515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3287000
+    },
+    {
+      "draft_count": 62500,
+      "challenger_win_rate": 0.48,
+      "score_margin": -0.4207763671875,
+      "avg_challenger_score": 1833.4508056640625,
+      "avg_champion_score": 1833.87158203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3349500
+    },
+    {
+      "draft_count": 63000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -1.683837890625,
+      "avg_challenger_score": 1835.3548583984375,
+      "avg_champion_score": 1837.0386962890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3412500
+    },
+    {
+      "draft_count": 63500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.163818359375,
+      "avg_challenger_score": 1835.145263671875,
+      "avg_champion_score": 1837.30908203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3476000
+    },
+    {
+      "draft_count": 64000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -1.7310791015625,
+      "avg_challenger_score": 1835.1595458984375,
+      "avg_champion_score": 1836.890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3540000
+    },
+    {
+      "draft_count": 64500,
+      "challenger_win_rate": 0.45,
+      "score_margin": -0.7052001953125,
+      "avg_challenger_score": 1832.337158203125,
+      "avg_champion_score": 1833.0423583984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3604500
+    },
+    {
+      "draft_count": 65000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -1.3359375,
+      "avg_challenger_score": 1834.5673828125,
+      "avg_champion_score": 1835.9033203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3669500
+    },
+    {
+      "draft_count": 65500,
+      "challenger_win_rate": 0.51,
+      "score_margin": -1.31005859375,
+      "avg_challenger_score": 1833.198486328125,
+      "avg_champion_score": 1834.508544921875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3735000
+    },
+    {
+      "draft_count": 66000,
+      "challenger_win_rate": 0.49,
+      "score_margin": -0.7591552734375,
+      "avg_challenger_score": 1834.9627685546875,
+      "avg_champion_score": 1835.721923828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3801000
+    },
+    {
+      "draft_count": 66500,
+      "challenger_win_rate": 0.53,
+      "score_margin": -0.3370361328125,
+      "avg_challenger_score": 1835.2705078125,
+      "avg_champion_score": 1835.6075439453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3867500
+    },
+    {
+      "draft_count": 500,
+      "challenger_win_rate": 0.3,
+      "score_margin": -3.7662353515625,
+      "avg_challenger_score": 1834.1702880859375,
+      "avg_champion_score": 1837.9365234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3868000
+    },
+    {
+      "draft_count": 1000,
+      "challenger_win_rate": 0.26,
+      "score_margin": -6.4036865234375,
+      "avg_challenger_score": 1826.9095458984375,
+      "avg_champion_score": 1833.313232421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3869000
+    },
+    {
+      "draft_count": 1500,
+      "challenger_win_rate": 0.29,
+      "score_margin": -5.4378662109375,
+      "avg_challenger_score": 1832.165283203125,
+      "avg_champion_score": 1837.6031494140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3870500
+    },
+    {
+      "draft_count": 2000,
+      "challenger_win_rate": 0.26,
+      "score_margin": -5.3515625,
+      "avg_challenger_score": 1831.0604248046875,
+      "avg_champion_score": 1836.4119873046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3872500
+    },
+    {
+      "draft_count": 2500,
+      "challenger_win_rate": 0.29,
+      "score_margin": -5.4683837890625,
+      "avg_challenger_score": 1829.88671875,
+      "avg_champion_score": 1835.3551025390625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3875000
+    },
+    {
+      "draft_count": 3000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -5.295166015625,
+      "avg_challenger_score": 1832.619384765625,
+      "avg_champion_score": 1837.91455078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3878000
+    },
+    {
+      "draft_count": 3500,
+      "challenger_win_rate": 0.27,
+      "score_margin": -4.3450927734375,
+      "avg_challenger_score": 1832.1446533203125,
+      "avg_champion_score": 1836.48974609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3881500
+    },
+    {
+      "draft_count": 4000,
+      "challenger_win_rate": 0.29,
+      "score_margin": -4.9359130859375,
+      "avg_challenger_score": 1831.20751953125,
+      "avg_champion_score": 1836.1434326171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3885500
+    },
+    {
+      "draft_count": 4500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -3.840576171875,
+      "avg_challenger_score": 1830.8531494140625,
+      "avg_champion_score": 1834.6937255859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3890000
+    },
+    {
+      "draft_count": 5000,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.376220703125,
+      "avg_challenger_score": 1831.1639404296875,
+      "avg_champion_score": 1834.5401611328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3895000
+    },
+    {
+      "draft_count": 5500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -2.282470703125,
+      "avg_challenger_score": 1830.975830078125,
+      "avg_champion_score": 1833.25830078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3900500
+    },
+    {
+      "draft_count": 6000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -3.5174560546875,
+      "avg_challenger_score": 1834.3240966796875,
+      "avg_champion_score": 1837.841552734375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3906500
+    },
+    {
+      "draft_count": 6500,
+      "challenger_win_rate": 0.37,
+      "score_margin": -3.610107421875,
+      "avg_challenger_score": 1835.3973388671875,
+      "avg_champion_score": 1839.0074462890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3913000
+    },
+    {
+      "draft_count": 7000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -2.123779296875,
+      "avg_challenger_score": 1829.6763916015625,
+      "avg_champion_score": 1831.8001708984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3920000
+    },
+    {
+      "draft_count": 7500,
+      "challenger_win_rate": 0.34,
+      "score_margin": -3.173828125,
+      "avg_challenger_score": 1832.8662109375,
+      "avg_champion_score": 1836.0400390625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3927500
+    },
+    {
+      "draft_count": 8000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -4.2415771484375,
+      "avg_challenger_score": 1833.6925048828125,
+      "avg_champion_score": 1837.93408203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3935500
+    },
+    {
+      "draft_count": 8500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -4.12841796875,
+      "avg_challenger_score": 1836.3153076171875,
+      "avg_champion_score": 1840.4437255859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3944000
+    },
+    {
+      "draft_count": 9000,
+      "challenger_win_rate": 0.23,
+      "score_margin": -4.9410400390625,
+      "avg_challenger_score": 1838.6500244140625,
+      "avg_champion_score": 1843.591064453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3953000
+    },
+    {
+      "draft_count": 9500,
+      "challenger_win_rate": 0.36,
+      "score_margin": -3.33447265625,
+      "avg_challenger_score": 1833.76220703125,
+      "avg_champion_score": 1837.0966796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3962500
+    },
+    {
+      "draft_count": 10000,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.9569091796875,
+      "avg_challenger_score": 1831.844482421875,
+      "avg_champion_score": 1835.8013916015625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3972500
+    },
+    {
+      "draft_count": 10500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -4.450927734375,
+      "avg_challenger_score": 1835.486572265625,
+      "avg_champion_score": 1839.9375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3983000
+    },
+    {
+      "draft_count": 11000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.30517578125,
+      "avg_challenger_score": 1829.88330078125,
+      "avg_champion_score": 1832.1884765625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 3994000
+    },
+    {
+      "draft_count": 11500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.542236328125,
+      "avg_challenger_score": 1831.71435546875,
+      "avg_champion_score": 1834.256591796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4005500
+    },
+    {
+      "draft_count": 12000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.1492919921875,
+      "avg_challenger_score": 1831.8341064453125,
+      "avg_champion_score": 1833.9833984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4017500
+    },
+    {
+      "draft_count": 12500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -3.0556640625,
+      "avg_challenger_score": 1834.0699462890625,
+      "avg_champion_score": 1837.1256103515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4030000
+    },
+    {
+      "draft_count": 13000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -2.81640625,
+      "avg_challenger_score": 1834.6968994140625,
+      "avg_champion_score": 1837.5133056640625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4043000
+    },
+    {
+      "draft_count": 13500,
+      "challenger_win_rate": 0.28,
+      "score_margin": -3.860595703125,
+      "avg_challenger_score": 1832.200439453125,
+      "avg_champion_score": 1836.06103515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4056500
+    },
+    {
+      "draft_count": 14000,
+      "challenger_win_rate": 0.32,
+      "score_margin": -3.531982421875,
+      "avg_challenger_score": 1830.8778076171875,
+      "avg_champion_score": 1834.4097900390625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4070500
+    },
+    {
+      "draft_count": 14500,
+      "challenger_win_rate": 0.3,
+      "score_margin": -3.411865234375,
+      "avg_challenger_score": 1833.6739501953125,
+      "avg_champion_score": 1837.0858154296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4085000
+    },
+    {
+      "draft_count": 15000,
+      "challenger_win_rate": 0.22,
+      "score_margin": -5.46630859375,
+      "avg_challenger_score": 1831.9085693359375,
+      "avg_champion_score": 1837.3748779296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4100000
+    },
+    {
+      "draft_count": 15500,
+      "challenger_win_rate": 0.2,
+      "score_margin": -4.456298828125,
+      "avg_challenger_score": 1830.8115234375,
+      "avg_champion_score": 1835.267822265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4115500
+    },
+    {
+      "draft_count": 16000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -4.3984375,
+      "avg_challenger_score": 1831.8204345703125,
+      "avg_champion_score": 1836.2188720703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4131500
+    },
+    {
+      "draft_count": 16500,
+      "challenger_win_rate": 0.25,
+      "score_margin": -4.350341796875,
+      "avg_challenger_score": 1831.9515380859375,
+      "avg_champion_score": 1836.3018798828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4148000
+    },
+    {
+      "draft_count": 17000,
+      "challenger_win_rate": 0.26,
+      "score_margin": -3.367431640625,
+      "avg_challenger_score": 1831.475341796875,
+      "avg_champion_score": 1834.8427734375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4165000
+    },
+    {
+      "draft_count": 17500,
+      "challenger_win_rate": 0.25,
+      "score_margin": -4.4412841796875,
+      "avg_challenger_score": 1832.9056396484375,
+      "avg_champion_score": 1837.346923828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4182500
+    },
+    {
+      "draft_count": 18000,
+      "challenger_win_rate": 0.32,
+      "score_margin": -4.309326171875,
+      "avg_challenger_score": 1833.9000244140625,
+      "avg_champion_score": 1838.2093505859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4200500
+    },
+    {
+      "draft_count": 18500,
+      "challenger_win_rate": 0.32,
+      "score_margin": -3.8201904296875,
+      "avg_challenger_score": 1833.0263671875,
+      "avg_champion_score": 1836.8465576171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4219000
+    },
+    {
+      "draft_count": 19000,
+      "challenger_win_rate": 0.29,
+      "score_margin": -5.0789794921875,
+      "avg_challenger_score": 1834.3656005859375,
+      "avg_champion_score": 1839.444580078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4238000
+    },
+    {
+      "draft_count": 19500,
+      "challenger_win_rate": 0.34,
+      "score_margin": -4.4901123046875,
+      "avg_challenger_score": 1834.5714111328125,
+      "avg_champion_score": 1839.0615234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4257500
+    },
+    {
+      "draft_count": 20000,
+      "challenger_win_rate": 0.32,
+      "score_margin": -3.375,
+      "avg_challenger_score": 1835.05224609375,
+      "avg_champion_score": 1838.42724609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4277500
+    },
+    {
+      "draft_count": 20500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -2.6693115234375,
+      "avg_challenger_score": 1831.6611328125,
+      "avg_champion_score": 1834.3304443359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4298000
+    },
+    {
+      "draft_count": 21000,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.4219970703125,
+      "avg_challenger_score": 1833.1573486328125,
+      "avg_champion_score": 1836.579345703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4319000
+    },
+    {
+      "draft_count": 21500,
+      "challenger_win_rate": 0.47,
+      "score_margin": -1.649658203125,
+      "avg_challenger_score": 1831.97705078125,
+      "avg_champion_score": 1833.626708984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4340500
+    },
+    {
+      "draft_count": 22000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -1.195556640625,
+      "avg_challenger_score": 1832.8087158203125,
+      "avg_champion_score": 1834.0042724609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4362500
+    },
+    {
+      "draft_count": 22500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -3.0794677734375,
+      "avg_challenger_score": 1833.7333984375,
+      "avg_champion_score": 1836.8128662109375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4385000
+    },
+    {
+      "draft_count": 23000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.1785888671875,
+      "avg_challenger_score": 1833.4610595703125,
+      "avg_champion_score": 1835.6396484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4408000
+    },
+    {
+      "draft_count": 23500,
+      "challenger_win_rate": 0.29,
+      "score_margin": -4.0067138671875,
+      "avg_challenger_score": 1833.405517578125,
+      "avg_champion_score": 1837.4122314453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4431500
+    },
+    {
+      "draft_count": 24000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.79833984375,
+      "avg_challenger_score": 1836.2076416015625,
+      "avg_champion_score": 1839.0059814453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4455500
+    },
+    {
+      "draft_count": 24500,
+      "challenger_win_rate": 0.44,
+      "score_margin": -2.064453125,
+      "avg_challenger_score": 1835.395751953125,
+      "avg_champion_score": 1837.460205078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4480000
+    },
+    {
+      "draft_count": 25000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.546142578125,
+      "avg_challenger_score": 1837.2935791015625,
+      "avg_champion_score": 1839.8397216796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4505000
+    },
+    {
+      "draft_count": 25500,
+      "challenger_win_rate": 0.58,
+      "score_margin": -0.044921875,
+      "avg_challenger_score": 1834.27880859375,
+      "avg_champion_score": 1834.32373046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4530500
+    },
+    {
+      "draft_count": 26000,
+      "challenger_win_rate": 0.45,
+      "score_margin": -1.7799072265625,
+      "avg_challenger_score": 1832.2127685546875,
+      "avg_champion_score": 1833.99267578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4556500
+    },
+    {
+      "draft_count": 26500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.795654296875,
+      "avg_challenger_score": 1835.91357421875,
+      "avg_champion_score": 1838.709228515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4583000
+    },
+    {
+      "draft_count": 27000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -1.6361083984375,
+      "avg_challenger_score": 1834.0570068359375,
+      "avg_champion_score": 1835.693115234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4610000
+    },
+    {
+      "draft_count": 27500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.1009521484375,
+      "avg_challenger_score": 1829.6519775390625,
+      "avg_champion_score": 1831.7529296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4637500
+    },
+    {
+      "draft_count": 28000,
+      "challenger_win_rate": 0.31,
+      "score_margin": -3.5885009765625,
+      "avg_challenger_score": 1833.9827880859375,
+      "avg_champion_score": 1837.5712890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4665500
+    },
+    {
+      "draft_count": 28500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -1.8834228515625,
+      "avg_challenger_score": 1832.74658203125,
+      "avg_champion_score": 1834.6300048828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4694000
+    },
+    {
+      "draft_count": 29000,
+      "challenger_win_rate": 0.45,
+      "score_margin": -1.238037109375,
+      "avg_challenger_score": 1833.6072998046875,
+      "avg_champion_score": 1834.8453369140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4723000
+    },
+    {
+      "draft_count": 29500,
+      "challenger_win_rate": 0.36,
+      "score_margin": -1.9285888671875,
+      "avg_challenger_score": 1830.9278564453125,
+      "avg_champion_score": 1832.8564453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4752500
+    },
+    {
+      "draft_count": 30000,
+      "challenger_win_rate": 0.3,
+      "score_margin": -3.32958984375,
+      "avg_challenger_score": 1833.10693359375,
+      "avg_champion_score": 1836.4365234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4782500
+    },
+    {
+      "draft_count": 30500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -2.7620849609375,
+      "avg_challenger_score": 1835.1824951171875,
+      "avg_champion_score": 1837.944580078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4813000
+    },
+    {
+      "draft_count": 31000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -1.5146484375,
+      "avg_challenger_score": 1829.2567138671875,
+      "avg_champion_score": 1830.7713623046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4844000
+    },
+    {
+      "draft_count": 31500,
+      "challenger_win_rate": 0.32,
+      "score_margin": -3.638916015625,
+      "avg_challenger_score": 1832.192138671875,
+      "avg_champion_score": 1835.8310546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4875500
+    },
+    {
+      "draft_count": 32000,
+      "challenger_win_rate": 0.34,
+      "score_margin": -3.0750732421875,
+      "avg_challenger_score": 1834.2598876953125,
+      "avg_champion_score": 1837.3349609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4907500
+    },
+    {
+      "draft_count": 32500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -1.94091796875,
+      "avg_challenger_score": 1831.030029296875,
+      "avg_champion_score": 1832.970947265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4940000
+    },
+    {
+      "draft_count": 33000,
+      "challenger_win_rate": 0.43,
+      "score_margin": -1.641357421875,
+      "avg_challenger_score": 1834.0238037109375,
+      "avg_champion_score": 1835.6651611328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 4973000
+    },
+    {
+      "draft_count": 33500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -3.090576171875,
+      "avg_challenger_score": 1833.11474609375,
+      "avg_champion_score": 1836.205322265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5006500
+    },
+    {
+      "draft_count": 34000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -3.3643798828125,
+      "avg_challenger_score": 1832.8656005859375,
+      "avg_champion_score": 1836.22998046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5040500
+    },
+    {
+      "draft_count": 34500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.53857421875,
+      "avg_challenger_score": 1833.33984375,
+      "avg_champion_score": 1835.87841796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5075000
+    },
+    {
+      "draft_count": 35000,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.99853515625,
+      "avg_challenger_score": 1832.91162109375,
+      "avg_champion_score": 1836.91015625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5110000
+    },
+    {
+      "draft_count": 35500,
+      "challenger_win_rate": 0.49,
+      "score_margin": -1.2598876953125,
+      "avg_challenger_score": 1833.6005859375,
+      "avg_champion_score": 1834.8604736328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5145500
+    },
+    {
+      "draft_count": 36000,
+      "challenger_win_rate": 0.23,
+      "score_margin": -4.3272705078125,
+      "avg_challenger_score": 1832.78271484375,
+      "avg_champion_score": 1837.1099853515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5181500
+    },
+    {
+      "draft_count": 36500,
+      "challenger_win_rate": 0.34,
+      "score_margin": -4.1875,
+      "avg_challenger_score": 1836.092529296875,
+      "avg_champion_score": 1840.280029296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5218000
+    },
+    {
+      "draft_count": 37000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.4378662109375,
+      "avg_challenger_score": 1832.9066162109375,
+      "avg_champion_score": 1835.344482421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5255000
+    },
+    {
+      "draft_count": 37500,
+      "challenger_win_rate": 0.36,
+      "score_margin": -2.9639892578125,
+      "avg_challenger_score": 1834.5958251953125,
+      "avg_champion_score": 1837.559814453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5292500
+    },
+    {
+      "draft_count": 38000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -4.790771484375,
+      "avg_challenger_score": 1837.0089111328125,
+      "avg_champion_score": 1841.7996826171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5330500
+    },
+    {
+      "draft_count": 500,
+      "challenger_win_rate": 0.44,
+      "score_margin": -2.7386474609375,
+      "avg_challenger_score": 1833.4493408203125,
+      "avg_champion_score": 1836.18798828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5331000
+    },
+    {
+      "draft_count": 1000,
+      "challenger_win_rate": 0.51,
+      "score_margin": -0.9708251953125,
+      "avg_challenger_score": 1833.997802734375,
+      "avg_champion_score": 1834.9686279296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5332000
+    },
+    {
+      "draft_count": 1500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -3.6490478515625,
+      "avg_challenger_score": 1833.7071533203125,
+      "avg_champion_score": 1837.356201171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5333500
+    },
+    {
+      "draft_count": 2000,
+      "challenger_win_rate": 0.54,
+      "score_margin": -1.2369384765625,
+      "avg_challenger_score": 1835.2464599609375,
+      "avg_champion_score": 1836.4833984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5335500
+    },
+    {
+      "draft_count": 2500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -2.486083984375,
+      "avg_challenger_score": 1833.513916015625,
+      "avg_champion_score": 1836.0,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5338000
+    },
+    {
+      "draft_count": 3000,
+      "challenger_win_rate": 0.27,
+      "score_margin": -4.9208984375,
+      "avg_challenger_score": 1831.29248046875,
+      "avg_champion_score": 1836.21337890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5341000
+    },
+    {
+      "draft_count": 3500,
+      "challenger_win_rate": 0.21,
+      "score_margin": -4.408447265625,
+      "avg_challenger_score": 1833.0350341796875,
+      "avg_champion_score": 1837.4434814453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5344500
+    },
+    {
+      "draft_count": 4000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.6246337890625,
+      "avg_challenger_score": 1832.6640625,
+      "avg_champion_score": 1835.2886962890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5348500
+    },
+    {
+      "draft_count": 4500,
+      "challenger_win_rate": 0.24,
+      "score_margin": -5.771728515625,
+      "avg_challenger_score": 1831.7996826171875,
+      "avg_champion_score": 1837.5714111328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5353000
+    },
+    {
+      "draft_count": 5000,
+      "challenger_win_rate": 0.36,
+      "score_margin": -5.1265869140625,
+      "avg_challenger_score": 1831.899658203125,
+      "avg_champion_score": 1837.0262451171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5358000
+    },
+    {
+      "draft_count": 5500,
+      "challenger_win_rate": 0.45,
+      "score_margin": -2.997314453125,
+      "avg_challenger_score": 1831.8397216796875,
+      "avg_champion_score": 1834.8370361328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5363500
+    },
+    {
+      "draft_count": 6000,
+      "challenger_win_rate": 0.34,
+      "score_margin": -3.93701171875,
+      "avg_challenger_score": 1832.94677734375,
+      "avg_champion_score": 1836.8837890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5369500
+    },
+    {
+      "draft_count": 6500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -2.5684814453125,
+      "avg_challenger_score": 1832.2958984375,
+      "avg_champion_score": 1834.8643798828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5376000
+    },
+    {
+      "draft_count": 7000,
+      "challenger_win_rate": 0.37,
+      "score_margin": -3.5904541015625,
+      "avg_challenger_score": 1832.1842041015625,
+      "avg_champion_score": 1835.774658203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5383000
+    },
+    {
+      "draft_count": 7500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -3.5277099609375,
+      "avg_challenger_score": 1833.515625,
+      "avg_champion_score": 1837.0433349609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5390500
+    },
+    {
+      "draft_count": 8000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -4.4290771484375,
+      "avg_challenger_score": 1834.3258056640625,
+      "avg_champion_score": 1838.7548828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5398500
+    },
+    {
+      "draft_count": 8500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -3.3807373046875,
+      "avg_challenger_score": 1838.1226806640625,
+      "avg_champion_score": 1841.50341796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5407000
+    },
+    {
+      "draft_count": 9000,
+      "challenger_win_rate": 0.34,
+      "score_margin": -3.742919921875,
+      "avg_challenger_score": 1836.819580078125,
+      "avg_champion_score": 1840.5625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5416000
+    },
+    {
+      "draft_count": 9500,
+      "challenger_win_rate": 0.48,
+      "score_margin": -2.367919921875,
+      "avg_challenger_score": 1835.8643798828125,
+      "avg_champion_score": 1838.2322998046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5425500
+    },
+    {
+      "draft_count": 10000,
+      "challenger_win_rate": 0.46,
+      "score_margin": -1.76171875,
+      "avg_challenger_score": 1831.77685546875,
+      "avg_champion_score": 1833.53857421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5435500
+    },
+    {
+      "draft_count": 10500,
+      "challenger_win_rate": 0.38,
+      "score_margin": -3.5433349609375,
+      "avg_challenger_score": 1836.58349609375,
+      "avg_champion_score": 1840.1268310546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5446000
+    },
+    {
+      "draft_count": 11000,
+      "challenger_win_rate": 0.24,
+      "score_margin": -3.9742431640625,
+      "avg_challenger_score": 1831.9215087890625,
+      "avg_champion_score": 1835.895751953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5457000
+    },
+    {
+      "draft_count": 11500,
+      "challenger_win_rate": 0.28,
+      "score_margin": -4.3905029296875,
+      "avg_challenger_score": 1830.87744140625,
+      "avg_champion_score": 1835.2679443359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5468500
+    },
+    {
+      "draft_count": 12000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -2.8599853515625,
+      "avg_challenger_score": 1835.0400390625,
+      "avg_champion_score": 1837.9000244140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5480500
+    },
+    {
+      "draft_count": 12500,
+      "challenger_win_rate": 0.33,
+      "score_margin": -3.5113525390625,
+      "avg_challenger_score": 1833.713623046875,
+      "avg_champion_score": 1837.2249755859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5493000
+    },
+    {
+      "draft_count": 13000,
+      "challenger_win_rate": 0.28,
+      "score_margin": -4.1673583984375,
+      "avg_challenger_score": 1835.993896484375,
+      "avg_champion_score": 1840.1612548828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5506000
+    },
+    {
+      "draft_count": 13500,
+      "challenger_win_rate": 0.26,
+      "score_margin": -4.49853515625,
+      "avg_challenger_score": 1835.9354248046875,
+      "avg_champion_score": 1840.4339599609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5519500
+    },
+    {
+      "draft_count": 14000,
+      "challenger_win_rate": 0.35,
+      "score_margin": -4.5537109375,
+      "avg_challenger_score": 1834.913330078125,
+      "avg_champion_score": 1839.467041015625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5533500
+    },
+    {
+      "draft_count": 14500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -3.95703125,
+      "avg_challenger_score": 1836.747802734375,
+      "avg_champion_score": 1840.704833984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5548000
+    },
+    {
+      "draft_count": 15000,
+      "challenger_win_rate": 0.39,
+      "score_margin": -3.1314697265625,
+      "avg_challenger_score": 1834.77685546875,
+      "avg_champion_score": 1837.9083251953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5563000
+    },
+    {
+      "draft_count": 15500,
+      "challenger_win_rate": 0.27,
+      "score_margin": -5.7900390625,
+      "avg_challenger_score": 1835.2645263671875,
+      "avg_champion_score": 1841.0545654296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5578500
+    },
+    {
+      "draft_count": 16000,
+      "challenger_win_rate": 0.24,
+      "score_margin": -5.119873046875,
+      "avg_challenger_score": 1836.1182861328125,
+      "avg_champion_score": 1841.2381591796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5594500
+    },
+    {
+      "draft_count": 16500,
+      "challenger_win_rate": 0.32,
+      "score_margin": -4.639892578125,
+      "avg_challenger_score": 1833.6607666015625,
+      "avg_champion_score": 1838.3006591796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5611000
+    },
+    {
+      "draft_count": 17000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -3.5584716796875,
+      "avg_challenger_score": 1834.3070068359375,
+      "avg_champion_score": 1837.865478515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5628000
+    },
+    {
+      "draft_count": 17500,
+      "challenger_win_rate": 0.35,
+      "score_margin": -3.2186279296875,
+      "avg_challenger_score": 1833.0960693359375,
+      "avg_champion_score": 1836.314697265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5645500
+    },
+    {
+      "draft_count": 18000,
+      "challenger_win_rate": 0.37,
+      "score_margin": -3.551513671875,
+      "avg_challenger_score": 1836.131103515625,
+      "avg_champion_score": 1839.6826171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5663500
+    },
+    {
+      "draft_count": 18500,
+      "challenger_win_rate": 0.31,
+      "score_margin": -3.8955078125,
+      "avg_challenger_score": 1831.8135986328125,
+      "avg_champion_score": 1835.7091064453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5682000
+    },
+    {
+      "draft_count": 19000,
+      "challenger_win_rate": 0.26,
+      "score_margin": -4.9307861328125,
+      "avg_challenger_score": 1836.2735595703125,
+      "avg_champion_score": 1841.204345703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5701000
+    },
+    {
+      "draft_count": 19500,
+      "challenger_win_rate": 0.3,
+      "score_margin": -3.3375244140625,
+      "avg_challenger_score": 1831.8857421875,
+      "avg_champion_score": 1835.2232666015625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5720500
+    },
+    {
+      "draft_count": 20000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -1.5760498046875,
+      "avg_challenger_score": 1830.830322265625,
+      "avg_champion_score": 1832.4063720703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5740500
+    },
+    {
+      "draft_count": 20500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -1.2235107421875,
+      "avg_challenger_score": 1835.3443603515625,
+      "avg_champion_score": 1836.56787109375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5761000
+    },
+    {
+      "draft_count": 21000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -2.1697998046875,
+      "avg_challenger_score": 1834.677978515625,
+      "avg_champion_score": 1836.8477783203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5782000
+    },
+    {
+      "draft_count": 21500,
+      "challenger_win_rate": 0.46,
+      "score_margin": -1.275146484375,
+      "avg_challenger_score": 1835.0714111328125,
+      "avg_champion_score": 1836.3465576171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5803500
+    },
+    {
+      "draft_count": 22000,
+      "challenger_win_rate": 0.48,
+      "score_margin": -1.8031005859375,
+      "avg_challenger_score": 1832.9163818359375,
+      "avg_champion_score": 1834.719482421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5825500
+    },
+    {
+      "draft_count": 22500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.1322021484375,
+      "avg_challenger_score": 1836.830322265625,
+      "avg_champion_score": 1838.9625244140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5848000
+    },
+    {
+      "draft_count": 23000,
+      "challenger_win_rate": 0.44,
+      "score_margin": -2.5777587890625,
+      "avg_challenger_score": 1835.0198974609375,
+      "avg_champion_score": 1837.59765625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5871000
+    },
+    {
+      "draft_count": 23500,
+      "challenger_win_rate": 0.41,
+      "score_margin": -2.9927978515625,
+      "avg_challenger_score": 1832.2633056640625,
+      "avg_champion_score": 1835.256103515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5894500
+    },
+    {
+      "draft_count": 24000,
+      "challenger_win_rate": 0.47,
+      "score_margin": -1.388671875,
+      "avg_challenger_score": 1831.905517578125,
+      "avg_champion_score": 1833.294189453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5918500
+    },
+    {
+      "draft_count": 24500,
+      "challenger_win_rate": 0.29,
+      "score_margin": -3.46826171875,
+      "avg_challenger_score": 1833.8074951171875,
+      "avg_champion_score": 1837.2757568359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5943000
+    },
+    {
+      "draft_count": 25000,
+      "challenger_win_rate": 0.35,
+      "score_margin": -3.261962890625,
+      "avg_challenger_score": 1835.6363525390625,
+      "avg_champion_score": 1838.8983154296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5968000
+    },
+    {
+      "draft_count": 25500,
+      "challenger_win_rate": 0.37,
+      "score_margin": -3.1104736328125,
+      "avg_challenger_score": 1835.405029296875,
+      "avg_champion_score": 1838.5155029296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 5993500
+    },
+    {
+      "draft_count": 26000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -2.2998046875,
+      "avg_challenger_score": 1836.579833984375,
+      "avg_champion_score": 1838.879638671875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6019500
+    },
+    {
+      "draft_count": 26500,
+      "challenger_win_rate": 0.45,
+      "score_margin": -2.263671875,
+      "avg_challenger_score": 1832.5235595703125,
+      "avg_champion_score": 1834.7872314453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6046000
+    },
+    {
+      "draft_count": 27000,
+      "challenger_win_rate": 0.49,
+      "score_margin": -1.49072265625,
+      "avg_challenger_score": 1833.0712890625,
+      "avg_champion_score": 1834.56201171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6073000
+    },
+    {
+      "draft_count": 27500,
+      "challenger_win_rate": 0.56,
+      "score_margin": -0.3975830078125,
+      "avg_challenger_score": 1834.190185546875,
+      "avg_champion_score": 1834.5877685546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6100500
+    },
+    {
+      "draft_count": 28000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -1.84814453125,
+      "avg_challenger_score": 1832.53857421875,
+      "avg_champion_score": 1834.38671875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6128500
+    },
+    {
+      "draft_count": 28500,
+      "challenger_win_rate": 0.54,
+      "score_margin": -0.026123046875,
+      "avg_challenger_score": 1834.497802734375,
+      "avg_champion_score": 1834.52392578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6157000
+    },
+    {
+      "draft_count": 29000,
+      "challenger_win_rate": 0.41,
+      "score_margin": -1.889404296875,
+      "avg_challenger_score": 1835.7835693359375,
+      "avg_champion_score": 1837.6729736328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6186000
+    },
+    {
+      "draft_count": 29500,
+      "challenger_win_rate": 0.59,
+      "score_margin": -0.0555419921875,
+      "avg_challenger_score": 1836.311279296875,
+      "avg_champion_score": 1836.3668212890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6215500
+    },
+    {
+      "draft_count": 30000,
+      "challenger_win_rate": 0.48,
+      "score_margin": -1.33837890625,
+      "avg_challenger_score": 1834.7103271484375,
+      "avg_champion_score": 1836.0487060546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6245500
+    },
+    {
+      "draft_count": 30500,
+      "challenger_win_rate": 0.4,
+      "score_margin": -2.7822265625,
+      "avg_challenger_score": 1833.915771484375,
+      "avg_champion_score": 1836.697998046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6276000
+    },
+    {
+      "draft_count": 31000,
+      "challenger_win_rate": 0.4,
+      "score_margin": -3.0328369140625,
+      "avg_challenger_score": 1835.49560546875,
+      "avg_champion_score": 1838.5284423828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6307000
+    },
+    {
+      "draft_count": 31500,
+      "challenger_win_rate": 0.42,
+      "score_margin": -3.1763916015625,
+      "avg_challenger_score": 1833.184814453125,
+      "avg_champion_score": 1836.3612060546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6338500
+    },
+    {
+      "draft_count": 32000,
+      "challenger_win_rate": 0.42,
+      "score_margin": -2.466796875,
+      "avg_challenger_score": 1835.2847900390625,
+      "avg_champion_score": 1837.7515869140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6370500
+    },
+    {
+      "draft_count": 32500,
+      "challenger_win_rate": 0.55,
+      "score_margin": -0.4207763671875,
+      "avg_challenger_score": 1832.39453125,
+      "avg_champion_score": 1832.8153076171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6403000
+    },
+    {
+      "draft_count": 33000,
+      "challenger_win_rate": 0.52,
+      "score_margin": -0.187744140625,
+      "avg_challenger_score": 1833.901123046875,
+      "avg_champion_score": 1834.0888671875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6436000
+    },
+    {
+      "draft_count": 33500,
+      "challenger_win_rate": 0.65,
+      "score_margin": 0.2015380859375,
+      "avg_challenger_score": 1837.8258056640625,
+      "avg_champion_score": 1837.624267578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6469500
+    },
+    {
+      "draft_count": 34000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 0.1173095703125,
+      "avg_challenger_score": 1835.083251953125,
+      "avg_champion_score": 1834.9659423828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6503500
+    },
+    {
+      "draft_count": 34500,
+      "challenger_win_rate": 0.7,
+      "score_margin": 1.7327880859375,
+      "avg_challenger_score": 1837.682373046875,
+      "avg_champion_score": 1835.9495849609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6538000
+    },
+    {
+      "draft_count": 35000,
+      "challenger_win_rate": 0.56,
+      "score_margin": -0.4503173828125,
+      "avg_challenger_score": 1839.594970703125,
+      "avg_champion_score": 1840.0452880859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6573000
+    },
+    {
+      "draft_count": 35500,
+      "challenger_win_rate": 0.56,
+      "score_margin": 0.5384521484375,
+      "avg_challenger_score": 1837.05908203125,
+      "avg_champion_score": 1836.5206298828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6608500
+    },
+    {
+      "draft_count": 36000,
+      "challenger_win_rate": 0.55,
+      "score_margin": 0.36376953125,
+      "avg_challenger_score": 1836.4990234375,
+      "avg_champion_score": 1836.13525390625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6644500
+    },
+    {
+      "draft_count": 36500,
+      "challenger_win_rate": 0.58,
+      "score_margin": -0.48388671875,
+      "avg_challenger_score": 1836.7110595703125,
+      "avg_champion_score": 1837.1949462890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6681000
+    },
+    {
+      "draft_count": 37000,
+      "challenger_win_rate": 0.49,
+      "score_margin": 0.0943603515625,
+      "avg_challenger_score": 1835.5010986328125,
+      "avg_champion_score": 1835.40673828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6718000
+    },
+    {
+      "draft_count": 37500,
+      "challenger_win_rate": 0.5,
+      "score_margin": -0.21044921875,
+      "avg_challenger_score": 1836.5670166015625,
+      "avg_champion_score": 1836.7774658203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6755500
+    },
+    {
+      "draft_count": 38000,
+      "challenger_win_rate": 0.48,
+      "score_margin": -1.0020751953125,
+      "avg_challenger_score": 1835.3316650390625,
+      "avg_champion_score": 1836.333740234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6793500
+    },
+    {
+      "draft_count": 38500,
+      "challenger_win_rate": 0.5,
+      "score_margin": 0.20458984375,
+      "avg_challenger_score": 1838.084716796875,
+      "avg_champion_score": 1837.880126953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6832000
+    },
+    {
+      "draft_count": 39000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 1.4833984375,
+      "avg_challenger_score": 1839.967041015625,
+      "avg_champion_score": 1838.483642578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6871000
+    },
+    {
+      "draft_count": 39500,
+      "challenger_win_rate": 0.52,
+      "score_margin": -0.65478515625,
+      "avg_challenger_score": 1833.98974609375,
+      "avg_champion_score": 1834.64453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6910500
+    },
+    {
+      "draft_count": 40000,
+      "challenger_win_rate": 0.6,
+      "score_margin": 0.98828125,
+      "avg_challenger_score": 1836.5452880859375,
+      "avg_champion_score": 1835.5570068359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6950500
+    },
+    {
+      "draft_count": 40500,
+      "challenger_win_rate": 0.68,
+      "score_margin": 0.9093017578125,
+      "avg_challenger_score": 1838.0062255859375,
+      "avg_champion_score": 1837.096923828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 6991000
+    },
+    {
+      "draft_count": 41000,
+      "challenger_win_rate": 0.53,
+      "score_margin": -0.128662109375,
+      "avg_challenger_score": 1837.466064453125,
+      "avg_champion_score": 1837.5947265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7032000
+    },
+    {
+      "draft_count": 41500,
+      "challenger_win_rate": 0.25,
+      "score_margin": -3.84423828125,
+      "avg_challenger_score": 1837.739990234375,
+      "avg_champion_score": 1841.584228515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7073500
+    },
+    {
+      "draft_count": 42000,
+      "challenger_win_rate": 0.58,
+      "score_margin": 0.79296875,
+      "avg_challenger_score": 1838.5576171875,
+      "avg_champion_score": 1837.7646484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7115500
+    },
+    {
+      "draft_count": 42500,
+      "challenger_win_rate": 0.54,
+      "score_margin": 0.1336669921875,
+      "avg_challenger_score": 1833.643310546875,
+      "avg_champion_score": 1833.5096435546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7158000
+    },
+    {
+      "draft_count": 43000,
+      "challenger_win_rate": 0.41,
+      "score_margin": -0.22216796875,
+      "avg_challenger_score": 1835.4951171875,
+      "avg_champion_score": 1835.71728515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7201000
+    },
+    {
+      "draft_count": 43500,
+      "challenger_win_rate": 0.39,
+      "score_margin": -1.481689453125,
+      "avg_challenger_score": 1833.66796875,
+      "avg_champion_score": 1835.149658203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7244500
+    },
+    {
+      "draft_count": 44000,
+      "challenger_win_rate": 0.49,
+      "score_margin": -0.8446044921875,
+      "avg_challenger_score": 1837.4786376953125,
+      "avg_champion_score": 1838.3232421875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7288500
+    },
+    {
+      "draft_count": 44500,
+      "challenger_win_rate": 0.57,
+      "score_margin": -0.3419189453125,
+      "avg_challenger_score": 1835.76513671875,
+      "avg_champion_score": 1836.1070556640625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7333000
+    },
+    {
+      "draft_count": 45000,
+      "challenger_win_rate": 0.53,
+      "score_margin": -0.7994384765625,
+      "avg_challenger_score": 1837.2833251953125,
+      "avg_champion_score": 1838.082763671875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7378000
+    },
+    {
+      "draft_count": 45500,
+      "challenger_win_rate": 0.6,
+      "score_margin": 0.624267578125,
+      "avg_challenger_score": 1836.9468994140625,
+      "avg_champion_score": 1836.3226318359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7423500
+    },
+    {
+      "draft_count": 46000,
+      "challenger_win_rate": 0.38,
+      "score_margin": -2.7349853515625,
+      "avg_challenger_score": 1836.704345703125,
+      "avg_champion_score": 1839.4393310546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7469500
+    },
+    {
+      "draft_count": 46500,
+      "challenger_win_rate": 0.43,
+      "score_margin": -1.7398681640625,
+      "avg_challenger_score": 1834.052978515625,
+      "avg_champion_score": 1835.7928466796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7516000
+    },
+    {
+      "draft_count": 47000,
+      "challenger_win_rate": 0.53,
+      "score_margin": 0.774658203125,
+      "avg_challenger_score": 1839.0152587890625,
+      "avg_champion_score": 1838.2406005859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7563000
+    },
+    {
+      "draft_count": 47500,
+      "challenger_win_rate": 0.67,
+      "score_margin": 1.18798828125,
+      "avg_challenger_score": 1834.3934326171875,
+      "avg_champion_score": 1833.2054443359375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7610500
+    },
+    {
+      "draft_count": 48000,
+      "challenger_win_rate": 0.55,
+      "score_margin": -1.1474609375,
+      "avg_challenger_score": 1837.8297119140625,
+      "avg_champion_score": 1838.9771728515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7658500
+    },
+    {
+      "draft_count": 48500,
+      "challenger_win_rate": 0.58,
+      "score_margin": -0.0592041015625,
+      "avg_challenger_score": 1836.5294189453125,
+      "avg_champion_score": 1836.588623046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7707000
+    },
+    {
+      "draft_count": 49000,
+      "challenger_win_rate": 0.5,
+      "score_margin": -1.449462890625,
+      "avg_challenger_score": 1836.1973876953125,
+      "avg_champion_score": 1837.6468505859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7756000
+    },
+    {
+      "draft_count": 49500,
+      "challenger_win_rate": 0.59,
+      "score_margin": -0.23779296875,
+      "avg_challenger_score": 1836.2529296875,
+      "avg_champion_score": 1836.49072265625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7805500
+    },
+    {
+      "draft_count": 50000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 0.6375732421875,
+      "avg_challenger_score": 1836.4964599609375,
+      "avg_champion_score": 1835.85888671875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7855500
+    },
+    {
+      "draft_count": 50500,
+      "challenger_win_rate": 0.56,
+      "score_margin": -0.2974853515625,
+      "avg_challenger_score": 1836.7940673828125,
+      "avg_champion_score": 1837.091552734375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7906000
+    },
+    {
+      "draft_count": 51000,
+      "challenger_win_rate": 0.62,
+      "score_margin": -0.1456298828125,
+      "avg_challenger_score": 1837.65234375,
+      "avg_champion_score": 1837.7979736328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 7957000
+    },
+    {
+      "draft_count": 51500,
+      "challenger_win_rate": 0.65,
+      "score_margin": -0.346435546875,
+      "avg_challenger_score": 1838.24267578125,
+      "avg_champion_score": 1838.589111328125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8008500
+    },
+    {
+      "draft_count": 52000,
+      "challenger_win_rate": 0.59,
+      "score_margin": 0.771728515625,
+      "avg_challenger_score": 1834.5784912109375,
+      "avg_champion_score": 1833.8067626953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8060500
+    },
+    {
+      "draft_count": 52500,
+      "challenger_win_rate": 0.69,
+      "score_margin": 1.9998779296875,
+      "avg_challenger_score": 1834.05224609375,
+      "avg_champion_score": 1832.0523681640625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8113000
+    },
+    {
+      "draft_count": 53000,
+      "challenger_win_rate": 0.58,
+      "score_margin": 0.4227294921875,
+      "avg_challenger_score": 1838.20947265625,
+      "avg_champion_score": 1837.7867431640625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8166000
+    },
+    {
+      "draft_count": 53500,
+      "challenger_win_rate": 0.6,
+      "score_margin": 0.349609375,
+      "avg_challenger_score": 1835.7735595703125,
+      "avg_champion_score": 1835.4239501953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8219500
+    },
+    {
+      "draft_count": 54000,
+      "challenger_win_rate": 0.63,
+      "score_margin": 1.072998046875,
+      "avg_challenger_score": 1837.085205078125,
+      "avg_champion_score": 1836.01220703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8273500
+    },
+    {
+      "draft_count": 54500,
+      "challenger_win_rate": 0.58,
+      "score_margin": -0.20751953125,
+      "avg_challenger_score": 1838.759521484375,
+      "avg_champion_score": 1838.967041015625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8328000
+    },
+    {
+      "draft_count": 55000,
+      "challenger_win_rate": 0.53,
+      "score_margin": -0.4666748046875,
+      "avg_challenger_score": 1835.3258056640625,
+      "avg_champion_score": 1835.79248046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8383000
+    },
+    {
+      "draft_count": 55500,
+      "challenger_win_rate": 0.67,
+      "score_margin": 1.0595703125,
+      "avg_challenger_score": 1835.4296875,
+      "avg_champion_score": 1834.3701171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8438500
+    },
+    {
+      "draft_count": 56000,
+      "challenger_win_rate": 0.65,
+      "score_margin": 0.9583740234375,
+      "avg_challenger_score": 1836.503173828125,
+      "avg_champion_score": 1835.5447998046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8494500
+    },
+    {
+      "draft_count": 56500,
+      "challenger_win_rate": 0.64,
+      "score_margin": 0.8170166015625,
+      "avg_challenger_score": 1838.3447265625,
+      "avg_champion_score": 1837.5277099609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8551000
+    },
+    {
+      "draft_count": 57000,
+      "challenger_win_rate": 0.51,
+      "score_margin": -0.044189453125,
+      "avg_challenger_score": 1833.233154296875,
+      "avg_champion_score": 1833.27734375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8608000
+    },
+    {
+      "draft_count": 57500,
+      "challenger_win_rate": 0.51,
+      "score_margin": -0.9356689453125,
+      "avg_challenger_score": 1837.76904296875,
+      "avg_champion_score": 1838.7047119140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8665500
+    },
+    {
+      "draft_count": 58000,
+      "challenger_win_rate": 0.51,
+      "score_margin": -0.38720703125,
+      "avg_challenger_score": 1836.283935546875,
+      "avg_champion_score": 1836.671142578125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8723500
+    },
+    {
+      "draft_count": 58500,
+      "challenger_win_rate": 0.67,
+      "score_margin": 1.18701171875,
+      "avg_challenger_score": 1834.6590576171875,
+      "avg_champion_score": 1833.4720458984375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8782000
+    },
+    {
+      "draft_count": 59000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 0.540283203125,
+      "avg_challenger_score": 1836.65087890625,
+      "avg_champion_score": 1836.110595703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8841000
+    },
+    {
+      "draft_count": 59500,
+      "challenger_win_rate": 0.59,
+      "score_margin": 1.2706298828125,
+      "avg_challenger_score": 1837.1812744140625,
+      "avg_champion_score": 1835.91064453125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8900500
+    },
+    {
+      "draft_count": 60000,
+      "challenger_win_rate": 0.56,
+      "score_margin": -0.101806640625,
+      "avg_challenger_score": 1839.10791015625,
+      "avg_champion_score": 1839.209716796875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 8960500
+    },
+    {
+      "draft_count": 60500,
+      "challenger_win_rate": 0.63,
+      "score_margin": 0.3958740234375,
+      "avg_challenger_score": 1837.5469970703125,
+      "avg_champion_score": 1837.151123046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9021000
+    },
+    {
+      "draft_count": 61000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 0.7655029296875,
+      "avg_challenger_score": 1835.596435546875,
+      "avg_champion_score": 1834.8309326171875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9082000
+    },
+    {
+      "draft_count": 61500,
+      "challenger_win_rate": 0.67,
+      "score_margin": 1.0355224609375,
+      "avg_challenger_score": 1836.60205078125,
+      "avg_champion_score": 1835.5665283203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9143500
+    },
+    {
+      "draft_count": 62000,
+      "challenger_win_rate": 0.59,
+      "score_margin": 0.56982421875,
+      "avg_challenger_score": 1836.7548828125,
+      "avg_champion_score": 1836.18505859375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9205500
+    },
+    {
+      "draft_count": 62500,
+      "challenger_win_rate": 0.54,
+      "score_margin": 0.5501708984375,
+      "avg_challenger_score": 1835.6138916015625,
+      "avg_champion_score": 1835.063720703125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9268000
+    },
+    {
+      "draft_count": 63000,
+      "challenger_win_rate": 0.54,
+      "score_margin": -0.7481689453125,
+      "avg_challenger_score": 1834.75341796875,
+      "avg_champion_score": 1835.5015869140625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9331000
+    },
+    {
+      "draft_count": 63500,
+      "challenger_win_rate": 0.66,
+      "score_margin": 1.5821533203125,
+      "avg_challenger_score": 1839.64892578125,
+      "avg_champion_score": 1838.0667724609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9394500
+    },
+    {
+      "draft_count": 64000,
+      "challenger_win_rate": 0.58,
+      "score_margin": 0.6082763671875,
+      "avg_challenger_score": 1838.9278564453125,
+      "avg_champion_score": 1838.319580078125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9458500
+    },
+    {
+      "draft_count": 64500,
+      "challenger_win_rate": 0.53,
+      "score_margin": -0.52490234375,
+      "avg_challenger_score": 1833.70556640625,
+      "avg_champion_score": 1834.23046875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9523000
+    },
+    {
+      "draft_count": 65000,
+      "challenger_win_rate": 0.7,
+      "score_margin": 1.0672607421875,
+      "avg_challenger_score": 1837.0166015625,
+      "avg_champion_score": 1835.9493408203125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9588000
+    },
+    {
+      "draft_count": 65500,
+      "challenger_win_rate": 0.64,
+      "score_margin": 0.610595703125,
+      "avg_challenger_score": 1833.606689453125,
+      "avg_champion_score": 1832.99609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9653500
+    },
+    {
+      "draft_count": 66000,
+      "challenger_win_rate": 0.55,
+      "score_margin": -0.3604736328125,
+      "avg_challenger_score": 1834.3511962890625,
+      "avg_champion_score": 1834.711669921875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9719500
+    },
+    {
+      "draft_count": 66500,
+      "challenger_win_rate": 0.7,
+      "score_margin": 1.6943359375,
+      "avg_challenger_score": 1832.71923828125,
+      "avg_champion_score": 1831.02490234375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9786000
+    },
+    {
+      "draft_count": 67000,
+      "challenger_win_rate": 0.57,
+      "score_margin": -0.4290771484375,
+      "avg_challenger_score": 1838.930908203125,
+      "avg_champion_score": 1839.3599853515625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9853000
+    },
+    {
+      "draft_count": 67500,
+      "challenger_win_rate": 0.6,
+      "score_margin": 0.949951171875,
+      "avg_challenger_score": 1835.3170166015625,
+      "avg_champion_score": 1834.3670654296875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9920500
+    },
+    {
+      "draft_count": 68000,
+      "challenger_win_rate": 0.6,
+      "score_margin": 0.3692626953125,
+      "avg_challenger_score": 1836.4898681640625,
+      "avg_champion_score": 1836.12060546875,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 9988500
+    },
+    {
+      "draft_count": 68500,
+      "challenger_win_rate": 0.62,
+      "score_margin": 0.528076171875,
+      "avg_challenger_score": 1838.798095703125,
+      "avg_champion_score": 1838.27001953125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 10057000
+    },
+    {
+      "draft_count": 69000,
+      "challenger_win_rate": 0.61,
+      "score_margin": 0.844482421875,
+      "avg_challenger_score": 1835.43212890625,
+      "avg_champion_score": 1834.587646484375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 10126000
+    },
+    {
+      "draft_count": 69500,
+      "challenger_win_rate": 0.6,
+      "score_margin": 0.3157958984375,
+      "avg_challenger_score": 1834.54736328125,
+      "avg_champion_score": 1834.2315673828125,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 10195500
+    },
+    {
+      "draft_count": 70000,
+      "challenger_win_rate": 0.52,
+      "score_margin": 0.2623291015625,
+      "avg_challenger_score": 1839.2822265625,
+      "avg_champion_score": 1839.0198974609375,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 10265500
+    },
+    {
+      "draft_count": 70500,
+      "challenger_win_rate": 0.62,
+      "score_margin": 0.8709716796875,
+      "avg_challenger_score": 1836.12060546875,
+      "avg_champion_score": 1835.2496337890625,
+      "is_new_champion": false,
+      "champion_generation": 11,
+      "champion_reign_drafts": 10336000
+    }
+  ]
+}

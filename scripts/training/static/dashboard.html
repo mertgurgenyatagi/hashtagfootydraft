@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>#footydraft — Bot Training Live Dashboard (Marathon Mode)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ground: #071414;
+        --ink: #e2f0ee;
+        --accent: #ef7a3c;
+        --tint: #123030;
+
+        --surface: color-mix(in oklab, var(--ground) 85%, var(--ink));
+        --surface-2: color-mix(in oklab, var(--ground) 75%, var(--ink));
+        --surface-3: color-mix(in oklab, var(--ground) 65%, var(--ink));
+        --line: color-mix(in oklab, var(--ground) 70%, var(--ink));
+        --line-strong: color-mix(in oklab, var(--ground) 50%, var(--ink));
+        --muted: color-mix(in oklab, var(--ink) 65%, var(--ground));
+        --dim: color-mix(in oklab, var(--ink) 40%, var(--ground));
+        --accent-soft: color-mix(in oklab, var(--accent) 15%, var(--ground));
+        --accent-line: color-mix(in oklab, var(--accent) 45%, var(--ground));
+
+        --green: #22c55e;
+        --green-soft: color-mix(in oklab, #22c55e 15%, var(--ground));
+        --cyan: #06b6d4;
+        --cyan-soft: color-mix(in oklab, #06b6d4 15%, var(--ground));
+        --purple: #a855f7;
+
+        --oswald: 'Oswald', sans-serif;
+        --inter: 'Inter', system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--ground);
+        color: var(--ink);
+        font-family: var(--inter);
+        font-size: 15px;
+        line-height: 1.5;
+        min-height: 100vh;
+        padding: 32px 24px 60px;
+      }
+
+      .container {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 20px;
+        margin-bottom: 28px;
+      }
+
+      .title-group .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--oswald);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        padding: 3px 8px;
+        border-radius: 2px;
+        margin-bottom: 8px;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--green);
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 8px var(--green);
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
+      }
+
+      h1 {
+        font-family: var(--oswald);
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .header-meta {
+        text-align: right;
+        font-family: var(--oswald);
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .header-meta strong {
+        color: var(--accent);
+        font-size: 20px;
+      }
+
+      /* Hero Stats Bar */
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      .hero-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 18px 20px;
+      }
+
+      .hero-label {
+        font-family: var(--oswald);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .hero-value {
+        font-family: var(--oswald);
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .hero-sub {
+        font-size: 12.5px;
+        color: var(--dim);
+        margin-top: 2px;
+      }
+
+      /* Big Live Status Card */
+      .marathon-card {
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        padding: 20px 24px;
+        margin-bottom: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .marathon-left {
+        flex: 1;
+      }
+
+      .marathon-title {
+        font-family: var(--oswald);
+        font-size: 18px;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      .marathon-desc {
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+
+      .marathon-right {
+        text-align: right;
+      }
+
+      .marathon-badge {
+        display: inline-block;
+        font-family: var(--oswald);
+        font-size: 13px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--green);
+        background: var(--green-soft);
+        border: 1px solid var(--green);
+        padding: 4px 12px;
+        border-radius: 3px;
+      }
+
+      /* Formats Grid */
+      .section-title {
+        font-family: var(--oswald);
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .formats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 36px;
+      }
+
+      .format-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .format-card.active {
+        border-color: var(--accent-line);
+      }
+
+      .format-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14px;
+      }
+
+      .format-name {
+        font-family: var(--oswald);
+        font-size: 22px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+
+      .format-status-badge {
+        font-family: var(--oswald);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 2px;
+        background: var(--surface-2);
+        color: var(--muted);
+        border: 1px solid var(--line);
+      }
+
+      .format-status-badge.training {
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-color: var(--accent-line);
+      }
+
+      .format-status-badge.complete {
+        background: var(--green-soft);
+        color: var(--green);
+        border-color: var(--green);
+      }
+
+      .format-metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        background: var(--surface-2);
+        padding: 10px 12px;
+        border-radius: 3px;
+        margin-bottom: 14px;
+        border: 1px solid var(--line);
+      }
+
+      .metric-col-label {
+        font-family: var(--oswald);
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-bottom: 2px;
+      }
+
+      .metric-col-val {
+        font-family: var(--oswald);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      /* Graph Container */
+      .chart-box {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 12px 14px 10px;
+        margin-bottom: 14px;
+        position: relative;
+      }
+
+      .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .chart-title {
+        font-family: var(--oswald);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .chart-tabs {
+        display: flex;
+        gap: 4px;
+      }
+
+      .chart-tab {
+        font-family: var(--oswald);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        padding: 2px 8px;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .chart-tab:hover {
+        color: var(--ink);
+        border-color: var(--dim);
+      }
+
+      .chart-tab.active {
+        background: var(--accent);
+        color: #000;
+        font-weight: 600;
+        border-color: var(--accent);
+      }
+
+      .canvas-wrap {
+        position: relative;
+        width: 100%;
+        height: 125px;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .chart-tooltip {
+        position: absolute;
+        display: none;
+        background: rgba(7, 20, 20, 0.95);
+        border: 1px solid var(--accent);
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 11.5px;
+        font-family: var(--oswald);
+        color: var(--ink);
+        pointer-events: none;
+        transform: translate(-50%, -120%);
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .chart-footer-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--dim);
+        margin-top: 4px;
+        font-family: var(--oswald);
+      }
+
+      .format-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-top: auto;
+      }
+
+      .explainer-box {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: 3px;
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .explainer-box strong {
+        color: var(--ink);
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid { grid-template-columns: repeat(2, 1fr); }
+        .formats-grid { grid-template-columns: 1fr; }
+        .marathon-card { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="title-group">
+          <div class="badge">
+            <span class="pulse-dot" id="statusDot"></span>
+            <span>Marathon Training Mode (Indefinite)</span>
+          </div>
+          <h1>#footydraft Bot Training Live Dashboard</h1>
+        </div>
+        <div class="header-meta">
+          Session Uptime: <strong id="heroUptime">00h 00m 00s</strong><br />
+          <span style="font-size: 12px; color: var(--dim)">Auto-updates every second</span>
+        </div>
+      </header>
+
+      <!-- 4 Hero Summary Cards -->
+      <div class="hero-grid">
+        <div class="hero-card">
+          <div class="hero-label">Total Drafts Simulated</div>
+          <div class="hero-value" id="heroTotalDrafts">0</div>
+          <div class="hero-sub" id="heroDraftsPerHour">0 drafts / hour</div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-label">Combined Speed</div>
+          <div class="hero-value" id="heroSpeed" style="color: var(--accent)">0 d/s</div>
+          <div class="hero-sub">Across 4 parallel processes</div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-label">Bot Quality Tier</div>
+          <div class="hero-value" id="heroBotLevel">Calibrating...</div>
+          <div class="hero-sub" id="heroBotDesc">Based on position-weighted score</div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-label">Active Formats</div>
+          <div class="hero-value" id="heroActiveCount">4 / 4</div>
+          <div class="hero-sub">GPU + Multi-Core Parallel</div>
+        </div>
+      </div>
+
+      <!-- Marathon Banner Card -->
+      <div class="marathon-card">
+        <div class="marathon-left">
+          <div class="marathon-title">⚡ Continuous Self-Play RL Marathon</div>
+          <div class="marathon-desc">
+            All 4 models are continuously self-training in parallel. Every 500 drafts, the current model challenges the reigning Champion. When a superior bot emerges, its neural network weights are <strong>automatically exported directly to client-ready game files</strong>.
+          </div>
+        </div>
+        <div class="marathon-right">
+          <span class="marathon-badge">Live Self-Play</span>
+        </div>
+      </div>
+
+      <!-- Formats Status Grid -->
+      <div class="section-title">
+        <span>Active Format Pipelines & Live Learning Curves</span>
+        <span style="font-size: 12px; color: var(--muted); text-transform: none; font-family: var(--inter)">
+          Hover on charts for details
+        </span>
+      </div>
+      <div class="formats-grid">
+        
+        <!-- Auction -->
+        <div class="format-card active" id="card-auction">
+          <div class="format-top">
+            <div>
+              <div class="format-name">Auction Format</div>
+              <div style="font-size: 13px; color: var(--muted)">Bidding strategies, budgets & graveyard slotting</div>
+            </div>
+            <span class="format-status-badge training" id="badge-auction">Training</span>
+          </div>
+          
+          <div class="format-metrics-row">
+            <div>
+              <div class="metric-col-label">Squad Score</div>
+              <div class="metric-col-val" id="score-auction">0.0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Champion Gen</div>
+              <div class="metric-col-val" id="gen-auction">Gen 0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Challenger Win%</div>
+              <div class="metric-col-val" id="win-auction">0%</div>
+            </div>
+            <div>
+              <div class="metric-col-label">PPO Loss</div>
+              <div class="metric-col-val" id="loss-auction">0.000</div>
+            </div>
+          </div>
+
+          <!-- Line Chart Box -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">
+                <span id="chart-label-auction">📈 Squad Score Trajectory</span>
+              </div>
+              <div class="chart-tabs">
+                <button class="chart-tab active" onclick="setMetric('auction', 'score', this)">Score</button>
+                <button class="chart-tab" onclick="setMetric('auction', 'win_rate', this)">Win %</button>
+                <button class="chart-tab" onclick="setMetric('auction', 'loss', this)">Loss</button>
+              </div>
+            </div>
+            <div class="canvas-wrap" id="wrap-auction">
+              <canvas id="canvas-auction"></canvas>
+              <div class="chart-tooltip" id="tooltip-auction"></div>
+            </div>
+            <div class="chart-footer-meta">
+              <span id="chart-x-start-auction">0 drafts</span>
+              <span id="chart-y-range-auction">Min: — | Max: —</span>
+              <span id="chart-x-end-auction">0 drafts</span>
+            </div>
+          </div>
+
+          <div class="format-footer">
+            <span id="progress-auction">0 drafts simulated</span>
+            <span id="speed-auction">0 d/s</span>
+          </div>
+        </div>
+
+        <!-- Deal or No Deal -->
+        <div class="format-card active" id="card-dond">
+          <div class="format-top">
+            <div>
+              <div class="format-name">Deal or No Deal</div>
+              <div style="font-size: 13px; color: var(--muted)">Stick / Hear probabilities & Banker valuation</div>
+            </div>
+            <span class="format-status-badge training" id="badge-dond">Training</span>
+          </div>
+          
+          <div class="format-metrics-row">
+            <div>
+              <div class="metric-col-label">Squad Score</div>
+              <div class="metric-col-val" id="score-dond">0.0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Champion Gen</div>
+              <div class="metric-col-val" id="gen-dond">Gen 0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Challenger Win%</div>
+              <div class="metric-col-val" id="win-dond">0%</div>
+            </div>
+            <div>
+              <div class="metric-col-label">PPO Loss</div>
+              <div class="metric-col-val" id="loss-dond">0.000</div>
+            </div>
+          </div>
+
+          <!-- Line Chart Box -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">
+                <span id="chart-label-dond">📈 Squad Score Trajectory</span>
+              </div>
+              <div class="chart-tabs">
+                <button class="chart-tab active" onclick="setMetric('dond', 'score', this)">Score</button>
+                <button class="chart-tab" onclick="setMetric('dond', 'win_rate', this)">Win %</button>
+                <button class="chart-tab" onclick="setMetric('dond', 'loss', this)">Loss</button>
+              </div>
+            </div>
+            <div class="canvas-wrap" id="wrap-dond">
+              <canvas id="canvas-dond"></canvas>
+              <div class="chart-tooltip" id="tooltip-dond"></div>
+            </div>
+            <div class="chart-footer-meta">
+              <span id="chart-x-start-dond">0 drafts</span>
+              <span id="chart-y-range-dond">Min: — | Max: —</span>
+              <span id="chart-x-end-dond">0 drafts</span>
+            </div>
+          </div>
+
+          <div class="format-footer">
+            <span id="progress-dond">0 drafts simulated</span>
+            <span id="speed-dond">0 d/s</span>
+          </div>
+        </div>
+
+        <!-- Free Pick -->
+        <div class="format-card active" id="card-free_pick">
+          <div class="format-top">
+            <div>
+              <div class="format-name">Free Pick (Snake)</div>
+              <div style="font-size: 13px; color: var(--muted)">Positional scarcity, star power & club constraints</div>
+            </div>
+            <span class="format-status-badge training" id="badge-free_pick">Training</span>
+          </div>
+          
+          <div class="format-metrics-row">
+            <div>
+              <div class="metric-col-label">Squad Score</div>
+              <div class="metric-col-val" id="score-free_pick">0.0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Champion Gen</div>
+              <div class="metric-col-val" id="gen-free_pick">Gen 0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Challenger Win%</div>
+              <div class="metric-col-val" id="win-free_pick">0%</div>
+            </div>
+            <div>
+              <div class="metric-col-label">PPO Loss</div>
+              <div class="metric-col-val" id="loss-free_pick">0.000</div>
+            </div>
+          </div>
+
+          <!-- Line Chart Box -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">
+                <span id="chart-label-free_pick">📈 Squad Score Trajectory</span>
+              </div>
+              <div class="chart-tabs">
+                <button class="chart-tab active" onclick="setMetric('free_pick', 'score', this)">Score</button>
+                <button class="chart-tab" onclick="setMetric('free_pick', 'win_rate', this)">Win %</button>
+                <button class="chart-tab" onclick="setMetric('free_pick', 'loss', this)">Loss</button>
+              </div>
+            </div>
+            <div class="canvas-wrap" id="wrap-free_pick">
+              <canvas id="canvas-free_pick"></canvas>
+              <div class="chart-tooltip" id="tooltip-free_pick"></div>
+            </div>
+            <div class="chart-footer-meta">
+              <span id="chart-x-start-free_pick">0 drafts</span>
+              <span id="chart-y-range-free_pick">Min: — | Max: —</span>
+              <span id="chart-x-end-free_pick">0 drafts</span>
+            </div>
+          </div>
+
+          <div class="format-footer">
+            <span id="progress-free_pick">0 drafts simulated</span>
+            <span id="speed-free_pick">0 d/s</span>
+          </div>
+        </div>
+
+        <!-- Spin the Wheel -->
+        <div class="format-card active" id="card-spin_wheel">
+          <div class="format-top">
+            <div>
+              <div class="format-name">Spin the Wheel</div>
+              <div style="font-size: 13px; color: var(--muted)">Entity-constrained drafting & dry-slice fallbacks</div>
+            </div>
+            <span class="format-status-badge training" id="badge-spin_wheel">Training</span>
+          </div>
+          
+          <div class="format-metrics-row">
+            <div>
+              <div class="metric-col-label">Squad Score</div>
+              <div class="metric-col-val" id="score-spin_wheel">0.0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Champion Gen</div>
+              <div class="metric-col-val" id="gen-spin_wheel">Gen 0</div>
+            </div>
+            <div>
+              <div class="metric-col-label">Challenger Win%</div>
+              <div class="metric-col-val" id="win-spin_wheel">0%</div>
+            </div>
+            <div>
+              <div class="metric-col-label">PPO Loss</div>
+              <div class="metric-col-val" id="loss-spin_wheel">0.000</div>
+            </div>
+          </div>
+
+          <!-- Line Chart Box -->
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">
+                <span id="chart-label-spin_wheel">📈 Squad Score Trajectory</span>
+              </div>
+              <div class="chart-tabs">
+                <button class="chart-tab active" onclick="setMetric('spin_wheel', 'score', this)">Score</button>
+                <button class="chart-tab" onclick="setMetric('spin_wheel', 'win_rate', this)">Win %</button>
+                <button class="chart-tab" onclick="setMetric('spin_wheel', 'loss', this)">Loss</button>
+              </div>
+            </div>
+            <div class="canvas-wrap" id="wrap-spin_wheel">
+              <canvas id="canvas-spin_wheel"></canvas>
+              <div class="chart-tooltip" id="tooltip-spin_wheel"></div>
+            </div>
+            <div class="chart-footer-meta">
+              <span id="chart-x-start-spin_wheel">0 drafts</span>
+              <span id="chart-y-range-spin_wheel">Min: — | Max: —</span>
+              <span id="chart-x-end-spin_wheel">0 drafts</span>
+            </div>
+          </div>
+
+          <div class="format-footer">
+            <span id="progress-spin_wheel">0 drafts simulated</span>
+            <span id="speed-spin_wheel">0 d/s</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Plain English Explainer -->
+      <div class="explainer-box">
+        <strong>How to read the graphs:</strong><br />
+        • <strong>Squad Score:</strong> The position-weighted quality of drafted 11-player squads (higher is better). Watch this rise as the bots learn player synergy.<br />
+        • <strong>Challenger Win Rate:</strong> In self-play, new models compete against the reigning Champion. When win rate climbs above 55%, a new Champion is crowned. Around ~50%, the model is converging toward mastery.<br />
+        • <strong>PPO Loss:</strong> Neural network regression loss per training epoch (decreases over time as predictions stabilize).
+      </div>
+    </div>
+
+    <script>
+      // Active metric selection per format: 'score', 'win_rate', or 'loss'
+      const activeMetrics = {
+        auction: 'score',
+        dond: 'score',
+        free_pick: 'score',
+        spin_wheel: 'score'
+      };
+
+      // In-memory data store for chart renderers
+      const formatHistoryData = {
+        auction: [],
+        dond: [],
+        free_pick: [],
+        spin_wheel: []
+      };
+
+      function setMetric(format, metricKey, btnElem) {
+        activeMetrics[format] = metricKey;
+        const container = btnElem.parentElement;
+        container.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+        btnElem.classList.add('active');
+
+        const labels = {
+          score: '📈 Squad Score Trajectory',
+          win_rate: '⚔️ Challenger Win Rate % (Target: ~50%)',
+          loss: '📉 PPO Loss Convergence'
+        };
+        const labelElem = document.getElementById(`chart-label-${format}`);
+        if (labelElem) labelElem.textContent = labels[metricKey];
+
+        drawChart(format);
+      }
+
+      async function fetchMetrics() {
+        try {
+          const res = await fetch('/api/metrics');
+          if (!res.ok) return;
+          const data = await res.json();
+          updateUI(data);
+        } catch (e) {
+          // Waiting
+        }
+      }
+
+      function updateUI(data) {
+        const totalDrafts = data.total_drafts_completed || 0;
+        const combinedSpeed = data.combined_drafts_per_sec || 0;
+        const uptimeStr = data.uptime_str || '00h 00m 00s';
+
+        document.getElementById('heroTotalDrafts').textContent = totalDrafts.toLocaleString();
+        document.getElementById('heroSpeed').textContent = combinedSpeed.toLocaleString() + ' d/s';
+        document.getElementById('heroUptime').textContent = uptimeStr;
+
+        const draftsPerHour = Math.round(combinedSpeed * 3600);
+        document.getElementById('heroDraftsPerHour').textContent = draftsPerHour.toLocaleString() + ' drafts / hour';
+
+        // Formats
+        const formats = ['auction', 'dond', 'free_pick', 'spin_wheel'];
+        let avgScoreSum = 0;
+        let activeCount = 0;
+
+        formats.forEach(fmt => {
+          const fData = (data.formats && data.formats[fmt]) ? data.formats[fmt] : null;
+          if (fData) {
+            const completed = fData.completed_drafts || 0;
+            const speed = fData.drafts_per_sec || 0;
+            const score = fData.avg_squad_score || 0;
+            const gen = fData.champion_generation || 0;
+            const winRate = fData.challenger_win_rate || 0;
+            const loss = fData.loss !== undefined ? fData.loss : 0;
+
+            document.getElementById(`score-${fmt}`).textContent = score > 0 ? score.toFixed(1) : '0.0';
+            document.getElementById(`gen-${fmt}`).textContent = 'Gen ' + gen;
+            document.getElementById(`win-${fmt}`).textContent = winRate > 0 ? winRate + '%' : '—';
+            document.getElementById(`loss-${fmt}`).textContent = loss > 0 ? loss.toFixed(3) : '0.000';
+            document.getElementById(`progress-${fmt}`).textContent = `${completed.toLocaleString()} drafts simulated`;
+            document.getElementById(`speed-${fmt}`).textContent = `${speed.toFixed(1)} d/s`;
+
+            const badge = document.getElementById(`badge-${fmt}`);
+            if (completed > 0) {
+              badge.className = 'format-status-badge training';
+              badge.textContent = 'Training (Gen ' + gen + ')';
+              activeCount++;
+            } else {
+              badge.className = 'format-status-badge';
+              badge.textContent = 'Waiting';
+            }
+
+            // Sync history for line graphs
+            if (Array.isArray(fData.history) && fData.history.length > 0) {
+              formatHistoryData[fmt] = fData.history;
+            } else if (completed > 0) {
+              // Fallback live point
+              if (!formatHistoryData[fmt].length || formatHistoryData[fmt][formatHistoryData[fmt].length - 1].drafts !== completed) {
+                formatHistoryData[fmt].push({
+                  drafts: completed,
+                  score: score,
+                  win_rate: winRate,
+                  loss: loss
+                });
+              }
+            }
+
+            drawChart(fmt);
+            avgScoreSum += score;
+          }
+        });
+
+        const avgScore = avgScoreSum / 4;
+        if (avgScore > 1750) {
+          document.getElementById('heroBotLevel').textContent = 'World Class';
+          document.getElementById('heroBotDesc').textContent = 'Drafting 175+ average elite superstars';
+        } else if (avgScore > 1650) {
+          document.getElementById('heroBotLevel').textContent = 'Pro Tier';
+          document.getElementById('heroBotDesc').textContent = 'Strong balanced 11 with optimal spacing';
+        } else if (avgScore > 1400) {
+          document.getElementById('heroBotLevel').textContent = 'Starter Tier';
+          document.getElementById('heroBotDesc').textContent = 'Solid first-team starting lineups';
+        } else {
+          document.getElementById('heroBotLevel').textContent = 'Learning...';
+          document.getElementById('heroBotDesc').textContent = 'Exploring player combinations';
+        }
+      }
+
+      // High-performance canvas chart renderer
+      function drawChart(format) {
+        const canvas = document.getElementById(`canvas-${format}`);
+        if (!canvas) return;
+        const wrap = document.getElementById(`wrap-${format}`);
+        const rect = wrap.getBoundingClientRect();
+        
+        const dpr = window.devicePixelRatio || 1;
+        const w = rect.width;
+        const h = rect.height;
+        if (w === 0 || h === 0) return;
+
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        const metricKey = activeMetrics[format];
+        const data = formatHistoryData[format];
+
+        ctx.clearRect(0, 0, w, h);
+
+        if (!data || data.length === 0) {
+          ctx.fillStyle = '#4a6b66';
+          ctx.font = '12px Oswald, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('Accumulating checkpoints for graph...', w / 2, h / 2);
+          return;
+        }
+
+        // Color palettes
+        let strokeColor = '#ef7a3c'; // Orange for score
+        let fillColorStart = 'rgba(239, 122, 60, 0.35)';
+        let fillColorEnd = 'rgba(239, 122, 60, 0.0)';
+        
+        if (metricKey === 'win_rate') {
+          strokeColor = '#06b6d4'; // Cyan for win rate
+          fillColorStart = 'rgba(6, 182, 212, 0.35)';
+          fillColorEnd = 'rgba(6, 182, 212, 0.0)';
+        } else if (metricKey === 'loss') {
+          strokeColor = '#a855f7'; // Purple for loss
+          fillColorStart = 'rgba(168, 85, 247, 0.35)';
+          fillColorEnd = 'rgba(168, 85, 247, 0.0)';
+        }
+
+        const values = data.map(d => d[metricKey] !== undefined ? d[metricKey] : 0);
+        let minVal = Math.min(...values);
+        let maxVal = Math.max(...values);
+        if (minVal === maxVal) {
+          minVal -= 1;
+          maxVal += 1;
+        }
+        const valPadding = (maxVal - minVal) * 0.15;
+        minVal -= valPadding;
+        maxVal += valPadding;
+
+        // Draw horizontal grid lines
+        const padX = 8;
+        const padY = 8;
+        const drawW = w - padX * 2;
+        const drawH = h - padY * 2;
+
+        ctx.strokeStyle = 'rgba(226, 240, 238, 0.07)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+
+        for (let i = 0; i <= 3; i++) {
+          const y = padY + (drawH / 3) * i;
+          ctx.beginPath();
+          ctx.moveTo(padX, y);
+          ctx.lineTo(w - padX, y);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        // Compute point coordinates
+        const points = data.map((d, idx) => {
+          const x = data.length === 1 ? w / 2 : padX + (idx / (data.length - 1)) * drawW;
+          const v = d[metricKey] !== undefined ? d[metricKey] : 0;
+          const y = padY + drawH - ((v - minVal) / (maxVal - minVal)) * drawH;
+          return { x, y, raw: d };
+        });
+
+        // Store points for interactive hover
+        canvas._points = points;
+        canvas._metricKey = metricKey;
+
+        // Draw Area Fill
+        const gradient = ctx.createLinearGradient(0, padY, 0, h - padY);
+        gradient.addColorStop(0, fillColorStart);
+        gradient.addColorStop(1, fillColorEnd);
+
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, padY + drawH);
+        points.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.lineTo(points[points.length - 1].x, padY + drawH);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Draw Stroke Line
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+          ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+
+        // Draw Point Dots
+        points.forEach((p, idx) => {
+          if (data.length <= 30 || idx === points.length - 1) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, idx === points.length - 1 ? 4 : 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = idx === points.length - 1 ? '#fff' : strokeColor;
+            ctx.fill();
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+        });
+
+        // Update Meta range labels
+        const unit = metricKey === 'win_rate' ? '%' : (metricKey === 'score' ? ' pts' : '');
+        const realMin = Math.min(...values);
+        const realMax = Math.max(...values);
+        const startDrafts = data[0].drafts || 0;
+        const endDrafts = data[data.length - 1].drafts || 0;
+
+        document.getElementById(`chart-x-start-${format}`).textContent = `${startDrafts.toLocaleString()} drafts`;
+        document.getElementById(`chart-x-end-${format}`).textContent = `${endDrafts.toLocaleString()} drafts`;
+        document.getElementById(`chart-y-range-${format}`).textContent = `Min: ${realMin.toFixed(1)}${unit} | Max: ${realMax.toFixed(1)}${unit}`;
+      }
+
+      // Interactive hover tooltips
+      ['auction', 'dond', 'free_pick', 'spin_wheel'].forEach(fmt => {
+        const wrap = document.getElementById(`wrap-${fmt}`);
+        const canvas = document.getElementById(`canvas-${fmt}`);
+        const tooltip = document.getElementById(`tooltip-${fmt}`);
+
+        wrap.addEventListener('mousemove', e => {
+          if (!canvas._points || canvas._points.length === 0) return;
+          const rect = wrap.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+
+          // Find closest point
+          let closest = canvas._points[0];
+          let minDist = Math.abs(mouseX - closest.x);
+          for (let i = 1; i < canvas._points.length; i++) {
+            const dist = Math.abs(mouseX - canvas._points[i].x);
+            if (dist < minDist) {
+              minDist = dist;
+              closest = canvas._points[i];
+            }
+          }
+
+          if (minDist < 30) {
+            const raw = closest.raw;
+            const metricKey = canvas._metricKey;
+            const unit = metricKey === 'win_rate' ? '%' : (metricKey === 'score' ? ' pts' : '');
+            const val = raw[metricKey] !== undefined ? raw[metricKey] : 0;
+            
+            tooltip.innerHTML = `Draft ${raw.drafts.toLocaleString()}<br /><strong>${val}${unit}</strong>`;
+            tooltip.style.left = closest.x + 'px';
+            tooltip.style.top = closest.y + 'px';
+            tooltip.style.display = 'block';
+          } else {
+            tooltip.style.display = 'none';
+          }
+        });
+
+        wrap.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        ['auction', 'dond', 'free_pick', 'spin_wheel'].forEach(drawChart);
+      });
+
+      setInterval(fetchMetrics, 1000);
+      fetchMetrics();
+    </script>
+  </body>
+</html>
