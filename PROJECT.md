@@ -19,6 +19,11 @@ multi-position tag was replaced with a single canonical position, decided across
 questionnaire rounds and applied to `player_data.csv` in one delivery. See Position
 Reform under Multi-Position Eligibility below.
 
+Round 8 (Bot Questionnaire 1) ran 2026-08-18 on the **`bot-questionnaires`** branch:
+settled Auction starting budget formula, auction bid timer resets, unsold player handling,
+Deal or No Deal banker sourcing/box handling, Free Pick deadlock stance, non-auction post-draft
+permanence, and defined the formal position-weighted squad evaluation metric for ML bot training.
+
 That reform made positions a hard gate, which in turn made it worth measuring which
 draft configurations can still be played at all. The **`draft-viability`** branch
 (2026-08-18) simulated every configuration against the real pool, withdrew the
@@ -587,10 +592,16 @@ Every draft is configured along three independent axes: **Format**, **Scope**, a
 ### Formats
 
 #### Auction
-3 example players: John, Paul, Ringo. Each starts with a budget (e.g. 1B euros). A
-footballer comes up starting at a predetermined starting value (not 0). Players bid in
-real time; if no one bids, the footballer is gone. Highest bidder wins. If the buyer has
-an open slot for that footballer's position, it fills the slot directly. If every slot
+3 example players: John, Paul, Ringo. Each starts with a budget calculated dynamically from
+the pool: **(Average Derived Price of all players in the selected pool) × 20, rounded to the nearest 100M EUR** *(R8-Q0 / settled 2026-08-18)*.
+A footballer comes up starting at a predetermined opening bid (70% of derived market value, rounded to nearest 5M).
+Players bid in real time. The auction turn timer represents the maximum allowed inactivity without a bid:
+**any valid bid resets the countdown timer back to its full duration** (e.g. 15s) *(R8-Q3)*.
+A player is sold to the highest bidder only when the full timer expires with zero new bids.
+If no one bids at opening bid and the initial timer expires, the footballer is **discarded into an unsold pile**
+and is only resurfaced for end-of-auction backfill if no other viable players remain in the pool *(R8-Q4)*.
+
+If the buyer has an open slot for that footballer's position, it fills the slot directly. If every slot
 for that position is already occupied, the purchase **overflows into the buyer's
 graveyard** instead — a holding area for purchased-but-unplaced footballers that only
 becomes relevant, and visible, once a buyer has an overflow purchase sitting in it. From
@@ -627,9 +638,9 @@ moment it appears, no rotating turn to bring it up. *(R2-Q5)* Footballers surfac
 sells or passes. *(R3-Q1)* The reveal order is **fully random** — no quality curve,
 best/worst-first, or position cycling. *(R6-Q1)*
 
-Bid increments are **flat, stepped amounts**, offered as a small fixed set of buttons
-(e.g. +1M / +5M / +10M) available at every price point — the steps don't scale up with
-the current price. *(R2-Q3, R3-Q9)* A footballer's **starting (opening) bid** is **70%
+Bid increments are **flat, stepped amounts**, offered as a small fixed set of buttons:
+**+5M / +10M / +25M** available at every price point — the steps don't scale up with
+the current price. *(R2-Q3, R3-Q9, updated to +5M/+10M/+25M in R9-Q3)* A footballer's **starting (opening) bid** is **70%
 of its derived market value, rounded to the nearest 5M** — see Player Data Pool below
 for how that market value is derived. *(R2-Q2, resolved on the `valuations` branch,
 2026-08-15)*
@@ -665,17 +676,14 @@ unplaced surplus to hold, so a graveyard has nothing to do. *(R3-Q2)*
 This format has no budget/currency in the briefing — every player is guaranteed a
 footballer each round, so it's self-completing by design. *(R1-Q1)*
 
-The AI proposer's offer is **deliberately a bit worse** than the average ability of the
-remaining unopened boxes for that round's position — sticking with the boxes should
-feel like the tempting choice, taking the deal a concession. *(R3-Q4)* That calculation
+The AI proposer's offer is **drawn from the remaining undrafted pool players for that round's designated position** (excluding players inside the current round's boxes), selected with an ability rating **15 points lower than the average ability of the remaining unopened boxes for that round's position** (`Average Unopened Ability - 15.0`) *(R3-Q4, R8-Q5, R9-Q6)* — sticking with the boxes should
+feel like the tempting choice, taking the deal a concession. That calculation
 is **flat and position-based only** — the same for whoever it's offered to that round,
 not adjusted per-player for squad needs, budget, or history. *(R6-Q8)*
 
 That round's boxes themselves follow the **same higher-ability skew** as the rest of
 the pool (see Player Data Pool) — they aren't pulled evenly/representatively just
-because they're boxes. *(R6-Q2)*
-
-**Open:** how footballers are chosen for the pool in general, beyond position coverage.
+because they're boxes. *(R6-Q2)* At the end of the round, any **unopened or rejected box players are returned to the undrafted pool** *(R8-Q6)* (meaning only CB players could ever be drawn in a later round since all other slots occur exactly once in the 4-2-3-1).
 
 #### Free Pick
 3 example players: John, Paul, Ringo. Straight **snake draft**, 11 picks total, each
@@ -694,12 +702,8 @@ Since the position reform made positions a **hard gate** — a footballer only e
 their one listed slot, no exceptions *(R7.3-Q1)* — the same filtering mechanism also
 removes any footballer whose designated slot is already full in the picker's own XI.
 There's no graveyard here to catch an overflow pick the way Auction does, so it's simply
-not offered. *(R7.3-Q3)* Whether the combination of that filter and the Constraint
-filter could ever leave a player with zero legal options for a position they still need
-is believed unlikely to happen in practice (given the pool's guaranteed position
-coverage) — reconsidered after the position reform removed the flexibility that
-judgment originally leaned on, and reconfirmed unchanged: still no explicit fallback
-rule defined for that edge case. *(R6-Q4, revisited and held at R7.3-Q4)*
+not offered. *(R7.3-Q3)* If a player's previous picks ever leave them with zero legal options
+for a position they still need (**constraint deadlock**), **the system does nothing and the game stays stuck** *(R8-Q1)* — no auto-waiver or artificial bailout. (Draft viability simulation contains this by blocking unviable configurations at the lobby level).
 
 #### Spin the Wheel
 The wheel is **never mixed** — no single wheel has club slices next to league slices
@@ -708,6 +712,8 @@ leagues, or all nationalities. *(R4-Q6, overturning the mixed-wheel reading of R
 Whichever single category is in play, the pick itself is a free pick in a snake draft —
 including Free Pick's slot-full filtering above, since it's the same underlying pick.
 *(R7.3-Q3)*
+
+**Wheel slice distribution:** the wheel has **equal-sized slices for every entity** (club, league, or nation) that currently has at least 1 legal player available for the active drafter's open positions *(R8-Q7)*.
 
 Which one category applies is still governed by Scope — whichever of **league / club /
 nationality** the current Scope *hasn't already fixed* is eligible to be the wheel's
@@ -804,9 +810,43 @@ over — control **always hands back to them immediately**. *(R4-Q4)*
 
 ### Bots
 Bots always play **one consistent default style** — no personality/aggressiveness
-picker exposed to players. *(R1-Q9)* The actual decision logic (how a bot bids,
-sticks, takes offers, etc.) is **explicitly deferred** — not to be speced out yet.
-*(R2-Q8)*
+picker exposed to players. *(R1-Q9)*
+
+**Architecture & Execution:**
+- **Separate Models per Format:** 4 dedicated, lightweight neural network policies (one each for Auction, Deal or No Deal, Free Pick, Spin the Wheel) *(R9-Q1)*.
+- **In-Browser Execution:** The trained models run directly in the client browser using lightweight ONNX / JS weights with zero backend latency or server cost on GitHub Pages *(R9-Q10)*.
+- **Organization:** Training scripts, simulation gyms, and checkpoint leagues reside in `scripts/training/`. Exported browser-ready weights reside in `src/data/botModels/` *(R10-Q10)*.
+
+**Machine Learning / Reinforcement Learning Training Pipeline:**
+- **Algorithm:** Multi-Agent **PPO (Proximal Policy Optimization)** with Actor-Critic networks for stable policy gradient learning over discrete action spaces *(R10-Q1)*.
+- **Training Volume:** **500,000+ drafts per format** in vectorized self-play simulation *(R10-Q7)*.
+- **End-of-Draft Reward Signal:** Relative margin over the room — $\text{Reward} = \text{Bot Squad Score} - \text{Lobby Average Squad Score}$ *(R9-Q2)*.
+- **Squad Score Metric:** Position-Weighted Ability Sum across the starting 11 *(R8-Q8)*:
+  $$\text{Squad Score} = \sum_{i=1}^{11} \text{Current Ability}_i \times \text{Weight}_{\text{pos}_i}$$
+
+| Position | Multiplier |
+|---|---|
+| ST | `1.0846` |
+| AMF / CAM | `1.0624` |
+| CM | `1.0612` |
+| RW | `1.0342` |
+| LW | `1.0322` |
+| CDM | `0.9827` |
+| RB | `0.9760` |
+| LB | `0.9750` |
+| CB | `0.9730` (each CB) |
+| GK | `0.8358` |
+
+- **Observation Spaces & Action Structures:**
+  - **Auction:** Discrete actions are `Pass (0)`, `+5M`, `+10M`, and `+25M` *(R9-Q3)*. Action masking strictly disables unaffordable raises with $-\infty$ logits *(R10-Q6)*. Automated optimal slotting ensures the highest-ability legal player is always placed in the starting XI while unplaced players move to graveyard *(R10-Q5)*; graveyard overflow contributes 0 points to squad score *(R9-Q4)*. Observations include active player stats, opening & current bids, bot's budget & formation slots, opponent budgets & open slots, and remaining pool count *(R10-Q2)*.
+  - **Deal or No Deal:** Two-step decision: Step 1 (Pick unopened box $\rightarrow$ `Stick` or `Hear Offer`), Step 2 (if hearing offer $\rightarrow$ `Take Offer` or `Open 2nd Box`) *(R9-Q5)*. Observations include active position multiplier, opened box player ability, remaining unopened box count & average ability, expected Banker offer (`Average − 15.0`), and current squad fill state *(R10-Q4)*.
+  - **Free Pick & Spin the Wheel:** Full pool embedding matrix across all 546 players combined with a legal availability mask, allowing pure policy networks to select the optimal pick without heuristic handholding *(R9-Q7, R10-Q3)*.
+- **Training Environments:** Self-play randomly samples table sizes from **2 to 5 drafters** *(R9-Q8)* across weighted scopes (50% All Players, 30% Top 5 Leagues, 20% Single Leagues) *(R9-Q9)*.
+- **Evaluation & Convergence Criterion:** **Champion vs Challenger Checkpoint League** *(R10-Q8)* — periodic checkpoints are evaluated in head-to-head matches against the reigning champion model. Convergence is reached when the challenger consistently produces negligible win margin or the champion holds its title across prolonged training intervals.
+
+**Deliberation & Live Game Inference:**
+- **Natural Human Pacing:** In live interactive lobbies against humans, bots simulate natural human pacing with a **1.5–3.5s delay** before picking or offering, and bid with natural human rhythm in auctions *(R8-Q10)*. In ML training and simulation runs, execution is untimed and immediate.
+- **Temperature Sampling:** Live move selection uses **Softmax sampling with Temperature $\tau \approx 0.6$** *(R10-Q9)* to preserve top-tier skill while introducing natural variation across games.
 
 ### Comparing Squads
 No numbers, no leaderboard — just a **pure side-by-side visual** of both finished
@@ -855,12 +895,12 @@ producing a **Derived Price (EURm)** for every player. **Auction opening bids** 
 already-drafted footballer sits in which formation slot.~~ **Narrowed 2026-08-18**: with
 positions a hard gate, no footballer can ever occupy a slot other than the one they're
 listed for, so there's nothing left to rearrange between slots. What survives is
-**graveyard swapping** — a player can keep swapping their own graveyard footballers
+**graveyard swapping** — an Auction player can keep swapping their own graveyard footballers
 against their XI after the draft ends, the same bump-swap mechanic as during Auction
 (above), just no longer time-limited by the draft being live. *(R1-Q10, narrowed by
-R7.3-Q5)* Free Pick, Spin the Wheel and Deal or No Deal have no graveyard, so it's
-unclear yet whether anything analogous to Post-Draft Editing exists for them at all —
-open, see Position Reform below.
+R7.3-Q5)*
+
+**Free Pick, Spin the Wheel and Deal or No Deal are permanently locked upon draft completion** *(R8-Q2)* — no graveyard exists, and no post-draft player swapping, trading, or substitutions are permitted.
 
 ### Multi-Position Eligibility — retired
 
@@ -1123,35 +1163,15 @@ questionnaire is answered.
     was wrong, corrected here). The setting isn't shown at all for the other three.
 ~~18. Auction reveal ordering~~ Resolved R6-Q1: fully random.
 ~~19. D-o-N-D box quality~~ Resolved R6-Q2: follows the same pool-wide skew.
-~~20. Constraint scope (per-squad vs. global)~~ Resolved R6-Q3: per-squad only.
-21. **Free Pick constraint deadlock — OPEN, and no longer hypothetical.** A drafter's
-    own earlier picks can leave them with zero legal options for a slot they still
-    need. Judged "unlikely in practice" twice (R6-Q4, and again at R7.3-Q4 after the
-    position reform), both times without measuring it. The viability simulation
-    (Draft Viability above) then **demonstrated it**: configurations that pass 500/500
-    unconstrained fail with a constraint, dozens of runs in.
-    The lobby currently sidesteps this by refusing to offer the configurations where it
-    was observed, which is containment, not a rule — **there is still no defined
-    in-draft fallback for a deadlock that happens anyway**, and the simulation only
-    covers the configurations the lobby offers. Worth a decision: auto-waive the
-    constraint for one pick, pause for the host, or something else.
+~~21. Free Pick constraint deadlock~~ Resolved R8-Q1: the game does nothing and stays stuck (no auto-waiver or artificial bailout; viability gating in the lobby prevents unviable configurations).
 ~~22. Host transfer on disconnect~~ Resolved R6-Q6: auto-passes to next-earliest joiner.
 ~~23. Indefinite blocking bids in Auction~~ Resolved R6-Q7: intended, no cap.
 ~~24. AI proposer offer targeting~~ Resolved R6-Q8: flat/position-based, not per-player.
 ~~25. Squad-share export timing~~ Resolved R6-Q9: manually triggered.
 ~~26. Lobby carryover between back-to-back drafts~~ Resolved R6-Q10: nothing carries
     over, clean slate every time.
-27. Position Reform (R7): data applied 2026-08-18, destructive full remap to one
-    position per player in a single delivery (R7-Q1/Q2); Multi-Position Eligibility
-    retired (R7-Q4); Auction purchases direct-to-slot by default, graveyard only on
-    overflow as a straight two-way swap, Auction-specific, backfill always direct
-    (R7.2-Q1/Q2, R7.3-Q2, superseding R7-Q5); positions are a hard gate (R7.3-Q1); Free
-    Pick/Spin the Wheel filter a full-slot footballer out of selection (R7.3-Q3);
-    constraint-deadlock judgment reconfirmed (R6-Q4, R7.3-Q4); Post-Draft Editing
-    narrowed to graveyard swapping (R1-Q10, R7.3-Q5). CM-targeting (R7-Q3) and pre-remap
-    timing (R7.2-Q3) were never answered but are moot now the pool is fully remapped.
-    **Still open:** whether Free Pick, Spin the Wheel, or Deal or No Deal — none of which
-    have a graveyard — get any post-draft equivalent.
+~~27. Post-Draft Editing for graveyard-less formats~~ Resolved R8-Q2: Free Pick, Spin the Wheel, and Deal or No Deal squads are permanently locked upon draft completion — no post-draft player changes.
+28. AI Bot ML Architecture & Training Specification: Model design, state representation, action space, and self-play RL training protocol. (In progress, Round 8+).
 
 ## Questionnaire Log
 
@@ -1167,7 +1187,7 @@ This table is kept as a historical index of what each round covered.
 | 4 | Constraint enforcement, disconnect/reconnect timing, share image contents, wheel odds, lobby chat/privacy/spectators, pool freshness | Answered |
 | 5 | Wheel category timing, constraint scope clarification, share-image asset, format/scope selection, bot auto-fill, Auction bidding-after-full-XI, D-o-N-D rotation, graveyard visibility, lobby lifecycle | Answered |
 | 6 | Auction/D-o-N-D reveal-quality ordering, constraint scope (per-squad vs global), Free Pick constraint deadlocks, default timer length, host transfer, indefinite-blocking bidding, AI proposer targeting, share-image timing | Answered |
-| 7 | Position reform: full remap to single positions, Multi-Position Eligibility retirement, Auction overflow-to-graveyard mechanic, hard-gate placement, Post-Draft Editing narrowed | In progress (3 rounds; Free Pick/Spin the Wheel/D-o-N-D post-draft equivalent still open) |
-| 8 | TBD | Not started |
-| 9 | TBD | Not started |
-| 10 | TBD | Not started |
+| 7 | Position reform: full remap to single positions, Multi-Position Eligibility retirement, Auction overflow-to-graveyard mechanic, hard-gate placement, Post-Draft Editing narrowed | Answered |
+| 8 | Bot Questionnaire 1: Auction budget formula, Auction bid timer resets, unsold player handling, D-o-N-D banker & boxes, Free Pick deadlock stance, non-auction post-draft lock, position-weighted squad evaluation metric, ML RL training approach, bot live delay | Answered (`bot-questionnaire-1.md`) |
+| 9 | Bot Questionnaire 2: Separate models per format, margin-over-average RL reward, Auction +5M/+10M/+25M actions, Deal or No Deal -15 banker discount, pure ML selection policies, randomized 2-5 seats & weighted scopes, in-browser ONNX/JS execution | Answered (`bot-questionnaire-2.md`) |
+| 10 | Bot Questionnaire 3: Multi-agent PPO, 500k+ episodes, Champion Checkpoint League evaluation, full pool 546-player embeddings, comprehensive auction/D-o-N-D observations, action masking, softmax temperature ~0.6 | Answered (`bot-questionnaire-3.md`) |
