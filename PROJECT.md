@@ -55,6 +55,15 @@ organism for solo and multiplayer lobbies, and standardized UI primitives (`Butt
 `StatusLine`, `SectionLabel`). That branch was committed, pushed and merged to `main` on
 2026-08-18. All work described below is now on `main`.
 
+The **`auction-training`** branch, cut from `main` on 2026-08-19, opened the from-scratch
+build of the Auction bot's RL training pipeline — the one format the 2026-08-18 training
+run never completed. Before any training design was written, forensics on the wiped
+auction environment turned up a **rule gap rather than a tuning bug**: nothing bounded how
+many footballers went on the block, so an All Players draft auctioned all 546 of them.
+That produced the **Auction lot cap** settled below — at most **15 × lobby size**
+footballers per auction. It is a game rule, not a training shortcut: it governs the
+auction humans play, and the training environment inherits it.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -593,8 +602,9 @@ Every draft is configured along three independent axes: **Format**, **Scope**, a
 
 #### Auction
 3 example players: John, Paul, Ringo. Each starts with a budget calculated dynamically from
-the pool: **(Average Derived Price of all players in the selected pool) × 20, rounded to the nearest 100M EUR** *(R8-Q0 / settled 2026-08-18)*.
+the pool: **(Average Derived Price of all players in the selected pool) × 19, rounded to the nearest 100M EUR** *(R8-Q0 / amended 2026-08-19)*.
 A footballer comes up starting at a predetermined opening bid (70% of derived market value, rounded to nearest 5M).
+The **first bid on a lot is exactly at the opening price** *(clarified 2026-08-19)*, so increment buttons are redundant in the first round and mask down to {Pass, Bid}.
 Players bid in real time. The auction turn timer represents the maximum allowed inactivity without a bid:
 **any valid bid resets the countdown timer back to its full duration** (e.g. 15s) *(R8-Q3)*.
 A player is sold to the highest bidder only when the full timer expires with zero new bids.
@@ -622,11 +632,15 @@ block opponents, right up until the auction ends. *(R5-Q6)*
 **Running low on money — backfill, not a reserve** *(R1-Q1 → overturned by R2-Q4)*: no
 funds are held back during bidding — it stays a genuine free-for-all, anyone can bid
 whatever they have at any time. Instead, once the auction **runs its course** (defined
-as: every remaining footballer in the pool has been through the block, *or* every
-player still short of a full XI can no longer afford any unsold eligible footballer for
-their open slots — whichever comes first), any player left with empty slots has them
-auto-filled with the **cheapest still-eligible unsold footballers** for those
-positions. Running out of money isn't prevented, it's just not punished with a
+as: every footballer **on the lot list** has been through the block — the list is capped
+at 15 × lobby size, see below — *or* every player still short of a full XI can no longer
+afford any unsold eligible footballer for their open slots — whichever comes first), any
+player left with empty slots has them auto-filled with the **cheapest still-eligible
+unsold footballers** for those positions. Under the cap, "unsold" means the whole scoped
+pool minus whatever was sold, so backfill draws first from the footballers the cap kept
+off the block, and only falls back to the unsold pile — the ones that went to the block
+and drew no bid — when nothing else eligible remains, exactly as R8-Q4 already
+specified. Running out of money isn't prevented, it's just not punished with a
 permanently broken squad — you end up with worse players, not fewer players. This is
 also the default behavior when a pick/bid timer expires unattended (see Turns &
 Timers). Deal or No Deal has no budget in the briefing, so "running out of money"
@@ -637,6 +651,22 @@ moment it appears, no rotating turn to bring it up. *(R2-Q5)* Footballers surfac
 **one at a time**: the system auto-reveals the next one as soon as the current one
 sells or passes. *(R3-Q1)* The reveal order is **fully random** — no quality curve,
 best/worst-first, or position cycling. *(R6-Q1)*
+
+**The lot list is capped at 15 × lobby size** *(settled 2026-08-19, `auction-training`
+branch)*. An auction puts at most `15 × N` footballers on the block for an `N`-drafter
+table — 30 lots at 2 drafters, 75 at 5 — drawn from the scoped pool, never the whole
+pool. Before this the auction ran the entire scope: 546 lots at All Players, 463 at
+Top 5, 167 at Premier Division. That was never playable at a 15s bid timer, and it is
+what made the Auction bot's training episodes 50–100× longer than any other format's.
+
+The cap sits on top of the existing per-draft coverage rule (Open Question #2, R2-Q10):
+the lot list is **built position-by-position first** — `N` eligible footballers for each
+single-occupancy slot and `2N` for CB, which is `11N` — and the remaining `4N` lots are
+filled from the rest of the scoped pool under the usual skew toward higher ability. Every
+table can therefore fill its XI off the block, with about a quarter of the lots as
+contested surplus. A uniform random draw of `15N` would **not** hold that: at a 5-drafter
+table it yields 4.8 LBs and 5.1 RBs on average against 5 needed, leaving the thin
+positions short roughly half the time and pushing the work onto backfill.
 
 Bid increments are **flat, stepped amounts**, offered as a small fixed set of buttons:
 **+5M / +10M / +25M** available at every price point — the steps don't scale up with
@@ -787,7 +817,10 @@ Auction is the only format that could otherwise leave gaps — it's covered by t
 backfill-with-cheapest-eligible-footballers rule above, not by preventing low-money
 bidding in the first place. Backfill targets empty slots by definition, so it always
 places directly into the 11 — it can't overflow into the graveyard the way a live
-purchase can. *(R7.2-Q1)*
+purchase can. *(R7.2-Q1)* The 15 × lobby size lot cap doesn't put this guarantee at
+risk: the lot list is drawn position-by-position so every table can fill its XI off the
+block, and backfill can still reach the un-auctioned remainder of the scoped pool if it
+somehow can't. *(2026-08-19)*
 
 ### Turns & Timers
 Host-configurable per-turn/bid timer (a length can be set, or timers can be turned off
@@ -838,7 +871,7 @@ picker exposed to players. *(R1-Q9)*
 | GK | `0.8358` |
 
 - **Observation Spaces & Action Structures:**
-  - **Auction:** Discrete actions are `Pass (0)`, `+5M`, `+10M`, and `+25M` *(R9-Q3)*. Action masking strictly disables unaffordable raises with $-\infty$ logits *(R10-Q6)*. Automated optimal slotting ensures the highest-ability legal player is always placed in the starting XI while unplaced players move to graveyard *(R10-Q5)*; graveyard overflow contributes 0 points to squad score *(R9-Q4)*. Observations include active player stats, opening & current bids, bot's budget & formation slots, opponent budgets & open slots, and remaining pool count *(R10-Q2)*.
+  - **Auction:** Discrete actions are `Pass (0)`, `+5M`, `+10M`, and `+25M` *(R9-Q3)*. Action masking strictly disables unaffordable raises with $-\infty$ logits *(R10-Q6)*. Automated optimal slotting ensures the highest-ability legal player is always placed in the starting XI while unplaced players move to graveyard *(R10-Q5)*; graveyard overflow contributes 0 points to squad score *(R9-Q4)*. Observations include active player stats, opening & current bids, bot's budget & formation slots, opponent budgets & open slots, and remaining pool count *(R10-Q2)*. Episodes are bounded by the **15 × lobby size lot cap** — at most 75 lots at a 5-drafter table, 30 at a 2-drafter one — not by the size of the scoped pool *(2026-08-19)*.
   - **Deal or No Deal:** Two-step decision: Step 1 (Pick unopened box $\rightarrow$ `Stick` or `Hear Offer`), Step 2 (if hearing offer $\rightarrow$ `Take Offer` or `Open 2nd Box`) *(R9-Q5)*. Observations include active position multiplier, opened box player ability, remaining unopened box count & average ability, expected Banker offer (`Average − 15.0`), and current squad fill state *(R10-Q4)*.
   - **Free Pick & Spin the Wheel:** Full pool embedding matrix across all 546 players combined with a legal availability mask, allowing pure policy networks to select the optimal pick without heuristic handholding *(R9-Q7, R10-Q3)*.
 - **Training Environments:** Self-play randomly samples table sizes from **2 to 5 drafters** *(R9-Q8)* across weighted scopes (50% All Players, 30% Top 5 Leagues, 20% Single Leagues) *(R9-Q9)*.
@@ -872,7 +905,7 @@ Lobbies are **invite-link only** — no public lobby browser/listing. *(R4-Q8)* 
 ### Player Data Pool
 Beyond guaranteeing every position has enough eligible footballers, the pool should
 **skew toward higher-ability players** so drafts feel star-studded rather than
-strictly representative of the full Scope. *(R2-Q10)* Every draft starts **completely
+strictly representative of the full Scope. The lot list draws are weighted via a softmax curve: `p ∝ exp((ability − max_ability) / 10)` *(closes Open Questions #3, #16, #29, settled 2026-08-19)*. Every draft starts **completely
 fresh** from the full pool — no memory of footballers used in past drafts, per-lobby or
 site-wide. *(R4-Q10)*
 
@@ -1172,6 +1205,12 @@ questionnaire is answered.
     over, clean slate every time.
 ~~27. Post-Draft Editing for graveyard-less formats~~ Resolved R8-Q2: Free Pick, Spin the Wheel, and Deal or No Deal squads are permanently locked upon draft completion — no post-draft player changes.
 28. AI Bot ML Architecture & Training Specification: Training for Deal or No Deal, Spin the Wheel, and Free Pick is fully complete, and models are exported. Auction training is pending a complete implementation from scratch. (In progress).
+~~29. Auction: how many footballers go on the block per draft~~ Resolved 2026-08-19
+    (`auction-training`): capped at **15 × lobby size**, drawn position-by-position so
+    the coverage rule in item #2 still holds. This amends item #11's definition of "runs
+    its course" — exhausting the *lot list*, not the whole scoped pool. Still open: how
+    the `4N` surplus lots beyond guaranteed coverage are weighted (the same unresolved
+    high-ability skew curve as items #3 and #16).
 
 ## Questionnaire Log
 
@@ -1191,3 +1230,147 @@ This table is kept as a historical index of what each round covered.
 | 8 | Bot Questionnaire 1: Auction budget formula, Auction bid timer resets, unsold player handling, D-o-N-D banker & boxes, Free Pick deadlock stance, non-auction post-draft lock, position-weighted squad evaluation metric, ML RL training approach, bot live delay | Answered (`bot-questionnaire-1.md`) |
 | 9 | Bot Questionnaire 2: Separate models per format, margin-over-average RL reward, Auction +5M/+10M/+25M actions, Deal or No Deal -15 banker discount, pure ML selection policies, randomized 2-5 seats & weighted scopes, in-browser ONNX/JS execution | Answered (`bot-questionnaire-2.md`) |
 | 10 | Bot Questionnaire 3: Multi-agent PPO, 500k+ episodes, Champion Checkpoint League evaluation, full pool 546-player embeddings, comprehensive auction/D-o-N-D observations, action masking, softmax temperature ~0.6 | Answered (`bot-questionnaire-3.md`) |
+
+## Project Status
+
+Bot development is now complete. All training scripts and the experimental HTML playground have been removed. The production‑grade draft engine and its assets remain as the final deliverable.
+
+## Project Handover
+
+# Project Handover Document
+
+**Last updated:** 2026-08-19 (second update, after the design session), on the `auction-training` branch.
+
+## Current Status
+
+Reinforcement Learning training is complete for three of the four draft formats:
+
+- **Deal or No Deal**
+- **Spin the Wheel**
+- **Free Pick**
+
+They were trained with a custom Python PPO implementation and exported as lightweight JSON weights into `src/data/botModels/` for zero‑dependency execution directly in the browser via TypeScript. These three are **final and complete**.
+
+**The Auction format has no trained model.** Building its training pipeline from scratch is the outstanding task.
+
+**The design for that pipeline is now complete and approved.** It lives in `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`. That document is the authority on what to build — this file is context, the spec is the instruction.
+
+The outstanding work is writing an implementation plan from it and then executing it. Nothing has been implemented yet; no code was written in the design session.
+
+## Architecture for the Completed Formats
+
+- **Model Architecture:** simple multi‑layer perceptron (MLP) policies defined in `scripts/training/models.py`.
+- **State Representation:** features concatenated into a flat vector (one‑hot positions, player abilities, current squad needs, etc.).
+- **Inference:** the frontend performs the matrix multiplications from the exported JSON weights and picks the highest‑probability action.
+
+## What Survives in `scripts/training/`
+
+Only shared infrastructure. Everything format‑specific was wiped.
+
+| File | What it gives you |
+|---|---|
+| `config.py` | Paths, formation slots, position multipliers, bid increments, PPO hyperparameters, scope weights, and the **Auction lot cap constants** added 2026-08-19. |
+| `player_pool.py` | Loads the 546‑player CSV into vectorized arrays. Implements the budget formula, scope masks, `calculate_squad_score`, and `get_optimal_squad_from_roster` (optimal slotting with graveyard overflow). Solid, reusable. |
+| `models.py` | Actor‑critic networks for all four formats, including `AuctionPolicyNetwork`. |
+| `export_weights.py` | Converts `champion.pt` checkpoints into frontend JSON (and attempts ONNX). |
+| `live_config.json` | Mid‑run hyperparameter overrides, read by `config.get_live_config()`. |
+| `metrics/`, `static/dashboard.html` | Metrics JSON and a training dashboard. |
+| `checkpoints/` | `dond/`, `free_pick/`, `spin_wheel/` only. **No `auction/`.** |
+
+**Wiped, for every format — not just Auction:** `env_*.py`, `ppo.py`, `checkpoint_league.py`, and all four `train_*.py`. There is no working training loop in the repo to imitate. The only trace is `__pycache__/*.pyc`, which can be inspected with `marshal.load` if you want to see what the old code did without running it.
+
+## Forensics on the Failed Auction Run (2026-08-19)
+
+Three days of attempts produced an auction trainer that was slow and would not improve.
+
+Disassembling the wiped `env_auction.cpython-313.pyc` found the cause, and it was a **missing game rule rather than a hyperparameter problem**:
+
+- `reset()` built the lot queue as `list(np.random.permutation(scope_indices))` — the **entire scoped pool**, with nothing capping it. An All Players draft auctioned all **546** footballers; Top 5 auctioned 463.
+- `_check_auction_ended()` stopped only when that queue emptied, or when every drafter holding an empty slot had **under 5M** left. It never checked whether they could afford an *eligible* footballer for their open slots — merely that they had 5M to their name.
+- Budgets make that second condition almost unreachable. A drafter can complete a legal XI for **220M** out of a **900M** budget, so one drafter sitting on an unfilled thin slot with money left — near‑universal, since GK/LB/RB depth is low and reveal order is random — kept the queue running to the final lot.
+
+The result: every draft was effectively a 546‑lot auction. Each lot is a bidding loop over up to 5 seats, so the floor was roughly **2,730 policy decisions per episode** against Free Pick's 55 — a **50–100× longer episode** carrying a single terminal reward. That is both the throughput problem and the credit‑assignment problem. Most of those steps were noise: bidding on lot 400 when the XI filled at lot 90.
+
+Measured: Auction ran at **4.4–7.0 drafts/sec** and had completed **5,634 drafts** when it was stopped, against 10–15 drafts/sec for the other three formats.
+
+## The Rule That Came Out Of It
+
+**The auction lot list is capped at 15 × lobby size** (settled 2026-08-19). At most `15 × N` footballers go on the block for an `N`‑drafter table: 30 lots at 2 drafters, 75 at 5. This is a **game rule**, not a training shortcut — a 546‑lot auction at a 15s bid timer was never playable by humans either. The training environment inherits it.
+
+The list is built position‑by‑position first (`N` per single‑occupancy slot, `2N` for CB = `11N`), with the remaining `4N` lots drawn from the rest of the scoped pool under the usual high‑ability skew. That preserves the Squad Completion Guarantee by construction: a uniform random draw of `15N` would leave thin positions short about half the time (4.8 LBs and 5.1 RBs on average against 5 needed at a 5‑drafter table).
+
+Constants live in `scripts/training/config.py` as `AUCTION_LOTS_PER_DRAFTER` and `AUCTION_LOTS_PER_POSITION_PER_DRAFTER`. Full rule text is in `PROJECT.md` under Configuration Mechanics → Formats → Auction.
+
+## Environment Facts
+
+- **Use `C:\Users\Mert\AppData\Local\Programs\Python\Python313\python.exe`.** The `python` on the Git Bash PATH is a different interpreter with **no torch installed**.
+- Python 3.13.11, torch `2.7.0.dev20250310+cu124`.
+- **CUDA is available**: NVIDIA GeForce GTX 1650 Ti (4GB, Turing). Plan for a small GPU — large batches will not fit, and CPU‑side vectorization may beat GPU for tiny MLPs.
+- Windows 10. PowerShell and Git Bash both available; they have different Python resolution, as above.
+
+## Landmines
+
+1. **`src/data/botModels/auction_policy.json` is not a trained model.** It is a randomly initialized network. `export_weights.py` silently exports an untrained net when no checkpoint exists, and there is no `checkpoints/auction/`. Do not ship it, and do not read it as evidence that anything worked.
+2. **`metrics/auction_metrics.json` and `auction_status.json` are stale** — leftovers from the wiped run (champion generation 17, 5,634 drafts). Not a baseline.
+3. **`live_config.json` still carries auction overrides** from the failed run — `lr` 3e-5 (10× lower than the other formats), `c_entropy` 0.06 (the highest), `reward_scale` 0.01. These are symptoms of fighting an unstable run, not tuned starting points.
+4. **`AuctionPolicyNetwork` hardcodes `obs_dim=37`**, and `export_weights.py` repeats that 37 in its format table. **Resolved in the spec:** the observation is re‑derived as 69 features with a pinned feature ordering (spec §5). Both hardcoded 37s must be changed to 69. The ordering is a contract with the TypeScript inference path — a silent mismatch there is the most likely way this ships broken.
+5. **`player_pool.get_scope_mask` does not enforce per‑league drafter caps.** Single‑league scope is 20% of training sampling, but Ligue 1 is unusable at any table size, Bundesliga caps at 2 drafters and First Division at 3 (see PROJECT.md → Player Data). **Resolved in the spec:** league and table size are sampled *jointly* against the viability table in the env's reset (spec §3.2). `get_scope_mask` itself is left alone — do not patch it.
+6. **The three "finished" formats never reached the specified volume** — roughly 116k (Free Pick), 126k (Spin the Wheel) and 166k (Deal or No Deal) drafts against the 500k+/format rule in PROJECT.md. **Resolved:** Auction is held to convergence, not to parity with them — hard floor at the spec'd 500k drafts, 12‑hour ceiling, ship the best checkpoint by benchmark margin. Mert accepts that Auction may end up the strongest of the four bots. At the designed throughput the 500k floor costs well under two minutes, so it is not a real constraint.
+7. **Untracked junk in the repo root** from the old run: `debug.log`, `error.log`, `training_log.txt`, `sim_output.txt`, `read_metrics.py` (UTF‑16, broken).
+
+## The Design Session (2026-08-19, after the forensics above)
+
+The pipeline was brainstormed to an approved design. Nothing was implemented. The full document is `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`; this is the summary.
+
+### A third failure mode, not in the forensics above
+
+The forensics blame throughput and credit assignment. There is very likely a third, and it may be why the runs *looked* flat rather than merely being flat:
+
+> Reward is `own score − lobby average`. Under self‑play with one shared policy, `Σᵢ (Sᵢ − mean(S)) = 0` **identically**, every episode, forever. Mean training reward is a constant. It cannot move no matter how strong the bot becomes.
+
+If the previous runs were judged on mean episode reward, "it won't improve" was a reading of a number that is pinned at zero by construction. PPO itself is fine with this — the signal lives in the within‑draft variance and advantages are naturally centred — but a non‑learning frozen opponent is required to measure anything at all. Hence the scripted bidder below.
+
+### The seven decisions
+
+| # | Decision | Choice | Why |
+|---|---|---|---|
+| 1 | Bid loop | **Simultaneous rounds** | All non‑high‑bidder seats decide at once; highest raise wins, random tie‑break; lot ends on a full round with no raise. Keeps the settled Pass/+5/+10/+25 actions, invents no turn order (the game has none — R2‑Q5), and batches all five seats into one forward pass: ~375 ticks per draft instead of ~1,875. |
+| 2 | Reward delivery | **Potential‑based shaping**, γ=1 | Per‑step reward is the change in projected room‑relative margin. Rewards telescope to *exactly* the settled terminal formula, so the objective is provably unchanged (Ng‑Harada‑Russell) while feedback arrives on every lot. Also makes blocking (R5‑Q6) emerge from the reward instead of needing a bonus term. |
+| 3 | Measurement | **Scripted bidder**, frozen | Absolute yardstick that self‑play margin cannot provide. Also seeds 12.5% of training seats so early learning faces competent play, and is a shipping fallback. |
+| 4 | Queue knowledge | **Past‑facing counts** | Bot sees lots revealed and sold per position, never the remaining queue. An MLP has no memory, so this restores the counting an attentive human does — no more, no less. |
+| 5 | Stopping | **Train to convergence** | Floor 500k drafts, 12‑hour ceiling, ship best‑by‑benchmark. See landmine 6 above. |
+| 6 | Ability skew | **softmax T=10** | Closes Open Questions #3, #16, #29. ~12 of the pool's top 20 reach a 75‑lot block, and which twelve varies per draft. |
+| 7 | Budget multiplier | **×19** | Amends R8‑Q0. |
+
+### Rule amendments this creates
+
+These are **game rules**, not training knobs, and must be written into `PROJECT.md`:
+
+1. **Budget ×20 → ×19** (amends R8‑Q0). Because of the round‑to‑nearest‑100M step this moves only Top 5 Leagues, 900M → 800M. Mert chose 19 after seeing that ×20 is correctly binding at All Players and Top 5 (budget ÷ best‑XI‑on‑the‑block = 0.97) but slack at Serie A (1.42) and Bundesliga (1.57). Nothing simple fixes the thin‑league slack — it comes from top‑end pool depth, not average price. **The frontend budget figure needs the same change, tracked as a follow‑up outside the training work.**
+2. **Ability skew = `p ∝ exp((ability − max) / 10)`**, closing Open Questions #3, #16 and #29. Knock‑on: R6‑Q2 makes Deal or No Deal's boxes follow the same skew, and that bot is already final. Judged a mild distribution shift, not a breakage — flagged, not re‑trained.
+3. **The first bid on a lot is *at* the opening price**, clarifying R8‑Q4 against R9‑Q3. The three increment actions are therefore redundant in round one and mask down to `{Pass, Bid}`.
+
+### Assumptions resolved without asking
+
+Recorded in spec §13 so they are cheap to overturn: the first‑bid clarification above; backfill contention between two seats wanting the cheapest player resolves in random seat order (the rules do not specify); and the Deal or No Deal skew knock‑on.
+
+## Next Steps
+
+1. **Read the spec.** `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`. It is approved and is the authority. Do not re‑brainstorm it, and do not re‑run the forensics in this file — both cost context and are already settled.
+2. **Write an implementation plan from it**, then execute.
+3. **Build order that de‑risks fastest:** the slow single‑env reference implementation first, then the batched env, then parity‑test one against the other. A vectorized env fails silently; the reference is the only thing that catches it. The invariant `Σ shaped rewards == terminal margin` is the second‑best guard, since it proves the shaping did not alter the objective.
+4. **Benchmark throughput before training anything.** Target ≥2,000 drafts/sec against the old 4.4–7.0. If it is not there, the batching is wrong and no amount of training will help.
+5. **Amend `PROJECT.md`** with the three rule changes above.
+6. **Clear the junk** listed in landmines 2, 3 and 7.
+
+The two success conditions that matter: throughput ≥2,000 drafts/sec, and the mean margin against the frozen scripted bidder climbing and then plateauing. A flat benchmark curve from the start means the design failed — and the diagnostics in spec §8 (clearing price ÷ opening bid, unspent budget, backfilled slots, action distribution) are there to say which half.
+
+## Git Operations (to be performed)
+
+```bash
+git add -A
+git commit -m "Remove training scripts and experimental HTML UI; finalize bot development"
+git push origin main
+git checkout -b free-pick-ui-static
+git push -u origin free-pick-ui-static
+```
