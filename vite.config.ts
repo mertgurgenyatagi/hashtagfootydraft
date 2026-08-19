@@ -13,7 +13,14 @@ export default defineConfig({
     {
       name: 'terminal-game-narrator',
       configureServer(server) {
-        server.middlewares.use('/api/log', (req, res) => {
+        server.middlewares.use('/api/log', (rawReq, res) => {
+          // `@types/node` is not a dependency here, so the Connect request type
+          // resolves to a stub with no `method` or `on`. Narrowed by hand rather
+          // than by pulling a whole type package in for one dev-only route.
+          const req = rawReq as unknown as {
+            method?: string
+            on: (event: string, handler: (chunk: string) => void) => void
+          }
           if (req.method === 'POST') {
             let body = ''
             req.on('data', chunk => { body += chunk })

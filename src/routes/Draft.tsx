@@ -1,0 +1,532 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
+import { DraftChat } from '../components/draft/DraftChat'
+import { DraftClock } from '../components/draft/DraftClock'
+import { Narrator, type NarratorTone } from '../components/draft/Narrator'
+import { PitchView } from '../components/draft/PitchView'
+import { PlayerPool, type PoolRow } from '../components/draft/PlayerPool'
+import { PlayerSpotlight } from '../components/draft/PlayerSpotlight'
+import { SpentCrests } from '../components/draft/SpentCrests'
+import { TableStrip } from '../components/draft/TableStrip'
+import type { Message } from '../components/lobby/LobbyChat'
+import { SQUAD_SIZE, type FormationSlot, type PositionCode, formation } from '../data/formation'
+import {
+  type Drafter,
+  type Pick,
+  type Squad,
+  botChoice,
+  blockedReason,
+  roundAt,
+  seatAt,
+  slotFor,
+  timeoutChoice,
+} from '../lib/draftEngine'
+import { type Player, inScope, loadPool } from '../lib/players'
+
+/** What the lobby hands over. Every field falls back to the same defaults. */
+export interface DraftConfig {
+  scope?: string
+  league?: string
+  constraint?: string
+  timer?: string
+  drafters?: Drafter[]
+}
+
+/**
+ * The table the exhibition was drawn against, and what you get by opening the
+ * route cold. You sit second, which matters: a snake draft reads completely
+ * differently from the end of the order than from the front of it.
+ */
+const DEFAULT_DRAFTERS: Drafter[] = [
+  { id: 'priya', name: 'Priya', kind: 'human', mark: 'P' },
+  { id: 'you', name: 'You', kind: 'you', mark: 'M' },
+  { id: 'bot-1', name: 'Bot 1', kind: 'bot', mark: '1' },
+  { id: 'bot-2', name: 'Bot 2', kind: 'bot', mark: '2' },
+]
+
+const WORDS = [
+  'No',
+  'One',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten',
+  'Eleven',
+]
+
+/** Bots pace at a human's reading speed, not at a machine's. */
+const BOT_PAUSE = [1500, 3500]
+/** A simulated person takes slightly longer, because a person does. */
+const HUMAN_PAUSE = [2400, 5200]
+/** How long the room reads "X took Y" before the narrator moves on. */
+const REPORT_HOLD = 1500
+
+const CHATTER = [
+  'needed that one',
+  'was hoping he would drop',
+  'good pick',
+  'there goes my keeper',
+  'right, plan b',
+  'cannot argue with that',
+]
+
+export function Draft() {
+  const { formatId } = useParams()
+  const location = useLocation()
+  const config = (location.state ?? {}) as DraftConfig
+
+  // Keyed on the format so arriving at a different one rebuilds the draft
+  // rather than resuming somebody else's.
+  return <DraftRoom key={formatId ?? 'free-pick'} config={config} />
+}
+
+function DraftRoom({ config }: { config: DraftConfig }) {
+  const scope = config.scope ?? 'top-5'
+  const league = config.league ?? 'premier-league'
+  const constraint = config.constraint ?? 'club-1'
+  const timerSetting = config.timer ?? '15'
+  const limit = timerSetting === 'off' ? null : Number(timerSetting)
+
+  const drafters = config.drafters?.length ? config.drafters : DEFAULT_DRAFTERS
+  const seatCount = drafters.length
+  const youSeat = Math.max(0, drafters.findIndex((drafter) => drafter.kind === 'you'))
+  const totalPicks = seatCount * SQUAD_SIZE
+
+  const [pool, setPool] = useState<Player[]>([])
+  const [poolError, setPoolError] = useState<string | null>(null)
+
+  const [picks, setPicks] = useState<Pick[]>([])
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState<PositionCode | null>(null)
+  const [tab, setTab] = useState(youSeat)
+  const [pane, setPane] = useState<'pool' | 'board'>('pool')
+  const [seconds, setSeconds] = useState(limit ?? 0)
+  const [narration, setNarration] = useState<{ text: string; tone: NarratorTone; beat: number }>({
+    text: 'Waiting for the board.',
+    tone: 'settled',
+    beat: 0,
+  })
+  const [messages, setMessages] = useState<Message[]>([])
+
+  const messageId = useRef(1)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    loadPool(controller.signal)
+      .then(setPool)
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return
+        setPoolError(error instanceof Error ? error.message : 'The player pool would not load.')
+      })
+    return () => controller.abort()
+  }, [])
+
+  const scoped = useMemo(
+    () => pool.filter((player) => inScope(player, scope, league)),
+    [pool, scope, league],
+  )
+
+  const overall = picks.length
+  const complete = overall >= totalPicks
+  const activeSeat = complete ? -1 : seatAt(overall, seatCount)
+  const yourTurn = activeSeat === youSeat
+  const round = complete ? SQUAD_SIZE : roundAt(overall, seatCount)
+
+  const squads = useMemo(() => {
+    const built: Squad[] = drafters.map(() => ({}))
+    for (const pick of picks) built[pick.seat][pick.slot] = pick.player
+    return built
+  }, [picks, drafters])
+
+  const taken = useMemo(() => new Set(picks.map((pick) => pick.player.id)), [picks])
+  const yourSquad = squads[youSeat] ?? {}
+
+  /* ------------------------------------------------------------- picking -- */
+
+  /**
+   * One entry point for every pick, whoever makes it. The choice is computed
+   * inside the state updater so it reads the squad it is actually landing in —
+   * a timer that fires twice, or a click that races a timeout, cannot produce
+   * two picks from one turn.
+   */
+  const commit = useCallback(
+    (seat: number, choose: (squad: Squad, taken: ReadonlySet<string>) => Player | null) => {
+      setPicks((previous) => {
+        if (previous.length >= totalPicks) return previous
+        if (seatAt(previous.length, seatCount) !== seat) return previous
+
+        const squad: Squad = {}
+        const already = new Set<string>()
+        for (const pick of previous) {
+          already.add(pick.player.id)
+          if (pick.seat === seat) squad[pick.slot] = pick.player
+        }
+
+        const player = choose(squad, already)
+        if (!player) return previous
+        const slot = slotFor(player, squad)
+        if (!slot) return previous
+
+        return [...previous, { overall: previous.length, seat, slot, player }]
+      })
+    },
+    [seatCount, totalPicks],
+  )
+
+  const draftSelected = useCallback(() => {
+    if (!yourTurn || !selectedId) return
+    commit(youSeat, (squad, already) => {
+      const player = scoped.find((entry) => entry.id === selectedId)
+      if (!player) return null
+      return blockedReason(player, squad, constraint, already) === null ? player : null
+    })
+  }, [yourTurn, selectedId, commit, youSeat, scoped, constraint])
+
+  /* ------- The turn loop. Everyone but you is simulated, on a stagger. ----- */
+
+  useEffect(() => {
+    if (complete || scoped.length === 0 || activeSeat === youSeat) return
+
+    const drafter = drafters[activeSeat]
+    const [low, high] = drafter.kind === 'bot' ? BOT_PAUSE : HUMAN_PAUSE
+    const wait = low + Math.random() * (high - low)
+
+    const timer = window.setTimeout(() => {
+      commit(activeSeat, (squad, already) =>
+        botChoice(scoped, squad, constraint, already, SQUAD_SIZE - round + 1),
+      )
+    }, wait)
+
+    return () => window.clearTimeout(timer)
+  }, [activeSeat, complete, scoped, youSeat, drafters, commit, constraint, round])
+
+  /* ------------------------------------------------------------ the clock -- */
+
+  useEffect(() => {
+    if (complete || limit === null) return
+    setSeconds(limit)
+
+    const tick = window.setInterval(() => {
+      setSeconds((left) => Math.max(0, left - 1))
+    }, 1000)
+
+    return () => window.clearInterval(tick)
+  }, [overall, complete, limit])
+
+  // Out of time. The system takes the cheapest footballer that still fits,
+  // which is never the pick you would have made — that is what a clock is for.
+  useEffect(() => {
+    if (complete || limit === null || seconds > 0 || !yourTurn || scoped.length === 0) return
+    commit(youSeat, (squad, already) => timeoutChoice(scoped, squad, constraint, already))
+  }, [seconds, complete, limit, yourTurn, scoped, commit, youSeat, constraint])
+
+  /* ---------------------------------------------------------- the narrator -- */
+
+  useEffect(() => {
+    if (scoped.length === 0) return
+
+    const turnLine = (): { text: string; tone: NarratorTone } => {
+      if (complete) return { text: 'Every eleven is full. The draft is done.', tone: 'settled' }
+      if (activeSeat === youSeat) return { text: 'Your pick.', tone: 'you' }
+      return { text: `${drafters[activeSeat].name} is picking.`, tone: 'waiting' }
+    }
+
+    const last = picks[picks.length - 1]
+    if (!last) {
+      const line = turnLine()
+      setNarration({ ...line, beat: 0 })
+      return
+    }
+
+    setNarration({
+      text: `${drafters[last.seat].name} took ${last.player.name} — ${last.player.position}, ${last.player.club}.`,
+      tone: 'settled',
+      beat: last.overall * 2 + 1,
+    })
+
+    const timer = window.setTimeout(() => {
+      const line = turnLine()
+      setNarration({ ...line, beat: last.overall * 2 + 2 })
+    }, REPORT_HOLD)
+
+    return () => window.clearTimeout(timer)
+  }, [picks, complete, activeSeat, youSeat, drafters, scoped.length])
+
+  // A round turning over is the one structural event the pick line cannot
+  // carry, because it happens between two picks rather than at one.
+  const previousRound = useRef(1)
+  useEffect(() => {
+    if (round === previousRound.current || complete) return
+    previousRound.current = round
+    setMessages((current) => [
+      ...current,
+      {
+        id: messageId.current++,
+        kind: 'system',
+        author: '',
+        body: `Round ${round} — the order reverses`,
+      },
+    ])
+  }, [round, complete])
+
+  // The room talks about what just went. Not every pick, or it is noise.
+  const chattered = useRef(-1)
+  useEffect(() => {
+    const last = picks[picks.length - 1]
+    if (!last || last.seat === youSeat || last.overall === chattered.current) return
+    chattered.current = last.overall
+    if (Math.random() > 0.34) return
+
+    const timer = window.setTimeout(() => {
+      setMessages((current) => [
+        ...current,
+        {
+          id: messageId.current++,
+          kind: 'said',
+          author: drafters[last.seat].name,
+          body: CHATTER[Math.floor(Math.random() * CHATTER.length)],
+        },
+      ])
+    }, 900)
+
+    return () => window.clearTimeout(timer)
+  }, [picks, youSeat, drafters])
+
+  /* ------------------------------------------------------------- the pool -- */
+
+  const rows: PoolRow[] = useMemo(() => {
+    const needle = query.trim().toLowerCase()
+    const result: PoolRow[] = []
+
+    for (const player of scoped) {
+      if (taken.has(player.id)) continue
+      if (filter && player.position !== filter) continue
+      if (
+        needle &&
+        !player.name.toLowerCase().includes(needle) &&
+        !player.club.toLowerCase().includes(needle) &&
+        !player.nation.toLowerCase().includes(needle)
+      ) {
+        continue
+      }
+      result.push({ player, blocked: blockedReason(player, yourSquad, constraint, taken) })
+    }
+
+    return result
+  }, [scoped, taken, filter, query, yourSquad, constraint])
+
+  const byId = useMemo(() => new Map(scoped.map((player) => [player.id, player])), [scoped])
+
+  // The selection has to survive somebody else taking your man.
+  useEffect(() => {
+    if (selectedId && !taken.has(selectedId) && byId.has(selectedId)) return
+    const first = rows.find((row) => !row.blocked) ?? rows[0]
+    setSelectedId(first?.player.id ?? null)
+  }, [selectedId, taken, byId, rows])
+
+  /**
+   * Your turn opening on a selection you cannot actually take is a dead button
+   * and no stated reason to look elsewhere — and it happens constantly, because
+   * the thing that blocked them is usually your own last pick. So the clock
+   * landing on you moves the selection to the first footballer who is yours to
+   * take.
+   *
+   * Once per turn, not continuously: selecting a blocked player on purpose is
+   * how you read why they are blocked, and an effect that bounced you off them
+   * every render would make that impossible.
+   */
+  const armedFor = useRef(-1)
+  useEffect(() => {
+    if (!yourTurn || rows.length === 0) return
+    if (armedFor.current === overall) return
+    armedFor.current = overall
+
+    const current = rows.find((row) => row.player.id === selectedId)
+    if (current && !current.blocked) return
+    const first = rows.find((row) => !row.blocked)
+    if (first) setSelectedId(first.player.id)
+  }, [yourTurn, overall, rows, selectedId])
+
+  useEffect(() => {
+    if (yourTurn) setTab(youSeat)
+  }, [yourTurn, youSeat])
+
+  const selected = selectedId ? (byId.get(selectedId) ?? null) : null
+
+  const selectedBlocked = selected ? blockedReason(selected, yourSquad, constraint, taken) : null
+  const canDraft = Boolean(yourTurn && selected && !selectedBlocked)
+
+  const openSlots = formation.filter((slot) => !yourSquad[slot.id]).length
+  const filledPositions = useMemo(() => {
+    const full = new Set<PositionCode>()
+    for (const slot of formation) {
+      if (!yourSquad[slot.id]) continue
+      const others = formation.filter((entry) => entry.position === slot.position)
+      if (others.every((entry) => yourSquad[entry.id])) full.add(slot.position)
+    }
+    return full
+  }, [yourSquad])
+
+  const pendingSlot: FormationSlot | null =
+    yourTurn && selected && !selectedBlocked
+      ? (formation.find((slot) => slot.id === slotFor(selected, yourSquad)) ?? null)
+      : null
+
+  const reason = (() => {
+    if (poolError) return poolError
+    if (scoped.length === 0) return 'Reading the board…'
+    if (complete) return 'Every eleven is full.'
+    if (!yourTurn) return `Waiting on ${drafters[activeSeat].name}.`
+    if (!selected) return `${WORDS[openSlots] ?? openSlots} positions open to you.`
+    if (selectedBlocked) return selectedBlocked
+    return `${selected.surname} fills your ${selected.position}.`
+  })()
+
+  const actionLabel = canDraft && selected ? `Draft ${selected.surname} →` : 'Draft →'
+
+  /* -------------------------------------------------------------- spent --- */
+
+  const yourPlayers = formation
+    .map((slot) => yourSquad[slot.id])
+    .filter((player): player is Player => Boolean(player))
+
+  const spentClubs = [...new Set(yourPlayers.map((player) => player.clubSlug))]
+  const clubNames = Object.fromEntries(yourPlayers.map((player) => [player.clubSlug, player.club]))
+  const spentNations = [...new Set(yourPlayers.map((player) => player.nation))]
+
+  const you = drafters[youSeat]
+  const lastArrival = picks[picks.length - 1]?.player.id ?? null
+
+  return (
+    <div className="draft flex h-full w-full flex-col px-[var(--draft-pad-x)] pt-[var(--draft-pad-y)] pb-[var(--draft-pad-y-bottom)]">
+      {/* ---- The narrator, and the table it is talking about. ---- */}
+      <div className="flex shrink-0 flex-col items-start gap-[10px] border-b border-line py-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+        <Narrator text={narration.text} tone={narration.tone} beat={narration.beat} />
+
+        <div className="flex w-full shrink-0 items-center justify-between gap-5 sm:w-auto sm:justify-end">
+          {/* Below the three-column layout the clock has no column to live in,
+              so it rides here instead of vanishing. */}
+          {limit !== null && !complete ? (
+            <span className="tabular shrink-0 font-display text-[19px] font-medium leading-none min-[1180px]:hidden">
+              {String(Math.ceil(seconds)).padStart(2, '0')}
+            </span>
+          ) : null}
+          <TableStrip drafters={drafters} active={activeSeat} />
+        </div>
+      </div>
+
+      {/* ---- Three columns, divided by hairlines rather than surface steps. ---- */}
+      <div className="draft-grid min-h-0 flex-1">
+        <div className="draft-rail flex-col gap-[26px] pr-[30px] pt-[22px]">
+          <DraftClock round={round} rounds={SQUAD_SIZE} />
+
+          <SpentCrests
+            constraint={constraint}
+            clubs={spentClubs}
+            clubNames={clubNames}
+            nations={spentNations}
+          />
+
+          <DraftChat
+            messages={messages}
+            you={you.name}
+            onSend={(body) =>
+              setMessages((current) => [
+                ...current,
+                { id: messageId.current++, kind: 'said', author: you.name, body },
+              ])
+            }
+          />
+        </div>
+
+        <div
+          className={[
+            'min-h-0 flex-col pt-[22px] min-[1180px]:flex min-[1180px]:border-l min-[1180px]:border-line min-[1180px]:px-[30px] md:flex md:pr-[30px]',
+            pane === 'pool' ? 'flex' : 'hidden',
+          ].join(' ')}
+        >
+          <PlayerPool
+            rows={rows}
+            query={query}
+            onQuery={setQuery}
+            filter={filter}
+            onFilter={setFilter}
+            filled={filledPositions}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onDraft={draftSelected}
+            canDraft={canDraft}
+            reason={reason}
+            actionLabel={actionLabel}
+            portrait={
+              <PlayerSpotlight
+                player={selected}
+                onDraft={draftSelected}
+                canDraft={canDraft}
+                reason={reason}
+                actionLabel={actionLabel}
+              />
+            }
+          />
+        </div>
+
+        <div
+          className={[
+            'min-h-0 flex-col pt-[22px] md:flex md:border-l md:border-line md:pl-[30px]',
+            pane === 'board' ? 'flex' : 'hidden',
+          ].join(' ')}
+        >
+          <PitchView
+            drafters={drafters}
+            tab={tab}
+            onTab={setTab}
+            squad={squads[tab] ?? {}}
+            pending={tab === youSeat ? pendingSlot : null}
+            preview={tab === youSeat ? selected : null}
+            lastArrival={lastArrival}
+          />
+        </div>
+      </div>
+
+      {/* ---- One viewport, one column: the two halves take turns. ---- */}
+      <div className="mt-[12px] flex shrink-0 items-center gap-[2px] border-t border-line pt-[10px] md:hidden">
+        <PaneTab active={pane === 'pool'} onClick={() => setPane('pool')}>
+          Who is left
+        </PaneTab>
+        <PaneTab active={pane === 'board'} onClick={() => setPane('board')}>
+          The elevens
+        </PaneTab>
+      </div>
+    </div>
+  )
+}
+
+function PaneTab({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={[
+        'flex-1 border-b px-2 py-[7px] font-display text-[10px] font-medium uppercase tracking-[0.14em] transition-colors duration-150 ease-out',
+        active ? 'border-accent text-ink' : 'border-transparent text-dim hover:text-muted',
+      ].join(' ')}
+    >
+      {children}
+    </button>
+  )
+}

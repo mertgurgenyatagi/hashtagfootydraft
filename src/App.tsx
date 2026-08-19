@@ -1,5 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
+import { Draft } from './routes/Draft'
 import { Home } from './routes/Home'
 import { MultiLobby } from './routes/MultiLobby'
 import { SoloLobby } from './routes/SoloLobby'
@@ -21,6 +22,7 @@ export function App() {
           <Route path="/solo" element={<SoloLobby />} />
           <Route path="/solo/:formatId" element={<SoloLobby />} />
           <Route path="/lobby/:code" element={<MultiLobby />} />
+          <Route path="/draft/:formatId" element={<Draft />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </AppShell>

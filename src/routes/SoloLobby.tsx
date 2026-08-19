@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ChipGroup, Collapse } from '../components/lobby/ChipGroup'
 import { LobbyLayout } from '../components/lobby/LobbyLayout'
 import { ScopeDetail } from '../components/lobby/ScopeDetail'
@@ -45,6 +45,7 @@ export function SoloLobby() {
 }
 
 function ReadyRoom({ formatId }: { formatId?: string }) {
+  const navigate = useNavigate()
   const [format, setFormat] = useState<string | null>(() =>
     formats.some((entry) => entry.id === formatId) ? (formatId as string) : null,
   )
@@ -57,13 +58,6 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
   const nextBotId = useRef(4)
   const [bots, setBots] = useState<number[]>([1, 2, 3])
 
-  const [status, setStatus] = useState('')
-  const [statusKey, setStatusKey] = useState(0)
-
-  const report = (message: string) => {
-    setStatus(message)
-    setStatusKey((key) => key + 1)
-  }
 
   const seats: Seat[] = [
     {
@@ -202,8 +196,8 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
           </div>
         </>
       }
-      statusMessage={status || resting}
-      statusKey={statusKey}
+      statusMessage={resting}
+      statusKey={resting}
       backControl={
         <Link
           to="/"
@@ -216,7 +210,18 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
         <Button
           variant="accent"
           disabled={!viable}
-          onClick={() => report('The draft screen isn’t built yet.')}
+          onClick={() => {
+            if (!format) return
+            navigate(`/draft/${format}`, {
+              state: {
+                scope,
+                league,
+                constraint,
+                timer,
+                drafters: seats.map(({ id, kind, name, mark }) => ({ id, kind, name, mark })),
+              },
+            })
+          }}
         >
           Kick off →
         </Button>

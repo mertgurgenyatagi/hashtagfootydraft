@@ -10,6 +10,7 @@ function renderLobby(path: string) {
       <Routes>
         <Route path="/solo" element={<SoloLobby />} />
         <Route path="/solo/:formatId" element={<SoloLobby />} />
+        <Route path="/draft/:formatId" element={<p>draft screen for {'free-pick'}</p>} />
       </Routes>
     </MemoryRouter>,
   )
@@ -106,11 +107,11 @@ describe('SoloLobby', () => {
     expect(screen.getByRole('button', { name: /kick off/i })).toBeEnabled()
   })
 
-  it('is an honest dead end at kick off', async () => {
+  it('kicks off into the draft it was configured for', async () => {
     const user = userEvent.setup()
     renderLobby('/solo/free-pick')
 
     await user.click(screen.getByRole('button', { name: /kick off/i }))
-    expect(screen.getByText(/draft screen isn’t built yet/i)).toBeInTheDocument()
+    expect(screen.getByText(/draft screen for free-pick/i)).toBeInTheDocument()
   })
 })

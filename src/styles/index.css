@@ -302,12 +302,14 @@
 
 /* Crests render full colour and unfiltered — a recoloured badge is a falsified
    badge. This adds an outline *around* the artwork rather than touching it:
-   four 1px offsets in ink, chained so each shadow falls on the last and the
-   corners close up. It exists because two of the five league marks are dark
-   and would otherwise disappear into the ground. Ink, not #fff. */
+   four 1px offsets, chained so each shadow falls on the last and the corners
+   close up. It exists because two of the five league marks are dark and would
+   otherwise disappear into the ground. A muted line tone, not full ink — the
+   outline only needs to separate the mark from the ground, not frame it. */
 .crest {
-  filter: drop-shadow(0 1px 0 var(--color-ink)) drop-shadow(0 -1px 0 var(--color-ink))
-    drop-shadow(1px 0 0 var(--color-ink)) drop-shadow(-1px 0 0 var(--color-ink));
+  --crest-stroke: color-mix(in oklab, var(--color-ink) 40%, transparent);
+  filter: drop-shadow(0 1px 0 var(--crest-stroke)) drop-shadow(0 -1px 0 var(--crest-stroke))
+    drop-shadow(1px 0 0 var(--crest-stroke)) drop-shadow(-1px 0 0 var(--crest-stroke));
 }
 
 /* A player portrait inside the letterforms, one of several stacked layers
@@ -527,4 +529,228 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ============================================================================
+   THE DRAFT SCREEN
+   Four numbered sections, hairline-ruled, in one 100dvh viewport that never
+   scrolls. The rules below are the ones a utility class cannot state: the
+   column geometry at three widths, and the vertical rhythm at two heights.
+   ============================================================================ */
+
+.draft {
+  /* 56 / 34 at the 1280x800 the layout was drawn at, shrinking from there. */
+  --draft-pad-x: clamp(1rem, 4.4vw, 3.5rem);
+  --draft-pad-y: clamp(0.75rem, 4.2vh, 2.125rem);
+  /* A real browser window loses vh to its own chrome (tab strip, bookmarks
+     bar) that a genuinely full screen doesn't — the bottom edge reads as
+     hugging the viewport even though the layout math is fine. Kept separate
+     from the top so only the bottom gets the extra room. */
+  --draft-pad-y-bottom: clamp(2rem, 9vh, 4.5rem);
+  --draft-clock: 60px;
+  --draft-portrait: 320px;
+  --draft-node: 68px;
+  --draft-name: 184px;
+  --draft-name-size: 18px;
+}
+
+/* Height, not width, is what runs out first here — same lesson the lobby
+   learned. A clamp() against vh never reaches its minimum at 568px tall,
+   because the middle term is still comfortably inside the range. */
+@media (max-height: 760px) {
+  .draft {
+    --draft-pad-y: 0.7rem;
+    --draft-pad-y-bottom: 2rem;
+    --draft-clock: 42px;
+    --draft-portrait: 260px;
+    --draft-node: 60px;
+  }
+}
+
+/* One column, and the two halves of the screen take turns. Below this width
+   there is no honest way to show a pool, a pitch and a rail at once. */
+.draft-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Explicit, because an `auto` row is sized by its tallest item — so the one
+     column whose content did not want to shrink would silently set the height
+     of all three and push the whole grid past the fold. */
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+}
+
+.draft-rail {
+  display: none;
+  min-height: 0;
+}
+
+/* One phone-width column puts the whole pitch inside 162px, and eleven name
+   plates cannot be laid over that without overlapping each other — which is a
+   worse read than not having them. The crests stay, the shape stays, and the
+   names are a tap away on the pool rows that put them there. */
+@media (max-width: 767px) {
+  .pitch-name {
+    display: none;
+  }
+}
+
+/* On a narrow pitch the three attacking name plates are close enough to touch,
+   so they give up width and point size before they give up being readable. The
+   full name stays on the row in the pool, and on the plate's own title. */
+@media (max-width: 1179px) {
+  .draft {
+    --draft-name: 144px;
+    --draft-name-size: 17px;
+  }
+}
+
+/* Two columns: the board you pick from and the board you are building. The
+   rail's clock moves up into the top bar rather than disappearing. */
+@media (min-width: 768px) {
+  .draft-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(248px, 30vw, 320px);
+  }
+}
+
+/* Three. The rail comes back, narrower than the exhibition drew it — the space
+   it gives up goes to the pitch, which is the half of the screen that had to
+   become readable rather than merely legible. */
+@media (min-width: 1180px) {
+  .draft-grid {
+    grid-template-columns: 270px minmax(0, 1fr) clamp(320px, 27vw, 372px);
+  }
+
+  .draft-rail {
+    display: flex;
+  }
+}
+
+/* Chat is the first thing to go when the rail runs out of height, exactly as
+   it is in the lobby — and for the same reason: below this it renders as a
+   sliver that can hold one line of a conversation. */
+.draft-chat {
+  display: flex;
+}
+
+@media (max-height: 620px) {
+  .draft-chat {
+    display: none;
+  }
+}
+
+/* What people actually said to each other is selectable. Chrome is not. */
+.draft-chat li {
+  user-select: text;
+}
+
+/* Four hundred ruled rows are in the DOM at once so that a footballer you
+   cannot take is still visible, struck through, where you would expect them.
+   Skipping the work for the ones outside the scroller keeps that honest and
+   cheap; the intrinsic size stops the scrollbar jumping as they resolve. */
+.pool-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 79px;
+}
+
+/* Establishes the query context `.spotlight-photo` below is computed against —
+   the panel's own rendered box, so a face lands in the same spot regardless
+   of how tall the panel itself ends up at a given viewport. */
+.spotlight-frame {
+  container-type: size;
+}
+
+/* The face-anchored portrait. `--face-fx` / `--face-fy` (0–1, the face box's
+   own centre as a fraction of the source photo), `--face-ar` (the photo's
+   width / height) and `--face-fh` (the face box's own height, as a fraction
+   of the photo's height) come from `faceCenters` via PlayerSpotlight.tsx.
+   Two things happen, in this order:
+
+   1. Scaled so the face reads as roughly the same size everywhere, with a
+      cover fit as the floor underneath that. Three candidate heights, and
+      the largest wins:
+        - 100cqh / 100cqw÷ar — plain object-fit: cover, so the panel is
+          never left with a gap regardless of what the other two produce.
+        - 30cqh ÷ fh — scales so the *face box* reaches 30% of the panel's
+          height. This is doing double duty: it is what evens out apparent
+          face size across photos taken at wildly different zoom levels, and
+          it is the only thing that gives a landscape photo in this portrait
+          panel any vertical slack to reposition in at all — a bare cover
+          fit here always binds on height with zero slack, since every
+          source photo is wider-than-tall and the panel is the opposite, so
+          without this term step 2 below could never move a face vertically.
+      Width follows from `aspect-ratio` once height is set.
+   2. The face, not the photo, gets centred. `translate` is clamped so the
+      photo's own edge — 0px at the near side, `100cqw|cqh - 100%` at the far
+      side, i.e. the rendered box's own width/height — can never pull in past
+      the panel border and leave a gap. Inside that range it targets the
+      point that puts the face at 50% across, 35% down. A face box already
+      large relative to its own photo (a tight crop to begin with) can hit
+      this clamp and land as near that point as the source photo allows,
+      never with a blank strip beside it. */
+.spotlight-photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  max-width: none;
+  aspect-ratio: var(--face-ar);
+  height: max(100cqh, calc(100cqw / var(--face-ar)), calc(30cqh / var(--face-fh)));
+  transform: translate(
+    clamp(calc(100cqw - 100%), calc(50cqw - (var(--face-fx) * 100%)), 0px),
+    clamp(calc(100cqh - 100%), calc(35cqh - (var(--face-fy) * 100%)), 0px)
+  );
+}
+
+/* The scroll containers: the pool and the chat log. The default bar is a
+   bright slab against a near-black ground, so it gets the palette too. */
+.scroller {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+.scroller::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroller::-webkit-scrollbar-button {
+  display: none;
+}
+
+.scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroller::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 3px;
+}
+
+/* The draft's plate: a band down the left edge, dissolving to the right so the
+   first column always sits on flat ground. Fainter than either of the other
+   two placements — this screen is busier than the ones before it. */
+.plate-edge {
+  opacity: 0.34;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, rgb(0 0 0 / 0.4) 46%, transparent 88%);
+  mask-image: linear-gradient(to right, #000 0%, rgb(0 0 0 / 0.4) 46%, transparent 88%);
+}
+
+.plate-edge img {
+  filter: grayscale(1) contrast(1.3) brightness(0.3);
+}
+
+/* Somebody else is thinking. A slow opacity breath on a 7px dot — the quiet
+   register the rest of the app is in, and nothing that moves in the corner of
+   your eye while you are reading four hundred names. */
+@keyframes fd-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+}
+
+.narrator-pulse {
+  animation: fd-breathe 1900ms var(--ease-in-out) infinite;
 }
