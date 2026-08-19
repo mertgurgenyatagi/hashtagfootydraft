@@ -78,6 +78,7 @@ export function MultiLobby() {
 }
 
 function Room({ code, session }: { code: string; session: LobbySession }) {
+  const navigate = useNavigate()
   /** What the host of this particular room settled on. The same code always
    *  opens the same draft, so two people typing it in see one lobby. */
   const seed = codeSeed(code)
@@ -116,13 +117,6 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
     },
   ])
 
-  const [status, setStatus] = useState('')
-  const [statusKey, setStatusKey] = useState(0)
-
-  const report = (message: string) => {
-    setStatus(message)
-    setStatusKey((key) => key + 1)
-  }
 
   const nextMessageId = useRef(1)
   const say = (message: Omit<Message, 'id'>) => {
@@ -342,8 +336,8 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
           </div>
         </>
       }
-      statusMessage={status || resting}
-      statusKey={statusKey}
+      statusMessage={resting}
+      statusKey={resting}
       backControl={
         <Link
           to="/"
@@ -356,7 +350,18 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
         <Button
           variant="accent"
           disabled={!canStart}
-          onClick={() => report('The draft screen isn’t built yet.')}
+          onClick={() => {
+            if (!format) return
+            navigate(`/draft/${format}`, {
+              state: {
+                scope,
+                league,
+                constraint,
+                timer,
+                drafters: seats.map(({ id, kind, name, mark }) => ({ id, kind, name, mark })),
+              },
+            })
+          }}
         >
           {session.host ? 'Kick off →' : 'Waiting for the host'}
         </Button>

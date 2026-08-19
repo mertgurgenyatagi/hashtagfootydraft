@@ -55,6 +55,23 @@ organism for solo and multiplayer lobbies, and standardized UI primitives (`Butt
 `StatusLine`, `SectionLabel`). That branch was committed, pushed and merged to `main` on
 2026-08-18. All work described below is now on `main`.
 
+The **`auction-training`** branch, cut from `main` on 2026-08-19, opened the from-scratch
+build of the Auction bot's RL training pipeline — the one format the 2026-08-18 training
+run never completed. Before any training design was written, forensics on the wiped
+auction environment turned up a **rule gap rather than a tuning bug**: nothing bounded how
+many footballers went on the block, so an All Players draft auctioned all 546 of them.
+That produced the **Auction lot cap** settled below — at most **15 × lobby size**
+footballers per auction. It is a game rule, not a training shortcut: it governs the
+auction humans play, and the training environment inherits it.
+
+The **Free Pick draft screen**, built 2026-08-19 on `free-pick-ui-static`, went through a
+simplification pass on 2026-08-20 on the same branch: the wordmark bar and the rail's
+section-numeral pattern were dropped, the clock lost its seconds and pick count, pool rows
+and the pitch grew, and the face-anchoring system behind the portrait panel was rebuilt from
+scratch to hit a fixed face position without pre-cropping any image. `HANDOVER.md`, the
+working document that pass was tuning against, was removed once it was done — see The Free
+Pick draft screen below for the full record.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -237,12 +254,14 @@ everything the app draws itself.
 
 Coverage is the top five leagues only — 69 crests against 112 clubs in
 `player_data.csv`. **Clubs outside the top five have no crest and are not getting one:
-draw a ring (a bordered circle) in the same footprint instead.** League scope maps
-`la-liga.svg` → the CSV's "First Division", `premier-league.svg` → "Premier Division",
-`ligue-1.svg` → "Ligue 1 Uber Eats".
+draw a ring (a bordered circle) in the same footprint instead.**
 
-Anything still missing falls through on load error to a generated SVG stand-in
-(`src/lib/placeholderImage.ts`).
+**Do not scope a draft by the CSV's `League` column.** It names the competition a row was
+scraped from, not the division the club plays in, so it files Fenerbahçe's players under
+"Serie A" and Flamengo's under "First Division", and 19 rows carry `-`. Scope by the
+**club** instead: `src/data/clubs.ts` maps all 69 crested club slugs to a `LeagueId`, and
+is the authority. It falls out of the crest set for free — a club the app cannot draw is
+a club it should not offer — and it is generated, so regenerate rather than hand-edit.
 
 `scripts/process_club_logos.py` is what produced them — it imports from an external
 Wikipedia-sourced logo dump (kept outside the repo, like the other raw source art),
@@ -253,8 +272,11 @@ placeholder deliberately, which also absorbs CSV noise (River Plate filed under 
 Division").
 
 Player photos are real, for 545 of the 546 players in `player_data.csv`, at
-`public/players/{slug}.webp` — `PlayerImage` already points every player at this path,
-so nothing else needed to change when the files landed. The one gap is
+`public/players/{slug}.webp`, keyed by `slugify(name)` from `src/lib/players.ts`. That
+slug has to fold the letters `NFKD` will not decompose — ø, ß, ð, đ, ł, æ, œ, þ, ı are
+letters in their own right rather than an ASCII letter wearing a mark, and without the
+table Ødegaard, Groß, Guðmundsson, Nørgaard, Sørloth and Højlund all miss their photo.
+Anything still missing falls through to the club crest at the point of use. The one gap is
 `ederson-atalanta` (the CSV has two different players named "Ederson"; only one photo
 was ever fetched and it's unambiguously the other one, the Fenerbahçe keeper — see
 `scripts/process_player_images.py`'s docstring). It falls through to the SVG stand-in
@@ -274,6 +296,12 @@ box per player — `{ x, y, width, height, imageWidth, imageHeight }`, all in th
 player's own image's pixel space — locating their face, so a later smart-crop can anchor
 on it instead of guessing. Marked by hand against `public/players/`; the tool used to do
 it was a throwaway local HTML page, not worth keeping once the data existed.
+
+**`src/data/faceAnchors.ts` is the second consumer**, generated from the same file: the
+centre of each face box as a percentage of the image, fed straight to `object-position`
+so a crop of any shape lands on the face. The draft screen's portrait panel uses it. It
+is 545 entries and ~12 KB in the bundle, which beat a second network fetch for a file the
+screen needs on first paint.
 
 **`public/faces/` is the first consumer of that data.** `scripts/make_face_crops.py`
 reads a player's face box, cuts a 4:5 portrait around it such that the face occupies a
@@ -307,9 +335,9 @@ LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
-**The home page, the single-player lobby and the multiplayer lobby.** `App.tsx` is a
-`HashRouter` over `/`, `/solo/:formatId` (plus a bare `/solo`) and `/lobby/:code`, with a
-catch-all back to home. The hash is not a preference: GitHub Pages serves static files
+**The home page, both lobbies and the Free Pick draft screen.** `App.tsx` is a
+`HashRouter` over `/`, `/solo/:formatId` (plus a bare `/solo`), `/lobby/:code` and
+`/draft/:formatId`, with a catch-all back to home. The hash is not a preference: GitHub Pages serves static files
 with no rewrite rules, so a deep link that isn't in the hash 404s on refresh — and
 `/#/lobby/KX7QD` is the invite link, so it has to survive being pasted.
 
@@ -504,8 +532,10 @@ follows the frame's composition and departs from it where a live screen has to:
   `--lobby-crest`) collapse under `@media (max-height: 720px)`. Verified with the tallest
   possible state (Free Pick + One league) at 320×568, 768×568 and 1280×700.
 
-**Kicking off is an honest dead end** — the draft screen doesn't exist, so the status line
-says so. That line does double duty: it carries the disabled control's reason too.
+**Kicking off goes to the draft.** Both lobbies now navigate to `/draft/:formatId`, handing
+the scope, league, constraint, timer and the seat list over as router state — so the draft
+opens on the table that was actually sitting in the lobby rather than on a default one. The
+status line kept its other job: it carries the disabled control's reason.
 
 ### The multiplayer lobby (built)
 
@@ -557,6 +587,280 @@ Verified in a browser at 1280×800, 1280×700, 768×568 and 320×568, host and g
 tallest possible state (Free Pick + One league, five seats). No scroll anywhere, no
 horizontal overflow, footer always above the fold.
 
+### The Free Pick draft screen exhibition (2026-08-19, `free-pick-ui-static`)
+
+**Where:** `mockups/free-pick.html`. Same self-contained gallery shell as the other three — 1280×800
+frames at half scale, click one to zoom to full width, opens straight off disk, no build step and no
+server.
+
+**Twenty layouts**, one per Hallmark macrostructure; Feature Stack excluded again (needs scroll).
+Same two rules as the lobby run: **palette fixed to petrol**, no switcher, and **type held to Oswald
++ Inter** with Bebas Neue only on the wordmark, so every difference between frames is structural and
+whatever gets picked ports without a type swap. **No motion at all** — first look only, by explicit
+instruction.
+
+01 The list · Index-First — 02 Two halves · Split Studio — 03 The board · Bento Grid — 04 The pitch ·
+Map/Diagram — 05 The card index · Catalogue — 06 The console · Workbench — 07 Nine · Stat-Led —
+08 Four ways in · Ecosystem Index — 09 Seven open · Component Playground — 10 The call · Marquee Hero
+— 11 Eleven rounds · Narrative Workflow — 12 What do you need · Conversational FAQ — 13 Four squads ·
+Portfolio Grid — 14 The names · Type Specimen — 15 Matchday · Photographic — 16 One per club ·
+Manifesto — 17 The team sheet · Long Document — **18 Sections · Specimen** — 19 The room · Quote-Led
+— 20 Dispatch · Letter.
+
+**All twenty are drawn in one internally consistent draft state**, so the frames are comparable:
+Free Pick · Top 5 leagues · 1 per club · 4 drafters · round 5 of 11 · pick 18 of 44 · your turn · 9s.
+Your four picks (Haaland, van Dijk, Bellingham, Kimmich) spend Manchester City, Liverpool, Real
+Madrid and Bayern Munich, which knocks Valverde, Foden, Rüdiger and Alexander-Arnold off *your*
+board while leaving them on everyone else's — the per-squad constraint made legible without prose.
+Every player, club, nation, age and crest is a real row of `player_data.csv`; the configuration was
+checked against `src/data/draftViability.ts` (`free-pick|top-5|club-1` seats 5).
+
+**Four decisions the run settled, all confirmed by Mert on 2026-08-19, all project-wide:**
+
+- **No ability ratings and no pool counts on a draft screen.** Both are data-model facts and the
+  standing no-internal-data rule already keeps them off. Free Pick also has no currency — so **the
+  only numerals on a Free Pick screen are the clock, the round and the pick number.** Auction is the
+  numbers format; Free Pick is the names format.
+- **The pool is ordered alphabetically.** There is no "best available" ordering: sorting by ability
+  leaks the same fact that hiding the rating was meant to keep off screen, so the number and the
+  ranking go together. The position filter is what narrows the list. *(The exhibition frames were
+  drawn before this and still list descending by ability — superseded.)*
+- **An unavailable player row is dimmed whole, crest included** — the same treatment the lobbies use
+  for unavailable chips, and the only one that respects the never-recolour-a-crest rule.
+- **"Filtered out" means unselectable, not invisible.** An illegal footballer — wrong slot, or
+  blocked by the constraint — stays in the list, dimmed and struck through, captioned with the club
+  that spent them. This is how R5-Q9 and R7.3-Q3 get drawn: seeing the best players left crossed out
+  is what makes a per-squad constraint legible, where removing them silently would only make the
+  pool look thinner for no stated reason.
+
+**Status: resolved.** Layout **18 · Sections** (Specimen) is what gets built — hairline-ruled
+numbered sections across three columns (`296px / 1fr / 268px`), each label stacked above its own
+heading rather than hung in a margin. Two structural changes were made to it on picking, and are
+**not** drawn in the frame: **the table moves into the upper bar** as a row of connected horizontal
+circles with names and nothing else, and **chat moves to the bottom left**, which leaves four
+sections (clock, spent, who is left, your eleven) instead of five and gives the eleven the
+full right-hand column. **Built on 2026-08-19, simplified on 2026-08-20** — see the section
+below, which supersedes the frame wherever they disagree and records both the first-sight
+changes and the later simplification pass (the numbered-section pattern itself did not
+survive it).
+
+### The Free Pick draft screen (built, 2026-08-19; simplified, 2026-08-20)
+
+`src/routes/Draft.tsx` at `/draft/:formatId`, eight components in `src/components/draft/`,
+two libraries (`src/lib/draftEngine.ts`, pure; `src/lib/players.ts`, the pool loader) and
+three data modules (`src/data/formation.ts`, and the generated `clubs.ts` and
+`faceAnchors.ts`). Layout 18 as agreed, with the exhibition's two structural changes and
+**five more Mert asked for on first sight of the working screen**:
+
+1. **A portrait panel beside the pool**, showing the selected row's photograph and
+   **nothing else** — no name, no badge, no caption. (Originally swapped on hover as well
+   as on selection; the hover behaviour was cut in the 2026-08-20 pass below — a hero image
+   that jumps under a moving pointer read as noise, and the row already carries the name a
+   few centimetres to the left.)
+2. **The left rail shrinks**, `296px → 224px` at build, then **`→ 270px`** in the
+   2026-08-20 pass once the rail's own content simplified — see below.
+3. **The eleven is a pitch, not a list.** A list of eleven rows tells you what you own; a
+   pitch tells you what you have *built* — that the left of your defence is empty, that you
+   are three deep in midfield with nobody to pass to.
+4. **Tabs across the top of the pitch** for every drafter's board.
+5. **A narrator across the top of the screen.**
+
+**A further simplification pass ran 2026-08-20**, once the built screen had been looked at
+for a while rather than just first sight of it. Mert judged it too busy and cut it back:
+
+- **The wordmark bar is gone.** The top of the screen is the narrator and the table strip
+  directly, with no `#footydraft` lockup and no quiet configuration line above them.
+- **The rail lost its section numerals and its heading pattern.** `SectionHeading.tsx` (the
+  numeral-above-heading pair) is deleted; the rail is three plain `SectionLabel` captions —
+  **Round**, **Used**, and an unnumbered **Chat** — not four numbered sections. The pitch
+  lost its "04 The elevens" heading the same way; the tabs now sit at the top of the column
+  with nothing above them.
+- **The clock lost its seconds and its pick count.** `DraftClock.tsx` shows only the ordinal
+  round ("1st round" … "11th round") and "of 11" underneath — the countdown and
+  `pick 18 of 44` were judged noise next to it. (The mobile top-bar seconds badge, shown
+  below 1180px when a timer is running, is unaffected — that number still needs somewhere
+  to live once the rail itself is gone.)
+- **Search and the position filter stopped sharing a dividing line.** They used to sit in
+  two equal halves with a shared vertical rule between them; the search field is now its own
+  bordered box at roughly a quarter of the row's width, the position chips take the rest,
+  and nothing draws a line between them.
+- **Pool rows grew, then were pulled back in**: padding `12px → 18px → 15px`, row gap
+  `11px → 14.5px`, name type `→ 16.5px`, the position tag `→ 12.75px`, the crest
+  `→ 25.5px`. Net effect against the original build: noticeably taller rows and larger type,
+  not the full 50% first tried.
+- **The portrait panel and the pitch both grew.** Portrait width `212px → 320px` (desktop),
+  `184px → 260px` (short viewport). Pitch node diameter `34px → 68px`, name plate
+  `92px/9px → 184px/18px` (`144px/17px` under 1180px, unchanged).
+- **The face-anchoring system was rebuilt from scratch** — see below.
+
+#### What is on screen
+
+Top bar: the **narrator** and the **table**, directly — no wordmark, no configuration line
+— under a `--color-line-strong` rule. Then three columns — `270px / 1fr / 320–372px` —
+divided by hairlines rather than surface steps.
+
+- **The narrator** (`Narrator.tsx`) reports and nothing else: `Bot 2 took Virgil van Dijk —
+  CB, Liverpool.`, held for 1.5s, then `Priya is picking.` It is **not a commentator** — no
+  banter, no exclamation, no second person beyond `Your pick.` A drafter who looks away for
+  ten seconds looks back at this one line and knows where the draft is. A 7px dot carries
+  the state: accent when it is you, a slow opacity breath while somebody else thinks.
+- **The table** (`TableStrip.tsx`) sits beside it as connected discs with names under them
+  and nothing else — no pick counts, no per-seat status. Whose turn it is is the accent on
+  the disc. Bots keep the lobby's outlined ring; a bot never gets a face.
+- **Round** (`DraftClock.tsx`) — just the ordinal round in Oswald ("1st round" … "11th
+  round") and "of 11" underneath. The countdown and the pick count used to sit here too;
+  both were cut 2026-08-20 as noise next to the one number that matters on this rail. The
+  seconds themselves still show, when a timer is running, as a small badge in the mobile top
+  bar below 1180px — that is the one place left where the number needs to live once the
+  rail is gone at that width.
+- **Used** (`SpentCrests.tsx`) — your own clubs at 34% opacity (nations as text when the
+  constraint counts those). No heading beyond the plain label; the constraint's one-line
+  explanation that used to sit under it was dropped with the rest of the section-numeral
+  furniture.
+- **Chat**, anchored to the bottom of the rail. Live the entire draft, including while the
+  clock is on you. The one scrolling region on the page.
+- **Who is left** (`PlayerPool.tsx`) — a search field at roughly a quarter of the row's
+  width, the position filter chips taking the rest with no shared dividing rule between
+  them, the ruled pool, and the portrait panel beside it; then a rule, the reason line and
+  the `Draft →` button.
+- **The elevens** (`PitchView.tsx`) — tabs directly at the top of the column, then the
+  pitch. No heading above the tabs.
+
+#### The pitch
+
+Drawn at real proportions — a `68 × 105` viewBox, so the centre circle is a circle and the
+boxes are the size they are on a Saturday — in `--color-line-strong` hairlines. **No green:**
+the ground under this app is petrol, and a strip of turf dropped into it would be the one lit
+object on a dark page. Each filled slot is the club crest in a disc with the surname beneath
+it on its own solid backing — a surname laid straight over the markings is a surname with a
+hairline through it. Open slots are a dashed ring with the position code; the slot your
+pending pick would land in is drawn in accent with the selected player's name previewed in
+it, so you can see the pick land before you commit it.
+
+The full-backs sit **higher up the pitch than the centre-backs** (`y: 71` against `y: 80`).
+That is where they play, and it is also what stops the LB and CB name plates grazing each
+other at 768px.
+
+#### The portrait panel's face anchoring (rebuilt from scratch, 2026-08-20)
+
+The portrait panel does not use a pre-cropped image — per the standing rule that player
+photos stay at native resolution and aspect ratio (see Art assets above), whatever crop a
+layout needs happens at that layout, not at ingest. The panel needs a face centred at
+**50% across, 35% down** its own frame regardless of the source photo's own shape, without
+ever cropping in past the photo's own edge and leaving a gap.
+
+`src/data/faceAnchors.ts` is generated from `face_coordinates.json` (the same hand-marked
+face boxes described under Art assets) into 545 four-value tuples, `fx, fy, ar, fh` per
+player: the face box's own centre as a fraction of the source photo (`fx`, `fy`), the source
+photo's aspect ratio (`ar`), and the face box's own height as a fraction of the photo's
+height (`fh`). `PlayerSpotlight.tsx` reads the tuple for the selected player and passes all
+four straight through as CSS custom properties; a player with a photo but no marked box
+falls back to a plausible default (`0.5, 0.35, 0.8, 0.2`) rather than crashing the lookup.
+
+`.spotlight-photo` in `index.css` does the actual placement, in two steps:
+
+1. **Scale.** Height is `max()` of three candidates: plain `object-fit: cover` (never leaves
+   a gap), a width-driven cover at the photo's own aspect ratio, and — the term that makes
+   the rest of this work — `30cqh ÷ fh`, which scales the image until the *face box itself*
+   reaches 30% of the panel's height. This does two jobs: it evens out how large a face reads
+   across photos taken at wildly different zoom levels, and it is the only term that gives a
+   landscape photo in this portrait panel any vertical slack to reposition in — a bare cover
+   fit always binds on height with zero slack, since every source photo is wider than the
+   panel is.
+2. **Position.** `translate()` is clamped between `0px` (the photo's near edge flush with the
+   panel) and `100cqw|cqh - 100%` (the photo's far edge flush with the panel) on each axis.
+   Inside that range it targets whatever point puts the face at 50%/35%. A face box that is
+   already large relative to its own photo — a tight crop to begin with — hits the clamp and
+   lands as close to that point as the source photo allows, never with a blank strip beside
+   it.
+
+Verified in a browser at 50.0%/35.05% face-centre position across photos of very different
+native crops. The previous system (a three-value `faceFrames` map feeding `object-position`
+directly) could not reach 35% vertically on a landscape source, because `object-position` has
+no equivalent of the `30cqh ÷ fh` scale-up term to create room to move in — replaced outright
+rather than patched.
+
+#### How far the room is exposed
+
+**Settled here: every drafter's board is open to everyone, the whole way through.** No
+reveal, no delay, no fog — that is what the tabs are. A draft where you cannot see what the
+others are building is a draft whose only strategy is taking the best name left, which is
+the format this app is trying not to be. Reading someone else's board costs one click and
+gives nothing away, since there is nothing to give away.
+
+#### The engine
+
+`src/lib/draftEngine.ts` is pure and holds the rules: `seatAt` (snake — the order reverses
+every round), `slotFor`, `blockedReason`, `botChoice` and `timeoutChoice`. Nothing in it
+touches React, which is what makes it the thing to read when a rule is in question.
+
+- **452 footballers** across the 69 crested clubs, parsed from `public/player_data.csv` at
+  mount. Every position is at least 27 deep, so a four-seat 4-2-3-1 under `1 per club` cannot
+  run out.
+- **A–Z**, as decided. Ability is read by the bots and by the timeout auto-pick and is
+  rendered nowhere.
+- **`blockedReason` is one function** returning the sentence the row prints — `Manchester City
+  is spent.`, `Your CB is filled.`, `Already drafted.` — or null. The pool row, the footer line
+  and the `Draft` button's disabled state all read the same call, so they cannot disagree.
+- **Bots** take one of the five strongest eligible rather than the single strongest, so a table
+  of bots does not play the same draft every time; positional need only bites once the rounds
+  left stop outnumbering the holes. They pace at 1.5–3.5s, simulated humans at 2.4–5.2s.
+- **Every pick goes through one `commit`**, and the choice is computed *inside* the state
+  updater so it reads the squad it is actually landing in. A timer that fires twice, or a
+  click racing a timeout, cannot produce two picks from one turn.
+- **On timeout** the system takes the cheapest eligible footballer, never the best — an
+  auto-pick that matched your own would make the clock meaningless.
+- Nothing is wired to Firebase. Per the standing fake-the-functionality rule the screen
+  simulates the room rather than announcing the gap: bots pick on a stagger, the clock runs,
+  chat sends, picks land in the XI, and a full 44-pick draft completes with every eleven
+  filled.
+
+#### Responsive
+
+Three shapes, and the breakpoint that matters is not a Tailwind default:
+
+- **≥1180px** — three columns, rail and portrait panel present.
+- **768–1179px** — two columns, pool and pitch. The rail goes and its clock rides in the top
+  bar rather than disappearing. Name plates drop to `72px / 8.5px`.
+- **<768px** — one column, and the two halves take turns behind a `Who is left / The elevens`
+  switch. **Pitch name plates are hidden entirely**: the whole pitch is inside 162px there, and
+  eleven plates over that overlap each other, which reads worse than not having them.
+
+Vertical rhythm is a height query (`max-height: 760px`), same lesson as the lobby — a `clamp()`
+against `vh` never reaches its minimum at 568px tall. Chat drops at `max-height: 620px`.
+Verified at 1280×800, 1280×700, 768×568 and 320×568: no scroll, no horizontal overflow, no
+console errors, and no overlapping name plates on any of the four boards.
+
+#### Gotchas worth not rediscovering
+
+- **`text-[var(--x)]` silently does nothing in Tailwind v4.** A bare `var()` in an arbitrary
+  value is ambiguous between a length and a colour, so it has to be `text-[length:var(--x)]`.
+  The clock spent an afternoon rendering at the inherited 16px instead of 60px, with no error
+  anywhere. `max-w-[var(--x)]` and `h-[var(--x)]` are unambiguous and do work, which is what
+  made it hard to spot.
+- **`.plate` outranked `opacity-0` and never hid.** Tailwind v4 puts utilities in
+  `@layer utilities`, and unlayered CSS beats layered CSS regardless of source order — so
+  `.plate { opacity: .36 }` in `index.css` won against the route switch's `opacity-0`, and the
+  home page's full-bleed backdrop was rendering underneath *every* route including both
+  lobbies. Fixed by moving the route switch onto a wrapper element. **Any future rule written
+  outside `@layer` in `index.css` has the same power** — check before adding one.
+- **A grid row defaults to `auto`,** which means the tallest item sets the height for every
+  column. The rail refusing to shrink pushed all three columns past the fold at 1280×700;
+  `.draft-grid` now states `grid-template-rows: minmax(0, 1fr)` and the rail carries
+  `min-height: 0`.
+- **`content-visibility: auto`** on the pool rows. All ~446 are in the DOM at once so that a
+  footballer you cannot take stays visible where you would expect them; this skips the work for
+  the ones outside the scroller, and `contain-intrinsic-size` stops the scrollbar jumping.
+
+#### One usability bug worth remembering
+
+On your turn the selection could sit on a footballer your own *previous* pick had just
+blocked — a dead button with no stated reason to look elsewhere, and it happened constantly
+because the thing blocking them was usually you. The clock landing on you now moves the
+selection to the first player who is actually yours to take. **Once per turn, not
+continuously:** selecting a blocked player on purpose is how you read why they are blocked,
+and an effect that bounced you off them every render would make that impossible.
+
 ### Both lobbies: viability gating (2026-08-18)
 
 Both settings panels are now gated by what the table can actually seat — see Draft
@@ -593,8 +897,9 @@ Every draft is configured along three independent axes: **Format**, **Scope**, a
 
 #### Auction
 3 example players: John, Paul, Ringo. Each starts with a budget calculated dynamically from
-the pool: **(Average Derived Price of all players in the selected pool) × 20, rounded to the nearest 100M EUR** *(R8-Q0 / settled 2026-08-18)*.
+the pool: **(Average Derived Price of all players in the selected pool) × 19, rounded to the nearest 100M EUR** *(R8-Q0 / amended 2026-08-19)*.
 A footballer comes up starting at a predetermined opening bid (70% of derived market value, rounded to nearest 5M).
+The **first bid on a lot is exactly at the opening price** *(clarified 2026-08-19)*, so increment buttons are redundant in the first round and mask down to {Pass, Bid}.
 Players bid in real time. The auction turn timer represents the maximum allowed inactivity without a bid:
 **any valid bid resets the countdown timer back to its full duration** (e.g. 15s) *(R8-Q3)*.
 A player is sold to the highest bidder only when the full timer expires with zero new bids.
@@ -622,11 +927,15 @@ block opponents, right up until the auction ends. *(R5-Q6)*
 **Running low on money — backfill, not a reserve** *(R1-Q1 → overturned by R2-Q4)*: no
 funds are held back during bidding — it stays a genuine free-for-all, anyone can bid
 whatever they have at any time. Instead, once the auction **runs its course** (defined
-as: every remaining footballer in the pool has been through the block, *or* every
-player still short of a full XI can no longer afford any unsold eligible footballer for
-their open slots — whichever comes first), any player left with empty slots has them
-auto-filled with the **cheapest still-eligible unsold footballers** for those
-positions. Running out of money isn't prevented, it's just not punished with a
+as: every footballer **on the lot list** has been through the block — the list is capped
+at 15 × lobby size, see below — *or* every player still short of a full XI can no longer
+afford any unsold eligible footballer for their open slots — whichever comes first), any
+player left with empty slots has them auto-filled with the **cheapest still-eligible
+unsold footballers** for those positions. Under the cap, "unsold" means the whole scoped
+pool minus whatever was sold, so backfill draws first from the footballers the cap kept
+off the block, and only falls back to the unsold pile — the ones that went to the block
+and drew no bid — when nothing else eligible remains, exactly as R8-Q4 already
+specified. Running out of money isn't prevented, it's just not punished with a
 permanently broken squad — you end up with worse players, not fewer players. This is
 also the default behavior when a pick/bid timer expires unattended (see Turns &
 Timers). Deal or No Deal has no budget in the briefing, so "running out of money"
@@ -637,6 +946,22 @@ moment it appears, no rotating turn to bring it up. *(R2-Q5)* Footballers surfac
 **one at a time**: the system auto-reveals the next one as soon as the current one
 sells or passes. *(R3-Q1)* The reveal order is **fully random** — no quality curve,
 best/worst-first, or position cycling. *(R6-Q1)*
+
+**The lot list is capped at 15 × lobby size** *(settled 2026-08-19, `auction-training`
+branch)*. An auction puts at most `15 × N` footballers on the block for an `N`-drafter
+table — 30 lots at 2 drafters, 75 at 5 — drawn from the scoped pool, never the whole
+pool. Before this the auction ran the entire scope: 546 lots at All Players, 463 at
+Top 5, 167 at Premier Division. That was never playable at a 15s bid timer, and it is
+what made the Auction bot's training episodes 50–100× longer than any other format's.
+
+The cap sits on top of the existing per-draft coverage rule (Open Question #2, R2-Q10):
+the lot list is **built position-by-position first** — `N` eligible footballers for each
+single-occupancy slot and `2N` for CB, which is `11N` — and the remaining `4N` lots are
+filled from the rest of the scoped pool under the usual skew toward higher ability. Every
+table can therefore fill its XI off the block, with about a quarter of the lots as
+contested surplus. A uniform random draw of `15N` would **not** hold that: at a 5-drafter
+table it yields 4.8 LBs and 5.1 RBs on average against 5 needed, leaving the thin
+positions short roughly half the time and pushing the work onto backfill.
 
 Bid increments are **flat, stepped amounts**, offered as a small fixed set of buttons:
 **+5M / +10M / +25M** available at every price point — the steps don't scale up with
@@ -787,7 +1112,10 @@ Auction is the only format that could otherwise leave gaps — it's covered by t
 backfill-with-cheapest-eligible-footballers rule above, not by preventing low-money
 bidding in the first place. Backfill targets empty slots by definition, so it always
 places directly into the 11 — it can't overflow into the graveyard the way a live
-purchase can. *(R7.2-Q1)*
+purchase can. *(R7.2-Q1)* The 15 × lobby size lot cap doesn't put this guarantee at
+risk: the lot list is drawn position-by-position so every table can fill its XI off the
+block, and backfill can still reach the un-auctioned remainder of the scoped pool if it
+somehow can't. *(2026-08-19)*
 
 ### Turns & Timers
 Host-configurable per-turn/bid timer (a length can be set, or timers can be turned off
@@ -838,7 +1166,7 @@ picker exposed to players. *(R1-Q9)*
 | GK | `0.8358` |
 
 - **Observation Spaces & Action Structures:**
-  - **Auction:** Discrete actions are `Pass (0)`, `+5M`, `+10M`, and `+25M` *(R9-Q3)*. Action masking strictly disables unaffordable raises with $-\infty$ logits *(R10-Q6)*. Automated optimal slotting ensures the highest-ability legal player is always placed in the starting XI while unplaced players move to graveyard *(R10-Q5)*; graveyard overflow contributes 0 points to squad score *(R9-Q4)*. Observations include active player stats, opening & current bids, bot's budget & formation slots, opponent budgets & open slots, and remaining pool count *(R10-Q2)*.
+  - **Auction:** Discrete actions are `Pass (0)`, `+5M`, `+10M`, and `+25M` *(R9-Q3)*. Action masking strictly disables unaffordable raises with $-\infty$ logits *(R10-Q6)*. Automated optimal slotting ensures the highest-ability legal player is always placed in the starting XI while unplaced players move to graveyard *(R10-Q5)*; graveyard overflow contributes 0 points to squad score *(R9-Q4)*. Observations include active player stats, opening & current bids, bot's budget & formation slots, opponent budgets & open slots, and remaining pool count *(R10-Q2)*. Episodes are bounded by the **15 × lobby size lot cap** — at most 75 lots at a 5-drafter table, 30 at a 2-drafter one — not by the size of the scoped pool *(2026-08-19)*.
   - **Deal or No Deal:** Two-step decision: Step 1 (Pick unopened box $\rightarrow$ `Stick` or `Hear Offer`), Step 2 (if hearing offer $\rightarrow$ `Take Offer` or `Open 2nd Box`) *(R9-Q5)*. Observations include active position multiplier, opened box player ability, remaining unopened box count & average ability, expected Banker offer (`Average − 15.0`), and current squad fill state *(R10-Q4)*.
   - **Free Pick & Spin the Wheel:** Full pool embedding matrix across all 546 players combined with a legal availability mask, allowing pure policy networks to select the optimal pick without heuristic handholding *(R9-Q7, R10-Q3)*.
 - **Training Environments:** Self-play randomly samples table sizes from **2 to 5 drafters** *(R9-Q8)* across weighted scopes (50% All Players, 30% Top 5 Leagues, 20% Single Leagues) *(R9-Q9)*.
@@ -872,7 +1200,7 @@ Lobbies are **invite-link only** — no public lobby browser/listing. *(R4-Q8)* 
 ### Player Data Pool
 Beyond guaranteeing every position has enough eligible footballers, the pool should
 **skew toward higher-ability players** so drafts feel star-studded rather than
-strictly representative of the full Scope. *(R2-Q10)* Every draft starts **completely
+strictly representative of the full Scope. The lot list draws are weighted via a softmax curve: `p ∝ exp((ability − max_ability) / 10)` *(closes Open Questions #3, #16, #29, settled 2026-08-19)*. Every draft starts **completely
 fresh** from the full pool — no memory of footballers used in past drafts, per-lobby or
 site-wide. *(R4-Q10)*
 
@@ -1172,6 +1500,18 @@ questionnaire is answered.
     over, clean slate every time.
 ~~27. Post-Draft Editing for graveyard-less formats~~ Resolved R8-Q2: Free Pick, Spin the Wheel, and Deal or No Deal squads are permanently locked upon draft completion — no post-draft player changes.
 28. AI Bot ML Architecture & Training Specification: Training for Deal or No Deal, Spin the Wheel, and Free Pick is fully complete, and models are exported. Auction training is pending a complete implementation from scratch. (In progress).
+~~29. Auction: how many footballers go on the block per draft~~ Resolved 2026-08-19
+    (`auction-training`): capped at **15 × lobby size**, drawn position-by-position so
+    the coverage rule in item #2 still holds. This amends item #11's definition of "runs
+    its course" — exhausting the *lot list*, not the whole scoped pool. Still open: how
+    the `4N` surplus lots beyond guaranteed coverage are weighted (the same unresolved
+    high-ability skew curve as items #3 and #16).
+~~30. How far the room's squads are exposed during a draft~~ Resolved 2026-08-19 when the
+    Free Pick draft screen was built: **fully, to everyone, the whole way through.** Every
+    drafter's eleven is one tab click away on the pitch — no reveal, no delay, no fog. A
+    draft where you cannot read what the others are building has only one strategy in it,
+    which is taking the best name left. Amends item #10: comparing squads is a *post*-draft
+    screen, but in-draft board reading is not a thing it was ever gating.
 
 ## Questionnaire Log
 
@@ -1191,3 +1531,172 @@ This table is kept as a historical index of what each round covered.
 | 8 | Bot Questionnaire 1: Auction budget formula, Auction bid timer resets, unsold player handling, D-o-N-D banker & boxes, Free Pick deadlock stance, non-auction post-draft lock, position-weighted squad evaluation metric, ML RL training approach, bot live delay | Answered (`bot-questionnaire-1.md`) |
 | 9 | Bot Questionnaire 2: Separate models per format, margin-over-average RL reward, Auction +5M/+10M/+25M actions, Deal or No Deal -15 banker discount, pure ML selection policies, randomized 2-5 seats & weighted scopes, in-browser ONNX/JS execution | Answered (`bot-questionnaire-2.md`) |
 | 10 | Bot Questionnaire 3: Multi-agent PPO, 500k+ episodes, Champion Checkpoint League evaluation, full pool 546-player embeddings, comprehensive auction/D-o-N-D observations, action masking, softmax temperature ~0.6 | Answered (`bot-questionnaire-3.md`) |
+
+## Project Status
+
+**Front end:** the home page, both lobbies and the **Free Pick draft screen** are built and
+routed — `/`, `/solo/:formatId`, `/lobby/:code`, `/draft/:formatId`. The draft screen went
+through a simplification pass on 2026-08-20 (see The Free Pick draft screen above) — a
+quieter rail, a rebuilt face-anchoring system, no section numerals. Every control on every
+one of them goes somewhere; there are no dead ends left in the flow. Nothing is wired to
+Firebase, so opponents, bots and chat are simulated on screen per the fake-the-functionality
+rule. The three remaining formats — Auction, Deal or No Deal, Spin the Wheel — have no draft
+screen yet.
+
+**Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
+are exported to `public/botModels/`. Auction training is specified but not run — see the
+handover below. The draft screen's bots are the simple heuristic in `src/lib/draftEngine.ts`,
+not the exported policies; wiring those in is separate work.
+
+Verify the front end with `npm run build` (typecheck + build), `npm test` (Vitest), and
+`npm run dev`.
+
+## Project Handover — the Auction bot training run
+
+Carried over from the 2026-08-19 auction-training session. **This is about bot training, not
+about the front end.** The front end had its own working document, `HANDOVER.md` at the repo
+root, written for the session that would tune the just-built draft screen; it was removed
+2026-08-20 once that tuning pass was done and its content folded into The Free Pick draft
+screen above, which is now the durable record. A second, lossier copy of everything below
+used to sit underneath this section too; it was deleted on 2026-08-19.
+
+# Project Handover Document
+
+**Last updated:** 2026-08-19 (second update, after the design session), on the `auction-training` branch.
+
+## Current Status
+
+Reinforcement Learning training is complete for three of the four draft formats:
+
+- **Deal or No Deal**
+- **Spin the Wheel**
+- **Free Pick**
+
+They were trained with a custom Python PPO implementation and exported as lightweight JSON weights into `src/data/botModels/` for zero‑dependency execution directly in the browser via TypeScript. These three are **final and complete**.
+
+**The Auction format has no trained model.** Building its training pipeline from scratch is the outstanding task.
+
+**The design for that pipeline is now complete and approved.** It lives in `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`. That document is the authority on what to build — this file is context, the spec is the instruction.
+
+The outstanding work is writing an implementation plan from it and then executing it. Nothing has been implemented yet; no code was written in the design session.
+
+## Architecture for the Completed Formats
+
+- **Model Architecture:** simple multi‑layer perceptron (MLP) policies defined in `scripts/training/models.py`.
+- **State Representation:** features concatenated into a flat vector (one‑hot positions, player abilities, current squad needs, etc.).
+- **Inference:** the frontend performs the matrix multiplications from the exported JSON weights and picks the highest‑probability action.
+
+## What Survives in `scripts/training/`
+
+Only shared infrastructure. Everything format‑specific was wiped.
+
+| File | What it gives you |
+|---|---|
+| `config.py` | Paths, formation slots, position multipliers, bid increments, PPO hyperparameters, scope weights, and the **Auction lot cap constants** added 2026-08-19. |
+| `player_pool.py` | Loads the 546‑player CSV into vectorized arrays. Implements the budget formula, scope masks, `calculate_squad_score`, and `get_optimal_squad_from_roster` (optimal slotting with graveyard overflow). Solid, reusable. |
+| `models.py` | Actor‑critic networks for all four formats, including `AuctionPolicyNetwork`. |
+| `export_weights.py` | Converts `champion.pt` checkpoints into frontend JSON (and attempts ONNX). |
+| `live_config.json` | Mid‑run hyperparameter overrides, read by `config.get_live_config()`. |
+| `metrics/`, `static/dashboard.html` | Metrics JSON and a training dashboard. |
+| `checkpoints/` | `dond/`, `free_pick/`, `spin_wheel/` only. **No `auction/`.** |
+
+**Wiped, for every format — not just Auction:** `env_*.py`, `ppo.py`, `checkpoint_league.py`, and all four `train_*.py`. There is no working training loop in the repo to imitate. The only trace is `__pycache__/*.pyc`, which can be inspected with `marshal.load` if you want to see what the old code did without running it.
+
+## Forensics on the Failed Auction Run (2026-08-19)
+
+Three days of attempts produced an auction trainer that was slow and would not improve.
+
+Disassembling the wiped `env_auction.cpython-313.pyc` found the cause, and it was a **missing game rule rather than a hyperparameter problem**:
+
+- `reset()` built the lot queue as `list(np.random.permutation(scope_indices))` — the **entire scoped pool**, with nothing capping it. An All Players draft auctioned all **546** footballers; Top 5 auctioned 463.
+- `_check_auction_ended()` stopped only when that queue emptied, or when every drafter holding an empty slot had **under 5M** left. It never checked whether they could afford an *eligible* footballer for their open slots — merely that they had 5M to their name.
+- Budgets make that second condition almost unreachable. A drafter can complete a legal XI for **220M** out of a **900M** budget, so one drafter sitting on an unfilled thin slot with money left — near‑universal, since GK/LB/RB depth is low and reveal order is random — kept the queue running to the final lot.
+
+The result: every draft was effectively a 546‑lot auction. Each lot is a bidding loop over up to 5 seats, so the floor was roughly **2,730 policy decisions per episode** against Free Pick's 55 — a **50–100× longer episode** carrying a single terminal reward. That is both the throughput problem and the credit‑assignment problem. Most of those steps were noise: bidding on lot 400 when the XI filled at lot 90.
+
+Measured: Auction ran at **4.4–7.0 drafts/sec** and had completed **5,634 drafts** when it was stopped, against 10–15 drafts/sec for the other three formats.
+
+## The Rule That Came Out Of It
+
+**The auction lot list is capped at 15 × lobby size** (settled 2026-08-19). At most `15 × N` footballers go on the block for an `N`‑drafter table: 30 lots at 2 drafters, 75 at 5. This is a **game rule**, not a training shortcut — a 546‑lot auction at a 15s bid timer was never playable by humans either. The training environment inherits it.
+
+The list is built position‑by‑position first (`N` per single‑occupancy slot, `2N` for CB = `11N`), with the remaining `4N` lots drawn from the rest of the scoped pool under the usual high‑ability skew. That preserves the Squad Completion Guarantee by construction: a uniform random draw of `15N` would leave thin positions short about half the time (4.8 LBs and 5.1 RBs on average against 5 needed at a 5‑drafter table).
+
+Constants live in `scripts/training/config.py` as `AUCTION_LOTS_PER_DRAFTER` and `AUCTION_LOTS_PER_POSITION_PER_DRAFTER`. Full rule text is in `PROJECT.md` under Configuration Mechanics → Formats → Auction.
+
+## Environment Facts
+
+- **Use `C:\Users\Mert\AppData\Local\Programs\Python\Python313\python.exe`.** The `python` on the Git Bash PATH is a different interpreter with **no torch installed**.
+- Python 3.13.11, torch `2.7.0.dev20250310+cu124`.
+- **CUDA is available**: NVIDIA GeForce GTX 1650 Ti (4GB, Turing). Plan for a small GPU — large batches will not fit, and CPU‑side vectorization may beat GPU for tiny MLPs.
+- Windows 10. PowerShell and Git Bash both available; they have different Python resolution, as above.
+
+## Landmines
+
+1. **`src/data/botModels/auction_policy.json` is not a trained model.** It is a randomly initialized network. `export_weights.py` silently exports an untrained net when no checkpoint exists, and there is no `checkpoints/auction/`. Do not ship it, and do not read it as evidence that anything worked.
+2. **`metrics/auction_metrics.json` and `auction_status.json` are stale** — leftovers from the wiped run (champion generation 17, 5,634 drafts). Not a baseline.
+3. **`live_config.json` still carries auction overrides** from the failed run — `lr` 3e-5 (10× lower than the other formats), `c_entropy` 0.06 (the highest), `reward_scale` 0.01. These are symptoms of fighting an unstable run, not tuned starting points.
+4. **`AuctionPolicyNetwork` hardcodes `obs_dim=37`**, and `export_weights.py` repeats that 37 in its format table. **Resolved in the spec:** the observation is re‑derived as 69 features with a pinned feature ordering (spec §5). Both hardcoded 37s must be changed to 69. The ordering is a contract with the TypeScript inference path — a silent mismatch there is the most likely way this ships broken.
+5. **`player_pool.get_scope_mask` does not enforce per‑league drafter caps.** Single‑league scope is 20% of training sampling, but Ligue 1 is unusable at any table size, Bundesliga caps at 2 drafters and First Division at 3 (see PROJECT.md → Player Data). **Resolved in the spec:** league and table size are sampled *jointly* against the viability table in the env's reset (spec §3.2). `get_scope_mask` itself is left alone — do not patch it.
+6. **The three "finished" formats never reached the specified volume** — roughly 116k (Free Pick), 126k (Spin the Wheel) and 166k (Deal or No Deal) drafts against the 500k+/format rule in PROJECT.md. **Resolved:** Auction is held to convergence, not to parity with them — hard floor at the spec'd 500k drafts, 12‑hour ceiling, ship the best checkpoint by benchmark margin. Mert accepts that Auction may end up the strongest of the four bots. At the designed throughput the 500k floor costs well under two minutes, so it is not a real constraint.
+7. **Untracked junk in the repo root** from the old run: `debug.log`, `error.log`, `training_log.txt`, `sim_output.txt`, `read_metrics.py` (UTF‑16, broken).
+
+## The Design Session (2026-08-19, after the forensics above)
+
+The pipeline was brainstormed to an approved design. Nothing was implemented. The full document is `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`; this is the summary.
+
+### A third failure mode, not in the forensics above
+
+The forensics blame throughput and credit assignment. There is very likely a third, and it may be why the runs *looked* flat rather than merely being flat:
+
+> Reward is `own score − lobby average`. Under self‑play with one shared policy, `Σᵢ (Sᵢ − mean(S)) = 0` **identically**, every episode, forever. Mean training reward is a constant. It cannot move no matter how strong the bot becomes.
+
+If the previous runs were judged on mean episode reward, "it won't improve" was a reading of a number that is pinned at zero by construction. PPO itself is fine with this — the signal lives in the within‑draft variance and advantages are naturally centred — but a non‑learning frozen opponent is required to measure anything at all. Hence the scripted bidder below.
+
+### The seven decisions
+
+| # | Decision | Choice | Why |
+|---|---|---|---|
+| 1 | Bid loop | **Simultaneous rounds** | All non‑high‑bidder seats decide at once; highest raise wins, random tie‑break; lot ends on a full round with no raise. Keeps the settled Pass/+5/+10/+25 actions, invents no turn order (the game has none — R2‑Q5), and batches all five seats into one forward pass: ~375 ticks per draft instead of ~1,875. |
+| 2 | Reward delivery | **Potential‑based shaping**, γ=1 | Per‑step reward is the change in projected room‑relative margin. Rewards telescope to *exactly* the settled terminal formula, so the objective is provably unchanged (Ng‑Harada‑Russell) while feedback arrives on every lot. Also makes blocking (R5‑Q6) emerge from the reward instead of needing a bonus term. |
+| 3 | Measurement | **Scripted bidder**, frozen | Absolute yardstick that self‑play margin cannot provide. Also seeds 12.5% of training seats so early learning faces competent play, and is a shipping fallback. |
+| 4 | Queue knowledge | **Past‑facing counts** | Bot sees lots revealed and sold per position, never the remaining queue. An MLP has no memory, so this restores the counting an attentive human does — no more, no less. |
+| 5 | Stopping | **Train to convergence** | Floor 500k drafts, 12‑hour ceiling, ship best‑by‑benchmark. See landmine 6 above. |
+| 6 | Ability skew | **softmax T=10** | Closes Open Questions #3, #16, #29. ~12 of the pool's top 20 reach a 75‑lot block, and which twelve varies per draft. |
+| 7 | Budget multiplier | **×19** | Amends R8‑Q0. |
+
+### Rule amendments this creates
+
+These are **game rules**, not training knobs, and must be written into `PROJECT.md`:
+
+1. **Budget ×20 → ×19** (amends R8‑Q0). Because of the round‑to‑nearest‑100M step this moves only Top 5 Leagues, 900M → 800M. Mert chose 19 after seeing that ×20 is correctly binding at All Players and Top 5 (budget ÷ best‑XI‑on‑the‑block = 0.97) but slack at Serie A (1.42) and Bundesliga (1.57). Nothing simple fixes the thin‑league slack — it comes from top‑end pool depth, not average price. **The frontend budget figure needs the same change, tracked as a follow‑up outside the training work.**
+2. **Ability skew = `p ∝ exp((ability − max) / 10)`**, closing Open Questions #3, #16 and #29. Knock‑on: R6‑Q2 makes Deal or No Deal's boxes follow the same skew, and that bot is already final. Judged a mild distribution shift, not a breakage — flagged, not re‑trained.
+3. **The first bid on a lot is *at* the opening price**, clarifying R8‑Q4 against R9‑Q3. The three increment actions are therefore redundant in round one and mask down to `{Pass, Bid}`.
+
+### Assumptions resolved without asking
+
+Recorded in spec §13 so they are cheap to overturn: the first‑bid clarification above; backfill contention between two seats wanting the cheapest player resolves in random seat order (the rules do not specify); and the Deal or No Deal skew knock‑on.
+
+## Next Steps
+
+1. **Read the spec.** `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`. It is approved and is the authority. Do not re‑brainstorm it, and do not re‑run the forensics in this file — both cost context and are already settled.
+2. **Write an implementation plan from it**, then execute.
+3. **Build order that de‑risks fastest:** the slow single‑env reference implementation first, then the batched env, then parity‑test one against the other. A vectorized env fails silently; the reference is the only thing that catches it. The invariant `Σ shaped rewards == terminal margin` is the second‑best guard, since it proves the shaping did not alter the objective.
+4. **Benchmark throughput before training anything.** Target ≥2,000 drafts/sec against the old 4.4–7.0. If it is not there, the batching is wrong and no amount of training will help.
+5. **Amend `PROJECT.md`** with the three rule changes above.
+6. **Clear the junk** listed in landmines 2, 3 and 7.
+
+The two success conditions that matter: throughput ≥2,000 drafts/sec, and the mean margin against the frozen scripted bidder climbing and then plateauing. A flat benchmark curve from the start means the design failed — and the diagnostics in spec §8 (clearing price ÷ opening bid, unspent budget, backfilled slots, action distribution) are there to say which half.
+
+## Git Operations — already carried out
+
+The commands this handover asked for were run on 2026-08-19; `free-pick-ui-static` exists and
+carries the work described above. Kept only as a record of what happened.
+
+```bash
+git add -A
+git commit -m "Remove training scripts and experimental HTML UI; finalize bot development"
+git push origin main
+git checkout -b free-pick-ui-static
+git push -u origin free-pick-ui-static
+```

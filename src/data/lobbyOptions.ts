@@ -34,6 +34,8 @@ export const scopes: Choice[] = [
  * because a recoloured badge is a falsified badge. Selection is drawn on the
  * chip around the mark, never on the mark itself.
  */
+export type LeagueId = 'premier-league' | 'la-liga' | 'serie-a' | 'bundesliga' | 'ligue-1'
+
 export const leagues: Choice[] = [
   { id: 'premier-league', name: 'Premier League' },
   { id: 'la-liga', name: 'La Liga' },
