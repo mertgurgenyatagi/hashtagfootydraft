@@ -594,18 +594,32 @@ board while leaving them on everyone else's — the per-squad constraint made le
 Every player, club, nation, age and crest is a real row of `player_data.csv`; the configuration was
 checked against `src/data/draftViability.ts` (`free-pick|top-5|club-1` seats 5).
 
-**Two decisions the run settled, and they are project-wide:**
+**Four decisions the run settled, all confirmed by Mert on 2026-08-19, all project-wide:**
 
 - **No ability ratings and no pool counts on a draft screen.** Both are data-model facts and the
   standing no-internal-data rule already keeps them off. Free Pick also has no currency — so **the
   only numerals on a Free Pick screen are the clock, the round and the pick number.** Auction is the
   numbers format; Free Pick is the names format.
+- **The pool is ordered alphabetically.** There is no "best available" ordering: sorting by ability
+  leaks the same fact that hiding the rating was meant to keep off screen, so the number and the
+  ranking go together. The position filter is what narrows the list. *(The exhibition frames were
+  drawn before this and still list descending by ability — superseded.)*
 - **An unavailable player row is dimmed whole, crest included** — the same treatment the lobbies use
   for unavailable chips, and the only one that respects the never-recolour-a-crest rule.
+- **"Filtered out" means unselectable, not invisible.** An illegal footballer — wrong slot, or
+  blocked by the constraint — stays in the list, dimmed and struck through, captioned with the club
+  that spent them. This is how R5-Q9 and R7.3-Q3 get drawn: seeing the best players left crossed out
+  is what makes a per-squad constraint legible, where removing them silently would only make the
+  pool look thinner for no stated reason.
 
-**Status: resolved.** Layout **18 · Sections** (Specimen) was picked and is what gets built — five
-numbered, hairline-ruled sections across three columns, each label stacked above its own heading
-rather than hung in a margin. Not built yet; see `HANDOVER.md` for the build brief.
+**Status: resolved.** Layout **18 · Sections** (Specimen) is what gets built — hairline-ruled
+numbered sections across three columns (`296px / 1fr / 268px`), each label stacked above its own
+heading rather than hung in a margin. Two structural changes were made to it on picking, and are
+**not** drawn in the frame: **the table moves into the upper bar** as a row of connected horizontal
+circles with names and nothing else, and **chat moves to the bottom left**, which leaves four
+numbered sections (clock, spent, who is left, your eleven) instead of five and gives the eleven the
+full right-hand column. Further tuning is expected during the build. Not built yet — see
+`HANDOVER.md`, which is authoritative wherever it and the frame disagree.
 
 ### Both lobbies: viability gating (2026-08-18)
 

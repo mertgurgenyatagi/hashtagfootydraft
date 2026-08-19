@@ -15,38 +15,52 @@ needs scroll and this app never scrolls).
 The other nineteen stay in the file, same as the home and lobby exhibitions did.
 
 Open the file straight off disk (`file://`) — no build step, no server. Click a frame to zoom it to
-full 1280×800, click again to shrink. **Read frame 18 before writing any code**; this document
-describes it but the frame is the specification.
+full 1280×800, click again to shrink. **Read frame 18 before writing any code.**
+
+**Where this document and the frame disagree, this document wins.** The frame is the starting point,
+not the specification — Mert ratified the exhibition's assumptions on 2026-08-19 and changed four
+things in the process. Those changes are below and are *not* drawn in the frame.
 
 ---
 
 ## What layout 18 is
 
-A **five-section, hairline-ruled, three-column** reading of the draft. Every region is explicitly
-numbered and named, nothing competes for attention, and a new drafter could be told where to look in
-one sentence. It is the most orderly of the twenty, and it was picked over the denser candidates on
-that basis.
+A **hairline-ruled, three-column, numbered-section** reading of the draft. Every region is explicitly
+named, nothing competes for attention, and a new drafter could be told where to look in one sentence.
+It is the most orderly of the twenty and was picked over the denser candidates on that basis.
 
 The frame is `1280 × 800`, `padding: 34px 56px`, one `100dvh` viewport with no scroll.
 
-**Masthead** — wordmark left (`#` in accent + `footydraft` in Bebas), the configuration as a single
+**Upper bar** — wordmark left (`#` in accent + `footydraft` in Bebas), the configuration as a single
 quiet line right: `Free Pick · Top 5 leagues · 1 per club`. A `--color-line-strong` rule under it.
 
+**The table lives in that upper bar** *(changed 2026-08-19 — the frame still has it in the left
+column)*: the drafters as **a row of connected horizontal circles with names, and nothing else** —
+no captions, no pick counts, no per-seat status text. Whose turn it is still has to read at a glance,
+so that is carried by the accent on the active circle rather than by a word. Moving it out of the
+column is what buys the space for everything else.
+
 **Then a three-column grid, `296px / 1fr / 268px`,** divided by 1px hairlines rather than surface
-steps. Each column holds numbered sections:
+steps:
 
 | § | Section | Column | Holds |
 |---|---|---|---|
 | 01 | The clock | left | `09` at 64px in Oswald tabular, a depleting `.tbar` rule, and `Round 5 of 11 · pick 18 of 44` underneath |
-| 02 | The table | left | the four seats, yours in accent, each captioned `done` / `now` / `next` / `then`, plus "The order reverses at the end of every round." |
-| 03 | Spent | left | the club crests you have used, dimmed to 34%, under the constraint's one-line explanation |
-| 04 | Who is left | centre | search field, then the pool as ruled player rows — crest, name, club·nation·age, position code — with the selected row on `--color-accent-soft`; a rule, then the reason line and the `Draft →` button |
-| 05 | Your eleven | right | the 4-2-3-1 as eleven stacked slots, filled ones solid, open ones dashed, the pending one in accent; chat sits underneath, anchored to the bottom |
+| 02 | Spent | left | the club crests you have used, dimmed to 34%, under the constraint's one-line explanation |
+| — | Chat | left, bottom | *(moved 2026-08-19)* anchored to the bottom of the left column, below §02 — newest message at the bottom, input beneath it. The one scrolling region on the screen |
+| 03 | Who is left | centre | search field, then the pool as ruled player rows — crest, name, club·nation·age, position code — with the selected row on `--color-accent-soft`; a rule, then the reason line and the `Draft →` button |
+| 04 | Your eleven | right | the 4-2-3-1 as eleven stacked slots, filled ones solid, open ones dashed, the pending one in accent. Gets the full column height now that chat has moved out |
+
+That is **four numbered sections**, down from the frame's five, because the table stopped being one.
+Whether chat earns a numeral of its own is open — it is drawn here without one.
 
 **The section label rule that matters:** each numeral (`01`, `02`, …) is stacked **directly above**
 its own heading in the same column. Do **not** hang the number in a left margin beside the heading —
 that hanging-header pattern is a templated-editorial tell and Hallmark auto-fails it (gate 54). The
 frame already does this correctly; keep it.
+
+**Further adjustments are expected.** Mert flagged that the layout will be tuned during the build —
+treat the above as the agreed starting shape, not a frozen spec.
 
 ---
 
@@ -74,16 +88,22 @@ Every player, club, nation, age, crest and photo path in the file was verified a
 
 ---
 
-## Two decisions baked into the frames — inherit them
+## Three decisions baked into the frames — inherit them
 
 **1. No ability ratings and no pool counts anywhere.** Ability is a data-model fact and `PROJECT.md`
 keeps those off screen (no pool counts, no per-position depth). Free Pick has no currency either.
 So **the only numerals on this screen are the clock, the round number and the pick number.** That
 turned out to be a feature rather than a limitation: Auction is the numbers format, Free Pick is the
-names format, and the screen is quiet because of it. A "best available" ordering is fine — a
-*number* next to a player is not.
+names format, and the screen is quiet because of it.
 
-**2. An unavailable row is dimmed whole, crest included.** Never grayscale, filter, recolour or
+**2. The pool is ordered alphabetically** *(decided 2026-08-19 — the frames still show ability
+order)*. There is **no "best available" ordering**, because an ability-derived ranking leaks the
+same data-model fact the rule above keeps off screen; hiding the number while sorting by it is a
+distinction without a difference. Every frame in the exhibition lists Saka, Rice, Modric, Saliba…
+descending by ability — **that is superseded.** The list runs A–Z, and the position filter is what
+narrows it. Re-cut the ordering when you port; do not mine the frames' row order.
+
+**3. An unavailable row is dimmed whole, crest included.** Never grayscale, filter, recolour or
 silhouette a crest on its own — a recoloured badge is a falsified badge. The lobby already
 established whole-control opacity as the sanctioned treatment for unavailability; the player rows
 use `.pr.no { opacity: .3 }` plus a strikethrough on the name only.
@@ -101,6 +121,11 @@ From `PROJECT.md` → Configuration Mechanics → Formats → Free Pick, and Pos
   of what you can select** — not offered and then rejected.
 - **Constraints are Free Pick only**, exactly one active, and checked **per your own squad**. Illegal
   players are filtered out of selection the same way.
+- **"Filtered out" means unselectable, not invisible** *(confirmed 2026-08-19)*. An illegal player
+  stays in the list, dimmed and struck through, captioned with the club that spent them. Seeing
+  Valverde and Foden crossed out is what teaches the constraint; removing them silently would just
+  make the pool look smaller for no stated reason. This was the exhibition's most load-bearing
+  assumption and it was ratified.
 - **Turn timer** defaults to ~15s and the host can turn it off entirely — so the layout must survive
   having no clock at all. §01 is the section that has to degrade gracefully.
 - **On timeout** the system auto-picks the cheapest eligible remaining footballer for that slot.
@@ -111,6 +136,12 @@ From `PROJECT.md` → Configuration Mechanics → Formats → Free Pick, and Pos
 ---
 
 ## What is *not* decided, and is yours to settle
+
+- **How far the room's squads are exposed during the draft.** Opponent picks are visible — that is
+  confirmed — and **Mert has said it will go further than merely visible**, but what that means is
+  deliberately left for the build session. Ask before designing it. Frame 13 (Four squads ·
+  Portfolio Grid) is the most complete take on in-draft board reading if you want a reference, even
+  though 18 is what ships.
 
 - **Motion.** The exhibition is deliberately motionless — first-look only, by instruction. The whole
   motion layer still has to be designed, and it must land in the quiet register: smooth simple fades
