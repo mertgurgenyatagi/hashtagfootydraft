@@ -1,218 +1,167 @@
-# Project Handover Document
+# Handover — build the Free Pick draft screen
 
-**Last updated:** 2026-08-19 (second update, after the design session), on the
-`auction-training` branch.
+**Written:** 2026-08-19, on the `free-pick-ui-static` branch.
+**For:** the next session, which builds this screen. Nothing has been implemented yet.
 
-## Current Status
+---
 
-Reinforcement Learning training is complete for three of the four draft formats:
+## The decision
 
-- **Deal or No Deal**
-- **Spin the Wheel**
-- **Free Pick**
+An exhibition of **20 static layouts** for the Free Pick draft screen was built at
+**`mockups/free-pick.html`** (one per Hallmark macrostructure; Feature Stack excluded because it
+needs scroll and this app never scrolls).
 
-They were trained with a custom Python PPO implementation and exported as lightweight
-JSON weights into `src/data/botModels/` for zero-dependency execution directly in the
-browser via TypeScript. These three are **final and complete**.
+**Mert picked layout 18 · "Sections" — the Specimen macrostructure.** That is what gets built.
+The other nineteen stay in the file, same as the home and lobby exhibitions did.
 
-**The Auction format has no trained model.** Building its training pipeline from scratch
-is the outstanding task.
+Open the file straight off disk (`file://`) — no build step, no server. Click a frame to zoom it to
+full 1280×800, click again to shrink. **Read frame 18 before writing any code**; this document
+describes it but the frame is the specification.
 
-**The design for that pipeline is now complete and approved.** It lives in
-`docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`. That document
-is the authority on what to build — this file is context, the spec is the instruction.
-The outstanding work is writing an implementation plan from it and then executing it.
-Nothing has been implemented yet; no code was written in the design session.
+---
 
-## Architecture for the Completed Formats
+## What layout 18 is
 
-- **Model Architecture:** simple multi-layer perceptron (MLP) policies defined in
-  `scripts/training/models.py`.
-- **State Representation:** features concatenated into a flat vector (one-hot positions,
-  player abilities, current squad needs, etc.).
-- **Inference:** the frontend performs the matrix multiplications from the exported JSON
-  weights and picks the highest-probability action.
+A **five-section, hairline-ruled, three-column** reading of the draft. Every region is explicitly
+numbered and named, nothing competes for attention, and a new drafter could be told where to look in
+one sentence. It is the most orderly of the twenty, and it was picked over the denser candidates on
+that basis.
 
-## What Survives in `scripts/training/`
+The frame is `1280 × 800`, `padding: 34px 56px`, one `100dvh` viewport with no scroll.
 
-Only shared infrastructure. Everything format-specific was wiped.
+**Masthead** — wordmark left (`#` in accent + `footydraft` in Bebas), the configuration as a single
+quiet line right: `Free Pick · Top 5 leagues · 1 per club`. A `--color-line-strong` rule under it.
 
-| File | What it gives you |
-|---|---|
-| `config.py` | Paths, formation slots, position multipliers, bid increments, PPO hyperparameters, scope weights, and the **Auction lot cap constants** added 2026-08-19. |
-| `player_pool.py` | Loads the 546-player CSV into vectorized arrays. Implements the budget formula, scope masks, `calculate_squad_score`, and `get_optimal_squad_from_roster` (optimal slotting with graveyard overflow). Solid, reusable. |
-| `models.py` | Actor-critic networks for all four formats, including `AuctionPolicyNetwork`. |
-| `export_weights.py` | Converts `champion.pt` checkpoints into frontend JSON (and attempts ONNX). |
-| `live_config.json` | Mid-run hyperparameter overrides, read by `config.get_live_config()`. |
-| `metrics/`, `static/dashboard.html` | Metrics JSON and a training dashboard. |
-| `checkpoints/` | `dond/`, `free_pick/`, `spin_wheel/` only. **No `auction/`.** |
+**Then a three-column grid, `296px / 1fr / 268px`,** divided by 1px hairlines rather than surface
+steps. Each column holds numbered sections:
 
-**Wiped, for every format — not just Auction:** `env_*.py`, `ppo.py`,
-`checkpoint_league.py`, and all four `train_*.py`. There is no working training loop in
-the repo to imitate. The only trace is `__pycache__/*.pyc`, which can be inspected with
-`marshal.load` if you want to see what the old code did without running it.
-
-## Forensics on the Failed Auction Run (2026-08-19)
-
-Three days of attempts produced an auction trainer that was slow and would not improve.
-Disassembling the wiped `env_auction.cpython-313.pyc` found the cause, and it was a
-**missing game rule rather than a hyperparameter problem**:
-
-- `reset()` built the lot queue as `list(np.random.permutation(scope_indices))` — the
-  **entire scoped pool**, with nothing capping it. An All Players draft auctioned all
-  **546** footballers; Top 5 auctioned 463.
-- `_check_auction_ended()` stopped only when that queue emptied, or when every drafter
-  holding an empty slot had **under 5M** left. It never checked whether they could afford
-  an *eligible* footballer for their open slots — merely that they had 5M to their name.
-- Budgets make that second condition almost unreachable. A drafter can complete a legal
-  XI for **220M** out of a **900M** budget, so one drafter sitting on an unfilled thin
-  slot with money left — near-universal, since GK/LB/RB depth is low and reveal order is
-  random — kept the queue running to the final lot.
-
-The result: every draft was effectively a 546-lot auction. Each lot is a bidding loop
-over up to 5 seats, so the floor was roughly **2,730 policy decisions per episode**
-against Free Pick's 55 — a **50–100× longer episode carrying a single terminal reward**.
-That is both the throughput problem and the credit-assignment problem. Most of those
-steps were noise: bidding on lot 400 when the XI filled at lot 90.
-
-Measured: Auction ran at **4.4–7.0 drafts/sec** and had completed **5,634 drafts** when
-it was stopped, against 10–15 drafts/sec for the other three formats.
-
-## The Rule That Came Out Of It
-
-**The auction lot list is capped at 15 × lobby size** (settled 2026-08-19). At most
-`15 × N` footballers go on the block for an `N`-drafter table: 30 lots at 2 drafters, 75
-at 5. This is a **game rule**, not a training shortcut — a 546-lot auction at a 15s bid
-timer was never playable by humans either. The training environment inherits it.
-
-The list is built position-by-position first (`N` per single-occupancy slot, `2N` for CB
-= `11N`), with the remaining `4N` lots drawn from the rest of the scoped pool under the
-usual high-ability skew. That preserves the Squad Completion Guarantee by construction: a
-uniform random draw of `15N` would leave thin positions short about half the time (4.8
-LBs and 5.1 RBs on average against 5 needed at a 5-drafter table).
-
-Constants live in `scripts/training/config.py` as `AUCTION_LOTS_PER_DRAFTER` and
-`AUCTION_LOTS_PER_POSITION_PER_DRAFTER`. Full rule text is in `PROJECT.md` under
-Configuration Mechanics → Formats → Auction.
-
-## Environment Facts
-
-- **Use `C:\Users\Mert\AppData\Local\Programs\Python\Python313\python.exe`.** The
-  `python` on the Git Bash PATH is a different interpreter with **no torch installed**.
-- Python 3.13.11, torch `2.7.0.dev20250310+cu124`.
-- **CUDA is available**: NVIDIA GeForce GTX 1650 Ti (4GB, Turing). Plan for a small GPU —
-  large batches will not fit, and CPU-side vectorization may beat GPU for tiny MLPs.
-- Windows 10. PowerShell and Git Bash both available; they have different Python
-  resolution, as above.
-
-## Landmines
-
-1. **`src/data/botModels/auction_policy.json` is not a trained model.** It is a randomly
-   initialized network. `export_weights.py` silently exports an untrained net when no
-   checkpoint exists, and there is no `checkpoints/auction/`. Do not ship it, and do not
-   read it as evidence that anything worked.
-2. **`metrics/auction_metrics.json` and `auction_status.json` are stale** — leftovers
-   from the wiped run (champion generation 17, 5,634 drafts). Not a baseline.
-3. **`live_config.json` still carries auction overrides** from the failed run — `lr`
-   3e-5 (10× lower than the other formats), `c_entropy` 0.06 (the highest), `reward_scale`
-   0.01. These are symptoms of fighting an unstable run, not tuned starting points.
-4. **`AuctionPolicyNetwork` hardcodes `obs_dim=37`**, and `export_weights.py` repeats
-   that 37 in its format table. **Resolved in the spec:** the observation is re-derived
-   as 69 features with a pinned feature ordering (spec §5). Both hardcoded 37s must be
-   changed to 69. The ordering is a contract with the TypeScript inference path — a
-   silent mismatch there is the most likely way this ships broken.
-5. **`player_pool.get_scope_mask` does not enforce per-league drafter caps.** Single-league
-   scope is 20% of training sampling, but Ligue 1 is unusable at any table size,
-   Bundesliga caps at 2 drafters and First Division at 3 (see PROJECT.md → Player Data).
-   **Resolved in the spec:** league and table size are sampled *jointly* against the
-   viability table in the env's reset (spec §3.2). `get_scope_mask` itself is left
-   alone — do not patch it.
-6. **The three "finished" formats never reached the specified volume** — roughly 116k
-   (Free Pick), 126k (Spin the Wheel) and 166k (Deal or No Deal) drafts against the
-   500k+/format rule in PROJECT.md. **Resolved:** Auction is held to convergence, not to
-   parity with them — hard floor at the spec'd 500k drafts, 12-hour wall-clock ceiling,
-   ship the best checkpoint by benchmark margin. Mert accepts that Auction may end up
-   the strongest of the four bots. At the designed throughput the 500k floor costs well
-   under two minutes, so it is not a real constraint.
-7. **Untracked junk in the repo root** from the old run: `debug.log`, `error.log`,
-   `training_log.txt`, `sim_output.txt`, `read_metrics.py` (UTF-16, broken).
-
-## The Design Session (2026-08-19, after the forensics above)
-
-The pipeline was brainstormed to an approved design. Nothing was implemented. The full
-document is `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`;
-this is the summary.
-
-### A third failure mode, not in the forensics above
-
-The forensics blame throughput and credit assignment. There is very likely a third, and
-it may be why the runs *looked* flat rather than merely being flat:
-
-> Reward is `own score − lobby average`. Under self-play with one shared policy,
-> `Σᵢ (Sᵢ − mean(S)) = 0` **identically**, every episode, forever. Mean training reward
-> is a constant. It cannot move no matter how strong the bot becomes.
-
-If the previous runs were judged on mean episode reward, "it won't improve" was a reading
-of a number that is pinned at zero by construction. PPO itself is fine with this — the
-signal lives in the within-draft variance and advantages are naturally centred — but a
-non-learning frozen opponent is required to measure anything at all. Hence the scripted
-bidder below.
-
-### The seven decisions
-
-| # | Decision | Choice | Why |
+| § | Section | Column | Holds |
 |---|---|---|---|
-| 1 | Bid loop | **Simultaneous rounds** | All non-high-bidder seats decide at once; highest raise wins, random tie-break; lot ends on a full round with no raise. Keeps the settled Pass/+5/+10/+25 actions, invents no turn order (the game has none — R2-Q5), and batches all five seats into one forward pass: ~375 ticks per draft instead of ~1,875. |
-| 2 | Reward delivery | **Potential-based shaping**, γ=1 | Per-step reward is the change in projected room-relative margin. Rewards telescope to *exactly* the settled terminal formula, so the objective is provably unchanged (Ng–Harada–Russell) while feedback arrives on every lot. Also makes blocking (R5-Q6) emerge from the reward instead of needing a bonus term. |
-| 3 | Measurement | **Scripted bidder**, frozen | Absolute yardstick that self-play margin cannot provide. Also seeds 12.5% of training seats so early learning faces competent play, and is a shipping fallback. |
-| 4 | Queue knowledge | **Past-facing counts** | Bot sees lots revealed and sold per position, never the remaining queue. An MLP has no memory, so this restores the counting an attentive human does — no more, no less. |
-| 5 | Stopping | **Train to convergence** | Floor 500k drafts, 12-hour ceiling, ship best-by-benchmark. See landmine 6 above. |
-| 6 | Ability skew | **softmax T=10** | Closes Open Questions #3, #16, #29. ~12 of the pool's top 20 reach a 75-lot block, and which twelve varies per draft. |
-| 7 | Budget multiplier | **×19** | Amends R8-Q0's ×20. |
+| 01 | The clock | left | `09` at 64px in Oswald tabular, a depleting `.tbar` rule, and `Round 5 of 11 · pick 18 of 44` underneath |
+| 02 | The table | left | the four seats, yours in accent, each captioned `done` / `now` / `next` / `then`, plus "The order reverses at the end of every round." |
+| 03 | Spent | left | the club crests you have used, dimmed to 34%, under the constraint's one-line explanation |
+| 04 | Who is left | centre | search field, then the pool as ruled player rows — crest, name, club·nation·age, position code — with the selected row on `--color-accent-soft`; a rule, then the reason line and the `Draft →` button |
+| 05 | Your eleven | right | the 4-2-3-1 as eleven stacked slots, filled ones solid, open ones dashed, the pending one in accent; chat sits underneath, anchored to the bottom |
 
-### Rule amendments this creates
+**The section label rule that matters:** each numeral (`01`, `02`, …) is stacked **directly above**
+its own heading in the same column. Do **not** hang the number in a left margin beside the heading —
+that hanging-header pattern is a templated-editorial tell and Hallmark auto-fails it (gate 54). The
+frame already does this correctly; keep it.
 
-These are **game rules**, not training knobs, and must be written into `PROJECT.md`:
+---
 
-1. **Budget ×20 → ×19** (amends R8-Q0). Because of the round-to-nearest-100M step this
-   moves only Top 5 Leagues, 900M → 800M. Mert chose 19 after seeing that ×20 is
-   correctly binding at All Players and Top 5 (budget ÷ best-XI-on-the-block = 0.97) but
-   slack at Serie A (1.42) and Bundesliga (1.57). Nothing simple fixes the thin-league
-   slack — it comes from top-end pool depth, not average price. **The frontend budget
-   figure needs the same change, tracked as a follow-up outside the training work.**
-2. **Ability skew = `p ∝ exp((ability − max) / 10)`**, closing Open Questions #3, #16
-   and #29. Knock-on: R6-Q2 makes Deal or No Deal's boxes follow the same skew, and that
-   bot is already final. Judged a mild distribution shift, not a breakage — flagged, not
-   re-trained.
-3. **The first bid on a lot is *at* the opening price**, clarifying R8-Q4 against R9-Q3.
-   The three increment actions are therefore redundant in round one and mask down to
-   `{Pass, Bid}`.
+## The draft state the frame is drawn in
 
-### Assumptions resolved without asking
+All twenty frames share one internally consistent position, and every value in it is real. Keep it
+when porting, because it exercises the rules that matter:
 
-Recorded in spec §13 so they are cheap to overturn: the first-bid clarification above;
-backfill contention between two seats wanting the same cheapest player resolves in random
-seat order (the rules do not specify); and the Deal or No Deal skew knock-on.
+- **Format** Free Pick · snake · 11 rounds
+- **Scope** Top 5 leagues
+- **Constraint** 1 per club — *your own squad only*
+- **Table** 4 drafters (you = seat 2; Priya, Bot 1, Bot 2)
+- **Moment** round 5 of 11 · pick 18 of 44 · your turn · 9s left
+- **Your four** Haaland ST (Man City) · van Dijk CB (Liverpool) · Bellingham AMF (Real Madrid) ·
+  Kimmich CDM (Bayern Munich)
+- **Open** GK · CB · LB · RB · CM · LW · RW
+- **The teaching moment** those four picks spend City, Liverpool, Madrid and Bayern, which knocks
+  Valverde, Camavinga, Foden, Rüdiger, Militão, Araujo, Rodrygo, Alexander-Arnold, Donnarumma and
+  Bernardo Silva off *your* board while leaving them on everyone else's. Seeing the best players
+  left crossed out is what makes the per-squad constraint legible without a sentence of prose.
 
-## Next Steps
+Every player, club, nation, age, crest and photo path in the file was verified against
+`player_data.csv`. The configuration was verified viable against `src/data/draftViability.ts`
+(`free-pick|top-5|club-1` seats 5). If you change the state, re-verify both.
 
-1. **Read the spec.** `docs/superpowers/specs/2026-08-19-auction-training-pipeline-design.md`.
-   It is approved and is the authority. Do not re-brainstorm it, and do not re-run the
-   forensics in this file — both cost context and are already settled.
-2. **Write an implementation plan from it**, then execute.
-3. **Build order that de-risks fastest:** the slow single-env reference implementation
-   first, then the batched env, then parity-test one against the other. A vectorized env
-   fails silently; the reference is the only thing that catches it. The invariant
-   `Σ shaped rewards == terminal margin` is the second-best guard, since it proves the
-   shaping did not alter the objective.
-4. **Benchmark throughput before training anything.** Target ≥2,000 drafts/sec against
-   the old 4.4–7.0. If it is not there, the batching is wrong and no amount of training
-   will help.
-5. **Amend `PROJECT.md`** with the three rule changes above.
-6. **Clear the junk** listed in landmines 2, 3 and 7.
+---
 
-The two success conditions that matter: throughput ≥2,000 drafts/sec, and the mean margin
-against the frozen scripted bidder climbing and then plateauing. A flat benchmark curve
-from the start means the design failed — and the diagnostics in spec §8 (clearing price
-÷ opening bid, unspent budget, backfilled slots, action distribution) are there to say
-which half.
+## Two decisions baked into the frames — inherit them
+
+**1. No ability ratings and no pool counts anywhere.** Ability is a data-model fact and `PROJECT.md`
+keeps those off screen (no pool counts, no per-position depth). Free Pick has no currency either.
+So **the only numerals on this screen are the clock, the round number and the pick number.** That
+turned out to be a feature rather than a limitation: Auction is the numbers format, Free Pick is the
+names format, and the screen is quiet because of it. A "best available" ordering is fine — a
+*number* next to a player is not.
+
+**2. An unavailable row is dimmed whole, crest included.** Never grayscale, filter, recolour or
+silhouette a crest on its own — a recoloured badge is a falsified badge. The lobby already
+established whole-control opacity as the sanctioned treatment for unavailability; the player rows
+use `.pr.no { opacity: .3 }` plus a strikethrough on the name only.
+
+---
+
+## Rules the screen has to honour
+
+From `PROJECT.md` → Configuration Mechanics → Formats → Free Pick, and Position Reform:
+
+- **Snake draft, 11 picks, one slot each.** Order reverses every round. First pick order is a random
+  draw at draft start.
+- **Positions are a hard gate.** A footballer only ever fills the one slot they are listed for. There
+  is no graveyard in Free Pick, so a player whose slot is already full in your XI is **filtered out
+  of what you can select** — not offered and then rejected.
+- **Constraints are Free Pick only**, exactly one active, and checked **per your own squad**. Illegal
+  players are filtered out of selection the same way.
+- **Turn timer** defaults to ~15s and the host can turn it off entirely — so the layout must survive
+  having no clock at all. §01 is the section that has to degrade gracefully.
+- **On timeout** the system auto-picks the cheapest eligible remaining footballer for that slot.
+- **Chat stays fully active at all times.**
+- **Bots** pace at 1.5–3.5s per move. Bots get abstract rings, never player faces.
+- **A draft can never end with an unfilled slot.**
+
+---
+
+## What is *not* decided, and is yours to settle
+
+- **Motion.** The exhibition is deliberately motionless — first-look only, by instruction. The whole
+  motion layer still has to be designed, and it must land in the quiet register: smooth simple fades
+  with a little travel, compositor-only (`transform` / `opacity` / `clip-path`), nothing overshooting
+  or bouncing, everything collapsing under `prefers-reduced-motion`. The ambient stadium plate keeps
+  drifting on the shared 30s `AppShell` loop — do not restart it.
+- **Responsive behaviour.** The frame is drawn at 1280×800 only. The lobbies are verified at
+  1280×800, 1280×700, 768×568 and 320×568, and this screen has to reach the same bar with no scroll
+  and no horizontal overflow. Expect the three columns to have to collapse; note the lobby's lesson
+  that `clamp()` against `vh` never reaches its minimum at 568px tall, so spacing tokens want a
+  `@media (max-height: 720px)` height query instead.
+- **Where the route lives.** There is no draft screen yet — both lobbies' `Kick off` currently
+  admits it goes nowhere. That honest dead end can be replaced once this screen exists.
+- **Real data.** Nothing is wired to Firebase. Per the standing **fake-the-functionality** rule, the
+  screen should simulate the draft rather than announce the gap: bots pick on a stagger, the clock
+  runs, chat sends, picks land in the XI.
+
+---
+
+## Where the rules live
+
+- `PROJECT.md` — the living source of truth for every game rule. Free Pick, Position Reform, Draft
+  Viability, and the Frontend section's design law all matter here.
+- `frontend_inspo.md` — design direction and the patterns behind it.
+- `.hallmark/log.json` — the exhibition run is logged as the newest entry.
+
+**Design law that is settled and project-wide:** petrol palette, four primes, everything else derived
+through one `color-mix(in oklab, …)` block; Oswald + Inter only, Bebas Neue for the wordmark alone;
+the page never scrolls; no I-beam over anything non-editable; no glow; off-white never `#fff`;
+crests full colour and never recoloured; copy professional and matter-of-fact with no voicey
+microcopy; no format is the default.
+
+---
+
+## Verify with
+
+```
+npm run build      # typecheck + build
+npm test           # Vitest smoke test
+npm run dev        # the real thing
+```
+
+Plus a browser pass at 1280×800, 1280×700, 768×568 and 320×568 — no scroll anywhere, no horizontal
+overflow, the action always above the fold.
+
+---
+
+## One loose end, not mine to fix
+
+`PROJECT.md` currently carries the auction-training handover **twice** — `## Project Handover` and
+`## Project Handover (merged)` are near-identical copies, and the `## Git Operations` block is
+duplicated at the end. That came from folding the previous `HANDOVER.md` into `PROJECT.md` in an
+earlier session. It is unrelated to this work and was left alone rather than silently rewritten;
+worth deduping next time someone is in that file.

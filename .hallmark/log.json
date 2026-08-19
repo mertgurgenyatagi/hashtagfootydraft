@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-08-19",
+    "macrostructure": "Index-First, Split Studio, Bento Grid, Map/Diagram, Catalogue, Workbench, Stat-Led, Ecosystem Index, Component Playground, Marquee Hero, Narrative Workflow, Conversational FAQ, Portfolio Grid, Type Specimen, Photographic, Manifesto, Long Document, Specimen, Quote-Led, Letter",
+    "theme": "custom",
+    "theme_axes": "dark paper band / display-condensed roman / warm accent (~40deg)",
+    "vibe": "floodlit, austere, competitive",
+    "enrichment": "E-photographic — stadium.webp, real player photos, full-colour club crests",
+    "brief": "#footydraft FREE PICK DRAFT screen — exhibition at mockups/free-pick.html. 20 of 21 macrostructures, one per frame; Feature Stack excluded (needs scroll). Petrol FIXED, no switcher; type held to Oswald+Inter so all variety is structural and the winner ports without a type swap. NO MOTION — static first-look only, by instruction. One internally consistent draft state across all 20: Free Pick / Top 5 leagues / 1 per club / 4 drafters / round 5 of 11 / pick 18 of 44 / your turn / 9s. Every player, club, crest, nation and age verified against player_data.csv; config verified viable against src/data/draftViability.ts. Design decision: NO ability ratings and NO pool counts on screen (data-model facts, PROJECT.md keeps them off), and Free Pick has no currency — so the only numerals are the clock, the round and the pick number. Unavailable rows dimmed WHOLE so crests are never filtered. RESOLVED — Mert picked off this run."
+  },
+  {
     "date": "2026-08-17",
     "macrostructure": "Split Studio",
     "theme": "custom",
