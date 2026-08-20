@@ -1,6 +1,11 @@
+import { useEffect, useState } from 'react'
 import { type FormationSlot, formation } from '../../data/formation'
+import { faceCenters } from '../../data/faceAnchors'
 import type { Drafter, Squad } from '../../lib/draftEngine'
-import type { Player } from '../../lib/players'
+import { type Player, slugify } from '../../lib/players'
+
+/** Same fallback PlayerSpotlight uses for a photo with no marked face box. */
+const DEFAULT_CENTER: [number, number] = [0.5, 0.35]
 
 interface PitchViewProps {
   drafters: Drafter[]
@@ -139,6 +144,9 @@ function Node({
   arrived: boolean
 }) {
   const shown = player ?? preview
+  const [failed, setFailed] = useState(false)
+  useEffect(() => setFailed(false), [player?.id])
+  const [fx, fy] = player ? (faceCenters[slugify(player.name)] ?? DEFAULT_CENTER) : DEFAULT_CENTER
 
   return (
     <div
@@ -147,7 +155,7 @@ function Node({
     >
       <span
         className={[
-          'grid h-[var(--draft-node)] w-[var(--draft-node)] place-items-center rounded-full transition-colors duration-300 ease-out',
+          'grid h-[var(--draft-node)] w-[var(--draft-node)] place-items-center overflow-hidden rounded-full transition-colors duration-300 ease-out',
           player
             ? 'border border-line-strong bg-surface-2'
             : pending
@@ -155,12 +163,21 @@ function Node({
               : 'border border-dashed border-line bg-ground/70',
         ].join(' ')}
       >
-        {player ? (
+        {shown && !failed ? (
           <img
-            key={player.id}
+            key={shown.id}
+            className={`h-full w-full object-cover ${arrived ? 'fx fx-pop' : ''}`}
+            style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }}
+            src={shown.portrait}
+            alt={shown.name}
+            onError={() => setFailed(true)}
+          />
+        ) : shown ? (
+          <img
+            key={`${shown.id}-crest`}
             className={`crest h-[62%] w-[62%] ${arrived ? 'fx fx-pop' : ''}`}
-            src={player.crest}
-            alt={player.club}
+            src={shown.crest}
+            alt={shown.club}
           />
         ) : (
           <span

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import type { PositionCode } from '../../data/formation'
 import type { Player } from '../../lib/players'
 import { SectionLabel } from '../ui/SectionLabel'
@@ -22,6 +22,9 @@ interface WheelPoolProps {
   actionLabel: string
   /** The wheel has not stopped yet, so there is nothing to list. */
   spinning: boolean
+  /** The portrait panel, drawn beside the list rather than above it — same
+      placement as Free Pick's pool. */
+  portrait: ReactNode
 }
 
 /**
@@ -53,6 +56,7 @@ export function WheelPool({
   reason,
   actionLabel,
   spinning,
+  portrait,
 }: WheelPoolProps) {
   const searchRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
@@ -121,59 +125,64 @@ export function WheelPool({
         />
       </div>
 
-      <div
-        ref={listRef}
-        className="scroller mt-[11px] min-h-0 flex-1 overflow-y-auto border-t border-line"
-      >
-        {spinning ? (
-          <p className="pt-[13px] text-[11.5px] text-faint">The wheel is still turning.</p>
-        ) : rows.length === 0 ? (
-          <p className="pt-[13px] text-[11.5px] text-faint">Nobody here matches that.</p>
-        ) : (
-          <ul key={title} className="fx fx-soft">
-            {rows.map((player) => {
-              const selected = player.id === selectedId
-              return (
-                <li key={player.id} className="wheel-row">
-                  <button
-                    type="button"
-                    onClick={() => onSelect(player.id)}
-                    onDoubleClick={() => {
-                      if (canDraft) onDraft()
-                    }}
-                    className={[
-                      'flex w-full items-center gap-[11px] border-b border-line px-[7px] py-[10.5px] text-left transition-colors duration-150 ease-out',
-                      selected ? 'bg-accent-soft' : 'hover:bg-surface-2',
-                    ].join(' ')}
-                  >
-                    {/* The code, not the position's full name: this list is
-                        already only positions you have open, so the tag is
-                        telling you which hole it fills rather than what the
-                        footballer is. */}
-                    <span className="w-[32px] shrink-0 font-display text-[11px] font-semibold uppercase leading-none tracking-[0.11em] text-accent">
-                      {player.position}
-                    </span>
-                    <img className="crest h-[21px] w-[21px] shrink-0" src={player.crest} alt="" />
-                    <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium leading-none text-ink">
-                      {player.name}
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        )}
+      <div className="mt-[11px] flex min-h-0 flex-1 items-stretch gap-[14px]">
+        <div
+          ref={listRef}
+          className="scroller min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-line lg:flex-[65]"
+        >
+          {spinning ? (
+            <p className="pt-[13px] text-[11.5px] text-faint">The wheel is still turning.</p>
+          ) : rows.length === 0 ? (
+            <p className="pt-[13px] text-[11.5px] text-faint">Nobody here matches that.</p>
+          ) : (
+            <ul key={title} className="fx fx-soft">
+              {rows.map((player) => {
+                const selected = player.id === selectedId
+                return (
+                  <li key={player.id} className="wheel-row">
+                    <button
+                      type="button"
+                      onClick={() => onSelect(player.id)}
+                      onDoubleClick={() => {
+                        if (canDraft) onDraft()
+                      }}
+                      className={[
+                        'flex w-full items-center gap-[11px] border-b border-line px-[7px] py-[10.5px] text-left transition-colors duration-150 ease-out',
+                        selected ? 'bg-accent-soft' : 'hover:bg-surface-2',
+                      ].join(' ')}
+                    >
+                      {/* The code, not the position's full name: this list is
+                          already only positions you have open, so the tag is
+                          telling you which hole it fills rather than what the
+                          footballer is. */}
+                      <span className="w-[32px] shrink-0 font-display text-[11px] font-semibold uppercase leading-none tracking-[0.11em] text-accent">
+                        {player.position}
+                      </span>
+                      <img className="crest h-[21px] w-[21px] shrink-0" src={player.crest} alt="" />
+                      <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium leading-none text-ink">
+                        {player.name}
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+
+        {portrait}
       </div>
 
-      {/* Above 1180px the portrait panel carries the action. Below it there is
-          no portrait, so the button docks here rather than disappearing. */}
-      <div className="mt-[11px] flex shrink-0 items-center justify-between gap-4 border-t border-line pt-[10px] min-[1180px]:hidden">
+      {/* Above lg the portrait panel carries the action, same as Free Pick's
+          pool. Below it there is no portrait, so the button docks here rather
+          than disappearing. */}
+      <div className="mt-[11px] flex shrink-0 items-center justify-between gap-4 border-t border-line pt-[10px] lg:hidden">
         <p className="min-w-0 truncate text-[11px] text-dim">{reason}</p>
         <button
           type="button"
           onClick={onDraft}
           disabled={!canDraft}
-          className="shrink-0 rounded-[2px] border border-accent bg-accent px-[18px] py-[9px] font-display text-[11.5px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
+          className="shrink-0 rounded-[2px] border border-accent bg-accent px-[9px] py-[4px] font-display text-[11.5px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
         >
           {actionLabel}
         </button>

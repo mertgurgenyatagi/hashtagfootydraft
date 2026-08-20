@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { DraftChat } from '../components/draft/DraftChat'
 import { Narrator, type NarratorTone } from '../components/draft/Narrator'
 import { type FeedLine, NarratorFeed } from '../components/draft/NarratorFeed'
@@ -457,9 +458,17 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
     >
       {/* ---- What this is, which round it is, and where the draft stands. ---- */}
       <header className="flex shrink-0 flex-wrap items-center justify-between gap-x-5 gap-y-[6px] pb-[var(--spin-gap-y)]">
-        <span className="font-display text-[length:var(--spin-title)] font-medium uppercase leading-none tracking-[0.09em] text-ink">
-          Spin the Wheel
-        </span>
+        <div className="flex min-w-0 items-center gap-4">
+          <Link
+            to="/"
+            className="shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
+          >
+            Back to home
+          </Link>
+          <span className="font-display text-[length:var(--spin-title)] font-medium uppercase leading-none tracking-[0.09em] text-ink">
+            Spin the Wheel
+          </span>
+        </div>
         <div className="flex min-w-0 items-center gap-[18px]">
           <span className="shrink-0 font-display text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-muted">
             Round {round} of {SQUAD_SIZE}
@@ -486,37 +495,55 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
           />
         </div>
 
-        <div className="spin-area spin-area-spot fx fx-soft" style={{ animationDelay: '90ms' }}>
-          <PlayerSpotlight
-            player={selected}
-            onDraft={draftSelected}
-            canDraft={canDraft}
-            reason={reason}
-            actionLabel={actionLabel}
-            className="spin-spotlight h-full w-full"
-          />
+        {/* The wheel's own column-mate — the pool, with chat stacked under it
+            at a 66/33 height split, same column turn used to occupy. */}
+        <div className="spin-area spin-area-mid gap-[var(--spin-gap-y)]">
+          <div className="spin-area flex-[66] fx fx-soft" style={{ animationDelay: '90ms' }}>
+            <WheelPool
+              title={poolTitle}
+              rows={rows}
+              query={query}
+              onQuery={setQuery}
+              filter={filter}
+              onFilter={setFilter}
+              positions={positions}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              onDraft={draftSelected}
+              canDraft={canDraft}
+              reason={reason}
+              actionLabel={actionLabel}
+              spinning={!settled && !complete}
+              portrait={
+                <PlayerSpotlight
+                  player={selected}
+                  onDraft={draftSelected}
+                  canDraft={canDraft}
+                  reason={reason}
+                  actionLabel={actionLabel}
+                  className="hidden min-w-0 lg:block lg:flex-[35]"
+                />
+              }
+            />
+          </div>
+
+          <div className="spin-area spin-area-chat flex-[33] fx fx-soft" style={{ animationDelay: '330ms' }}>
+            <div className="spin-panel flex min-h-0 flex-1 flex-col p-[14px]">
+              <DraftChat
+                messages={messages}
+                you={you.name}
+                onSend={(body) =>
+                  setMessages((current) => [
+                    ...current,
+                    { id: messageId.current++, kind: 'said', author: you.name, body },
+                  ])
+                }
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="spin-area spin-area-pool fx fx-soft" style={{ animationDelay: '150ms' }}>
-          <WheelPool
-            title={poolTitle}
-            rows={rows}
-            query={query}
-            onQuery={setQuery}
-            filter={filter}
-            onFilter={setFilter}
-            positions={positions}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            onDraft={draftSelected}
-            canDraft={canDraft}
-            reason={reason}
-            actionLabel={actionLabel}
-            spinning={!settled && !complete}
-          />
-        </div>
-
-        <div className="spin-area spin-area-turn fx fx-soft" style={{ animationDelay: '210ms' }}>
+        <div className="spin-area spin-area-turn fx fx-soft" style={{ animationDelay: '150ms' }}>
           <TurnIndicator
             drafters={drafters}
             active={activeSeat}
@@ -529,11 +556,11 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
           />
         </div>
 
-        <div className="spin-area spin-area-narr fx fx-soft" style={{ animationDelay: '270ms' }}>
+        <div className="spin-area spin-area-narr fx fx-soft" style={{ animationDelay: '210ms' }}>
           <NarratorFeed lines={feed} />
         </div>
 
-        <div className="spin-area spin-area-pitch fx fx-soft" style={{ animationDelay: '330ms' }}>
+        <div className="spin-area spin-area-pitch fx fx-soft" style={{ animationDelay: '270ms' }}>
           <div className="spin-panel flex min-h-0 flex-1 flex-col p-[14px]">
             <PitchView
               drafters={drafters}
@@ -543,21 +570,6 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
               pending={tab === youSeat ? pendingSlot : null}
               preview={tab === youSeat ? selected : null}
               lastArrival={lastArrival}
-            />
-          </div>
-        </div>
-
-        <div className="spin-area spin-area-chat fx fx-soft" style={{ animationDelay: '390ms' }}>
-          <div className="spin-panel flex min-h-0 flex-1 flex-col p-[14px]">
-            <DraftChat
-              messages={messages}
-              you={you.name}
-              onSend={(body) =>
-                setMessages((current) => [
-                  ...current,
-                  { id: messageId.current++, kind: 'said', author: you.name, body },
-                ])
-              }
             />
           </div>
         </div>

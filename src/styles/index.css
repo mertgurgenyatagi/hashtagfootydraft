@@ -821,8 +821,13 @@
 .spin {
   --spin-gap-x: clamp(1.1rem, 3.4vw, 3.4rem);
   --spin-gap-y: clamp(0.6rem, 1.9cqh, 1.3rem);
-  --spin-row-top: clamp(8rem, 25cqh, 14rem);
-  --spin-row-bottom: clamp(6.5rem, 18.5cqh, 11rem);
+  /* The wheel's own cell is 25% smaller than it used to be on both axes — the
+     width comes off the wheel column below, and the height comes off this row,
+     handed straight to --spin-row-bottom so chat (the wheel's column-mate in
+     the bottom row) is what gets it back, not the shared middle row that pool
+     and pitch also read from. */
+  --spin-row-top: clamp(6rem, 18.75cqh, 10.5rem);
+  --spin-row-bottom: clamp(8.5rem, 24.75cqh, 14.5rem);
   --spin-title: 15px;
   /* Single `clamp()` per size instead of a jumped pair — see the note on
      `.draft` above for the `max / 8` reasoning. */
@@ -838,6 +843,10 @@
   --draft-node: clamp(44px, 6.25cqh, 50px);
   --draft-name: 108px;
   --draft-name-size: 14px;
+  /* Read by PlayerSpotlight's default width, now that the portrait sits
+     inside the pool panel the same way it does on the Free Pick screen —
+     `.draft` declares its own copy of this, `.spin` needs one too. */
+  --draft-portrait: clamp(260px, 40cqh, 320px);
 }
 
 /* Height is what runs out first, exactly as it does on the other three
@@ -851,8 +860,8 @@
 @container app (max-height: 780px) {
   .spin {
     --spin-gap-y: 0.55rem;
-    --spin-row-top: 7.5rem;
-    --spin-row-bottom: 6.5rem;
+    --spin-row-top: 5.625rem;
+    --spin-row-bottom: 8.375rem;
     --draft-name: 112px;
     --draft-name-size: 13px;
   }
@@ -883,7 +892,7 @@
    portrait has no room to be a portrait, and chat is the first thing to go
    when a column runs out — same as it is in both lobbies. */
 .spin-area-wheel,
-.spin-area-pool,
+.spin-area-mid,
 .spin-area-pitch {
   grid-column: 1;
   grid-row: 1;
@@ -894,7 +903,6 @@
   grid-row: 2;
 }
 
-.spin-area-spot,
 .spin-area-narr,
 .spin-area-chat {
   display: none;
@@ -902,13 +910,13 @@
 
 @media (max-width: 767px) {
   .spin:not([data-pane="wheel"]) .spin-area-wheel,
-  .spin[data-pane="wheel"] .spin-area-pool {
+  .spin[data-pane="wheel"] .spin-area-mid {
     display: none;
   }
 }
 
 @media (max-width: 1179px) {
-  .spin[data-pane="board"] .spin-area-pool,
+  .spin[data-pane="board"] .spin-area-mid,
   .spin:not([data-pane="board"]) .spin-area-pitch {
     display: none;
   }
@@ -930,7 +938,7 @@
   .spin-area-turn {
     grid-area: turn;
   }
-  .spin-area-pool,
+  .spin-area-mid,
   .spin-area-pitch {
     grid-area: main;
   }
@@ -940,27 +948,32 @@
    as large as the page allows; everything else is a satellite around it. */
 @media (min-width: 1180px) {
   .spin-grid {
-    grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    /* The wheel column gives up 25% of its own width (1.62fr → 1.215fr);
+       the middle column — spot and pool, "the middle section" — is what
+       picks it up (1fr → 1.405fr). Column 3 is untouched. */
+    grid-template-columns: minmax(0, 1.215fr) minmax(0, 1.405fr) minmax(0, 1.1fr);
     grid-template-rows: var(--spin-row-top) minmax(0, 1fr) var(--spin-row-bottom);
+    /* "mid" spans all three rows of column 2 — the portrait lives inside the
+       pool panel (see WheelPool.tsx), and chat is stacked under the pool
+       inside that same cell at a 60/40 height split, nested in flex rather
+       than read off these grid rows: that keeps the split exact regardless
+       of how wheel/narr/pitch end up sharing this row-track system. Turn
+       swapped into column 1, under the wheel, where chat used to sit. */
     grid-template-areas:
-      "wheel spot narr"
-      "wheel pool pitch"
-      "chat  turn pitch";
+      "wheel mid  narr"
+      "wheel mid  pitch"
+      "turn  mid  pitch";
   }
 
   .spin-area-wheel {
     grid-area: wheel;
   }
-  .spin-area-spot {
-    grid-area: spot;
-    display: flex;
-  }
   .spin-area-narr {
     grid-area: narr;
     display: flex;
   }
-  .spin-area-pool {
-    grid-area: pool;
+  .spin-area-mid {
+    grid-area: mid;
   }
   .spin-area-turn {
     grid-area: turn;
@@ -969,27 +982,16 @@
     grid-area: pitch;
   }
   .spin-area-chat {
-    grid-area: chat;
     display: flex;
-    /* Held in under the wheel rather than run out to the column's own width:
-       a conversation is a narrow thing and the sun above it is round. */
-    width: 100%;
-    max-width: 30rem;
-    margin-inline: auto;
   }
 }
 
 /* Chat goes when the row it lives in would render it as a sliver that holds
-   one line of a conversation. The wheel takes the space it leaves. */
+   one line of a conversation. Nested in flex rather than read off the grid's
+   own rows, the pool is the only thing left in "mid" once chat is hidden, so
+   it takes the space back on its own — no grid reassignment needed. */
 @media (min-width: 1180px) {
   @container app (max-height: 620px) {
-    .spin-grid {
-      grid-template-areas:
-        "wheel spot narr"
-        "wheel pool pitch"
-        "wheel turn pitch";
-    }
-
     .spin-area-chat {
       display: none;
     }
@@ -1003,23 +1005,6 @@
 .spin-panel {
   background: color-mix(in oklab, var(--color-surface) 86%, transparent);
   border: 1px solid var(--color-line);
-}
-
-/* The portrait's scrim, deepened. Unlayered on purpose: Tailwind's own
-   utilities sit in @layer utilities, and unlayered CSS outranks a layer
-   whatever the source order — which is the mechanism this rule needs and the
-   same one that has bitten this file before. The Free Pick panel is tall and
-   portrait, so its gradient has room to fade out above the reason line; this
-   one is wide and short, and a photograph is still bright where the button
-   lands. */
-.spin-spotlight .spotlight-scrim {
-  padding-top: 3.5rem;
-  background: linear-gradient(
-    to top,
-    var(--color-ground) 24%,
-    color-mix(in oklab, var(--color-ground) 40%, transparent) 66%,
-    transparent 100%
-  );
 }
 
 /* Same trick as the Free Pick pool: every row is in the DOM at once, and the

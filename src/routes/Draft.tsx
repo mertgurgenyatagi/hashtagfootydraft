@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { DraftChat } from '../components/draft/DraftChat'
 import { DraftClock } from '../components/draft/DraftClock'
 import { Narrator, type NarratorTone } from '../components/draft/Narrator'
@@ -414,8 +414,16 @@ function DraftRoom({ config }: { config: DraftConfig }) {
   return (
     <div className="draft flex h-full w-full flex-col px-[var(--app-inset-x)] py-[var(--app-inset-y)]">
       {/* ---- The narrator, and the table it is talking about. ---- */}
-      <div className="flex shrink-0 flex-col items-start gap-[10px] border-b border-line py-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-5">
-        <Narrator text={narration.text} tone={narration.tone} beat={narration.beat} />
+      <div className="fx fx-soft flex shrink-0 flex-col items-start gap-[10px] border-b border-line py-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+        <div className="flex min-w-0 items-center gap-4">
+          <Link
+            to="/"
+            className="shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
+          >
+            Back to home
+          </Link>
+          <Narrator text={narration.text} tone={narration.tone} beat={narration.beat} />
+        </div>
 
         <div className="flex w-full shrink-0 items-center justify-between gap-5 sm:w-auto sm:justify-end">
           {/* Below the three-column layout the clock has no column to live in,
@@ -431,7 +439,10 @@ function DraftRoom({ config }: { config: DraftConfig }) {
 
       {/* ---- Three columns, divided by hairlines rather than surface steps. ---- */}
       <div className="draft-grid min-h-0 flex-1">
-        <div className="draft-rail flex-col gap-[26px] pr-[30px] pt-[22px]">
+        <div
+          className="draft-rail fx fx-soft flex-col gap-[26px] pr-[30px] pt-[22px]"
+          style={{ animationDelay: '90ms' }}
+        >
           <DraftClock round={round} rounds={SQUAD_SIZE} />
 
           <SpentCrests
@@ -455,9 +466,10 @@ function DraftRoom({ config }: { config: DraftConfig }) {
 
         <div
           className={[
-            'min-h-0 flex-col pt-[22px] min-[1180px]:flex min-[1180px]:border-l min-[1180px]:border-line min-[1180px]:px-[30px] md:flex md:pr-[30px]',
+            'fx fx-soft min-h-0 flex-col pt-[22px] min-[1180px]:flex min-[1180px]:border-l min-[1180px]:border-line min-[1180px]:px-[30px] md:flex md:pr-[30px]',
             pane === 'pool' ? 'flex' : 'hidden',
           ].join(' ')}
+          style={{ animationDelay: '150ms' }}
         >
           <PlayerPool
             rows={rows}
@@ -486,9 +498,10 @@ function DraftRoom({ config }: { config: DraftConfig }) {
 
         <div
           className={[
-            'min-h-0 flex-col pt-[22px] md:flex md:border-l md:border-line md:pl-[30px]',
+            'fx fx-soft min-h-0 flex-col pt-[22px] md:flex md:border-l md:border-line md:pl-[30px]',
             pane === 'board' ? 'flex' : 'hidden',
           ].join(' ')}
+          style={{ animationDelay: '210ms' }}
         >
           <PitchView
             drafters={drafters}

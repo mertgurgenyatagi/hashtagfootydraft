@@ -87,6 +87,15 @@ Handover** below) and about `player_data_ability_backup.csv`, and cleared assort
 questionnaires, and other litter. That branch was committed, pushed and merged to `main` on
 2026-08-20. All work described below is now on `main`.
 
+The **`size-tweaks`** branch, cut from `main` on 2026-08-20, ran a fast Tachyon-mode pass over
+both draft screens: page transitions and a back-to-home link on Free Pick, face-anchored
+photos in pitch nodes (both screens, on preview as well as on confirmation), and a restructure
+of the Spin the Wheel orbit — the portrait moved inside the pool panel at a 65/35 split, chat
+and the turn indicator swapped columns, the pool and chat now split 66/33 by height, and the
+pool's `Draft →` button shrank by half. See **Spin the Wheel: this pass** below for the full
+record. That branch was committed, pushed and merged to `main` on 2026-08-20. All work
+described below is now on `main`.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -998,8 +1007,9 @@ equivalent of. That tuned arrangement is what was built.
 #### What is on screen
 
 Header — the format's name, the round, and one status line (`Your pick.` / `Priya is
-picking.` / `The wheel is spinning.`) with the state dot. Then a three-column grid,
-`1.62fr / 1fr / 1.1fr`, over three rows.
+picking.` / `The wheel is spinning.`) with the state dot. Then a three-column grid over three
+rows — see **Spin the Wheel: this pass** below for the current column widths and row layout,
+which have moved on from what shipped 2026-08-20.
 
 - **The wheel** takes the left column across two rows, sized `min(100cqw, 100cqh)` so it is
   the largest circle its cell allows. One conic gradient for the face, one transform for the
@@ -1009,16 +1019,12 @@ picking.` / `The wheel is spinning.`) with the state dot. Then a three-column gr
   `The wheel / Spinning`, then `Landed / Serie A`, then `The draft / Complete`. The landing
   is jittered inside its slice, because a pointer that stops dead centre every time looks
   like a lookup.
-- **Chat** under it, held to 30rem and centred: a conversation is a narrow thing and the sun
-  above it is round.
-- **The portrait**, top centre — `PlayerSpotlight` with a `className` for the frame, so the
-  face-anchoring rule is shared verbatim. Its scrim is deepened here (`.spin-spotlight
-  .spotlight-scrim`) because this panel is wide and short where the Free Pick one is tall.
+- **The turn indicator** sits under the wheel — the seats as connected discs with the
+  snake's direction, and the clock as a hairline draining along the bottom edge rather than
+  a number, except on your own turn where the number is the whole point.
 - **The pool**, centre — `{landed} · open slots`, or `· Priya's slots` when the clock is on
-  somebody else. Rows are position code in accent, crest, name.
-- **The turn indicator**, bottom centre — the seats as connected discs with the snake's
-  direction, and the clock as a hairline draining along the bottom edge rather than a
-  number, except on your own turn where the number is the whole point.
+  somebody else. Rows are position code in accent, crest, name. The portrait sits beside the
+  list rather than above it, and chat is stacked under the whole pool panel — see below.
 - **The report**, top right — the narrator with a panel instead of a line. Free Pick has one
   event per turn; a spin has two, which is eighty-eight over a draft, so the latest is set
   large and the ones it replaced stay under it, dimming.
@@ -1078,6 +1084,47 @@ sees it. Checked at 1920×926, 1440×900, 1280×800, 1280×700, 1024×768 and 37
 - **The pool follows the drafter on the clock**, not you, because the wheel does — the two
   would otherwise disagree about what is on the board. It costs nothing, since every
   drafter's eleven is already open to everyone.
+
+#### Spin the Wheel: this pass (2026-08-20, `size-tweaks`)
+
+A fast Tachyon-mode pass, run after the screen had been looked at in a browser for a while.
+Four changes, all Spin the Wheel-specific except the last:
+
+- **The wheel gave up 25% of its own column width** (`1.62fr → 1.215fr`) to the middle
+  column (`1fr → 1.405fr`), and the wheel's own row heights shrank to match
+  (`--spin-row-top`, `--spin-row-bottom` both cut). The freed width went to the pool and
+  chat, which needed the room once the portrait moved inside the pool (next point).
+- **The portrait moved inside the pool panel**, beside the list rather than in a row of its
+  own above it — the same placement Free Pick's pool already uses. `WheelPool` now takes a
+  `portrait` prop exactly the way `PlayerPool` does, and the list/portrait split inside that
+  row is **65/35** (`flex-[65]` / `flex-[35]`, Tailwind's flex-grow ratio, not a CSS width —
+  see the split note below for why a ratio and not a grid-row percentage).
+- **Chat and the turn indicator swapped places.** Chat used to sit under the wheel, held to
+  30rem and centred, because "a conversation is a narrow thing and the sun above it is
+  round." With the portrait now living inside the pool panel, chat moved to sit under the
+  *pool* instead — a rectangular panel, not a round one, so the 30rem cap and the centring
+  were dropped; chat now runs the pool panel's full width. The turn indicator took chat's
+  old spot under the wheel.
+- **Pool and chat split 66/33 by height**, inside a shared grid cell (`mid`, spanning all
+  three of the orbit's rows in that column) rather than off the grid's own row tracks. The
+  wheel, narrator and pitch panels all still share those row tracks with each other, so
+  sizing pool-vs-chat directly off `--spin-row-top`/`--spin-row-bottom` would have dragged
+  wheel-vs-turn and narrator-vs-pitch along with it in the same ratio. Nesting pool and chat
+  in their own flex column inside one grid cell (`flex-[66]` / `flex-[33]`) makes the split
+  exact and isolates it from the other three panels. When chat hides at short viewports
+  (`@container app (max-height: 620px)`), the pool's flex-grow absorbs the freed space on
+  its own — no `grid-template-areas` override needed for that case any more.
+- **The pool's `Draft →` button is about half its old size** (`px-[18px] py-[9px] →
+  px-[9px] py-[4px]`) — Free Pick's own button is untouched.
+- **Pitch nodes show a face on preview, not only on confirmation** (`PitchView.tsx`, shared
+  by both draft screens): the node in a `pending` slot now renders the face-anchored photo
+  of the player about to be drafted, the same way a confirmed pick's node does, rather than
+  falling back to the accent-text position code until the pick lands. `Draft.tsx` also
+  picked up a **Back to home** link and staggered `fx fx-soft` entrances on the rail and
+  pool columns, matching the transition treatment the rest of the app already had.
+
+Verified with `npm run build` (typecheck + build) and `npm test`; not re-checked in a
+browser this pass, per Mert's explicit "no playwright."
 
 ### Both lobbies: viability gating (2026-08-18)
 
