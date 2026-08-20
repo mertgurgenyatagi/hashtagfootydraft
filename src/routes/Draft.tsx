@@ -22,6 +22,7 @@ import {
   timeoutChoice,
 } from '../lib/draftEngine'
 import { type Player, inScope, loadPool } from '../lib/players'
+import { DondDraft } from './DondDraft'
 import { SpinDraft } from './SpinDraft'
 
 /** What the lobby hands over. Every field falls back to the same defaults. */
@@ -84,11 +85,13 @@ export function Draft() {
   // Keyed on the format so arriving at a different one rebuilds the draft
   // rather than resuming somebody else's.
   //
-  // Two screens live behind this route. They share the engine, the pool, the
-  // pitch and the chat; what differs is where a turn's board comes from — a
-  // free pick reads the whole scope, a spin reads whatever the wheel stopped
-  // on — and that difference is structural enough to be its own layout.
+  // Three screens live behind this route. They share the pool, the pitch, the
+  // table strip and the chat; what differs is where a turn's board comes from
+  // — a free pick reads the whole scope, a spin reads whatever the wheel
+  // stopped on, and Deal or No Deal has no board at all, only boxes — and that
+  // difference is structural enough for each to be its own layout.
   if (formatId === 'spin-the-wheel') return <SpinDraft key={formatId} config={config} />
+  if (formatId === 'deal-or-no-deal') return <DondDraft key={formatId} config={config} />
 
   return <DraftRoom key={formatId ?? 'free-pick'} config={config} />
 }

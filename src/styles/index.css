@@ -1219,3 +1219,140 @@
 .plate-orbit img {
   filter: grayscale(1) contrast(1.3) brightness(0.3);
 }
+
+/* ============================================================================
+   THE DEAL OR NO DEAL DRAFT SCREEN
+   Layout 18 of the exhibition: the Free Pick screen's own three-column shape,
+   so it inherits `.draft`, `.draft-grid` and `.draft-rail` wholesale. Only the
+   things that layout has no equivalent of live here — the box, the stage a box
+   opens onto, and the two sizes that had to be bigger than anything shipped.
+   ============================================================================ */
+
+.dond {
+  --dond-number: clamp(24px, 4.5cqh, 40px);
+  --dond-position: clamp(38px, 7.5cqh, 60px);
+  /* The three below are read inside `.spotlight-frame`, which is itself a size
+     container — so their `cqh` is a percentage of the stage rather than of the
+     app, and they scale with the surface they are actually drawn on. */
+  --dond-name: clamp(28px, 8cqh, 52px);
+  /* Q4: the stick/hear and take/back controls are deliberately the largest
+     controls in the app — this is the decision the whole format is about. */
+  --dond-decision-px: clamp(16px, 6.4cqh, 42px);
+  --dond-decision-py: clamp(10px, 3.2cqh, 21px);
+  --dond-decision-size: clamp(12px, 2.9cqh, 19px);
+}
+
+.dond-number {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--dond-number);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  /* Sat below the lid seam, where a number is stencilled on a real case. */
+  margin-top: 12%;
+}
+
+.dond-position {
+  font-size: var(--dond-position);
+}
+
+.dond-stage-name {
+  font-size: var(--dond-name);
+}
+
+.dond-decision {
+  padding: var(--dond-decision-py) var(--dond-decision-px);
+  font-size: var(--dond-decision-size);
+  letter-spacing: 0.1em;
+}
+
+/* Rows are declared rather than left to `auto`, for the same reason
+   `.draft-grid`'s are: an auto row is sized by its content, the boxes inside
+   ask for `height: 100%` of it, and the pair resolves to nothing. Equal
+   fractions of whatever height the column has left instead. */
+.dond-boxes {
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+/* The box itself, literal and textured: a ribbed diagonal weave, a lid seam
+   across the top third and a clasp centred on it. Nothing about the footballer
+   inside is legible until it opens — which is the entire point of the thing,
+   and the reason it is drawn as an object rather than as a tile. */
+.dond-box {
+  position: relative;
+  overflow: hidden;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+}
+
+.dond-box-shut {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 5px,
+      color-mix(in oklab, var(--color-ink) 5%, transparent) 5px 6px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-ink) 6%, var(--color-surface-2)) 0 34%,
+      var(--color-surface-2) 34%
+    );
+}
+
+.dond-box-shut::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 34%;
+  height: 1px;
+  background: var(--color-line-strong);
+}
+
+.dond-box-shut::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 22%;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 1px;
+  background: color-mix(in oklab, var(--color-ink) 8%, var(--color-surface-2));
+}
+
+.dond-box-open {
+  background: var(--color-surface);
+}
+
+/* Opened boxes are a set of photographs read side by side, so they are held to
+   one treatment rather than each bringing its own colour temperature. */
+.dond-box-open img:not(.crest) {
+  filter: grayscale(1) contrast(1.12) brightness(0.86);
+}
+
+/* The stage is lit where the grid is not — this is the one moment in the
+   format and it should not look like the same surface as a tile. */
+.dond-stage-photo {
+  filter: grayscale(1) contrast(1.3) brightness(1.02);
+}
+
+.dond-stage-caption {
+  background: linear-gradient(
+    to top,
+    var(--color-ground) 4%,
+    color-mix(in oklab, var(--color-ground) 62%, transparent) 46%,
+    transparent 82%
+  );
+}
+
+/* Below the three-column layout the boxes get a phone's width, where two rows
+   of five are five 44px lids. The grid gives up its second row before it gives
+   up being touchable. */
+@media (max-width: 767px) {
+  .dond-boxes {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

@@ -96,6 +96,13 @@ pool's `Draft →` button shrank by half. See **Spin the Wheel: this pass** belo
 record. That branch was committed, pushed and merged to `main` on 2026-08-20. All work
 described below is now on `main`.
 
+The **`dond-ui`** branch, cut from `main` on 2026-08-20 after the Deal or No Deal exhibition
+(`pre-dond-ex-q`) had already merged, built the Deal or No Deal draft screen — the third of
+the four formats to get one, off the exhibition's picked layout 18 · Sections. A Tachyon-mode
+pass: no brainstorming phase, sensible defaults chosen and stated rather than asked. See **The
+Deal or No Deal draft screen** below for the full record. That branch was committed, pushed
+and merged to `main` on 2026-08-20. All work described below is now on `main`.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -1126,6 +1133,85 @@ Four changes, all Spin the Wheel-specific except the last:
 Verified with `npm run build` (typecheck + build) and `npm test`; not re-checked in a
 browser this pass, per Mert's explicit "no playwright."
 
+### The Deal or No Deal draft screen (built, 2026-08-20, `dond-ui`)
+
+`src/routes/DondDraft.tsx`, reached through `Draft.tsx`, which now dispatches on `formatId`:
+`spin-the-wheel` gets the orbit, `deal-or-no-deal` gets this screen, everything else gets
+Free Pick. All three share the pool loader, `PitchView`, `TableStrip`, `DraftChat` and
+`Narrator`; what differs here is that there is no board to choose from at all. New parts are
+`src/lib/dondEngine.ts` (pure) and two components — `BoxGrid`, `BoxStage`.
+
+**Where it came from:** layout **18 · Sections** of `mockups/dond.html`, built on the earlier
+`pre-dond-ex-q` branch and already merged — the Free Pick screen's own three-column shape
+with a grid of ten boxes standing in for the pool. That exhibition settled the box's texture
+(ribbed weave, lid seam, clasp), the stick/hear and take/back controls as the largest in the
+app, the banker's offer drawn at the same portrait weight as an opened box, and a narrator
+held to one line — see `HANDOVER.md`'s record of that run, now folded into this section and
+removed.
+
+#### What is on screen
+
+Top bar — narrator and table strip, same as Free Pick. Then three hairline-divided columns:
+
+- **Rail** — Round (ordinal only, same as Free Pick), **This round fills** (the round's
+  designated position, set large in accent — CDM at up to 60px), and chat. No "Used" panel:
+  nothing in this format gates on club or nation.
+- **The boxes**, centre — `2N` sealed lids in two rows for an `N`-drafter table, anonymous
+  until opened (no per-box "whose" marker — the narrator says who). Opening one is yours to
+  do only on your own turn; everyone else's opens are simulated. A box coming open, or the
+  banker's offer, takes over the column as a full-bleed stage — the same `.spotlight-photo`
+  face-anchoring formula the portrait panel and pitch nodes already use — with the decision
+  (stick/hear, or take/back) docked across the bottom of the photograph itself.
+- **The elevens**, right — `PitchView` unchanged, behind the same drafter tabs the other two
+  screens use.
+
+#### The rules it implements
+
+- **A strict round robin, never a snake** (R5-Q7): `dondEngine.seatOrder` rotates one seat
+  per round and does not reverse. `draftEngine.seatAt` is not used by this screen at all.
+- **The eleven rounds are a shuffle of the formation**, not eleven independent random draws
+  (`dondEngine.roundOrder`) — every drafter fills every slot exactly once, which is what
+  makes the format self-completing with no graveyard (R3-Q2).
+- **Boxes follow the pool's own higher-ability skew** (R6-Q2), not an even draw —
+  `dondEngine.skewedSample` reuses the `p ∝ exp((ability − max)/10)` formula the bot training
+  design settled on.
+- **The banker's offer is flat and position-based**: `bankerTarget` prices at fifteen points
+  under the average ability of whatever is still sealed (R3-Q4/R8-Q5/R9-Q6); `bankerOffers`
+  draws the named footballer from the undrafted pool for that position, excluding this
+  round's own boxes, one distinct name per drafter who asked (R6-Q8).
+- **Going back to the boxes forces the next one** — no second choice once you decline the
+  offer, per the briefing's own rule.
+- **Unopened or rejected boxes return to the pool at round end** (R8-Q6) — handled by
+  construction rather than as a separate step: a box player is only removed from the
+  available pool once *somebody* ends the round holding them, so an unclaimed box player is
+  simply never taken out of circulation.
+- **Timeout defaults to the least-committal option** (Turns & Timers): stick, and take the
+  offer. Timing out while choosing a box opens a random shut one, since there is no
+  "no-help" option for the one decision that has to happen.
+
+#### Judgement calls made without asking, worth a look
+
+- **Results commit live, not at round end.** The pitch fills as each seat settles rather than
+  waiting for the whole round to finish — chosen so a drafter can see the table filling in
+  real time, and because it makes the box-return rule fall out of the data model for free
+  (see above) instead of needing an end-of-round sweep.
+- **HANDOVER.md's flagged question — whether "one box opened, yours just opened" (as R11 was
+  literally worded) or "everyone has opened, offers are live" is the state to build toward —
+  was resolved toward the rule as written**: offers only go out once every seat has opened
+  once. The exhibition frame is reachable but is not the state the screen opens on.
+- **Bots read only the boxes already opened this round**, never the sealed ones — the same
+  information a person at the table has. `botSticks` / `botTakesOffer` are heuristics, not
+  the exported ML policy; wiring the real bot models into any draft screen is still separate,
+  deferred work.
+
+#### Verification
+
+`npm run build` (typecheck + build) and `npm test` — `src/lib/dondEngine.test.ts` covers the
+round shuffle, the round-robin order, the box draw, and the banker's pricing/offer selection;
+`src/routes/DondDraft.test.tsx` plays a box open through to a stuck pick and confirms the turn
+hands to the next seat rather than reversing. Not checked in a browser this pass, per Mert's
+explicit "no playwright."
+
 ### Both lobbies: viability gating (2026-08-18)
 
 Both settings panels are now gated by what the table can actually seat — see Draft
@@ -1803,24 +1889,25 @@ This table is kept as a historical index of what each round covered.
 
 ## Project Status
 
-**Front end:** the home page, both lobbies and **two draft screens — Free Pick and Spin the
-Wheel** — are built and routed: `/`, `/solo/:formatId`, `/lobby/:code`, `/draft/:formatId`,
-the last dispatching on the format. Free Pick went through a simplification pass on
-2026-08-20 (a quieter rail, a rebuilt face-anchoring system, no section numerals); Spin the
-Wheel was built the same day off the Orbit layout. All four screens now sit inside one app
-frame with a symmetric inset — left equals right, top equals bottom, on every route — and
-have stopped measuring the window themselves — see The app frame, symmetric above, and do
+**Front end:** the home page, both lobbies and **three draft screens — Free Pick, Spin the
+Wheel and Deal or No Deal** — are built and routed: `/`, `/solo/:formatId`, `/lobby/:code`,
+`/draft/:formatId`, the last dispatching on the format. Free Pick went through a
+simplification pass on 2026-08-20 (a quieter rail, a rebuilt face-anchoring system, no
+section numerals); Spin the Wheel was built the same day off the Orbit layout; Deal or No
+Deal followed, also 2026-08-20, off the exhibition's picked layout 18. All screens sit inside
+one app frame with a symmetric inset — left equals right, top equals bottom, on every route —
+and have stopped measuring the window themselves — see The app frame, symmetric above, and do
 not write `100dvh` or a route-local padding figure again. Every control on every one of
 them goes somewhere; there are no dead ends left in the flow. Nothing is wired to Firebase,
 so opponents, bots and chat are simulated on screen per the fake-the-functionality rule. The
-two remaining formats — Auction and Deal or No Deal — have no draft screen yet.
+one remaining format — Auction — has no draft screen yet.
 
 **Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
 are exported to `public/botModels/`. **Auction training has since run** — a real pipeline,
 checkpoint and exported policy all now exist; see the 2026-08-20 update at the top of the
-handover below for what's verified and what isn't. The draft screen's bots are the simple
-heuristic in `src/lib/draftEngine.ts`, not the exported policies; wiring those in is separate
-work, for all four formats.
+handover below for what's verified and what isn't. Every draft screen's bots, including the
+new Deal or No Deal one, are simple heuristics local to that screen's own engine file, not
+the exported policies; wiring those in is separate work, for all four formats.
 
 Verify the front end with `npm run build` (typecheck + build), `npm test` (Vitest), and
 `npm run dev`.
@@ -1828,11 +1915,13 @@ Verify the front end with `npm run build` (typecheck + build), `npm test` (Vites
 ## Project Handover — the Auction bot training run
 
 Carried over from the 2026-08-19 auction-training session. **This is about bot training, not
-about the front end.** The front end had its own working document, `HANDOVER.md` at the repo
-root, written for the session that would tune the just-built draft screen; it was removed
-2026-08-20 once that tuning pass was done and its content folded into The Free Pick draft
-screen above, which is now the durable record. A second, lossier copy of everything below
-used to sit underneath this section too; it was deleted on 2026-08-19.
+about the front end.** The front end has repeatedly used its own working document,
+`HANDOVER.md` at the repo root, written per-branch for whichever build was in progress and
+removed once that build's content was folded into this document — first for the Free Pick
+tuning pass (removed 2026-08-20, folded into The Free Pick draft screen above), then again
+for the Deal or No Deal build (removed 2026-08-20, folded into The Deal or No Deal draft
+screen above). It is not a durable file; this document is. A second, lossier copy of
+everything below used to sit underneath this section too; it was deleted on 2026-08-19.
 
 # Project Handover Document
 
