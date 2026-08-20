@@ -412,7 +412,7 @@ function DraftRoom({ config }: { config: DraftConfig }) {
   const lastArrival = picks[picks.length - 1]?.player.id ?? null
 
   return (
-    <div className="draft flex h-full w-full flex-col px-[var(--draft-pad-x)] pt-[var(--draft-pad-y)] pb-[var(--draft-pad-y-bottom)]">
+    <div className="draft flex h-full w-full flex-col px-[var(--app-inset-x)] py-[var(--app-inset-y)]">
       {/* ---- The narrator, and the table it is talking about. ---- */}
       <div className="flex shrink-0 flex-col items-start gap-[10px] border-b border-line py-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <Narrator text={narration.text} tone={narration.tone} beat={narration.beat} />

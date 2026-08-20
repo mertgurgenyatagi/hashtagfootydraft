@@ -452,7 +452,7 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
 
   return (
     <div
-      className="spin flex h-full w-full flex-col px-[var(--spin-pad-x)] pt-[var(--spin-pad-y)] pb-[var(--spin-pad-y-bottom)]"
+      className="spin flex h-full w-full flex-col px-[var(--app-inset-x)] py-[var(--app-inset-y)]"
       data-pane={pane}
     >
       {/* ---- What this is, which round it is, and where the draft stands. ---- */}
