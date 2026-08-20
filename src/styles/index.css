@@ -33,6 +33,21 @@
      "play with friends" title when a format is hovered. */
   --color-shade: color-mix(in oklab, var(--color-ground) 12%, black);
 
+  /* ---- The wheel's five slices. The second licensed exception. ----
+     Spin the Wheel draws a league's identity as a field of colour rather than
+     as a mark, which is the same claim the crests make and the same answer:
+     a league recoloured into the palette is a league misnamed. They are the
+     only colours in the app outside the four primes that are not artwork, and
+     they exist for exactly one element. Every one is mixed 66% into black so
+     the wheel still sits on a petrol page rather than on top of it — and the
+     one-saturated-accent rule is untouched, because none of them is an accent:
+     nothing is ever actionable because it is one of these. */
+  --color-league-premier-league: color-mix(in oklab, #3b1858 66%, black);
+  --color-league-la-liga: color-mix(in oklab, #f74942 66%, black);
+  --color-league-serie-a: color-mix(in oklab, #036ef7 66%, black);
+  --color-league-bundesliga: color-mix(in oklab, #ca0213 66%, black);
+  --color-league-ligue-1: color-mix(in oklab, #091b3c 66%, black);
+
   /* ---- Type. Two families only. The wordmark is the logo, and gets the third. ---- */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
@@ -131,6 +146,49 @@
 }
 
 /* ============================================================================
+   THE APP FRAME
+   One inset, declared once, under every route.
+
+   Every screen in this app is a single non-scrolling viewport that divides its
+   own height up between a header, some rows and a footer. That only works if
+   the height it divides is the height it actually has — and in a real browser
+   window it is not. A maximised window is not a full screen: a tab strip, an
+   address bar, a bookmarks bar and, on Windows, a taskbar all come out of it,
+   and how much they take differs per machine, per profile and per zoom level.
+   A layout tuned against `vh` on one of them hangs off the bottom of another.
+
+   So the shell declares two things once, here, and every route reads them.
+
+   **`--app-inset-bottom`** — the room every screen keeps clear at the bottom
+   of the window. One figure for the whole app: a screen that hugs the bottom
+   edge in one place and not another reads as the page having moved when you
+   navigate. It is deliberately generous, because the thing it is guarding
+   against is chrome this page cannot measure.
+
+   Routes spend it as **padding on their own content**, not on this element —
+   a full-bleed surface (the lobby's left half, the home page's plate) still
+   has to reach the bottom of the window; it is only what you read that stops
+   short of it. So the frame stays exactly the size of the viewport.
+
+   **A size container.** Routes are `h-full` inside it and size their vertical
+   rhythm in `cqh` rather than `vh`, which means every screen divides up the
+   box it was actually handed. That is the same number as `vh` today and will
+   not be the moment anything is ever nested inside the shell.
+   ============================================================================ */
+.app-frame {
+  --app-inset-bottom: clamp(3rem, 11vh, 7rem);
+  container-type: size;
+  container-name: app;
+}
+
+/* Below this the inset costs more than the chrome it is guarding against. */
+@media (max-height: 620px) {
+  .app-frame {
+    --app-inset-bottom: 1.25rem;
+  }
+}
+
+/* ============================================================================
    THE STADIUM PLATE
    One photograph, faded out downward, sitting under everything. The wordmark
    clips a second copy of it straight into the letterforms, so the same picture
@@ -202,20 +260,27 @@
 /* ============================================================================
    THE LOBBY'S VERTICAL RHYTHM
    Four settings groups, a table and a footer all have to land above the fold,
-   and this page doesn't scroll. A `clamp()` against `vh` can't do it: at 568px
+   and this page doesn't scroll. A `clamp()` can't do it on its own: at 568px
    tall the middle term is still comfortably inside the range, so the spacing
    never actually reaches its minimum. Height is the real constraint, so it's
    a height query — one place that says what "short" means for this screen.
+   Against the frame's box rather than the window: see `.app-frame` above.
    ============================================================================ */
 .lobby {
-  --lobby-gap: clamp(1rem, 4.6vh, 2.75rem);
-  --lobby-pad-y: clamp(1rem, 2.6vh, 2.4rem);
-  --lobby-chip-py: clamp(0.45rem, 1.2vh, 0.6875rem);
-  --lobby-chip-mt: clamp(0.4rem, 1.25vh, 0.625rem);
-  --lobby-crest: clamp(2.25rem, 5.4vh, 3rem);
+  --lobby-gap: clamp(1rem, 4.6cqh, 2.75rem);
+  --lobby-pad-y: clamp(1rem, 2.6cqh, 2.4rem);
+  --lobby-chip-py: clamp(0.45rem, 1.2cqh, 0.6875rem);
+  --lobby-chip-mt: clamp(0.4rem, 1.25cqh, 0.625rem);
+  --lobby-crest: clamp(2.25rem, 5.4cqh, 3rem);
 }
 
-@media (max-height: 720px) {
+/* The inset, spent on the content rather than on the half it sits in — the
+   surface behind the seats still has to reach the bottom of the window. */
+.lobby-half {
+  padding-bottom: calc(var(--lobby-pad-y) + var(--app-inset-bottom));
+}
+
+@container app (max-height: 720px) {
   .lobby {
     --lobby-gap: 0.8rem;
     --lobby-pad-y: 0.7rem;
@@ -244,9 +309,11 @@
   }
 }
 
-@media (min-width: 768px) and (max-height: 560px) {
-  .lobby-chat {
-    display: none;
+@media (min-width: 768px) {
+  @container app (max-height: 560px) {
+    .lobby-chat {
+      display: none;
+    }
   }
 }
 
@@ -533,7 +600,7 @@
 
 /* ============================================================================
    THE DRAFT SCREEN
-   Four numbered sections, hairline-ruled, in one 100dvh viewport that never
+   Four numbered sections, hairline-ruled, in one frame-height column that never
    scrolls. The rules below are the ones a utility class cannot state: the
    column geometry at three widths, and the vertical rhythm at two heights.
    ============================================================================ */
@@ -541,12 +608,9 @@
 .draft {
   /* 56 / 34 at the 1280x800 the layout was drawn at, shrinking from there. */
   --draft-pad-x: clamp(1rem, 4.4vw, 3.5rem);
-  --draft-pad-y: clamp(0.75rem, 4.2vh, 2.125rem);
-  /* A real browser window loses vh to its own chrome (tab strip, bookmarks
-     bar) that a genuinely full screen doesn't — the bottom edge reads as
-     hugging the viewport even though the layout math is fine. Kept separate
-     from the top so only the bottom gets the extra room. */
-  --draft-pad-y-bottom: clamp(2rem, 9vh, 4.5rem);
+  --draft-pad-y: clamp(0.75rem, 4.2cqh, 2.125rem);
+  /* One figure for the whole app, declared on `.app-frame` above. */
+  --draft-pad-y-bottom: var(--app-inset-bottom);
   --draft-clock: 60px;
   --draft-portrait: 320px;
   --draft-node: 68px;
@@ -555,12 +619,12 @@
 }
 
 /* Height, not width, is what runs out first here — same lesson the lobby
-   learned. A clamp() against vh never reaches its minimum at 568px tall,
-   because the middle term is still comfortably inside the range. */
-@media (max-height: 760px) {
+   learned. A clamp() never reaches its minimum at 568px tall on its own,
+   because the middle term is still comfortably inside the range. The query is
+   against the frame's box, not the window — see `.app-frame` above. */
+@container app (max-height: 760px) {
   .draft {
     --draft-pad-y: 0.7rem;
-    --draft-pad-y-bottom: 2rem;
     --draft-clock: 42px;
     --draft-portrait: 260px;
     --draft-node: 60px;
@@ -632,7 +696,7 @@
   display: flex;
 }
 
-@media (max-height: 620px) {
+@container app (max-height: 620px) {
   .draft-chat {
     display: none;
   }
@@ -753,4 +817,432 @@
 
 .narrator-pulse {
   animation: fd-breathe 1900ms var(--ease-in-out) infinite;
+}
+
+/* ============================================================================
+   THE SPIN THE WHEEL DRAFT SCREEN — "The Orbit"
+   Layout 08 of the exhibition: one sun and four satellites, none of them
+   touching it and none of them close to its size. The rules a utility class
+   cannot state are the orbit's own geometry at three widths, the wheel, and
+   the two controls the Free Pick screen has no equivalent of.
+   ============================================================================ */
+
+.spin {
+  --spin-pad-x: clamp(1rem, 3.2vw, 2.6rem);
+  --spin-pad-y: clamp(0.7rem, 2.4cqh, 1.5rem);
+  /* One figure for the whole app, declared on `.app-frame` above — so the two
+     draft screens sit off the bottom edge by exactly the same amount. */
+  --spin-pad-y-bottom: var(--app-inset-bottom);
+  --spin-gap-x: clamp(1.1rem, 3.4vw, 3.4rem);
+  --spin-gap-y: clamp(0.6rem, 1.9cqh, 1.3rem);
+  --spin-row-top: clamp(8rem, 25cqh, 14rem);
+  --spin-row-bottom: clamp(6.5rem, 18.5cqh, 11rem);
+  --spin-title: 15px;
+  --spin-report: 15px;
+  --spin-seconds: 27px;
+  --spin-seat: 40px;
+  /* Read by PitchView, which is shared with the Free Pick screen. The orbit
+     gives the eleven a smaller cell than the Free Pick layout does — the sun
+     takes the room — so the nodes and the name plates come down with it, a
+     little further than the proportions alone would ask for. The two centre
+     backs and the keeper stack up in the same corner of any 4-2-3-1, and the
+     smaller the pitch the sooner their plates start touching. */
+  --draft-node: 50px;
+  --draft-name: 108px;
+  --draft-name-size: 14px;
+}
+
+/* Height is what runs out first, exactly as it does on the other three
+   screens, and a clamp() never reaches its minimum at 568px tall on its own.
+   Measured against the frame's box — see `.app-frame` above. */
+@container app (max-height: 780px) {
+  .spin {
+    --spin-pad-y: 0.55rem;
+    --spin-gap-y: 0.55rem;
+    --spin-row-top: 7.5rem;
+    --spin-row-bottom: 6.5rem;
+    --spin-report: 13.5px;
+    --spin-seconds: 22px;
+    --spin-seat: 32px;
+    --draft-node: 44px;
+    --draft-name: 112px;
+    --draft-name-size: 13px;
+  }
+}
+
+.spin-grid {
+  display: grid;
+  min-height: 0;
+  column-gap: var(--spin-gap-x);
+  row-gap: var(--spin-gap-y);
+  /* One column. Explicit rows, because an `auto` row is sized by its tallest
+     item — so the one area that did not want to shrink would set the height of
+     everything beside it and push the grid past the fold. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.spin-area {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Below 768px the wheel, the pool and the eleven take turns in the one cell.
+   The three panels that have nowhere to go at that width are simply not drawn:
+   the report collapses into the header line it is a longer version of, the
+   portrait has no room to be a portrait, and chat is the first thing to go
+   when a column runs out — same as it is in both lobbies. */
+.spin-area-wheel,
+.spin-area-pool,
+.spin-area-pitch {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.spin-area-turn {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.spin-area-spot,
+.spin-area-narr,
+.spin-area-chat {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .spin:not([data-pane="wheel"]) .spin-area-wheel,
+  .spin[data-pane="wheel"] .spin-area-pool {
+    display: none;
+  }
+}
+
+@media (max-width: 1179px) {
+  .spin[data-pane="board"] .spin-area-pool,
+  .spin:not([data-pane="board"]) .spin-area-pitch {
+    display: none;
+  }
+}
+
+/* Two columns: the wheel and the table on the left, and on the right whichever
+   of the pool and the eleven is being looked at. */
+@media (min-width: 768px) {
+  .spin-grid {
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr);
+    grid-template-areas:
+      "wheel main"
+      "turn  main";
+  }
+
+  .spin-area-wheel {
+    grid-area: wheel;
+  }
+  .spin-area-turn {
+    grid-area: turn;
+  }
+  .spin-area-pool,
+  .spin-area-pitch {
+    grid-area: main;
+  }
+}
+
+/* The orbit itself. The wheel takes two rows of the left column so it can be
+   as large as the page allows; everything else is a satellite around it. */
+@media (min-width: 1180px) {
+  .spin-grid {
+    grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-rows: var(--spin-row-top) minmax(0, 1fr) var(--spin-row-bottom);
+    grid-template-areas:
+      "wheel spot narr"
+      "wheel pool pitch"
+      "chat  turn pitch";
+  }
+
+  .spin-area-wheel {
+    grid-area: wheel;
+  }
+  .spin-area-spot {
+    grid-area: spot;
+    display: flex;
+  }
+  .spin-area-narr {
+    grid-area: narr;
+    display: flex;
+  }
+  .spin-area-pool {
+    grid-area: pool;
+  }
+  .spin-area-turn {
+    grid-area: turn;
+  }
+  .spin-area-pitch {
+    grid-area: pitch;
+  }
+  .spin-area-chat {
+    grid-area: chat;
+    display: flex;
+    /* Held in under the wheel rather than run out to the column's own width:
+       a conversation is a narrow thing and the sun above it is round. */
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+}
+
+/* Chat goes when the row it lives in would render it as a sliver that holds
+   one line of a conversation. The wheel takes the space it leaves. */
+@media (min-width: 1180px) {
+  @container app (max-height: 620px) {
+    .spin-grid {
+      grid-template-areas:
+        "wheel spot narr"
+        "wheel pool pitch"
+        "wheel turn pitch";
+    }
+
+    .spin-area-chat {
+      display: none;
+    }
+  }
+}
+
+/* ---- The surfaces the satellites sit on. ---- */
+
+/* Held just off opaque so the stadium behind the screen reads through them as
+   texture rather than stopping dead at every panel edge. */
+.spin-panel {
+  background: color-mix(in oklab, var(--color-surface) 86%, transparent);
+  border: 1px solid var(--color-line);
+}
+
+/* The portrait's scrim, deepened. Unlayered on purpose: Tailwind's own
+   utilities sit in @layer utilities, and unlayered CSS outranks a layer
+   whatever the source order — which is the mechanism this rule needs and the
+   same one that has bitten this file before. The Free Pick panel is tall and
+   portrait, so its gradient has room to fade out above the reason line; this
+   one is wide and short, and a photograph is still bright where the button
+   lands. */
+.spin-spotlight .spotlight-scrim {
+  padding-top: 3.5rem;
+  background: linear-gradient(
+    to top,
+    var(--color-ground) 24%,
+    color-mix(in oklab, var(--color-ground) 40%, transparent) 66%,
+    transparent 100%
+  );
+}
+
+/* Same trick as the Free Pick pool: every row is in the DOM at once, and the
+   ones outside the scroller skip their layout until they are needed. */
+.wheel-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 43px;
+}
+
+/* ============================================================================
+   THE WHEEL
+   One conic gradient for the face and one transform for the spin — the whole
+   thing is a single composited layer, which is what makes a three-second
+   rotation free while four hundred rows sit next to it.
+   ============================================================================ */
+
+/* A size container, so the wheel can be told to be the largest circle that
+   fits its cell in one expression, without measuring anything in JS. */
+.wheel-stage {
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+
+.wheel-fit {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+}
+
+.wheel-pointer {
+  position: absolute;
+  left: 50%;
+  top: -9px;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 16px solid var(--color-accent);
+}
+
+/* Decelerating, never overshooting — a wheel that bounced back off its own
+   result would be telling you something that is not true. */
+.wheel-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--color-line-strong);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.1, 0.78, 0.14, 1);
+  will-change: transform;
+}
+
+.wheel-chip {
+  position: absolute;
+  --r: 33%;
+  width: var(--chip);
+  height: var(--chip);
+  left: calc(50% + var(--r) * sin(var(--a)));
+  top: calc(50% - var(--r) * cos(var(--a)));
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  padding: 5%;
+  border-radius: 50%;
+  background: var(--color-ink);
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow 320ms var(--ease-out);
+}
+
+/* Where it stopped, said twice: the hub names it and its own mark is ringed.
+   A ring rather than a glow, and drawn outside the artwork rather than on it. */
+.wheel-chip-landed {
+  box-shadow: 0 0 0 3px var(--color-accent);
+}
+
+/* Counter-rotated on the same curve and duration as the wheel, so a crest is
+   upright at every frame of the spin rather than only at the end of it. */
+.wheel-chip img,
+.wheel-chip b {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.1, 0.78, 0.14, 1);
+}
+
+.wheel-chip b {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 60%;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ground);
+}
+
+/* Outside the rotating element rather than inside it counter-rotated: a hub
+   that has to be un-spun is a hub that shimmers for three seconds every turn. */
+.wheel-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 28%;
+  height: 28%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  padding: 6%;
+  text-align: center;
+  border-radius: 50%;
+  border: 2px solid var(--color-line-strong);
+  background: var(--color-ground);
+  container-type: inline-size;
+}
+
+.wheel-hub b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(8px, 9cqw, 11px);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.wheel-hub em {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: clamp(11px, 13cqw, 19px);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  color: var(--color-accent);
+}
+
+/* ---- The clock, drawn rather than counted. ---- */
+
+@keyframes fd-drain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.turn-drain {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent);
+  transform-origin: left center;
+  animation-name: fd-drain;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* ---- The position dropdown. ---- */
+
+.select-caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  transition: transform 180ms var(--ease-out);
+}
+
+.select-caret-open {
+  transform: rotate(180deg);
+}
+
+/* Opaque, unlike the panels — a list you are reading a name off cannot have a
+   stadium behind it. Depth is an offset directional shadow, never a halo. */
+.select-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 5px);
+  z-index: 40;
+  min-width: 100%;
+  width: max-content;
+  max-width: 15rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  background: var(--color-ground);
+  border: 1px solid var(--color-line-strong);
+  box-shadow: 7px 7px 0 0 var(--color-shade);
+}
+
+/* ---- The draft's stadium, for this screen only. ---- */
+
+/* The Free Pick screen puts its plate down the left edge, which is the one
+   part of that layout nothing is drawn on. Here the left edge is the wheel, so
+   the photograph goes behind the whole orbit instead, masked to a soft ellipse
+   a little above centre — the wheel then sits in front of a stand rather than
+   beside one. */
+.plate-orbit {
+  opacity: 0.42;
+  -webkit-mask-image: radial-gradient(62% 68% at 46% 44%, #000 0%, transparent 100%);
+  mask-image: radial-gradient(62% 68% at 46% 44%, #000 0%, transparent 100%);
+}
+
+.plate-orbit img {
+  filter: grayscale(1) contrast(1.3) brightness(0.3);
 }

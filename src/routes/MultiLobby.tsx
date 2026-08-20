@@ -63,7 +63,7 @@ export function MultiLobby() {
 
   if (!session) {
     return (
-      <div className="lobby relative h-[100dvh] overflow-hidden">
+      <div className="lobby relative h-full overflow-hidden">
         <NameGate
           mode="join"
           code={code}

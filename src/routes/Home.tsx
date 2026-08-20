@@ -24,7 +24,7 @@ export function Home() {
   const [gate, setGate] = useState<{ mode: 'create' | 'join'; code: string } | null>(null)
 
   return (
-    <div className="relative flex h-[100dvh] flex-col overflow-hidden px-[clamp(1.25rem,4vw,3.5rem)] pb-[clamp(1.25rem,3vh,2.25rem)] pt-[clamp(1.25rem,3vh,2.5rem)]">
+    <div className="relative flex h-full flex-col overflow-hidden px-[clamp(1.25rem,4vw,3.5rem)] pb-[var(--app-inset-bottom)] pt-[clamp(1.25rem,3cqh,2.5rem)]">
 
       <header
         className="fx fx-rise relative z-10 flex items-baseline justify-between gap-6"
@@ -44,7 +44,7 @@ export function Home() {
       {/* Above the bottom block on purpose: the hover shadow down there spreads
           wide enough to reach the tiles, and it has to pass behind them. */}
       <main className="relative z-20 flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 items-center py-[clamp(0.5rem,3vh,2.25rem)]">
+        <div className="flex min-h-0 flex-1 items-center py-[clamp(0.5rem,3cqh,2.25rem)]">
           <div className="flex w-full items-start justify-between gap-8">
             <Wordmark />
 

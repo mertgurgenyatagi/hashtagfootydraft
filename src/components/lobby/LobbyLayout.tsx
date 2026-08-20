@@ -51,11 +51,11 @@ export function LobbyLayout({
   actionControl,
 }: LobbyLayoutProps) {
   return (
-    <div className="lobby relative flex h-[100dvh] flex-col overflow-hidden md:flex-row">
+    <div className="lobby relative flex h-full flex-col overflow-hidden md:flex-row">
       {/* ══ Left Canvas: Who is playing ══ */}
       <section
         aria-labelledby={leftHeadingId}
-        className="fx fx-fade flex min-h-0 shrink-0 flex-col bg-surface px-[clamp(1.1rem,3vw,2.75rem)] py-[var(--lobby-pad-y)] md:h-full md:w-1/2"
+        className="lobby-half fx fx-fade flex min-h-0 shrink-0 flex-col bg-surface px-[clamp(1.1rem,3vw,2.75rem)] py-[var(--lobby-pad-y)] md:h-full md:w-1/2"
       >
         {/* Top header row — hidden on short viewport where compact strip handles counts */}
         <div
@@ -81,7 +81,7 @@ export function LobbyLayout({
       {/* ══ Right Canvas: What they're playing ══ */}
       <section
         aria-label="Draft settings"
-        className="relative flex min-h-0 flex-1 flex-col px-[clamp(1.1rem,3vw,2.75rem)] py-[var(--lobby-pad-y)] md:h-full md:w-1/2 md:flex-none"
+        className="lobby-half relative flex min-h-0 flex-1 flex-col px-[clamp(1.1rem,3vw,2.75rem)] py-[var(--lobby-pad-y)] md:h-full md:w-1/2 md:flex-none"
       >
         <div
           className="fx fx-soft relative z-10 flex items-baseline justify-between gap-4"

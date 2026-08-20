@@ -6,10 +6,12 @@ import { useLocation } from 'react-router-dom'
  * Hoisted to the root AppShell so the 30-second ambient scale/drift animation
  * is continuous across page navigation rather than restarting on every route change.
  *
- * Three placements of one photograph: full bleed on Home, cornered into the
- * settings half in a lobby, and pulled to the left edge during a draft — where
- * the right of the screen is a pitch, and a photograph behind pitch markings is
- * two drawings fighting over the same pixels.
+ * Four placements of one photograph: full bleed on Home, cornered into the
+ * settings half in a lobby, pulled to the left edge on the Free Pick draft —
+ * where the right of the screen is a pitch, and a photograph behind pitch
+ * markings is two drawings fighting over the same pixels — and masked to a
+ * soft ellipse behind the orbit on Spin the Wheel, whose left edge is the
+ * wheel and so has no empty band to give away.
  *
  * Each placement's own opacity lives in `index.css`, on an unlayered rule that
  * outranks any Tailwind utility no matter what order they are written in. So
@@ -20,8 +22,9 @@ import { useLocation } from 'react-router-dom'
 export function AmbientBackdrop() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isDraft = location.pathname.startsWith('/draft')
-  const isLobby = !isHome && !isDraft
+  const isSpin = location.pathname.startsWith('/draft/spin-the-wheel')
+  const isDraft = location.pathname.startsWith('/draft') && !isSpin
+  const isLobby = !isHome && !isDraft && !isSpin
 
   const shown = (visible: boolean) =>
     `absolute inset-0 transition-opacity duration-500 ease-out ${
@@ -58,8 +61,22 @@ export function AmbientBackdrop() {
         </div>
       </div>
 
-      {/* Draft: a narrow band down the left edge, well under the reading weight
-          of anything in front of it. */}
+      {/* Spin the Wheel: behind the whole orbit, masked to an ellipse a little
+          above centre so the wheel stands in front of a stand. */}
+      <div className={shown(isSpin)}>
+        <div className="plate-orbit absolute inset-0">
+          <img
+            src={`${import.meta.env.BASE_URL}stadium.webp`}
+            alt=""
+            className="plate-drift h-full w-full object-cover object-[50%_38%]"
+            draggable={false}
+          />
+          <div className="plate-tint absolute inset-0" />
+        </div>
+      </div>
+
+      {/* Free Pick: a narrow band down the left edge, well under the reading
+          weight of anything in front of it. */}
       <div className={shown(isDraft)}>
         <div className="plate-edge absolute inset-y-0 left-0 w-[30%] max-w-[360px]">
           <img
