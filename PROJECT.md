@@ -72,6 +72,21 @@ scratch to hit a fixed face position without pre-cropping any image. `HANDOVER.m
 working document that pass was tuning against, was removed once it was done — see The Free
 Pick draft screen below for the full record.
 
+The **`resolution-generalization`** branch, cut from `main` on 2026-08-20, replaced the app
+frame's single asymmetric bottom inset with two symmetric tokens — `--app-inset-x`
+(left = right) and `--app-inset-y` (top = bottom) — shared by all four routes, and turned a
+handful of component sizes that used to jump at one remembered breakpoint into continuous
+`clamp()` scaling instead; see **The app frame, symmetric** below. The same branch then ran a
+full workspace audit against all 975 tracked files plus everything untracked and gitignored
+on disk (published as an artifact, "Preseason Cuts") and acted on the 25 decisions that came
+back: removed the `public/assets` symlink that had been shipping the 593 MB raw photo archive
+into `dist/` on every build, fixed four silently-broken `.gitignore` patterns, corrected this
+document's stale claims about Auction bot training (see the 2026-08-20 update under **Project
+Handover** below) and about `player_data_ability_backup.csv`, and cleared assorted stray files
+— the root `checkpoints/`, two throwaway mockups, the HTML duplicates of the bot
+questionnaires, and other litter. That branch was committed, pushed and merged to `main` on
+2026-08-20. All work described below is now on `main`.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -890,6 +905,79 @@ Two things are now declared once, in the shell, and read by all four screens:
 **No route may write `100dvh` or `100vh` again.** The shell is the only element that knows
 how big the window is. Everything else is `h-full` inside the frame.
 
+**Superseded the same day** by the symmetric-inset pass directly below — the single
+`--app-inset-bottom` figure above became two tokens, `--app-inset-x` and `--app-inset-y`.
+Kept here as the record of why a size container exists at all.
+
+### The app frame, symmetric (2026-08-20, same day)
+
+**Four routes, four different padding formulas.** Before this pass Home, both lobbies, Free
+Pick and Spin the Wheel each wrote their own `px-[clamp(...vw...)]` for their sides, at four
+slightly different numbers, and the bottom figure (`--app-inset-bottom` above) was inflated
+well past the others specifically to guard against browser chrome. The result: no two edges
+of any one screen matched, and no screen matched any other screen either. Mert's ask,
+stated broadly — *left should equal right, top should equal bottom, on every common modern
+browser, and it should hold up without re-checking every time a size on the page changes* —
+amounts to replacing four guesses with one shared pair.
+
+**`--app-inset-x`** (left = right) and **`--app-inset-y`** (top = bottom) are now the only
+two padding tokens, declared once on `.app-frame` and read by all four routes as
+`px-[var(--app-inset-x)] py-[var(--app-inset-y)]`. Nothing downstream writes its own
+`px-`/`py-`/`pb-` figure any more. The two axes are **not** forced to equal each other — `x`
+is driven by `dvw`, `y` by `dvh`, so a wide window naturally gets more side padding than
+top-to-bottom room and a tall one the reverse — only left-vs-right and top-vs-bottom are
+guaranteed:
+
+```css
+--app-inset-x: clamp(1.25rem, 3.4dvw, 3rem);
+--app-inset-y: clamp(1.25rem, 3.4dvh, 3rem);
+```
+
+`dvw`/`dvh` rather than `vw`/`vh` on principle, not because it changes the number today: in
+every evergreen browser (Chrome, Opera and the rest of the Chromium/Gecko/WebKit family) the
+viewport unit already excludes chrome, so the old `--app-inset-bottom`'s generous 7rem
+ceiling was guarding against a measurement error that doesn't actually exist on desktop —
+what made the bottom look short was the four screens disagreeing with each other, not the
+number being wrong. `--app-inset-bottom`, `.lobby-half`, `--draft-pad-x/-pad-y/-pad-y-bottom`
+and `--spin-pad-x/-pad-y/-pad-y-bottom` are all gone; the short-viewport override
+(`@media (max-height: 620px)`) is gone too, because the clamp's own floor already carries
+every screen down to the same 1.25rem minimum together, so there's no separate breakpoint
+left to keep in sync by hand.
+
+**Component sizes that used to jump between two hand-picked pixel values at one remembered
+breakpoint are now a single `clamp()` against `cqh` instead**, on the same reasoning: the
+draft clock, the portrait panel, the pitch nodes on both draft screens, and the wheel
+screen's seat discs / report type / countdown figure. Each is `clamp(min, (max/8)cqh, max)`
+— the `/8` falls out of the layouts having been drawn at an 800px-tall container, so the
+preferred term lands exactly on the old "large" value there and glides continuously down to
+the old "short-viewport" value instead of snapping at one height. The point of writing it
+this way rather than tuning a fresh pair every time: a size picked anywhere in the app can be
+turned up or down later without re-deriving a second value to match it at some other height.
+**Left alone, deliberately:** the wheel screen's row heights (`--spin-row-top`,
+`--spin-row-bottom`) and its name plate (`--draft-name`, `--draft-name-size`) — the rows are
+cut harder than a smooth curve would to make room for the grid beside them, and the name
+plate's width goes *up* as its type goes *down* at short heights, which no monotonic formula
+can express. Both stay as a hand-tuned breakpoint pair.
+
+Verified in a browser at 1280×800, 1280×700 and 320×568 on Home, the multiplayer lobby, Free
+Pick and Spin the Wheel: left padding equals right, top equals bottom, on every one of them,
+at every size, with no horizontal overflow and no overlap. `npm run build` and `npm test`
+both pass.
+
+**One incident worth recording, unrelated to the padding work itself:** `public/botModels`
+used to be a real OS symlink to `src/data/botModels`, made while symlinks happened to work
+on this machine. This repo's git is configured `core.symlinks=false` (typical without
+Developer Mode or an elevated shell on Windows), so git had already been committing that
+path as four ordinary dereferenced files, not a symlink. A `git checkout`/`merge` earlier in
+this same session resolved through the still-real on-disk symlink while replacing it with
+those tracked regular files, and deleted the actual content at `src/data/botModels` in the
+process — a Windows directory-symlink deletion footgun, not anything the padding change
+touched. Both paths were independently tracked in git history, so `git checkout --
+src/data/botModels/` recovered the four files byte-for-byte (verified against the committed
+blobs) and nothing was lost. `public/botModels` is now a plain directory holding its own
+copy, matching what git already tracked — there is no symlink left to resolve through, so
+this specific failure mode can't recur here.
+
 ### The Spin the Wheel draft screen (built, 2026-08-20)
 
 `src/routes/SpinDraft.tsx`, reached through `Draft.tsx`, which now dispatches on `formatId`:
@@ -1340,7 +1428,11 @@ equal real-world caliber as of August 2026, grouped in threes (`gemini_quizzes/`
 then refit with a regularized least-squares pass: each player is pulled toward
 agreement with whoever they were grouped with, weighted by how much evidence exists for
 them, while staying anchored to their original rating so weakly-evidenced players barely
-move. Pre-calibration values are preserved in `player_data_ability_backup.csv`.
+move. Pre-calibration values were preserved in `player_data_ability_backup.csv` at the time —
+that file was itself swept up and deleted in the 2026-08-15 workspace cleanup along with the
+RL pipeline and prototype it ran alongside (see Status above), so it no longer exists.
+**Corrected 2026-08-20**: this section previously still claimed the backup was preserved;
+`player_data.csv`'s shipped ability column is the only surviving record of the calibration.
 
 **Derived market value → Auction opening bid:** a small real-world price sample (56
 age-27 players, manually researched) was fit to an exponential curve in ability
@@ -1669,16 +1761,19 @@ Wheel** — are built and routed: `/`, `/solo/:formatId`, `/lobby/:code`, `/draf
 the last dispatching on the format. Free Pick went through a simplification pass on
 2026-08-20 (a quieter rail, a rebuilt face-anchoring system, no section numerals); Spin the
 Wheel was built the same day off the Orbit layout. All four screens now sit inside one app
-frame with a shared bottom inset and have stopped measuring the window themselves — see The
-app frame above, and do not write `100dvh` in a route again. Every control on every one of
+frame with a symmetric inset — left equals right, top equals bottom, on every route — and
+have stopped measuring the window themselves — see The app frame, symmetric above, and do
+not write `100dvh` or a route-local padding figure again. Every control on every one of
 them goes somewhere; there are no dead ends left in the flow. Nothing is wired to Firebase,
 so opponents, bots and chat are simulated on screen per the fake-the-functionality rule. The
 two remaining formats — Auction and Deal or No Deal — have no draft screen yet.
 
 **Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
-are exported to `public/botModels/`. Auction training is specified but not run — see the
-handover below. The draft screen's bots are the simple heuristic in `src/lib/draftEngine.ts`,
-not the exported policies; wiring those in is separate work.
+are exported to `public/botModels/`. **Auction training has since run** — a real pipeline,
+checkpoint and exported policy all now exist; see the 2026-08-20 update at the top of the
+handover below for what's verified and what isn't. The draft screen's bots are the simple
+heuristic in `src/lib/draftEngine.ts`, not the exported policies; wiring those in is separate
+work, for all four formats.
 
 Verify the front end with `npm run build` (typecheck + build), `npm test` (Vitest), and
 `npm run dev`.
@@ -1697,6 +1792,34 @@ used to sit underneath this section too; it was deleted on 2026-08-19.
 **Last updated:** 2026-08-19 (second update, after the design session), on the `auction-training` branch.
 
 ## Current Status
+
+**Update, 2026-08-20 — read this before the rest of the document.** A training run has
+completed since this was written: `env_auction.py`, `ppo.py`, `train_auction.py`,
+`scripted_auction.py`, `reference_auction.py`, `obs_auction.py` and
+`tests/test_auction_env.py` — everything the "Nothing has been implemented yet" line below
+says doesn't exist — are in `scripts/training/`, along with a real
+`checkpoints/auction/champion.pt` and `metrics/auction_history.json`. These landed in the
+repo mixed into an unrelated frontend commit (the Spin the Wheel UI screen), because they
+were sitting untracked when that commit was staged with `git add -A` — worth knowing if
+you go looking for a dedicated "Auction training" commit and don't find one.
+
+Verified directly against the files, not assumed: **166 logged updates over ~6.6 hours**
+(23,707s elapsed), **1,153,433 drafts trained on** — past the spec's 500k floor, under its
+12-hour ceiling — `avg_squad_score` climbing from 265 at update 1 to a plateau around 1,508
+by roughly update 140 and holding flat through update 166. `src/data/botModels/auction_policy.json`
+is weight-for-weight identical to `champion.pt`'s `state_dict` (checked entry by entry), and
+its first layer takes **69 inputs**, not the old hardcoded 37 — so it *is* the real trained
+export, not the placeholder Landmine 1 below describes, and Landmine 4's dimension mismatch
+was already fixed by the time this export was made.
+
+**Not verified:** no scripted-bidder benchmark log exists anywhere in
+`scripts/training/metrics/` — the design's own intended yardstick (see "The seven
+decisions" → Measurement, below) for telling real skill from self-play noise. A plateaued
+self-play score is the only convergence evidence on hand; it is not the same claim as
+"beats the scripted bidder by a real margin." Confirm that before treating this as done.
+
+The rest of this document is the 2026-08-19 point-in-time record and is left as written —
+read it against the update above, not as still-current on the Auction question.
 
 Reinforcement Learning training is complete for three of the four draft formats:
 
@@ -1765,13 +1888,13 @@ Constants live in `scripts/training/config.py` as `AUCTION_LOTS_PER_DRAFTER` and
 
 ## Landmines
 
-1. **`src/data/botModels/auction_policy.json` is not a trained model.** It is a randomly initialized network. `export_weights.py` silently exports an untrained net when no checkpoint exists, and there is no `checkpoints/auction/`. Do not ship it, and do not read it as evidence that anything worked.
-2. **`metrics/auction_metrics.json` and `auction_status.json` are stale** — leftovers from the wiped run (champion generation 17, 5,634 drafts). Not a baseline.
-3. **`live_config.json` still carries auction overrides** from the failed run — `lr` 3e-5 (10× lower than the other formats), `c_entropy` 0.06 (the highest), `reward_scale` 0.01. These are symptoms of fighting an unstable run, not tuned starting points.
-4. **`AuctionPolicyNetwork` hardcodes `obs_dim=37`**, and `export_weights.py` repeats that 37 in its format table. **Resolved in the spec:** the observation is re‑derived as 69 features with a pinned feature ordering (spec §5). Both hardcoded 37s must be changed to 69. The ordering is a contract with the TypeScript inference path — a silent mismatch there is the most likely way this ships broken.
+1. **`src/data/botModels/auction_policy.json` is not a trained model.** It is a randomly initialized network. `export_weights.py` silently exports an untrained net when no checkpoint exists, and there is no `checkpoints/auction/`. Do not ship it, and do not read it as evidence that anything worked. **No longer true as of 2026-08-20** — see the Current Status update above: a `checkpoints/auction/` now exists, and the exported JSON is weight-for-weight identical to it.
+2. **`metrics/auction_metrics.json` and `auction_status.json` are stale** — leftovers from the wiped run (champion generation 17, 5,634 drafts). Not a baseline. **Moot as of 2026-08-20** — neither file exists in the tree any more; the current run only wrote `metrics/auction_history.json`.
+3. **`live_config.json` still carries auction overrides** from the failed run — `lr` 3e-5 (10× lower than the other formats), `c_entropy` 0.06 (the highest), `reward_scale` 0.01. These are symptoms of fighting an unstable run, not tuned starting points. **Moot as of 2026-08-20** — `scripts/training/live_config.json` doesn't exist any more; whatever hyperparameters the 2026-08-20 run actually used aren't recorded anywhere checked.
+4. **`AuctionPolicyNetwork` hardcodes `obs_dim=37`**, and `export_weights.py` repeats that 37 in its format table. **Resolved in the spec:** the observation is re‑derived as 69 features with a pinned feature ordering (spec §5). Both hardcoded 37s must be changed to 69. The ordering is a contract with the TypeScript inference path — a silent mismatch there is the most likely way this ships broken. **Confirmed fixed, 2026-08-20** — the exported policy's first layer takes 69 inputs, not 37.
 5. **`player_pool.get_scope_mask` does not enforce per‑league drafter caps.** Single‑league scope is 20% of training sampling, but Ligue 1 is unusable at any table size, Bundesliga caps at 2 drafters and First Division at 3 (see PROJECT.md → Player Data). **Resolved in the spec:** league and table size are sampled *jointly* against the viability table in the env's reset (spec §3.2). `get_scope_mask` itself is left alone — do not patch it.
 6. **The three "finished" formats never reached the specified volume** — roughly 116k (Free Pick), 126k (Spin the Wheel) and 166k (Deal or No Deal) drafts against the 500k+/format rule in PROJECT.md. **Resolved:** Auction is held to convergence, not to parity with them — hard floor at the spec'd 500k drafts, 12‑hour ceiling, ship the best checkpoint by benchmark margin. Mert accepts that Auction may end up the strongest of the four bots. At the designed throughput the 500k floor costs well under two minutes, so it is not a real constraint.
-7. **Untracked junk in the repo root** from the old run: `debug.log`, `error.log`, `training_log.txt`, `sim_output.txt`, `read_metrics.py` (UTF‑16, broken).
+7. **Untracked junk in the repo root** from the old run: `debug.log`, `error.log`, `training_log.txt`, `sim_output.txt`, `read_metrics.py` (UTF‑16, broken). **Gone as of 2026-08-20** — none of the five exist in the tree any more, and `.gitignore` now actually matches the four log/txt names (it was silently broken — letter-spaced from a bad paste — until this same pass fixed it).
 
 ## The Design Session (2026-08-19, after the forensics above)
 

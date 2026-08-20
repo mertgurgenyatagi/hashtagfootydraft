@@ -147,45 +147,56 @@
 
 /* ============================================================================
    THE APP FRAME
-   One inset, declared once, under every route.
+   Two insets, declared once, under every route.
 
    Every screen in this app is a single non-scrolling viewport that divides its
    own height up between a header, some rows and a footer. That only works if
-   the height it divides is the height it actually has — and in a real browser
-   window it is not. A maximised window is not a full screen: a tab strip, an
-   address bar, a bookmarks bar and, on Windows, a taskbar all come out of it,
-   and how much they take differs per machine, per profile and per zoom level.
-   A layout tuned against `vh` on one of them hangs off the bottom of another.
+   the height it divides is the height it actually has — and each route used
+   to measure that for itself: Home, both lobbies, the Free Pick screen and the
+   Orbit screen each wrote their own `px-[clamp(...vw...)]` and their own
+   top/bottom padding, at four slightly different numbers, and the bottom
+   figure was inflated well past the others to guard against browser chrome a
+   route can't see coming. The result was four screens that were each
+   internally lopsided and didn't agree with each other either.
 
-   So the shell declares two things once, here, and every route reads them.
+   `dvw`/`dvh` remove the reason for the guess: in every evergreen browser they
+   already report the window's actual rendered content box — tab strip,
+   address bar, bookmarks bar and taskbar are already subtracted before the
+   page ever sees a number. So the shell declares exactly two tokens, here, and
+   every route reads both instead of inventing its own:
 
-   **`--app-inset-bottom`** — the room every screen keeps clear at the bottom
-   of the window. One figure for the whole app: a screen that hugs the bottom
-   edge in one place and not another reads as the page having moved when you
-   navigate. It is deliberately generous, because the thing it is guarding
-   against is chrome this page cannot measure.
+   **`--app-inset-x`** — left padding and right padding, always the same
+   value. **`--app-inset-y`** — top padding and bottom padding, always the
+   same value. The two don't have to agree with *each other* (one is driven by
+   the window's width, the other by its height, so a wide window naturally
+   gets more breathing room on the sides than top-to-bottom, and vice versa on
+   a tall one) — the guarantee is only ever left-equals-right and
+   top-equals-bottom, in every screen, at once.
 
-   Routes spend it as **padding on their own content**, not on this element —
-   a full-bleed surface (the lobby's left half, the home page's plate) still
-   has to reach the bottom of the window; it is only what you read that stops
-   short of it. So the frame stays exactly the size of the viewport.
+   Routes spend both as **padding on their own content**, never on this
+   element — a full-bleed surface (the lobby's left half, the home page's
+   plate) still has to reach every edge of the window; it is only what you
+   read that stops short of it. So the frame stays exactly the size of the
+   viewport, and nothing needs a short-viewport override any more: the clamp's
+   own floor already carries every screen down to the same minimum together.
 
    **A size container.** Routes are `h-full` inside it and size their vertical
    rhythm in `cqh` rather than `vh`, which means every screen divides up the
-   box it was actually handed. That is the same number as `vh` today and will
-   not be the moment anything is ever nested inside the shell.
+   box it was actually handed rather than the window. That is the same number
+   as `vh` today and will not be the moment anything is ever nested inside the
+   shell. Component sizes that used to jump between two hand-picked pixel
+   values at one breakpoint (the draft clock, the portrait, the pitch nodes,
+   the wheel's seat discs and report type) are written as a single `clamp()`
+   against `cqh` instead, so they move with the box continuously rather than
+   at one remembered height — the point being that a size chosen anywhere in
+   this app can be dialled up or down later without re-deriving a breakpoint
+   pair to match it.
    ============================================================================ */
 .app-frame {
-  --app-inset-bottom: clamp(3rem, 11vh, 7rem);
+  --app-inset-x: clamp(1.25rem, 3.4dvw, 3rem);
+  --app-inset-y: clamp(1.25rem, 3.4dvh, 3rem);
   container-type: size;
   container-name: app;
-}
-
-/* Below this the inset costs more than the chrome it is guarding against. */
-@media (max-height: 620px) {
-  .app-frame {
-    --app-inset-bottom: 1.25rem;
-  }
 }
 
 /* ============================================================================
@@ -268,22 +279,14 @@
    ============================================================================ */
 .lobby {
   --lobby-gap: clamp(1rem, 4.6cqh, 2.75rem);
-  --lobby-pad-y: clamp(1rem, 2.6cqh, 2.4rem);
   --lobby-chip-py: clamp(0.45rem, 1.2cqh, 0.6875rem);
   --lobby-chip-mt: clamp(0.4rem, 1.25cqh, 0.625rem);
   --lobby-crest: clamp(2.25rem, 5.4cqh, 3rem);
 }
 
-/* The inset, spent on the content rather than on the half it sits in — the
-   surface behind the seats still has to reach the bottom of the window. */
-.lobby-half {
-  padding-bottom: calc(var(--lobby-pad-y) + var(--app-inset-bottom));
-}
-
 @container app (max-height: 720px) {
   .lobby {
     --lobby-gap: 0.8rem;
-    --lobby-pad-y: 0.7rem;
     --lobby-chip-py: 0.35rem;
     --lobby-chip-mt: 0.3rem;
     --lobby-crest: 2rem;
@@ -606,29 +609,17 @@
    ============================================================================ */
 
 .draft {
-  /* 56 / 34 at the 1280x800 the layout was drawn at, shrinking from there. */
-  --draft-pad-x: clamp(1rem, 4.4vw, 3.5rem);
-  --draft-pad-y: clamp(0.75rem, 4.2cqh, 2.125rem);
-  /* One figure for the whole app, declared on `.app-frame` above. */
-  --draft-pad-y-bottom: var(--app-inset-bottom);
-  --draft-clock: 60px;
-  --draft-portrait: 320px;
-  --draft-node: 68px;
+  /* Every size below is a single `clamp()` against `cqh`, scaled so the
+     preferred term lands on its own max at the 800px-tall container the
+     layout was drawn at (`max / 8`, since 8cqh = 800px = 100%) and floors at
+     the value that was hand-picked for a short viewport — so there's one
+     formula per size instead of a jumped pair, and it moves continuously
+     between them rather than snapping at one remembered height. */
+  --draft-clock: clamp(42px, 7.5cqh, 60px);
+  --draft-portrait: clamp(260px, 40cqh, 320px);
+  --draft-node: clamp(60px, 8.5cqh, 68px);
   --draft-name: 184px;
   --draft-name-size: 18px;
-}
-
-/* Height, not width, is what runs out first here — same lesson the lobby
-   learned. A clamp() never reaches its minimum at 568px tall on its own,
-   because the middle term is still comfortably inside the range. The query is
-   against the frame's box, not the window — see `.app-frame` above. */
-@container app (max-height: 760px) {
-  .draft {
-    --draft-pad-y: 0.7rem;
-    --draft-clock: 42px;
-    --draft-portrait: 260px;
-    --draft-node: 60px;
-  }
 }
 
 /* One column, and the two halves of the screen take turns. Below this width
@@ -828,43 +819,40 @@
    ============================================================================ */
 
 .spin {
-  --spin-pad-x: clamp(1rem, 3.2vw, 2.6rem);
-  --spin-pad-y: clamp(0.7rem, 2.4cqh, 1.5rem);
-  /* One figure for the whole app, declared on `.app-frame` above — so the two
-     draft screens sit off the bottom edge by exactly the same amount. */
-  --spin-pad-y-bottom: var(--app-inset-bottom);
   --spin-gap-x: clamp(1.1rem, 3.4vw, 3.4rem);
   --spin-gap-y: clamp(0.6rem, 1.9cqh, 1.3rem);
   --spin-row-top: clamp(8rem, 25cqh, 14rem);
   --spin-row-bottom: clamp(6.5rem, 18.5cqh, 11rem);
   --spin-title: 15px;
-  --spin-report: 15px;
-  --spin-seconds: 27px;
-  --spin-seat: 40px;
+  /* Single `clamp()` per size instead of a jumped pair — see the note on
+     `.draft` above for the `max / 8` reasoning. */
+  --spin-report: clamp(13.5px, 1.875cqh, 15px);
+  --spin-seconds: clamp(22px, 3.375cqh, 27px);
+  --spin-seat: clamp(32px, 5cqh, 40px);
   /* Read by PitchView, which is shared with the Free Pick screen. The orbit
      gives the eleven a smaller cell than the Free Pick layout does — the sun
      takes the room — so the nodes and the name plates come down with it, a
      little further than the proportions alone would ask for. The two centre
      backs and the keeper stack up in the same corner of any 4-2-3-1, and the
      smaller the pitch the sooner their plates start touching. */
-  --draft-node: 50px;
+  --draft-node: clamp(44px, 6.25cqh, 50px);
   --draft-name: 108px;
   --draft-name-size: 14px;
 }
 
 /* Height is what runs out first, exactly as it does on the other three
    screens, and a clamp() never reaches its minimum at 568px tall on its own.
-   Measured against the frame's box — see `.app-frame` above. */
+   Measured against the frame's box — see `.app-frame` above. The row heights
+   and the name plate are left as a hand-tuned pair rather than folded into
+   the clamp() treatment above: the row heights are deliberately cut harder
+   than a smooth curve would to make room for the grid beside them, and the
+   name plate's width goes up as its type goes down, which a single monotonic
+   formula can't express. */
 @container app (max-height: 780px) {
   .spin {
-    --spin-pad-y: 0.55rem;
     --spin-gap-y: 0.55rem;
     --spin-row-top: 7.5rem;
     --spin-row-bottom: 6.5rem;
-    --spin-report: 13.5px;
-    --spin-seconds: 22px;
-    --spin-seat: 32px;
-    --draft-node: 44px;
     --draft-name: 112px;
     --draft-name-size: 13px;
   }

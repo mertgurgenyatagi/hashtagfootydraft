@@ -24,7 +24,7 @@ export function Home() {
   const [gate, setGate] = useState<{ mode: 'create' | 'join'; code: string } | null>(null)
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden px-[clamp(1.25rem,4vw,3.5rem)] pb-[var(--app-inset-bottom)] pt-[clamp(1.25rem,3cqh,2.5rem)]">
+    <div className="relative flex h-full flex-col overflow-hidden px-[var(--app-inset-x)] py-[var(--app-inset-y)]">
 
       <header
         className="fx fx-rise relative z-10 flex items-baseline justify-between gap-6"
