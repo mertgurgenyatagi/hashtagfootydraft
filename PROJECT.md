@@ -335,7 +335,8 @@ LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
-**The home page, both lobbies and the Free Pick draft screen.** `App.tsx` is a
+**The home page, both lobbies and two of the four draft screens — Free Pick and Spin the
+Wheel.** `App.tsx` is a
 `HashRouter` over `/`, `/solo/:formatId` (plus a bare `/solo`), `/lobby/:code` and
 `/draft/:formatId`, with a catch-all back to home. The hash is not a preference: GitHub Pages serves static files
 with no rewrite rules, so a deep link that isn't in the hash 404s on refresh — and
@@ -860,6 +861,135 @@ because the thing blocking them was usually you. The clock landing on you now mo
 selection to the first player who is actually yours to take. **Once per turn, not
 continuously:** selecting a blocked player on purpose is how you read why they are blocked,
 and an effect that bounced you off them every render would make that impossible.
+
+### The app frame — one bottom inset, every page (2026-08-20)
+
+**`.app-frame` in `index.css`, applied once in `AppShell.tsx`.** Every screen in this app is
+a single non-scrolling viewport that divides its own height between a header, some rows and
+a footer, and each of them used to claim `h-[100dvh]` and measure its rhythm in `vh`. That
+is a lie in a real browser window: a maximised window is not a full screen, and a tab strip,
+an address bar, a bookmarks bar and a taskbar all come out of it in amounts that differ per
+machine, per profile and per zoom level. The bottom of every page ended up hugging the
+window edge, and on Mert's own machine the draft screens hung off it.
+
+Two things are now declared once, in the shell, and read by all four screens:
+
+- **`--app-inset-bottom`** — `clamp(3rem, 11vh, 7rem)`, collapsing to `1.25rem` under 620px
+  tall. One figure for the whole app: a screen that sits off the bottom edge by one amount
+  and its neighbour by another reads as the page having moved when you navigate. Routes
+  spend it as **padding on their own content, never on the frame** — the lobby's left
+  surface and the home page's plate still have to reach the bottom of the window; only what
+  you read stops short of it. `.lobby-half`, `--draft-pad-y-bottom` and `--spin-pad-y-bottom`
+  are all just this token now.
+- **A size container** (`container-name: app`). Routes are `h-full` inside it and size their
+  vertical rhythm in **`cqh`**, and their height breakpoints are `@container app
+  (max-height: …)` rather than `@media`. Same number as `vh` today; the point is that no
+  screen assumes it owns the window any more, so nesting anything inside the shell later
+  cannot silently break four layouts at once.
+
+**No route may write `100dvh` or `100vh` again.** The shell is the only element that knows
+how big the window is. Everything else is `h-full` inside the frame.
+
+### The Spin the Wheel draft screen (built, 2026-08-20)
+
+`src/routes/SpinDraft.tsx`, reached through `Draft.tsx`, which now dispatches on `formatId`:
+`spin-the-wheel` gets this screen, everything else gets the Free Pick one. They share the
+engine, the pool loader, `PitchView`, `PlayerSpotlight` and `DraftChat`; what differs is
+where a turn's board comes from. New parts are `src/lib/wheelEngine.ts` (pure) and five
+components in `src/components/draft/` — `SpinWheel`, `WheelPool`, `PositionSelect`,
+`NarratorFeed`, `TurnIndicator`.
+
+**Where it came from:** layout **08 · Orbit** of `mockups/spin-wheel.html` — one sun, four
+satellites, none of them touching it and none close to its size. Mert then re-tuned it by
+hand in `mockups/orbit-tuner.html` (a drag-and-resize slide canvas built for the purpose):
+the wheel moved to the top left and roughly doubled, the pool and portrait stacked into a
+centre column, the eleven took the right, chat went under the wheel, and two panels were
+blocked out for a **narrator** and a **turn indicator** that the exhibition frame had no
+equivalent of. That tuned arrangement is what was built.
+
+#### What is on screen
+
+Header — the format's name, the round, and one status line (`Your pick.` / `Priya is
+picking.` / `The wheel is spinning.`) with the state dot. Then a three-column grid,
+`1.62fr / 1fr / 1.1fr`, over three rows.
+
+- **The wheel** takes the left column across two rows, sized `min(100cqw, 100cqh)` so it is
+  the largest circle its cell allows. One conic gradient for the face, one transform for the
+  spin, and a counter-transform per chip on the same curve and duration so a crest is
+  upright at every frame rather than only at the end. The hub sits outside the rotating
+  element — a hub that has to be un-spun shimmers for three seconds a turn — and reads
+  `The wheel / Spinning`, then `Landed / Serie A`, then `The draft / Complete`. The landing
+  is jittered inside its slice, because a pointer that stops dead centre every time looks
+  like a lookup.
+- **Chat** under it, held to 30rem and centred: a conversation is a narrow thing and the sun
+  above it is round.
+- **The portrait**, top centre — `PlayerSpotlight` with a `className` for the frame, so the
+  face-anchoring rule is shared verbatim. Its scrim is deepened here (`.spin-spotlight
+  .spotlight-scrim`) because this panel is wide and short where the Free Pick one is tall.
+- **The pool**, centre — `{landed} · open slots`, or `· Priya's slots` when the clock is on
+  somebody else. Rows are position code in accent, crest, name.
+- **The turn indicator**, bottom centre — the seats as connected discs with the snake's
+  direction, and the clock as a hairline draining along the bottom edge rather than a
+  number, except on your own turn where the number is the whole point.
+- **The report**, top right — the narrator with a panel instead of a line. Free Pick has one
+  event per turn; a spin has two, which is eighty-eight over a draft, so the latest is set
+  large and the ones it replaced stay under it, dimming.
+- **The eleven**, right — `PitchView` unchanged, reading `--draft-node` / `--draft-name` set
+  smaller here than on the Free Pick screen. The orbit gives the eleven a smaller cell, and
+  the two centre backs and the keeper stack into the same corner of any 4-2-3-1.
+
+#### Search and the position filter
+
+**A search field and one dropdown, not a chip row.** Ten chips is the right control when
+every one of them is always live, which is what Free Pick's pool is. Here the board is
+already twice narrowed — by the slice and by the shape of the picker's own eleven — so most
+chips would be dead most of the time. `PositionSelect` lists only the positions actually on
+the board, hand-rolled rather than a native `<select>` because the native list paints in the
+platform's colours, which on a near-black page is a white slab. Both controls go quiet while
+the wheel is turning, and both reset on a new spin: a filter carried over from the last
+category is a filter that shows you an empty list.
+
+#### The rules it implements
+
+- **The category is fixed once, at the start** (R5-Q1). `top-5` / `all` leave league, club
+  and nationality open and the wheel takes **league** — five slices, five real marks. A
+  single-league Scope has already fixed league, so it drops to clubs.
+- **One equal slice per entity holding at least one legal footballer for the drafter on the
+  clock** (R8-Q7) — so the wheel is rebuilt per turn, not once for the table, and a league
+  whose remaining players all play where you are already full is not on it at all.
+- **The pick itself is a free pick** — same snake, same slot gate, same A–Z. **No
+  constraints** (R5-Q2), so `blockedReason` runs with `'none'` and there is nothing to strike
+  through: a footballer who cannot be taken is not in this category or not in this shape.
+- **Empty wheel falls back to the whole remaining pool for that turn** (R2-Q4), captioned
+  `Open board`.
+
+#### One race worth not rediscovering
+
+A pick lands one commit before the effect that starts the next spin runs, so for exactly one
+render `phase` still says `landed` while `overall` has already moved on. That window was long
+enough for the report to announce the next turn's landing *before* the pick that caused it,
+and for the pool to be rebuilt out of the old category against the new drafter's squad. The
+landing is now stamped with the turn it was spun for (`landedTurn`) and everything reads one
+derived `settled` flag, which makes the state unrepresentable rather than merely rare.
+
+#### Verification
+
+A full 44-pick draft played out in the browser with every one of the four elevens filled, no
+scroll and no console errors. `src/lib/wheelEngine.test.ts` plays the same draft in Node
+against a synthetic pool and asserts the wheel never runs dry — that is this format's one
+failure mode that Free Pick does not have, since the board is narrowed twice before anyone
+sees it. Checked at 1920×926, 1440×900, 1280×800, 1280×700, 1024×768 and 375×667.
+
+#### Two judgement calls worth overruling if wrong
+
+- **The wheel's five slices are league colours**, mixed 66% into black — `--color-league-*`
+  in `index.css`, the second licensed exception to the four primes after the crests, and the
+  only one that is not artwork. It is what the tuned mockup drew and it is the wheel's whole
+  legibility; the one-saturated-accent rule is untouched, since nothing is ever actionable
+  because it is one of these. Non-league wheels fall back to a ramp mixed from the primes.
+- **The pool follows the drafter on the clock**, not you, because the wheel does — the two
+  would otherwise disagree about what is on the board. It costs nothing, since every
+  drafter's eleven is already open to everyone.
 
 ### Both lobbies: viability gating (2026-08-18)
 
@@ -1534,14 +1664,16 @@ This table is kept as a historical index of what each round covered.
 
 ## Project Status
 
-**Front end:** the home page, both lobbies and the **Free Pick draft screen** are built and
-routed — `/`, `/solo/:formatId`, `/lobby/:code`, `/draft/:formatId`. The draft screen went
-through a simplification pass on 2026-08-20 (see The Free Pick draft screen above) — a
-quieter rail, a rebuilt face-anchoring system, no section numerals. Every control on every
-one of them goes somewhere; there are no dead ends left in the flow. Nothing is wired to
-Firebase, so opponents, bots and chat are simulated on screen per the fake-the-functionality
-rule. The three remaining formats — Auction, Deal or No Deal, Spin the Wheel — have no draft
-screen yet.
+**Front end:** the home page, both lobbies and **two draft screens — Free Pick and Spin the
+Wheel** — are built and routed: `/`, `/solo/:formatId`, `/lobby/:code`, `/draft/:formatId`,
+the last dispatching on the format. Free Pick went through a simplification pass on
+2026-08-20 (a quieter rail, a rebuilt face-anchoring system, no section numerals); Spin the
+Wheel was built the same day off the Orbit layout. All four screens now sit inside one app
+frame with a shared bottom inset and have stopped measuring the window themselves — see The
+app frame above, and do not write `100dvh` in a route again. Every control on every one of
+them goes somewhere; there are no dead ends left in the flow. Nothing is wired to Firebase,
+so opponents, bots and chat are simulated on screen per the fake-the-functionality rule. The
+two remaining formats — Auction and Deal or No Deal — have no draft screen yet.
 
 **Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
 are exported to `public/botModels/`. Auction training is specified but not run — see the

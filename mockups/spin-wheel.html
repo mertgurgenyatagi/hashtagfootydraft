@@ -1,0 +1,2424 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>#footydraft — the Spin the Wheel draft screen, 20 layouts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Hallmark · exhibition of Spin the Wheel DRAFT screens — 20 layouts, one per
+       *   macrostructure. Feature Stack excluded by design (needs scroll; this app
+       *   never scrolls). Macrostructure re-use across exhibitions is explicitly
+       *   permitted in this repo (PROJECT.md, set 2026-08-17) — this run reuses the
+       *   Free Pick exhibition's 20-name set, since both screens do the same job.
+       * genre: atmospheric
+       * theme: custom — petrol, FIXED, no switcher. Four primes:
+       *   --ground #071414 · --ink #e2f0ee · --accent #ef7a3c · --tint #123030.
+       *   Everything else derives through one color-mix(in oklab) block written
+       *   once. A SECOND sanctioned exception sits beside the crest rule: the
+       *   wheel's five slices carry the five leagues' own real colours, darkened
+       *   one step via color-mix(…, black) so they read as lit rather than flat —
+       *   set by Mert, non-negotiable, scoped to the wheel alone.
+       * theme_axes: dark paper band / display-condensed roman / warm accent (~40deg)
+       * type: Oswald + Inter only. Bebas Neue solely where a frame draws the
+       *   wordmark. Per-frame voice is case/tracking/weight/scale (.l01-.l20),
+       *   never a different face — so whatever gets picked ports with no swap.
+       * tone: floodlit, austere, competitive · anchor hue: 40deg
+       * motion: NONE. First-look only, static layout, by explicit instruction.
+       * enrichment: E-photographic — stadium.webp, real player photos from
+       *   public/players/, full-colour club and league crests. Crests are never
+       *   recoloured, greyscaled or silhouetted; an unavailable row is dimmed
+       *   WHOLE, crest included.
+       * copy: every name, club, nation and position on these frames is a real row
+       *   of player_data.csv, scoped through src/data/clubs.ts the way the app
+       *   itself scopes a draft — never the CSV's own League column. NO ability
+       *   ratings and NO pool counts anywhere. Spin the Wheel has no currency, so
+       *   the only numerals on these screens are the round number and pick count.
+       * pre-emit critique: P5 H5 E5 S4 R4 V5
+       */
+
+      /* ============================================================
+         PETROL — the four primes. Fixed. Plus the wheel's licensed
+         second exception: five real league colours, one step darker.
+         ============================================================ */
+      :root {
+        --ground: #071414;
+        --ink: #e2f0ee;
+        --accent: #ef7a3c;
+        --tint: #123030;
+
+        /* wheel slices — real league colour, darkened via color-mix, per spec */
+        --pl: color-mix(in oklab, #3b1858 78%, black);
+        --ll: color-mix(in oklab, #f74942 78%, black);
+        --sa: color-mix(in oklab, #036ef7 78%, black);
+        --bl: color-mix(in oklab, #ca0213 78%, black);
+        --l1: color-mix(in oklab, #091b3c 78%, black);
+
+        --oswald: 'Oswald', sans-serif;
+        --inter: 'Inter', system-ui, sans-serif;
+        --bebas: 'Bebas Neue', Impact, sans-serif;
+        --ph-f: grayscale(1) contrast(1.25) brightness(0.42);
+      }
+
+      /* ============================================================
+         DERIVED — written once, nowhere else
+         ============================================================ */
+      .frame {
+        --surface: color-mix(in oklab, var(--ground) 92%, var(--ink));
+        --surface-2: color-mix(in oklab, var(--ground) 84%, var(--ink));
+        --line: color-mix(in oklab, var(--ground) 76%, var(--ink));
+        --line-strong: color-mix(in oklab, var(--ground) 55%, var(--ink));
+        --muted: color-mix(in oklab, var(--ink) 58%, var(--ground));
+        --dim: color-mix(in oklab, var(--ink) 30%, var(--ground));
+        --faint: color-mix(in oklab, var(--ink) 16%, var(--ground));
+        --accent-ink: color-mix(in oklab, var(--accent) 14%, var(--ground));
+        --accent-soft: color-mix(in oklab, var(--accent) 20%, var(--ground));
+        --accent-line: color-mix(in oklab, var(--accent) 50%, var(--ground));
+        --shade: color-mix(in oklab, var(--ground) 82%, transparent);
+      }
+
+      /* ============================================================
+         TYPE KNOBS — one family, twenty voices
+         ============================================================ */
+      .frame { --disp: var(--oswald); --body: var(--inter); --dtr: uppercase; --dls: .06em; --dw: 600 }
+
+      .l01 { --dtr: uppercase; --dls: .02em;  --dw: 600 }
+      .l02 { --dtr: uppercase; --dls: .05em;  --dw: 600 }
+      .l03 { --dtr: uppercase; --dls: .01em;  --dw: 700 }
+      .l04 { --dtr: uppercase; --dls: .18em;  --dw: 400 }
+      .l05 { --dtr: uppercase; --dls: .10em;  --dw: 500 }
+      .l06 { --dtr: uppercase; --dls: .04em;  --dw: 500 }
+      .l07 { --dtr: uppercase; --dls: -.02em; --dw: 700 }
+      .l08 { --dtr: uppercase; --dls: .13em;  --dw: 400 }
+      .l09 { --dtr: uppercase; --dls: .03em;  --dw: 600 }
+      .l10 { --dtr: uppercase; --dls: .09em;  --dw: 500 }
+      .l11 { --dtr: uppercase; --dls: -.01em; --dw: 700 }
+      .l12 { --dtr: none;      --dls: .005em; --dw: 500 }
+      .l13 { --dtr: uppercase; --dls: .07em;  --dw: 600 }
+      .l14 { --dtr: uppercase; --dls: -.03em; --dw: 700 }
+      .l15 { --dtr: uppercase; --dls: .22em;  --dw: 300 }
+      .l16 { --dtr: none;      --dls: -.01em; --dw: 600 }
+      .l17 { --dtr: none;      --dls: .01em;  --dw: 400 }
+      .l18 { --dtr: uppercase; --dls: .15em;  --dw: 400 }
+      .l19 { --dtr: none;      --dls: -.02em; --dw: 300 }
+      .l20 { --dtr: none;      --dls: .02em;  --dw: 400 }
+
+      /* ============================================================
+         GALLERY CHROME
+         ============================================================ */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; cursor: default }
+      html { overflow-x: clip }
+      body {
+        background: #050b0b; color: #dce8e6; font-family: var(--inter);
+        -webkit-font-smoothing: antialiased; padding: 36px 24px 140px; overflow-x: clip;
+      }
+      .gal-head { max-width: 1352px; margin: 0 auto 30px }
+      .gal-head h1 { font-family: var(--oswald); font-size: 32px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em }
+      .gal-head h1 b { color: #ef7a3c; font-weight: 600 }
+      .gal-head p { color: #7f918e; font-size: 13px; margin-top: 10px; max-width: 92ch; line-height: 1.65 }
+      .gal-head p + p { margin-top: 7px }
+      .gal-head code { font-family: var(--oswald); letter-spacing: .04em; color: #a9bab7 }
+      .gal-head strong { color: #c3d2cf; font-weight: 600 }
+      .state { margin-top: 18px; border: 1px solid #1b2626; padding: 16px 18px; max-width: 1100px; display: grid;
+               grid-template-columns: repeat(4, 1fr); gap: 15px 26px }
+      .state div { display: flex; flex-direction: column; gap: 5px }
+      .state b { font-family: var(--oswald); font-size: 9.5px; letter-spacing: .2em; text-transform: uppercase; color: #6d807d; font-weight: 500 }
+      .state span { font-size: 12px; color: #b7c6c3; line-height: 1.45 }
+
+      .gal { max-width: 1352px; margin: 0 auto; display: grid; gap: 34px; grid-template-columns: repeat(auto-fill, minmax(640px, 1fr)) }
+      .card { --s: .5 }
+      .card.zoom { --s: 1; grid-column: 1/-1 }
+      .scaler { width: calc(1280px * var(--s)); height: calc(800px * var(--s)); overflow: hidden; border: 1px solid #1b2626; cursor: zoom-in }
+      .card.zoom .scaler { cursor: zoom-out }
+
+      .cap { margin-top: 11px; display: flex; gap: 9px; align-items: baseline; flex-wrap: wrap }
+      .cap b { font-family: var(--oswald); font-size: 11px; letter-spacing: .2em; color: #ef7a3c; font-weight: 500 }
+      .cap strong { font-family: var(--oswald); font-size: 15px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500; color: #dce8e6 }
+      .cap em { font-style: normal; color: #6d807d; font-size: 11.5px; font-family: var(--oswald); letter-spacing: .05em }
+      .cap p { color: #7f918e; font-size: 12px; line-height: 1.55; flex-basis: 100%; max-width: 74ch }
+
+      /* ============================================================
+         THE FRAME + SHARED ATOMS
+         ============================================================ */
+      .frame {
+        width: 1280px; height: 800px; background: var(--ground); color: var(--ink);
+        position: relative; overflow: hidden; font-size: 14px; font-family: var(--body);
+        transform: scale(var(--s)); transform-origin: top left; user-select: none;
+      }
+      .d { font-family: var(--disp); text-transform: var(--dtr); letter-spacing: var(--dls); font-weight: var(--dw); line-height: .95 }
+      .lbl { font-family: var(--oswald); text-transform: uppercase; letter-spacing: .2em; font-size: 10px; color: var(--muted); font-weight: 500 }
+      .mut { color: var(--muted) } .dimc { color: var(--dim) } .fnt { color: var(--faint) } .acc { color: var(--accent) }
+      .num { font-variant-numeric: tabular-nums; font-family: var(--oswald) }
+      .row { display: flex; align-items: center; gap: 10px } .col { display: flex; flex-direction: column }
+      .sp { justify-content: space-between } .wrap { flex-wrap: wrap }
+      .panel { background: var(--surface); border: 1px solid var(--line) }
+      .hr { height: 1px; background: var(--line) } .hrs { height: 1px; background: var(--line-strong) }
+      .rel { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column }
+      .clip { overflow: hidden }
+
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap;
+             font-family: var(--oswald); text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+             padding: 14px 30px; font-size: 13px; border: 1px solid transparent; background: transparent; color: inherit; border-radius: 2px }
+      .btn.p { background: var(--accent); color: var(--accent-ink) }
+      .btn.g { border-color: var(--line-strong); color: var(--ink) }
+      .btn.q { border-color: var(--line); color: var(--muted) }
+      .btn.sm { padding: 9px 17px; font-size: 11px } .btn.lg { padding: 18px 40px; font-size: 15px }
+      .btn.off { border-color: var(--line); color: var(--faint) }
+
+      .op { font-family: var(--oswald); text-transform: uppercase; letter-spacing: .08em; font-weight: 500; font-size: 12px;
+            padding: 8px 13px; border: 1px solid var(--line); color: var(--muted); border-radius: 2px; white-space: nowrap }
+      .op.on { border-color: var(--accent); background: var(--accent-soft); color: var(--ink) }
+      .op.off { color: var(--faint); border-style: dashed }
+      .tag { font-family: var(--oswald); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; padding: 4px 8px;
+             border: 1px solid var(--line-strong); color: var(--muted); border-radius: 2px; white-space: nowrap; font-weight: 500 }
+      .tag.a { color: var(--accent); border-color: var(--accent-line) }
+      .why { font-size: 10.5px; color: var(--dim); line-height: 1.4 }
+
+      .pos { font-family: var(--oswald); font-size: 10px; letter-spacing: .13em; font-weight: 600;
+             color: var(--accent); flex: none; text-align: left }
+      .pos.w { width: 34px } .pos.q { color: var(--muted) } .pos.f { color: var(--faint) }
+
+      .pr { display: flex; align-items: center; gap: 11px; padding: 8px 0 }
+      .pr .nm { font-size: 13px; font-weight: 500; letter-spacing: -.005em; white-space: nowrap }
+      .pr .cl { font-size: 11px; color: var(--dim); white-space: nowrap }
+      .pr .na { font-size: 10.5px; color: var(--faint); white-space: nowrap }
+      .pr.no { opacity: .3 }
+      .pr.no .nm { text-decoration: line-through; text-decoration-color: var(--line-strong) }
+      .pr.sel { background: var(--accent-soft); margin: 0 -10px; padding-left: 10px; padding-right: 10px; border-radius: 2px }
+
+      .crest { flex: none; display: block; object-fit: contain }
+      .ring { border: 1px solid var(--line-strong); border-radius: 50%; flex: none }
+
+      .fc { overflow: hidden; flex: none; background: var(--surface-2) }
+      .fc img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 26%; display: block;
+                filter: grayscale(1) contrast(1.12) brightness(.9) }
+
+      .clk { font-family: var(--oswald); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent) }
+      .tbar { height: 2px; background: var(--line); width: 100%; overflow: hidden }
+      .tbar i { display: block; height: 100%; background: var(--accent) }
+
+      .seat { display: flex; align-items: center; gap: 10px }
+      .seat .av { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-strong); flex: none;
+                  display: flex; align-items: center; justify-content: center; font-family: var(--oswald);
+                  font-size: 10px; letter-spacing: .04em; color: var(--muted); font-weight: 500 }
+      .seat .av.you { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+      .seat .av.bot { border-style: dashed }
+      .seat.turn .nm2 { color: var(--accent) }
+      .seat .nm2 { font-size: 12.5px; font-weight: 500 }
+
+      .msg { font-size: 11.5px; line-height: 1.5; color: var(--muted) }
+      .msg b { font-family: var(--oswald); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+               color: var(--dim); font-weight: 500; margin-right: 7px }
+      .msg.me { color: var(--ink) } .msg.me b { color: var(--accent) }
+      .cin { border: 1px solid var(--line); padding: 9px 12px; font-size: 11.5px; color: var(--faint) }
+
+      .srch { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-strong); padding: 11px 14px; border-radius: 2px }
+      .srch .ph2 { font-size: 12.5px; color: var(--dim) }
+
+      .ph { position: absolute; overflow: hidden; pointer-events: none; z-index: 0 }
+      .ph img { width: 100%; height: 100%; object-fit: cover; display: block; filter: var(--ph-f) }
+      .ph::after { content: ''; position: absolute; inset: 0; background: var(--tint); mix-blend-mode: color }
+      .m-b { mask-image: linear-gradient(to bottom, black 38%, transparent 100%) }
+      .m-t { mask-image: linear-gradient(to top, black 42%, transparent 100%) }
+      .m-r { mask-image: linear-gradient(to right, black 44%, transparent 100%) }
+      .m-l { mask-image: linear-gradient(to left, black 40%, transparent 100%) }
+      .m-rad { mask-image: radial-gradient(58% 66% at 50% 42%, black 0, transparent 100%) }
+      .m-vig { mask-image: radial-gradient(120% 100% at 50% 28%, black 30%, transparent 100%) }
+      .m-sliv { mask-image: linear-gradient(to bottom, transparent 0, black 34%, black 62%, transparent 100%) }
+      .m-corner { mask-image: radial-gradient(90% 90% at 100% 100%, black 10%, transparent 100%) }
+      .m-cornerl { mask-image: radial-gradient(90% 90% at 0% 100%, black 10%, transparent 100%) }
+      .m-full { mask-image: none }
+
+      /* ============================================================
+         NEW · THE WHEEL — the main event. Five real league colours,
+         darkened one step. Never a corner widget: every layout below
+         sizes it as the single largest element on screen.
+         ============================================================ */
+      .wmount { position: relative; width: var(--wsize, 340px); height: var(--wsize, 340px); flex: none }
+      .wpointer { position: absolute; left: 50%; top: -8px; transform: translateX(-50%); width: 0; height: 0;
+                  border-left: 10px solid transparent; border-right: 10px solid transparent;
+                  border-top: 15px solid var(--accent); z-index: 3 }
+      .wheel { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--line-strong);
+               background: conic-gradient(from 0deg, var(--pl) 0deg 72deg, var(--ll) 72deg 144deg,
+                 var(--sa) 144deg 216deg, var(--bl) 216deg 288deg, var(--l1) 288deg 360deg);
+               transform: rotate(var(--rot, -178deg)) }
+      .wheel::after { content: ''; position: absolute; inset: 0; border-radius: 50%;
+                      background: repeating-conic-gradient(from 0deg, var(--ground) 0deg 1.4deg, transparent 1.4deg 72deg);
+                      opacity: .9 }
+      .wchip { position: absolute; width: 15%; height: 15%; --r: 33%;
+               left: calc(50% + var(--r) * sin(var(--a))); top: calc(50% - var(--r) * cos(var(--a)));
+               transform: translate(-50%, -50%); border-radius: 50%; background: var(--ink);
+               padding: 5%; box-sizing: border-box; display: flex; align-items: center; justify-content: center }
+      .wchip img { width: 100%; height: 100%; object-fit: contain; display: block;
+                   transform: rotate(calc(-1 * var(--rot, -178deg))) }
+      .whub { position: absolute; left: 50%; top: 50%; width: 27%; height: 27%;
+              transform: translate(-50%, -50%) rotate(calc(-1 * var(--rot, -178deg)));
+              border-radius: 50%; background: var(--ground); border: 2px solid var(--line-strong);
+              display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6% }
+      .whub b { font-family: var(--oswald); font-size: 10.5px; letter-spacing: .14em; color: var(--muted); font-weight: 500; line-height: 1.3; text-transform: uppercase }
+      .whub em { display: block; font-style: normal; font-family: var(--oswald); font-size: 13.5px; letter-spacing: .03em; color: var(--accent); font-weight: 600; margin-top: 4px; line-height: 1.1 }
+
+      /* ============================================================
+         NEW · THE PITCH — real 68×105 proportions, per the finalized
+         Free Pick screen. No green: a lit strip of turf on this ground
+         would be the one bright object on a dark page.
+         ============================================================ */
+      .pitchbox { position: relative; width: 100%; aspect-ratio: 68 / 105 }
+      .pitchbox svg.mark { position: absolute; inset: 0; width: 100%; height: 100% }
+      .pnode { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 5px }
+      .pdisc { width: var(--node, 38px); height: var(--node, 38px); border-radius: 50%; border: 1px solid var(--line-strong);
+               background: var(--surface-2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex: none }
+      .pdisc.open { border-style: dashed; border-color: var(--line); background: transparent }
+      .pdisc.pend { border-color: var(--accent); border-style: dashed; background: var(--accent-soft) }
+      .pdisc img { width: 62%; height: 62%; object-fit: contain }
+      .pdisc b { font-family: var(--oswald); font-size: 9px; letter-spacing: .07em; color: var(--dim); font-weight: 600 }
+      .pdisc.pend b { color: var(--accent) }
+      .pname { font-family: var(--oswald); font-size: 9px; letter-spacing: .03em; text-transform: uppercase; font-weight: 500;
+               background: color-mix(in oklab, var(--ground) 85%, transparent); padding: 2px 5px; border-radius: 2px;
+               color: var(--ink); max-width: 82px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+      .pname.pre { color: var(--accent) }
+      .ptabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line) }
+      .ptab { flex: 1; text-align: center; padding: 0 4px 8px; font-family: var(--oswald); font-size: 10px; font-weight: 500;
+              letter-spacing: .12em; text-transform: uppercase; color: var(--dim); border-bottom: 1px solid transparent;
+              white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+      .ptab.on { color: var(--ink); border-color: var(--accent) }
+
+      /* ============================================================
+         NEW · THE SPOTLIGHT — one footballer's photograph and nothing
+         else on the card itself, per the finalized Free Pick screen.
+         ============================================================ */
+      .spot { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line); flex: none; min-height: 140px }
+      .spot .sph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%;
+                   filter: grayscale(1) contrast(1.12) brightness(.94) }
+      .spot .scrim { position: absolute; inset: auto 0 0 0; height: 60%;
+                     background: linear-gradient(to top, var(--ground) 14%, color-mix(in oklab, var(--ground) 65%, transparent) 58%, transparent 100%) }
+      .spot .sinner { position: absolute; inset: auto 0 0 0; padding: 14px; display: flex; flex-direction: column; gap: 9px }
+      .spot .swhy { font-size: 10.5px; line-height: 1.4; color: var(--dim) }
+
+      /* ============================================================
+         NEW · NARRATOR + TABLE — the top bar, per the finalized
+         Free Pick screen: reports and nothing else.
+         ============================================================ */
+      .narr { display: flex; align-items: center; gap: 10px; min-width: 0 }
+      .ndot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); flex: none }
+      .ndot.on { background: var(--accent) }
+      .tstrip { display: flex; align-items: flex-start; list-style: none; margin: 0; padding: 0 }
+      .tstrip li { list-style: none }
+      .tperson { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 56px }
+      .tsep { width: 20px; height: 1px; background: var(--line-strong); margin-top: 15px; flex: none }
+      .tdisc { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+               font-family: var(--oswald); font-size: 11px; font-weight: 500; border: 1px solid var(--line-strong); color: var(--muted) }
+      .tdisc.bot { border-style: dashed }
+      .tname { font-family: var(--oswald); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); font-weight: 500 }
+      .tperson.on .tdisc { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+      .tperson.on .tname { color: var(--ink) }
+
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important } }
+
+      /* ============================================================
+         BATTLE TOURNAMENT MODE (SIMPLE / NON-AESTHETIC)
+         ============================================================ */
+      .mode-switch {
+        display: flex; gap: 10px; margin-top: 20px; align-items: center;
+      }
+      .mode-btn {
+        font-family: var(--oswald); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+        font-weight: 600; padding: 10px 18px; border: 1px solid #1b2626; background: #071414;
+        color: #7f918e; cursor: pointer; border-radius: 2px;
+      }
+      .mode-btn:hover { color: #dce8e6; border-color: #334444; }
+      .mode-btn.active { background: var(--accent); color: #071414; border-color: var(--accent); }
+
+      #battle-view { max-width: 1352px; margin: 0 auto; display: none; }
+      body.in-battle-mode .gal { display: none; }
+      body.in-battle-mode #battle-view { display: block; }
+
+      .battle-hud {
+        border: 1px solid #1b2626; background: #071414; padding: 14px 18px; margin-bottom: 24px;
+        display: flex; flex-direction: column; gap: 12px;
+      }
+      .battle-hud-top {
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+      }
+      .battle-status {
+        font-family: var(--oswald); font-size: 15px; font-weight: 600; letter-spacing: .06em;
+        text-transform: uppercase; color: #dce8e6; display: flex; align-items: center; gap: 10px;
+      }
+      .battle-status b { color: var(--accent); }
+      .battle-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .battle-btn {
+        font-family: var(--oswald); font-size: 11px; font-weight: 500; letter-spacing: .08em;
+        text-transform: uppercase; padding: 7px 13px; border: 1px solid #233434; background: #0d1e1e;
+        color: #b7c6c3; cursor: pointer; border-radius: 2px;
+      }
+      .battle-btn:hover:not(:disabled) { border-color: var(--accent); color: #fff; }
+      .battle-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+      .battle-btn.accent { background: var(--accent); color: #071414; border-color: var(--accent); font-weight: 600; }
+      .battle-btn.accent:hover { background: #ff8e54; }
+
+      .battle-ladder {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        font-family: var(--oswald); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+        color: #4a5c5a; padding-top: 10px; border-top: 1px solid #132020;
+      }
+      .ladder-step { display: inline-flex; align-items: center; gap: 6px; }
+      .ladder-step.done { color: #7f918e; }
+      .ladder-step.curr { color: var(--accent); font-weight: 600; }
+      .ladder-sep { color: #2a3a3a; font-weight: 400; }
+
+      .battle-notice {
+        font-size: 12px; color: #e2f0ee; background: #0c2020; border-left: 3px solid var(--accent);
+        padding: 8px 12px; font-family: var(--inter);
+      }
+      .battle-hint {
+        font-family: var(--oswald); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+        color: #6d807d; margin-left: auto;
+      }
+      .battle-hint kbd {
+        font-family: monospace; font-size: 11px; background: #132020; color: var(--accent);
+        padding: 2px 6px; border: 1px solid #233434; border-radius: 2px;
+      }
+
+      .battle-arena {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(580px, 1fr)); gap: 24px;
+      }
+      .battle-slot {
+        display: flex; flex-direction: column; gap: 12px; border: 1px solid #1b2626; background: #071414; padding: 16px;
+      }
+      .battle-slot-top {
+        display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        border-bottom: 1px solid #1b2626; padding-bottom: 12px;
+      }
+      .battle-slot-info { display: flex; flex-direction: column; gap: 2px; }
+      .battle-slot-title {
+        font-family: var(--oswald); font-size: 16px; font-weight: 600; letter-spacing: .05em;
+        text-transform: uppercase; color: #dce8e6;
+      }
+      .battle-slot-title b { color: var(--accent); margin-right: 8px; }
+      .battle-slot-sub { font-family: var(--oswald); font-size: 12px; color: #6d807d; letter-spacing: .05em; }
+
+      .battle-pick-btn {
+        font-family: var(--oswald); font-size: 13px; font-weight: 600; letter-spacing: .08em;
+        text-transform: uppercase; padding: 10px 18px; background: var(--accent); color: #071414;
+        border: 1px solid var(--accent); cursor: pointer; border-radius: 2px;
+        display: inline-flex; align-items: center; gap: 8px;
+      }
+      .battle-pick-btn:hover { background: #ff8e54; }
+      .battle-pick-btn kbd {
+        font-family: monospace; font-size: 11px; background: #071414; color: var(--accent);
+        padding: 2px 6px; border-radius: 2px; font-weight: bold;
+      }
+
+      .battle-frame-wrap {
+        position: relative; border: 1px solid #1b2626; background: #050b0b; overflow: hidden;
+      }
+      .battle-frame-wrap .card { --s: 0.475; margin: 0; }
+      .battle-frame-wrap.zoomed .card { --s: 1; }
+      .battle-frame-wrap.zoomed { overflow: auto; max-height: 800px; }
+      .battle-frame-wrap .scaler { margin: 0 auto; cursor: pointer; width: calc(1280px * var(--s)); height: calc(800px * var(--s)); }
+      .battle-frame-wrap.zoomed .scaler { cursor: default; }
+
+      .battle-slot-tools { display: flex; justify-content: space-between; align-items: center; }
+      .battle-zoom-btn {
+        font-family: var(--oswald); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase;
+        padding: 4px 9px; border: 1px solid #233434; background: transparent; color: #7f918e; cursor: pointer; border-radius: 2px;
+      }
+      .battle-zoom-btn:hover { color: #dce8e6; border-color: #445555; }
+
+      .battle-slot-desc {
+        font-size: 12px; color: #7f918e; line-height: 1.55; border-top: 1px solid #1b2626; padding-top: 10px;
+      }
+
+      /* CHAMPION / WINNER VIEW */
+      .battle-champion-box {
+        border: 1px solid #1b2626; background: #071414; padding: 24px; display: flex; flex-direction: column; gap: 20px;
+      }
+      .champion-banner {
+        border-left: 4px solid var(--accent); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 4px;
+      }
+      .champion-banner h2 {
+        font-family: var(--oswald); font-size: 26px; font-weight: 600; letter-spacing: .06em;
+        text-transform: uppercase; color: #dce8e6;
+      }
+      .champion-banner h2 b { color: var(--accent); }
+      .champion-banner p { font-size: 13px; color: #7f918e; }
+
+      .battle-run-summary {
+        border: 1px solid #1b2626; background: #050b0b; padding: 16px 20px;
+      }
+      .battle-run-summary h4 {
+        font-family: var(--oswald); font-size: 12px; font-weight: 600; letter-spacing: .12em;
+        text-transform: uppercase; color: #6d807d; margin-bottom: 10px;
+      }
+      .battle-run-list {
+        list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #b7c6c3;
+      }
+      .battle-run-list li { display: flex; align-items: baseline; gap: 8px; }
+      .battle-run-list li span.r-tag {
+        font-family: var(--oswald); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase;
+        color: var(--accent); width: 140px; flex: none;
+      }
+
+      .gal .card.highlight-winner {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="gal-head">
+      <h1><b>#</b>footydraft — the Spin the Wheel draft screen, 20 layouts</h1>
+      <p>
+        Twenty page-shapes for one screen, not twenty dressings of one shape. Every frame does the
+        same six jobs, all non-negotiable: put <strong>the wheel</strong> front and centre — never a
+        corner widget — with its five slices carrying <strong>the real league colours</strong>, one
+        step darker; spotlight <strong>the selected footballer</strong> the way the finalized Free
+        Pick screen does, one photograph and nothing else on the card; show <strong>your eleven on a
+        pitch</strong>, with tabs onto everyone else's; keep <strong>chat</strong> reachable; and use
+        <code>stadium.webp</code> as visibly as the frame can carry it. The palette is
+        <code>petrol</code> and does not change; type is Oswald and Inter. <strong>All the variety is
+        structural.</strong> No motion — first look only.
+      </p>
+      <p>
+        Every player, club and crest is a real row of <code>player_data.csv</code>, scoped by club the
+        way the app itself scopes — never the CSV's own <code>League</code> column. There are
+        <strong>no ability ratings and no pool counts</strong> anywhere: data-model facts stay off
+        screen. Spin the Wheel has no currency either, so the only numerals on these frames are the
+        round and the pick count.
+      </p>
+      <p>Click a frame to blow it up to full 1280×800; click again to shrink.</p>
+      <div class="state">
+        <div><b>Draft</b><span>Spin the Wheel · snake · 11 rounds</span></div>
+        <div><b>Category</b><span>League — fixed for the whole draft</span></div>
+        <div><b>Scope</b><span>Top 5 leagues</span></div>
+        <div><b>Table</b><span>4 drafters · you are seat 2</span></div>
+        <div><b>Moment</b><span>Round 5 of 11 · pick 18 of 44 · your turn</span></div>
+        <div><b>The spin</b><span>Landed on Serie A — this turn's pick comes from there</span></div>
+        <div><b>Your four</b><span>Haaland ST · van&nbsp;Dijk CB · Bellingham AMF · Kimmich CDM</span></div>
+        <div><b>Still to fill</b><span>GK · CB · LB · RB · CM · LW · RW</span></div>
+      </div>
+      <div class="mode-switch">
+        <button type="button" class="mode-btn active" id="btn-mode-gal">▦ Gallery Grid (20)</button>
+        <button type="button" class="mode-btn" id="btn-mode-battle">⚔ Battle Mode (Tournament)</button>
+        <a href="orbit-tuner.html" class="mode-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:#0f2424;border-color:#2a4444;color:#ef7a3c">🎛 Orbit (08) Tuner Tool →</a>
+      </div>
+    </header>
+
+    <!-- ══════════ BATTLE MODE TOURNAMENT CONTAINER ══════════ -->
+    <div id="battle-view"></div>
+
+    <div class="gal">
+
+      <!-- ══════════ 01 · THE DRAW — Index-First ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l01">
+          <div class="ph m-b" style="inset:0 0 auto 0;height:120px;opacity:.5"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel">
+            <div class="row sp" style="padding:18px 28px 14px">
+              <div class="row" style="gap:16px">
+                <div class="row" style="gap:5px">
+                  <span style="font-family:var(--bebas);font-size:19px;color:var(--accent)">#</span>
+                  <span style="font-family:var(--bebas);font-size:19px;letter-spacing:.05em">footydraft</span>
+                </div>
+                <div class="row" style="gap:7px">
+                  <span class="tag a">Spin the Wheel</span><span class="tag">Top 5 leagues</span><span class="tag">Category: League</span>
+                </div>
+              </div>
+              <div class="row" style="gap:22px">
+                <span class="lbl">Round <b class="num acc" style="font-weight:600">5</b> of 11 · pick <b class="num" style="color:var(--ink);font-weight:600">18</b> of 44</span>
+                <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:15px">Your pick.</span></p>
+              </div>
+            </div>
+            <div class="hrs"></div>
+            <div style="flex:1;display:grid;grid-template-columns:300px 1fr 320px;min-height:0">
+              <div style="border-right:1px solid var(--line);padding:22px 24px;display:flex;flex-direction:column;align-items:center;gap:14px">
+                <div class="wmount" style="--wsize:230px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-178deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+                <span class="why" style="text-align:center">Every spin, one league lights up — the pick comes from there.</span>
+              </div>
+              <div style="display:flex;flex-direction:column;min-height:0">
+                <div style="padding:18px 26px 10px"><span class="lbl">Serie A · your open slots</span></div>
+                <div class="row" style="padding:0 26px 8px;gap:11px">
+                  <span class="lbl" style="width:34px">Pos</span><span class="lbl" style="flex:1">Player</span><span class="lbl" style="width:140px">Club</span>
+                </div>
+                <div class="hr" style="margin:0 26px"></div>
+                <div class="clip" style="flex:1;padding:0 26px">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span><span class="cl" style="width:140px">AC Milan</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl" style="width:140px">Inter</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Domenico Berardi</span><span class="cl" style="width:140px">Sassuolo</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">LB</span><img class="crest" src="../public/clubs/inter.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Federico Dimarco</span><span class="cl" style="width:140px">Inter</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RB</span><img class="crest" src="../public/clubs/napoli.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Giovanni Di Lorenzo</span><span class="cl" style="width:140px">Napoli</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl" style="width:140px">AC Milan</span></div>
+                  <div class="pr"><span class="pos w">CM</span><img class="crest" src="../public/clubs/inter.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Nicolò Barella</span><span class="cl" style="width:140px">Inter</span></div>
+                </div>
+                <div class="hr" style="margin:0 26px"></div>
+                <div class="row sp" style="padding:14px 26px 18px">
+                  <span class="why">Leão fills your LW.</span>
+                  <span class="btn p sm">Draft Leão →</span>
+                </div>
+              </div>
+              <div style="border-left:1px solid var(--line);padding:22px 24px;display:flex;flex-direction:column;gap:16px;min-height:0">
+                <div class="spot" style="height:200px">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner"><span class="swhy">Leão fills your LW.</span></div>
+                </div>
+                <div class="col" style="gap:10px;flex:1;min-height:0">
+                  <div class="ptabs"><span class="ptab">Priya</span><span class="ptab on">You</span><span class="ptab">Bot 1</span><span class="ptab">Bot 2</span></div>
+                  <div class="pitchbox" style="width:172px;margin:0 auto">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4">
+                      <rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/>
+                      <circle cx="34" cy="52.5" r="9.15"/><circle cx="34" cy="52.5" r="0.5" fill="var(--line-strong)" stroke="none"/>
+                      <rect x="13.84" y="0.2" width="40.32" height="16.5"/><rect x="24.84" y="0.2" width="18.32" height="5.5"/>
+                      <circle cx="34" cy="11" r="0.5" fill="var(--line-strong)" stroke="none"/><path d="M 26.7 16.7 A 9.15 9.15 0 0 0 41.3 16.7"/>
+                      <rect x="13.84" y="88.3" width="40.32" height="16.5"/><rect x="24.84" y="99.3" width="18.32" height="5.5"/>
+                      <circle cx="34" cy="94" r="0.5" fill="var(--line-strong)" stroke="none"/><path d="M 26.7 88.3 A 9.15 9.15 0 0 1 41.3 88.3"/>
+                    </svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:22px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:22px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:22px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:22px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:22px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:22px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:22px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:22px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:22px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:22px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:22px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                </div>
+                <div class="col" style="gap:6px">
+                  <p class="msg"><b>Priya</b>serie a again</p>
+                  <p class="msg me"><b>You</b>leão it is</p>
+                  <div class="cin">Message the room</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>01</b><strong>The draw</strong><em>Index-First</em>
+            <p>The wheel sits fixed in its own left rail, the same size every round, while the index beside it does the changing — a compact spotlight and pitch share the right column rather than claiming one each. Reads like a results page: what came up, what you can take, what you already have.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 02 · TURNSTILE — Split Studio ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l02">
+          <div style="display:grid;grid-template-columns:1fr 1fr;height:100%">
+            <div class="rel" style="background:var(--surface);position:relative">
+              <div class="ph m-r" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+              <div class="rel" style="padding:30px 34px;gap:22px">
+                <div class="row" style="gap:5px">
+                  <span style="font-family:var(--bebas);font-size:20px;color:var(--accent)">#</span>
+                  <span style="font-family:var(--bebas);font-size:20px;letter-spacing:.05em">footydraft</span>
+                </div>
+                <div class="row" style="gap:7px;margin-top:6px">
+                  <span class="tag a">Spin the Wheel</span><span class="tag">Top 5 leagues</span>
+                </div>
+                <div style="flex:1;display:flex;align-items:center;justify-content:center;margin-top:10px">
+                  <div class="wmount" style="--wsize:400px">
+                    <div class="wpointer"></div>
+                    <div class="wheel" style="--rot:-182deg">
+                      <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                      <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                      <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                      <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                      <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                      <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row sp" style="margin-top:auto">
+                  <span class="lbl">Round <b class="num acc" style="font-weight:600">5</b> of 11</span>
+                  <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:14px">Your pick.</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="rel" style="background:var(--ground);padding:30px 36px;gap:16px">
+              <div style="display:flex;justify-content:flex-end">
+                <ul class="tstrip">
+                  <li class="tperson"><span class="tdisc">P</span><span class="tname">Priya</span></li>
+                  <li class="tsep"></li>
+                  <li class="tperson on"><span class="tdisc">M</span><span class="tname">You</span></li>
+                  <li class="tsep"></li>
+                  <li class="tperson"><span class="tdisc bot">1</span><span class="tname">Bot 1</span></li>
+                  <li class="tsep"></li>
+                  <li class="tperson"><span class="tdisc bot">2</span><span class="tname">Bot 2</span></li>
+                </ul>
+              </div>
+              <div class="row" style="gap:18px;flex:1;min-height:0;margin-top:6px">
+                <div class="spot" style="width:180px;height:100%">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner">
+                    <span class="swhy">Leão fills your LW.</span>
+                    <span class="btn p sm" style="width:100%">Draft Leão →</span>
+                  </div>
+                </div>
+                <div class="col" style="flex:1;min-height:0">
+                  <span class="lbl">Serie A · your open slots</span>
+                  <div class="clip" style="flex:1;margin-top:10px">
+                    <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Domenico Berardi</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span></div>
+                    <div class="pr"><span class="pos w">CM</span><img class="crest" src="../public/clubs/inter.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Nicolò Barella</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row sp" style="border-top:1px solid var(--line);padding-top:14px">
+                <div class="ptabs" style="border:none;gap:14px"><span class="ptab off" style="flex:none">Pitch:</span><span class="ptab on" style="flex:none">You</span><span class="ptab" style="flex:none">Priya</span><span class="ptab" style="flex:none">Bot 1</span><span class="ptab" style="flex:none">Bot 2</span></div>
+              </div>
+              <div class="row" style="gap:16px">
+                <div class="pitchbox" style="width:150px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4">
+                    <rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/>
+                    <circle cx="34" cy="52.5" r="9.15"/><rect x="13.84" y="0.2" width="40.32" height="16.5"/>
+                    <rect x="13.84" y="88.3" width="40.32" height="16.5"/>
+                  </svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:20px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:20px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:20px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:20px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:20px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:20px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:20px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:20px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:20px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:20px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:20px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+                <div class="col" style="flex:1;gap:6px;justify-content:flex-end">
+                  <p class="msg"><b>Bot 2</b>take the keeper</p>
+                  <p class="msg me"><b>You</b>leão it is</p>
+                  <div class="cin">Message the room</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>02</b><strong>Turnstile</strong><em>Split Studio</em>
+            <p>A hard 50/50: the wheel owns the left half outright, everything you do about it lives on the right. The diptych this repo already reaches for — same division as both lobbies — applied to a draft screen for the first time.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 03 · THE BOARD — Bento Grid ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l03">
+          <div class="ph m-corner" style="inset:0;opacity:.46"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:22px;gap:14px">
+            <div class="row sp">
+              <div class="row" style="gap:16px">
+                <span class="d" style="font-size:17px">Spin the Wheel</span>
+                <div class="row" style="gap:7px"><span class="tag a">Top 5 leagues</span><span class="tag">Category: League</span></div>
+              </div>
+              <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:14px">Your pick.</span></p>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;min-height:0">
+              <div class="panel" style="grid-row:1/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px">
+                <div class="wmount" style="--wsize:300px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-172deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+                <span class="lbl">Round 5 of 11</span>
+              </div>
+              <div class="panel" style="padding:16px;display:flex;flex-direction:column;min-height:0">
+                <span class="lbl" style="margin-bottom:8px">Serie A · open slots</span>
+                <div class="clip" style="flex:1">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Leão</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Bastoni</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Berardi</span></div>
+                  <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Maignan</span></div>
+                </div>
+                <span class="btn p sm" style="margin-top:10px">Draft Leão →</span>
+              </div>
+              <div class="panel spot" style="padding:0">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner"><span class="swhy">Leão fills your LW.</span></div>
+              </div>
+              <div class="panel" style="padding:14px;display:flex;flex-direction:column;min-height:0">
+                <div class="ptabs" style="margin-bottom:8px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                <div class="pitchbox" style="width:150px;margin:0 auto">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4">
+                    <rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/>
+                    <circle cx="34" cy="52.5" r="9.15"/><rect x="13.84" y="0.2" width="40.32" height="16.5"/><rect x="13.84" y="88.3" width="40.32" height="16.5"/>
+                  </svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:18px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:18px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:18px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:18px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:18px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:18px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:18px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:18px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:18px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:18px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:18px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+              <div class="panel" style="grid-column:2/4;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
+                <p class="msg"><b>Priya</b>serie a again</p>
+                <p class="msg me"><b>You</b>leão it is</p>
+                <div class="cin">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>03</b><strong>The board</strong><em>Bento Grid</em>
+            <p>Six unequal tiles. The wheel spans both rows on the left — visibly the largest tile on the board — while pool, spotlight, pitch and chat divide the remainder. Nothing else is allowed to match its footprint.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 04 · HUB — Map/Diagram ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l04">
+          <div class="ph m-vig" style="inset:0;opacity:.44"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:26px 30px;gap:0">
+            <div class="row sp">
+              <span class="d" style="font-size:16px">Spin the Wheel</span>
+              <div class="row" style="gap:16px">
+                <span class="lbl">Round 5 of 11</span>
+                <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:13px">Your pick.</span></p>
+              </div>
+            </div>
+            <div style="position:relative;flex:1;margin-top:10px">
+              <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" aria-hidden="true">
+                <line x1="640" y1="380" x2="260" y2="150" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="3 4" />
+                <line x1="640" y1="380" x2="1020" y2="150" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="3 4" />
+                <line x1="640" y1="380" x2="260" y2="560" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="3 4" />
+                <line x1="640" y1="380" x2="1020" y2="560" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="3 4" />
+              </svg>
+              <div style="position:absolute;left:50%;top:47%;transform:translate(-50%,-50%)">
+                <div class="wmount" style="--wsize:340px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-176deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="position:absolute;left:32px;top:60px;width:210px;padding:14px">
+                <span class="lbl">Serie A · open slots</span>
+                <div style="margin-top:8px">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line);padding:6px 0"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Leão</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line);padding:6px 0"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Bastoni</span></div>
+                  <div class="pr" style="padding:6px 0"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Maignan</span></div>
+                </div>
+              </div>
+              <div class="panel spot" style="position:absolute;right:32px;top:60px;width:150px;height:180px;padding:0">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner" style="padding:10px"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+              </div>
+              <div class="panel" style="position:absolute;left:32px;bottom:10px;width:220px;padding:14px">
+                <div class="ptabs" style="margin-bottom:8px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                <div class="pitchbox" style="width:130px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4">
+                    <rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/>
+                  </svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:16px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:16px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:16px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:16px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:16px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:16px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:16px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:16px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:16px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:16px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:16px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+              <div class="panel" style="position:absolute;right:32px;bottom:10px;width:220px;padding:14px;display:flex;flex-direction:column;gap:6px">
+                <span class="lbl">Chat</span>
+                <p class="msg"><b>Priya</b>serie a again</p>
+                <p class="msg me"><b>You</b>leão it is</p>
+                <div class="cin" style="margin-top:2px">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>04</b><strong>Hub</strong><em>Map / Diagram</em>
+            <p>The wheel drawn as a hub with four dotted spokes running out to pool, spotlight, pitch and chat — a literal diagram of a turn: everything on this screen exists because the wheel just told it something.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 05 · THE CARD INDEX — Catalogue ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l05">
+          <div class="ph m-l" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="flex-direction:row">
+            <div style="width:56px;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:22px 0;gap:26px">
+              <span class="d acc" style="font-size:15px;writing-mode:vertical-rl">Spin the Wheel</span>
+              <div class="col" style="gap:14px;margin-top:auto;align-items:center">
+                <span class="d mut" style="font-size:11px;writing-mode:vertical-rl">01 Wheel</span>
+                <span class="d mut" style="font-size:11px;writing-mode:vertical-rl">02 Pool</span>
+                <span class="d mut" style="font-size:11px;writing-mode:vertical-rl">03 Pitch</span>
+                <span class="d mut" style="font-size:11px;writing-mode:vertical-rl">04 Chat</span>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;padding:24px 32px;gap:18px;min-height:0">
+              <div class="row sp">
+                <span class="lbl">Round 5 of 11 · pick 18 of 44</span>
+                <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:14px">Your pick.</span></p>
+              </div>
+              <div class="row" style="gap:24px;flex:1;min-height:0">
+                <div class="col" style="gap:10px">
+                  <span class="lbl">01 · Wheel</span>
+                  <div class="wmount" style="--wsize:250px">
+                    <div class="wpointer"></div>
+                    <div class="wheel" style="--rot:-180deg">
+                      <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                      <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                      <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                      <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                      <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                      <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col" style="gap:10px;flex:1;min-height:0">
+                  <span class="lbl">02 · Serie A, your open slots</span>
+                  <div class="clip" style="flex:1">
+                    <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span><span class="cl">AC Milan</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl">Inter</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Domenico Berardi</span><span class="cl">Sassuolo</span></div>
+                    <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl">AC Milan</span></div>
+                  </div>
+                  <div class="row sp"><span class="why">Leão fills your LW.</span><span class="btn p sm">Draft Leão →</span></div>
+                </div>
+                <div class="spot" style="width:150px">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div class="row" style="gap:24px;height:150px">
+                <div class="col" style="gap:8px">
+                  <span class="lbl">03 · Your eleven</span>
+                  <div class="ptabs" style="width:200px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                  <div class="pitchbox" style="width:105px">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:14px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:14px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:14px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:14px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:14px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:14px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:14px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:14px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:14px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:14px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:14px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                </div>
+                <div class="col" style="flex:1;gap:6px;justify-content:flex-end">
+                  <span class="lbl">04 · Chat</span>
+                  <p class="msg"><b>Priya</b>serie a again</p>
+                  <p class="msg me"><b>You</b>leão it is</p>
+                  <div class="cin">Message the room</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>05</b><strong>The card index</strong><em>Catalogue</em>
+            <p>Four numbered entries down a rail — wheel, pool, pitch, chat — each catalogued in reading order. The wheel still gets the tallest, widest cell of the four; being first in the index doesn't make it small.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 06 · THE CONSOLE — Workbench ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l06">
+          <div class="ph m-scan" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:20px;gap:14px">
+            <div class="row sp panel" style="padding:12px 18px">
+              <div class="row" style="gap:14px"><span class="d" style="font-size:15px">Wheel console</span><span class="tag a">Spin the Wheel</span><span class="tag">Category: League</span></div>
+              <div class="row" style="gap:16px"><span class="lbl">Rd 5 / 11</span><p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:13px">Your pick.</span></p></div>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:1fr 340px;gap:14px;min-height:0">
+              <div class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative">
+                <span class="lbl" style="position:absolute;left:16px;top:14px">Viewport — the spin</span>
+                <div class="wmount" style="--wsize:330px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-174deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col" style="gap:14px;min-height:0">
+                <div class="panel" style="padding:14px;flex:1;display:flex;flex-direction:column;min-height:0">
+                  <span class="lbl">Readout — Serie A, open slots</span>
+                  <div class="clip" style="flex:1;margin-top:8px">
+                    <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span></div>
+                    <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span></div>
+                  </div>
+                  <span class="btn p sm" style="margin-top:8px">Draft Leão →</span>
+                </div>
+                <div class="panel spot" style="height:130px;padding:0">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner" style="padding:10px"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="gap:14px;height:150px">
+              <div class="panel" style="flex:1;padding:12px;display:flex;flex-direction:column">
+                <span class="lbl" style="margin-bottom:6px">Readout — your eleven</span>
+                <div class="row" style="gap:14px;flex:1">
+                  <div class="ptabs" style="flex-direction:column;border:none;gap:4px"><span class="ptab" style="text-align:left">Priya</span><span class="ptab on" style="text-align:left">You</span><span class="ptab" style="text-align:left">Bot 1</span><span class="ptab" style="text-align:left">Bot 2</span></div>
+                  <div class="pitchbox" style="width:96px">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:13px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:13px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:13px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:13px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:13px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:13px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:13px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:13px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:13px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:13px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:13px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="flex:1;padding:12px;display:flex;flex-direction:column;gap:5px">
+                <span class="lbl">Log — chat</span>
+                <p class="msg"><b>Priya</b>serie a again</p>
+                <p class="msg me"><b>You</b>leão it is</p>
+                <div class="cin">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>06</b><strong>The console</strong><em>Workbench</em>
+            <p>Instrument-panel framing: the wheel is the console's one viewport, everything else a boxed readout beneath and beside it. Boxy, bordered, deliberately un-photographic despite the plate underneath.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 07 · FIVE SLICES — Stat-Led ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l07">
+          <div class="ph m-t" style="inset:auto 0 0 0;height:180px;opacity:.5"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:28px 34px;gap:20px">
+            <div class="row sp">
+              <span class="d" style="font-size:16px">Spin the Wheel</span>
+              <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:14px">Your pick.</span></p>
+            </div>
+            <div class="row" style="gap:40px;align-items:center">
+              <div class="col">
+                <span class="lbl">Round</span>
+                <span class="d" style="font-size:96px;line-height:.85">05</span>
+                <span class="lbl" style="margin-top:4px">of 11</span>
+              </div>
+              <div class="col">
+                <span class="lbl">Pick</span>
+                <span class="d acc" style="font-size:96px;line-height:.85">18</span>
+                <span class="lbl" style="margin-top:4px">of 44</span>
+              </div>
+              <div class="wmount" style="--wsize:230px;margin-left:auto">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-186deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="gap:10px">
+              <span class="row" style="gap:6px"><i style="width:10px;height:10px;border:1px solid var(--line-strong);background:var(--pl);display:block;border-radius:2px"></i><span class="lbl" style="letter-spacing:.06em">Premier League</span></span>
+              <span class="row" style="gap:6px"><i style="width:10px;height:10px;border:1px solid var(--line-strong);background:var(--ll);display:block;border-radius:2px"></i><span class="lbl" style="letter-spacing:.06em">La Liga</span></span>
+              <span class="row" style="gap:6px"><i style="width:10px;height:10px;border:1px solid var(--line-strong);background:var(--sa);display:block;border-radius:2px"></i><span class="lbl acc" style="letter-spacing:.06em;color:var(--accent)">Serie A</span></span>
+              <span class="row" style="gap:6px"><i style="width:10px;height:10px;border:1px solid var(--line-strong);background:var(--bl);display:block;border-radius:2px"></i><span class="lbl" style="letter-spacing:.06em">Bundesliga</span></span>
+              <span class="row" style="gap:6px"><i style="width:10px;height:10px;border:1px solid var(--line-strong);background:var(--l1);display:block;border-radius:2px"></i><span class="lbl" style="letter-spacing:.06em">Ligue 1</span></span>
+            </div>
+            <div class="hr"></div>
+            <div class="row" style="gap:24px;flex:1;min-height:0;align-items:flex-start">
+              <div class="col" style="flex:1;min-height:0">
+                <span class="lbl">Serie A · your open slots</span>
+                <div class="clip" style="flex:1;margin-top:8px">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span><span class="cl">AC Milan</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl">Inter</span></div>
+                  <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl">AC Milan</span></div>
+                </div>
+                <div class="col" style="gap:5px;margin-top:14px">
+                  <p class="msg"><b>Priya</b>serie a again</p>
+                  <p class="msg me"><b>You</b>leão it is</p>
+                  <div class="cin">Message the room</div>
+                </div>
+              </div>
+              <div class="spot" style="width:150px">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span><span class="btn p sm" style="font-size:9.5px;padding:7px 10px">Draft →</span></div>
+              </div>
+              <div class="col" style="gap:8px">
+                <div class="ptabs" style="width:170px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                <div class="pitchbox" style="width:90px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:12px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:12px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:12px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:12px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:12px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:12px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:12px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:12px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:12px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:12px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:12px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>07</b><strong>Five slices</strong><em>Stat-Led</em>
+            <p>Round and pick as the two big numerals this format is allowed, the wheel scaled to match them rather than sitting smaller. A colour legend under it names the five slices in the one place a swatch needs a label.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 08 · ORBIT — Ecosystem Index ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l08">
+          <div class="ph m-rad" style="inset:0;opacity:.48"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:22px 26px;gap:0">
+            <div class="row sp">
+              <span class="d" style="font-size:15px">Spin the Wheel</span>
+              <div class="row" style="gap:14px"><span class="lbl">Round 5 of 11</span><p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:13px">Your pick.</span></p></div>
+            </div>
+            <div style="position:relative;flex:1;margin-top:8px">
+              <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)">
+                <div class="wmount" style="--wsize:320px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-179deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="position:absolute;left:0;top:0;width:280px;padding:14px">
+                <span class="lbl">Serie A · open slots</span>
+                <div style="margin-top:8px">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line);padding:6px 0"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Rafael Leão</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line);padding:6px 0"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Alessandro Bastoni</span></div>
+                  <div class="pr" style="padding:6px 0"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Domenico Berardi</span></div>
+                </div>
+              </div>
+              <div class="panel spot" style="position:absolute;right:0;top:0;width:170px;height:210px;padding:0">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner"><span class="swhy" style="font-size:10px">Leão fills LW.</span><span class="btn p sm" style="font-size:10px;padding:7px 10px">Draft →</span></div>
+              </div>
+              <div class="panel" style="position:absolute;left:0;bottom:0;width:280px;padding:14px">
+                <div class="ptabs" style="margin-bottom:8px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                <div class="pitchbox" style="width:130px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:16px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:16px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:16px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:16px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:16px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:16px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:16px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:16px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:16px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:16px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:16px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+              <div class="panel" style="position:absolute;right:0;bottom:0;width:170px;padding:14px;display:flex;flex-direction:column;gap:6px">
+                <span class="lbl">Chat</span>
+                <p class="msg"><b>Priya</b>again?</p>
+                <p class="msg me"><b>You</b>leão</p>
+                <div class="cin" style="font-size:10px;padding:6px 9px">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>08</b><strong>Orbit</strong><em>Ecosystem Index</em>
+            <p>Four satellites in a loose ring around the wheel — pool, spotlight, pitch, chat — none of them touching the centre, none of them close to its size. An ecosystem map with one obvious sun.</p>
+            <div style="margin-top:8px"><a href="orbit-tuner.html" class="btn p sm" style="text-decoration:none;font-size:10.5px;padding:6px 12px">🎛 Open 08 Orbit Tuner →</a></div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 09 · SEVEN OPEN — Component Playground ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l09">
+          <div class="ph m-dot" style="inset:0;opacity:.34"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:20px;gap:12px">
+            <div class="row sp"><span class="lbl">Spin the Wheel — component set</span><p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:13px">Your pick.</span></p></div>
+            <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto;gap:12px;min-height:0">
+              <div class="panel" style="grid-row:1/3;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative">
+                <span class="lbl" style="position:absolute;left:14px;top:12px">Wheel</span>
+                <div class="wmount" style="--wsize:280px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-169deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="padding:14px;position:relative">
+                <span class="lbl" style="position:absolute;left:14px;top:12px">Pool row</span>
+                <div style="margin-top:22px">
+                  <div class="pr sel"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span></div>
+                  <div class="pr"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span></div>
+                </div>
+              </div>
+              <div class="panel spot" style="position:relative;padding:0">
+                <span class="lbl" style="position:absolute;left:14px;top:12px;z-index:1">Spotlight</span>
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+              </div>
+              <div class="panel" style="padding:14px;position:relative">
+                <span class="lbl" style="position:absolute;left:14px;top:12px">Pitch node</span>
+                <div class="pitchbox" style="width:110px;margin:22px auto 0">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:14px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:14px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:14px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:14px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:14px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:14px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:14px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:14px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:14px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:14px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:14px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+              <div class="panel" style="padding:14px;position:relative;display:flex;flex-direction:column;gap:5px">
+                <span class="lbl">Chat</span>
+                <p class="msg"><b>Priya</b>serie a again</p>
+                <p class="msg me"><b>You</b>leão it is</p>
+                <div class="cin" style="margin-top:auto">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>09</b><strong>Seven open</strong><em>Component Playground</em>
+            <p>Every atom labelled and boxed like a dev showcase — Wheel, Pool row, Spotlight, Pitch node, Chat — but the wheel's box is still twice the others' footprint. Even a swatch sheet keeps the hierarchy honest.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 10 · THE SPIN — Marquee Hero ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l10">
+          <div class="ph m-l" style="inset:0;opacity:.5"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="flex-direction:row">
+            <div style="flex:1.15;display:flex;align-items:center;justify-content:center;position:relative">
+              <div class="wmount" style="--wsize:520px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-183deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                </div>
+              </div>
+              <div style="position:absolute;left:36px;top:32px" class="row"><span style="font-family:var(--bebas);font-size:20px;color:var(--accent)">#</span><span style="font-family:var(--bebas);font-size:20px;letter-spacing:.05em">footydraft</span></div>
+            </div>
+            <div style="flex:1;padding:40px 44px;display:flex;flex-direction:column;justify-content:center;gap:22px">
+              <div class="row" style="gap:7px"><span class="tag a">Spin the Wheel</span><span class="tag">Category: League</span></div>
+              <span class="d" style="font-size:52px">Serie A<br />is live.</span>
+              <span class="lbl">Round 5 of 11 · pick 18 of 44</span>
+              <div class="row" style="gap:16px">
+                <div class="spot" style="width:130px;height:160px">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner" style="padding:10px">
+                    <span class="swhy" style="font-size:9.5px">Leão fills LW.</span>
+                    <span class="btn p sm" style="width:100%;font-size:9.5px;padding:7px 8px">Draft →</span>
+                  </div>
+                </div>
+                <div class="col" style="gap:6px;flex:1">
+                  <div class="ptabs"><span class="ptab on">You</span><span class="ptab">Priya</span><span class="ptab">Bot 1</span><span class="ptab">Bot 2</span></div>
+                  <div class="pitchbox" style="width:100px">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:13px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:13px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:13px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:13px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:13px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:13px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:13px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:13px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:13px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:13px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:13px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                </div>
+              </div>
+              <p class="msg me"><b>You</b>leão it is</p>
+              <div class="cin">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>10</b><strong>The spin</strong><em>Marquee Hero</em>
+            <p>The wheel as the whole left half of the screen, full height, nothing sharing its space. A single headline states the result; the rest of the turn happens in a narrow right column underneath it.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 11 · LANDED — Narrative Workflow ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l11">
+          <div class="ph m-b" style="inset:0 0 auto 0;height:130px;opacity:.46"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:26px 30px;gap:16px">
+            <div class="row sp"><span class="d" style="font-size:15px">Spin the Wheel</span><span class="lbl">Round 5 of 11 · pick 18 of 44</span></div>
+            <div class="row" style="align-items:stretch;gap:0;flex:1;min-height:0">
+              <div class="col" style="width:220px;align-items:center;gap:10px">
+                <span class="lbl">01 · Spin</span>
+                <div class="wmount" style="--wsize:180px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-181deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col" style="align-items:center;width:50px;padding-top:96px"><span class="d fnt" style="font-size:22px">→</span></div>
+              <div class="col" style="width:220px;align-items:center;gap:10px">
+                <span class="lbl">02 · Landed</span>
+                <img class="crest" src="../public/leagues/serie-a.svg" alt="Serie A" style="width:88px;height:88px;margin-top:8px" />
+                <span class="d acc" style="font-size:18px">Serie A</span>
+              </div>
+              <div class="col" style="align-items:center;width:50px;padding-top:96px"><span class="d fnt" style="font-size:22px">→</span></div>
+              <div class="col" style="width:280px;gap:8px;min-height:0">
+                <span class="lbl">03 · Pick</span>
+                <div class="clip" style="flex:1">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span></div>
+                  <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span></div>
+                </div>
+                <span class="btn p sm">Draft Leão →</span>
+              </div>
+              <div class="col" style="align-items:center;width:50px;padding-top:96px"><span class="d fnt" style="font-size:22px">→</span></div>
+              <div class="col" style="flex:1;gap:8px;min-height:0">
+                <span class="lbl">04 · Placed</span>
+                <div class="row" style="gap:14px">
+                  <div class="pitchbox" style="width:96px">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:13px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:13px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:13px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:13px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:13px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:13px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:13px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:13px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:13px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:13px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:13px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                  <div class="spot" style="width:110px">
+                    <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                    <div class="scrim"></div>
+                    <div class="sinner" style="padding:8px"><span class="swhy" style="font-size:9px">Leão → LW.</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line);padding-top:12px">
+              <p class="msg"><b>Priya</b>serie a again</p>
+              <div class="cin" style="width:280px">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>11</b><strong>Landed</strong><em>Narrative Workflow</em>
+            <p>The turn told as a strip of four steps — spin, landed, pick, placed — each one arrowed into the next. The wheel is the first frame of the story and still the widest of the four.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 12 · WHAT'S UP — Conversational FAQ ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l12">
+          <div class="ph m-vig" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:30px 40px;gap:20px;align-items:center">
+            <div class="row sp" style="width:100%"><span class="d" style="font-size:15px">Spin the Wheel</span><span class="lbl">Round 5 of 11</span></div>
+            <span class="d acc" style="font-size:34px;text-align:center">The wheel landed on Serie A.</span>
+            <div class="row" style="gap:26px;flex:1;min-height:0;width:100%;align-items:flex-start;justify-content:center">
+              <div class="wmount" style="--wsize:270px;margin-top:10px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-176deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                </div>
+              </div>
+              <div class="col" style="gap:8px;width:150px">
+                <span class="lbl acc" style="color:var(--accent)">Who's up?</span>
+                <div class="spot" style="flex:1">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner" style="padding:10px"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+                </div>
+              </div>
+              <div class="col panel" style="width:250px;padding:16px;gap:8px">
+                <span class="lbl acc" style="color:var(--accent)">What can I take?</span>
+                <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Rafael Leão</span></div>
+                <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Alessandro Bastoni</span></div>
+                <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Mike Maignan</span></div>
+                <span class="btn p sm" style="margin-top:6px">Draft Leão →</span>
+              </div>
+              <div class="col panel" style="width:250px;padding:16px;gap:8px">
+                <span class="lbl acc" style="color:var(--accent)">What do I have?</span>
+                <div class="row" style="gap:12px">
+                  <div class="ptabs" style="flex-direction:column;border:none;gap:4px"><span class="ptab" style="text-align:left">Priya</span><span class="ptab on" style="text-align:left">You</span><span class="ptab" style="text-align:left">Bot 1</span></div>
+                  <div class="pitchbox" style="width:100px">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:14px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:14px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:14px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:14px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:14px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:14px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:14px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:14px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:14px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:14px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:14px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                </div>
+                <span class="lbl acc" style="color:var(--accent);margin-top:6px">Anything to say?</span>
+                <p class="msg me"><b>You</b>leão it is</p>
+                <div class="cin">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>12</b><strong>What's up</strong><em>Conversational FAQ</em>
+            <p>One stated fact, then two questions a drafter actually has answered underneath it. Terser than it sounds — the wheel is the fact, the panels are the two answers, and nothing else gets asked.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 13 · FOUR BOARDS — Portfolio Grid ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l13">
+          <div class="ph m-corner" style="inset:0;opacity:.42"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:24px;gap:14px">
+            <div class="row sp"><span class="d" style="font-size:16px">Spin the Wheel</span><div class="row" style="gap:16px"><span class="lbl">Rd 5 · pick 18</span><p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:13px">Your pick.</span></p></div></div>
+            <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:14px;min-height:0">
+              <div class="panel" style="grid-column:1/3;grid-row:1/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+                <span class="lbl">Board — the wheel</span>
+                <div class="wmount" style="--wsize:290px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-175deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" style="grid-column:3/5;padding:14px;display:flex;flex-direction:column">
+                <span class="lbl" style="margin-bottom:8px">Board — Serie A pool</span>
+                <div class="row" style="gap:14px;flex:1">
+                  <div class="col" style="flex:1;gap:4px">
+                    <div class="pr sel" style="padding:4px 0"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Rafael Leão</span></div>
+                    <div class="pr" style="padding:4px 0"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Alessandro Bastoni</span></div>
+                    <div class="pr" style="padding:4px 0"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Domenico Berardi</span></div>
+                  </div>
+                  <span class="btn p sm" style="align-self:flex-end">Draft Leão →</span>
+                </div>
+              </div>
+              <div class="panel spot" style="grid-column:3/4;padding:0">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner" style="padding:10px"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+              </div>
+              <div class="panel" style="grid-column:4/5;padding:12px;display:flex;flex-direction:column">
+                <div class="ptabs" style="margin-bottom:6px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span></div>
+                <div class="pitchbox" style="width:96px;margin:0 auto">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:12px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:12px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:12px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:12px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:12px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:12px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:12px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:12px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:12px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:12px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:12px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel" style="padding:10px 16px;display:flex;align-items:center;gap:16px">
+              <span class="lbl">Board — chat</span>
+              <p class="msg"><b>Priya</b>serie a again</p>
+              <p class="msg me"><b>You</b>leão it is</p>
+              <div class="cin" style="margin-left:auto;width:220px">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>13</b><strong>Four boards</strong><em>Portfolio Grid</em>
+            <p>Four cards presented like a portfolio, uniformly framed — but the wheel's card is drawn at 2×2 while everything else is 1×1 or a single strip. A grid can still have a lead item.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 14 · SERIE A — Type Specimen ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l14">
+          <div class="ph m-b" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:0">
+            <span class="d acc" style="position:absolute;left:-18px;top:70px;font-size:220px;line-height:.8;opacity:.1;letter-spacing:-.02em">SA</span>
+            <div class="col" style="padding:30px 40px;gap:0;height:100%">
+              <div class="row sp"><span class="d" style="font-size:15px">Spin the Wheel</span><span class="lbl">Round 5 of 11</span></div>
+              <div class="row" style="gap:34px;align-items:center;margin-top:14px">
+                <span class="d" style="font-size:110px;line-height:.82">Serie A</span>
+                <div class="wmount" style="--wsize:230px">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-181deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:24px;flex:1;min-height:0;margin-top:24px">
+                <div class="col" style="flex:1;min-height:0">
+                  <span class="lbl">Your open slots</span>
+                  <div class="clip" style="flex:1;margin-top:8px">
+                    <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span><span class="cl">AC Milan</span></div>
+                    <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl">Inter</span></div>
+                    <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl">AC Milan</span></div>
+                  </div>
+                  <span class="btn p sm" style="margin-top:10px">Draft Leão →</span>
+                </div>
+                <div class="spot" style="width:160px">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+                </div>
+                <div class="col" style="gap:8px">
+                  <div class="ptabs" style="width:150px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                  <div class="pitchbox" style="width:110px">
+                    <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                    <div class="pnode" style="left:50%;top:89%;--node:14px"><span class="pdisc open"><b>GK</b></span></div>
+                    <div class="pnode" style="left:11%;top:71%;--node:14px"><span class="pdisc open"><b>LB</b></span></div>
+                    <div class="pnode" style="left:36%;top:80%;--node:14px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:64%;top:80%;--node:14px"><span class="pdisc open"><b>CB</b></span></div>
+                    <div class="pnode" style="left:89%;top:71%;--node:14px"><span class="pdisc open"><b>RB</b></span></div>
+                    <div class="pnode" style="left:33%;top:57%;--node:14px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:67%;top:57%;--node:14px"><span class="pdisc open"><b>CM</b></span></div>
+                    <div class="pnode" style="left:12%;top:34%;--node:14px"><span class="pdisc pend"><b>LW</b></span></div>
+                    <div class="pnode" style="left:50%;top:39%;--node:14px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                    <div class="pnode" style="left:88%;top:34%;--node:14px"><span class="pdisc open"><b>RW</b></span></div>
+                    <div class="pnode" style="left:50%;top:17%;--node:14px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row sp" style="border-top:1px solid var(--line);padding-top:12px">
+                <p class="msg"><b>Priya</b>serie a again</p>
+                <div class="cin" style="width:260px">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>14</b><strong>Serie A</strong><em>Type Specimen</em>
+            <p>The landed league set as huge display type, a ghost of the same word behind it, the wheel scaled to sit beside the word rather than under it. Chrome drops to almost nothing.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 15 · MATCHDAY — Photographic ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l15">
+          <div class="ph m-full" style="inset:0;opacity:.62"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:30px 36px;gap:16px">
+            <div class="row sp">
+              <div class="row" style="gap:5px"><span style="font-family:var(--bebas);font-size:19px;color:var(--accent)">#</span><span style="font-family:var(--bebas);font-size:19px;letter-spacing:.05em">footydraft</span></div>
+              <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:14px">Your pick.</span></p>
+            </div>
+            <div class="row" style="flex:1;min-height:0;gap:30px;align-items:center">
+              <div class="wmount" style="--wsize:400px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-184deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                </div>
+              </div>
+              <div class="col" style="flex:1;gap:14px;min-height:0">
+                <div class="panel" style="padding:16px;background:color-mix(in oklab, var(--ground) 72%, transparent);backdrop-filter:blur(1px)">
+                  <span class="lbl">Serie A · your open slots</span>
+                  <div style="margin-top:8px">
+                    <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span></div>
+                    <div class="pr"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span></div>
+                  </div>
+                </div>
+                <div class="row" style="gap:14px">
+                  <div class="spot" style="width:140px;height:150px">
+                    <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                    <div class="scrim"></div>
+                    <div class="sinner" style="padding:10px"><span class="swhy" style="font-size:9px">Leão → LW.</span></div>
+                  </div>
+                  <div class="panel" style="flex:1;padding:12px;background:color-mix(in oklab, var(--ground) 72%, transparent)">
+                    <div class="ptabs" style="margin-bottom:6px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                    <div class="pitchbox" style="width:96px">
+                      <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                      <div class="pnode" style="left:50%;top:89%;--node:13px"><span class="pdisc open"><b>GK</b></span></div>
+                      <div class="pnode" style="left:11%;top:71%;--node:13px"><span class="pdisc open"><b>LB</b></span></div>
+                      <div class="pnode" style="left:36%;top:80%;--node:13px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                      <div class="pnode" style="left:64%;top:80%;--node:13px"><span class="pdisc open"><b>CB</b></span></div>
+                      <div class="pnode" style="left:89%;top:71%;--node:13px"><span class="pdisc open"><b>RB</b></span></div>
+                      <div class="pnode" style="left:33%;top:57%;--node:13px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                      <div class="pnode" style="left:67%;top:57%;--node:13px"><span class="pdisc open"><b>CM</b></span></div>
+                      <div class="pnode" style="left:12%;top:34%;--node:13px"><span class="pdisc pend"><b>LW</b></span></div>
+                      <div class="pnode" style="left:50%;top:39%;--node:13px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                      <div class="pnode" style="left:88%;top:34%;--node:13px"><span class="pdisc open"><b>RW</b></span></div>
+                      <div class="pnode" style="left:50%;top:17%;--node:13px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="btn p sm">Draft Leão →</span>
+              </div>
+            </div>
+            <div class="row sp panel" style="padding:10px 16px;background:color-mix(in oklab, var(--ground) 72%, transparent)">
+              <div class="row" style="gap:16px"><p class="msg"><b>Priya</b>serie a again</p><p class="msg me"><b>You</b>leão it is</p></div>
+              <div class="cin" style="width:220px">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>15</b><strong>Matchday</strong><em>Photographic</em>
+            <p>The stadium at its most visible in the set — no top-fade, no corner mask, the frame's own ground colour and blend doing all the taming. Every panel over it gets a translucent backing so the copy stays legible.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 16 · ONE AT A TIME — Manifesto ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l16">
+          <div class="ph m-r" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 40px;gap:20px">
+            <div class="row sp"><span class="d" style="font-size:15px">Spin the Wheel</span><span class="lbl">Round 5 of 11</span></div>
+            <div class="row" style="gap:40px;flex:1;min-height:0;align-items:center">
+              <div class="wmount" style="--wsize:360px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-177deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                </div>
+              </div>
+              <div class="col" style="gap:14px;flex:1">
+                <span class="d" style="font-size:26px;line-height:1.15">One league.<br />One pick.<br />Whatever comes up.</span>
+                <span class="why" style="font-size:11.5px;margin-top:6px">No nominating. No choosing your category. The wheel decides, every round, and the pick that follows is a free one within it.</span>
+                <div class="hr" style="margin:10px 0"></div>
+                <div class="row" style="gap:14px">
+                  <div class="spot" style="width:100px;height:140px">
+                    <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                    <div class="scrim"></div>
+                    <div class="sinner" style="padding:8px"><span class="swhy" style="font-size:9px">Leão → LW.</span></div>
+                  </div>
+                  <div class="col" style="flex:1;gap:4px">
+                    <div class="pr sel" style="padding:4px 0"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Rafael Leão</span></div>
+                    <div class="pr" style="padding:4px 0"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:16px;height:16px" alt="" /><span class="nm" style="flex:1;font-size:12px">Alessandro Bastoni</span></div>
+                  </div>
+                  <span class="btn p sm" style="align-self:center">Draft Leão →</span>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line);padding-top:14px">
+              <div class="row" style="gap:18px">
+                <div class="pitchbox" style="width:128px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:15px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:15px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:15px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:15px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:15px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:15px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:15px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:15px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:15px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:15px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:15px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+                <p class="msg me" style="white-space:nowrap"><b>You</b>leão it is</p>
+              </div>
+              <div class="cin" style="width:260px">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>16</b><strong>One at a time</strong><em>Manifesto</em>
+            <p>A three-line statement of what makes this format itself, set beside a large wheel rather than under a hero image. Pitch and chat compress to a single closing row underneath.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 17 · THE TEAM SHEET — Long Document ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l17">
+          <div class="ph m-t" style="inset:0;opacity:.36"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:24px 220px;gap:0;overflow:hidden">
+            <div class="row sp"><span class="d" style="font-size:14px">Spin the Wheel</span><span class="lbl">Round 5 of 11 · pick 18 of 44</span></div>
+            <div class="hrs" style="margin-top:10px"></div>
+            <div class="row" style="justify-content:center;padding:18px 0;gap:20px;align-items:center">
+              <div class="wmount" style="--wsize:170px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-182deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                </div>
+              </div>
+              <span class="d acc" style="font-size:22px">Landed on Serie A.</span>
+            </div>
+            <div class="hr"></div>
+            <div class="col" style="padding:16px 0;gap:0">
+              <span class="lbl" style="margin-bottom:8px">Your open slots, this league</span>
+              <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span><span class="cl">AC Milan</span></div>
+              <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl">Inter</span></div>
+              <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:18px;height:18px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl">AC Milan</span></div>
+            </div>
+            <div class="row sp" style="padding:14px 0"><span class="why">Leão fills your LW.</span><span class="btn p sm">Draft Leão →</span></div>
+            <div class="hr"></div>
+            <div class="row" style="padding:16px 0;gap:24px;flex:1;min-height:0">
+              <div class="spot" style="width:130px">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner" style="padding:8px"><span class="swhy" style="font-size:9px">Leão → LW.</span></div>
+              </div>
+              <div class="row" style="gap:14px">
+                <div class="ptabs" style="flex-direction:column;border:none;gap:4px"><span class="ptab" style="text-align:left">Priya</span><span class="ptab on" style="text-align:left">You</span><span class="ptab" style="text-align:left">Bot 1</span></div>
+                <div class="pitchbox" style="width:96px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:13px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:13px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:13px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:13px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:13px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:13px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:13px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:13px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:13px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:13px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:13px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+              <div class="col" style="flex:1;gap:5px;justify-content:flex-end">
+                <p class="msg"><b>Priya</b>serie a again</p>
+                <div class="cin">Message the room</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>17</b><strong>The team sheet</strong><em>Long Document</em>
+            <p>A single narrow reading column, margins wide on both sides, each block ruled off from the next — the wheel is just the first entry in a document rather than a screen's worth of chrome.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 18 · SECTIONS — Specimen ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l18">
+          <div class="ph m-sliv" style="inset:0;opacity:.44"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel">
+            <div class="row sp" style="padding:16px 26px">
+              <ul class="tstrip">
+                <li class="tperson"><span class="tdisc">P</span><span class="tname">Priya</span></li>
+                <li class="tsep"></li>
+                <li class="tperson on"><span class="tdisc">M</span><span class="tname">You</span></li>
+                <li class="tsep"></li>
+                <li class="tperson"><span class="tdisc bot">1</span><span class="tname">Bot 1</span></li>
+                <li class="tsep"></li>
+                <li class="tperson"><span class="tdisc bot">2</span><span class="tname">Bot 2</span></li>
+              </ul>
+              <p class="narr"><span class="ndot on"></span><span class="d acc" style="font-size:14px">Your pick.</span></p>
+            </div>
+            <div class="hrs"></div>
+            <div style="flex:1;display:grid;grid-template-columns:280px 1fr 320px;min-height:0">
+              <div style="border-right:1px solid var(--line);padding:20px 22px;display:flex;flex-direction:column;gap:18px">
+                <span class="lbl">01 — The wheel</span>
+                <div class="wmount" style="--wsize:210px;margin:0 auto">
+                  <div class="wpointer"></div>
+                  <div class="wheel" style="--rot:-171deg">
+                    <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                    <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                    <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                    <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                    <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                    <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <span class="lbl">02 — Round</span>
+                <span class="d" style="font-size:30px">5th round</span>
+                <span style="font-size:10.5px;color:var(--dim)">of 11</span>
+              </div>
+              <div style="padding:20px 26px;display:flex;flex-direction:column;min-height:0">
+                <span class="lbl">03 — Serie A, your open slots</span>
+                <div class="row" style="padding:10px 0 8px;gap:11px"><span class="lbl" style="width:34px">Pos</span><span class="lbl" style="flex:1">Player</span><span class="lbl" style="width:140px">Club</span></div>
+                <div class="hr"></div>
+                <div class="clip" style="flex:1">
+                  <div class="pr sel" style="border-bottom:1px solid var(--line)"><span class="pos w">LW</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Rafael Leão</span><span class="cl" style="width:140px">AC Milan</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl" style="width:140px">Inter</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RW</span><img class="crest" src="../public/clubs/sassuolo.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Domenico Berardi</span><span class="cl" style="width:140px">Sassuolo</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">LB</span><img class="crest" src="../public/clubs/inter.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Federico Dimarco</span><span class="cl" style="width:140px">Inter</span></div>
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">RB</span><img class="crest" src="../public/clubs/napoli.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Giovanni Di Lorenzo</span><span class="cl" style="width:140px">Napoli</span></div>
+                  <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:19px;height:19px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl" style="width:140px">AC Milan</span></div>
+                </div>
+                <div class="hr"></div>
+                <div class="row sp" style="padding-top:14px"><span class="why">Leão fills your LW.</span><span class="btn p sm">Draft Leão →</span></div>
+              </div>
+              <div style="border-left:1px solid var(--line);padding:20px 22px;display:flex;flex-direction:column;gap:16px;min-height:0">
+                <span class="lbl">04 — Your eleven</span>
+                <div class="spot" style="height:150px">
+                  <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                  <div class="scrim"></div>
+                  <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span></div>
+                </div>
+                <div class="ptabs"><span class="ptab">Priya</span><span class="ptab on">You</span><span class="ptab">Bot 1</span><span class="ptab">Bot 2</span></div>
+                <div class="pitchbox" style="width:150px;margin:0 auto">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4">
+                    <rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/>
+                    <circle cx="34" cy="52.5" r="9.15"/><rect x="13.84" y="0.2" width="40.32" height="16.5"/><rect x="13.84" y="88.3" width="40.32" height="16.5"/>
+                  </svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:18px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:18px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:18px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:18px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:18px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:18px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:18px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:18px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:18px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:18px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:18px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+                <div class="col" style="gap:5px;margin-top:auto">
+                  <p class="msg"><b>Priya</b>serie a again</p>
+                  <div class="cin">Message the room</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>18</b><strong>Sections</strong><em>Specimen</em>
+            <p>Hairline-ruled numbered sections across three columns, the same shape the finalized Free Pick screen shipped — but the rail's first section is now the wheel, sized to match the pool column rather than shrink beside it.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 19 · THE ROOM — Quote-Led ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l19">
+          <div class="ph m-cornerl" style="inset:0;opacity:.4"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:34px 40px;gap:18px;align-items:center">
+            <div class="row sp" style="width:100%"><span class="d" style="font-size:14px">Spin the Wheel</span><span class="lbl">Round 5 of 11</span></div>
+            <span class="d acc" style="font-size:44px;text-align:center;max-width:820px;margin-top:10px">"Landed on Serie A."</span>
+            <span class="why" style="text-align:center">The wheel's own report, held on screen — everything below answers to it.</span>
+            <div class="row" style="gap:30px;flex:1;min-height:0;align-items:center;margin-top:10px">
+              <div class="wmount" style="--wsize:280px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-179deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                  <div class="whub"><b>Landed</b><em>Serie A</em></div>
+                </div>
+              </div>
+              <div class="spot" style="width:150px;height:190px">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span><span class="btn p sm" style="font-size:9.5px;padding:7px 10px">Draft →</span></div>
+              </div>
+              <div class="col" style="gap:8px">
+                <div class="ptabs" style="width:170px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                <div class="pitchbox" style="width:96px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:13px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:13px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:13px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:13px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:13px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:13px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:13px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:13px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:13px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:13px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:13px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="width:100%;border-top:1px solid var(--line);padding-top:12px">
+              <p class="msg"><b>Priya</b>serie a again</p>
+              <div class="cin" style="width:260px">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>19</b><strong>The room</strong><em>Quote-Led</em>
+            <p>What the wheel just said, quoted at hero size, everything else arranged as the room's reaction to it. The one frame that treats the narrator's own line as the headline rather than a rail footnote.</p></div>
+        </figcaption>
+      </figure>
+
+      <!-- ══════════ 20 · DISPATCH — Letter ══════════ -->
+      <figure class="card">
+        <div class="scaler"><div class="frame l20">
+          <div class="ph m-b" style="inset:0;opacity:.38"><img src="../public/stadium.webp" alt="" /></div>
+          <div class="rel" style="padding:36px 220px;gap:18px">
+            <div class="row sp"><span class="d" style="font-size:14px">Spin the Wheel — round 5</span><span class="lbl">Pick 18 of 44</span></div>
+            <div class="row" style="gap:26px;align-items:center;margin-top:6px">
+              <div class="wmount" style="--wsize:150px">
+                <div class="wpointer"></div>
+                <div class="wheel" style="--rot:-185deg">
+                  <div class="wchip" style="--a:36deg"><img src="../public/leagues/premier-league.svg" alt="Premier League" /></div>
+                  <div class="wchip" style="--a:108deg"><img src="../public/leagues/la-liga.svg" alt="La Liga" /></div>
+                  <div class="wchip" style="--a:180deg"><img src="../public/leagues/serie-a.svg" alt="Serie A" /></div>
+                  <div class="wchip" style="--a:252deg"><img src="../public/leagues/bundesliga.svg" alt="Bundesliga" /></div>
+                  <div class="wchip" style="--a:324deg"><img src="../public/leagues/ligue-1.svg" alt="Ligue 1" /></div>
+                </div>
+              </div>
+              <p style="font-size:15px;line-height:1.65;color:var(--muted)">The wheel found <span class="acc" style="font-weight:600">Serie A</span>. Rafael Leão is sitting there for your open LW, and nothing about the rest of the pool changes until you take him or pass.</p>
+            </div>
+            <div class="hr"></div>
+            <div class="row" style="gap:24px;flex:1;min-height:0">
+              <div class="spot" style="width:160px">
+                <img class="sph" src="../public/players/rafael-leao.webp" alt="Rafael Leão" />
+                <div class="scrim"></div>
+                <div class="sinner"><span class="swhy" style="font-size:9.5px">Leão fills LW.</span><span class="btn p sm" style="font-size:10px;padding:8px 12px">Draft Leão →</span></div>
+              </div>
+              <div class="col" style="flex:1;min-height:0">
+                <span class="lbl">Also available</span>
+                <div class="clip" style="flex:1;margin-top:8px">
+                  <div class="pr" style="border-bottom:1px solid var(--line)"><span class="pos w">CB</span><img class="crest" src="../public/clubs/inter.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Alessandro Bastoni</span><span class="cl">Inter</span></div>
+                  <div class="pr"><span class="pos w">GK</span><img class="crest" src="../public/clubs/ac-milan.svg" style="width:17px;height:17px" alt="" /><span class="nm" style="flex:1">Mike Maignan</span><span class="cl">AC Milan</span></div>
+                </div>
+              </div>
+              <div class="col" style="gap:8px">
+                <div class="ptabs" style="width:150px"><span class="ptab">P</span><span class="ptab on">You</span><span class="ptab">1</span><span class="ptab">2</span></div>
+                <div class="pitchbox" style="width:88px">
+                  <svg class="mark" viewBox="0 0 68 105" fill="none" stroke="var(--line-strong)" stroke-width="0.4"><rect x="0.2" y="0.2" width="67.6" height="104.6"/><line x1="0.2" y1="52.5" x2="67.8" y2="52.5"/><circle cx="34" cy="52.5" r="9.15"/></svg>
+                  <div class="pnode" style="left:50%;top:89%;--node:12px"><span class="pdisc open"><b>GK</b></span></div>
+                  <div class="pnode" style="left:11%;top:71%;--node:12px"><span class="pdisc open"><b>LB</b></span></div>
+                  <div class="pnode" style="left:36%;top:80%;--node:12px"><span class="pdisc"><img src="../public/clubs/liverpool.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:64%;top:80%;--node:12px"><span class="pdisc open"><b>CB</b></span></div>
+                  <div class="pnode" style="left:89%;top:71%;--node:12px"><span class="pdisc open"><b>RB</b></span></div>
+                  <div class="pnode" style="left:33%;top:57%;--node:12px"><span class="pdisc"><img src="../public/clubs/bayern-munich.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:67%;top:57%;--node:12px"><span class="pdisc open"><b>CM</b></span></div>
+                  <div class="pnode" style="left:12%;top:34%;--node:12px"><span class="pdisc pend"><b>LW</b></span></div>
+                  <div class="pnode" style="left:50%;top:39%;--node:12px"><span class="pdisc"><img src="../public/clubs/real-madrid.svg" alt=""/></span></div>
+                  <div class="pnode" style="left:88%;top:34%;--node:12px"><span class="pdisc open"><b>RW</b></span></div>
+                  <div class="pnode" style="left:50%;top:17%;--node:12px"><span class="pdisc"><img src="../public/clubs/manchester-city.svg" alt=""/></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row sp" style="border-top:1px solid var(--line);padding-top:12px">
+              <p class="msg"><b>Priya</b>serie a again</p>
+              <div class="cin" style="width:260px">Message the room</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption>
+          <div class="cap"><b>20</b><strong>Dispatch</strong><em>Letter</em>
+            <p>The turn narrated as one short paragraph, with the wheel drawn small beside it like a wax seal — the only frame in the set where the wheel is anything less than the loudest object on screen, and it still isn't a corner widget: it opens the letter.</p></div>
+        </figcaption>
+      </figure>
+
+    </div>
+
+    <script>
+      // 1. Gallery view card zoom toggle
+      document.querySelectorAll('.gal .card').forEach((card) => {
+        card.querySelector('.scaler').addEventListener('click', () => card.classList.toggle('zoom'))
+      });
+
+      // 2. Battle Mode Tournament Engine
+      (function() {
+        const rawCards = Array.from(document.querySelectorAll('.gal > .card'));
+        const designs = rawCards.map((card, idx) => {
+          const cap = card.querySelector('figcaption .cap');
+          const num = cap?.querySelector('b')?.textContent.trim() || String(idx + 1).padStart(2, '0');
+          const title = cap?.querySelector('strong')?.textContent.trim() || `Layout ${num}`;
+          const sub = cap?.querySelector('em')?.textContent.trim() || '';
+          const desc = cap?.querySelector('p')?.textContent.trim() || '';
+          const scaler = card.querySelector('.scaler');
+          return {
+            id: idx,
+            num,
+            title,
+            sub,
+            desc,
+            scalerHtml: scaler ? scaler.innerHTML : '',
+            cardEl: card
+          };
+        });
+
+        // DOM elements
+        const btnGal = document.getElementById('btn-mode-gal');
+        const btnBattle = document.getElementById('btn-mode-battle');
+        const battleView = document.getElementById('battle-view');
+
+        // State
+        let isBattleMode = false;
+        let isShuffled = false;
+        let tournamentRound = 1;
+        let roundPool = [];
+        let roundMatches = [];
+        let roundWinners = [];
+        let roundByes = [];
+        let currentMatchIdx = 0;
+        let matchHistory = [];
+        let undoStack = [];
+        let championId = null;
+        let zoomState = { left: false, right: false, champion: false };
+
+        function getRoundTitle(roundNum, count) {
+          if (count === 2) return `Finals`;
+          if (count === 3 || count === 4) return `Semifinals`;
+          if (count <= 6) return `Quarterfinals (Top ${count})`;
+          return `Round ${roundNum} (Top ${count})`;
+        }
+
+        function buildRound(contestantIds) {
+          roundPool = [...contestantIds];
+          roundWinners = [];
+          roundByes = [];
+          currentMatchIdx = 0;
+
+          let pool = [...contestantIds];
+          // If odd count, give bye to the last contestant
+          if (pool.length % 2 === 1) {
+            const byeId = pool.pop();
+            roundByes.push(byeId);
+            roundWinners.push(byeId); // auto-advances
+          }
+
+          roundMatches = [];
+          for (let i = 0; i < pool.length; i += 2) {
+            roundMatches.push([pool[i], pool[i + 1]]);
+          }
+        }
+
+        function startTournament(shuffled = false) {
+          isShuffled = shuffled;
+          tournamentRound = 1;
+          championId = null;
+          matchHistory = [];
+          undoStack = [];
+          zoomState = { left: false, right: false, champion: false };
+
+          let ids = designs.map(d => d.id);
+          if (shuffled) {
+            for (let i = ids.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [ids[i], ids[j]] = [ids[j], ids[i]];
+            }
+          }
+          buildRound(ids);
+          render();
+        }
+
+        function setMode(battle) {
+          isBattleMode = battle;
+          if (isBattleMode) {
+            document.body.classList.add('in-battle-mode');
+            btnBattle.classList.add('active');
+            btnGal.classList.remove('active');
+            if (roundMatches.length === 0 && championId === null) {
+              startTournament(false);
+            } else {
+              render();
+            }
+            window.scrollTo({ top: battleView.offsetTop - 20, behavior: 'smooth' });
+          } else {
+            document.body.classList.remove('in-battle-mode');
+            btnGal.classList.add('active');
+            btnBattle.classList.remove('active');
+          }
+        }
+
+        btnGal.addEventListener('click', () => setMode(false));
+        btnBattle.addEventListener('click', () => setMode(true));
+
+        function pickOption(winnerId) {
+          const match = roundMatches[currentMatchIdx];
+          if (!match) return;
+
+          const loserId = match[0] === winnerId ? match[1] : match[0];
+
+          // Save undo snapshot
+          undoStack.push({
+            tournamentRound,
+            roundPool: [...roundPool],
+            roundMatches: roundMatches.map(m => [...m]),
+            roundWinners: [...roundWinners],
+            roundByes: [...roundByes],
+            currentMatchIdx,
+            matchHistory: [...matchHistory],
+            championId
+          });
+
+          roundWinners.push(winnerId);
+          matchHistory.push({
+            round: tournamentRound,
+            roundName: getRoundTitle(tournamentRound, roundPool.length),
+            idA: match[0],
+            idB: match[1],
+            winnerId,
+            loserId
+          });
+
+          currentMatchIdx++;
+          zoomState.left = false;
+          zoomState.right = false;
+
+          // Check if round finished
+          if (currentMatchIdx >= roundMatches.length) {
+            if (roundWinners.length === 1) {
+              championId = roundWinners[0];
+            } else {
+              tournamentRound++;
+              buildRound(roundWinners);
+            }
+          }
+
+          render();
+        }
+
+        function undoPick() {
+          if (undoStack.length === 0) return;
+          const prev = undoStack.pop();
+          tournamentRound = prev.tournamentRound;
+          roundPool = prev.roundPool;
+          roundMatches = prev.roundMatches;
+          roundWinners = prev.roundWinners;
+          roundByes = prev.roundByes;
+          currentMatchIdx = prev.currentMatchIdx;
+          matchHistory = prev.matchHistory;
+          championId = prev.championId;
+          zoomState = { left: false, right: false, champion: false };
+          render();
+        }
+
+        function viewWinnerInGallery(id) {
+          setMode(false);
+          const card = designs[id].cardEl;
+          if (card) {
+            document.querySelectorAll('.gal .card').forEach(c => c.classList.remove('highlight-winner'));
+            card.classList.add('highlight-winner');
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+              card.classList.remove('highlight-winner');
+            }, 4000);
+          }
+        }
+
+        function render() {
+          if (!isBattleMode) return;
+
+          if (championId !== null) {
+            renderChampionScreen();
+            return;
+          }
+
+          renderMatchScreen();
+        }
+
+        function renderMatchScreen() {
+          const match = roundMatches[currentMatchIdx];
+          if (!match) return;
+
+          const designA = designs[match[0]];
+          const designB = designs[match[1]];
+          const roundName = getRoundTitle(tournamentRound, roundPool.length);
+          const totalMatchesInRound = roundMatches.length;
+          const matchNum = currentMatchIdx + 1;
+
+          // Bye note
+          let byeNoticeHtml = '';
+          if (roundByes.length > 0) {
+            const byeNames = roundByes.map(id => `<b>${designs[id].num}</b> ${designs[id].title}`).join(', ');
+            byeNoticeHtml = `<div class="battle-notice">ℹ Bye: ${byeNames} received a bye this round and automatically advances to next round.</div>`;
+          }
+
+          battleView.innerHTML = `
+            <div class="battle-hud">
+              <div class="battle-hud-top">
+                <div class="battle-status">
+                  <span>⚔</span> ${roundName} · Match <b>${matchNum}</b> of <b>${totalMatchesInRound}</b>
+                </div>
+                <div class="battle-actions">
+                  <button type="button" class="battle-btn" id="btn-undo" ${undoStack.length === 0 ? 'disabled' : ''}>↩ Undo Pick</button>
+                  <button type="button" class="battle-btn" id="btn-restart-seq">⟲ Restart (1 vs 2)</button>
+                  <button type="button" class="battle-btn" id="btn-restart-rnd">🔀 Reshuffle</button>
+                  <button type="button" class="battle-btn" id="btn-exit">✕ Exit Battle</button>
+                </div>
+              </div>
+              <div class="battle-ladder">
+                <span class="ladder-step ${tournamentRound > 1 ? 'done' : 'curr'}">R1 (20)</span>
+                <span class="ladder-sep">→</span>
+                <span class="ladder-step ${tournamentRound > 2 ? 'done' : tournamentRound === 2 ? 'curr' : ''}">R2 (10)</span>
+                <span class="ladder-sep">→</span>
+                <span class="ladder-step ${tournamentRound > 3 ? 'done' : tournamentRound === 3 ? 'curr' : ''}">R3 (5)</span>
+                <span class="ladder-sep">→</span>
+                <span class="ladder-step ${tournamentRound > 4 ? 'done' : tournamentRound === 4 ? 'curr' : ''}">Semis (3)</span>
+                <span class="ladder-sep">→</span>
+                <span class="ladder-step ${tournamentRound === 5 ? 'curr' : ''}">Finals (2)</span>
+                <span class="ladder-sep">→</span>
+                <span class="ladder-step">🏆 Winner</span>
+                <span class="battle-hint">Pick: <kbd>1</kbd> / <kbd>←</kbd> Left &nbsp; <kbd>2</kbd> / <kbd>→</kbd> Right &nbsp; <kbd>U</kbd> Undo</span>
+              </div>
+              ${byeNoticeHtml}
+            </div>
+
+            <div class="battle-arena">
+              <!-- SLOT LEFT (A) -->
+              <div class="battle-slot" id="slot-left">
+                <div class="battle-slot-top">
+                  <div class="battle-slot-info">
+                    <div class="battle-slot-title"><b>${designA.num}</b>${designA.title}</div>
+                    <div class="battle-slot-sub">${designA.sub}</div>
+                  </div>
+                  <button type="button" class="battle-pick-btn" id="pick-btn-left">
+                    Pick This <kbd>1 / ←</kbd>
+                  </button>
+                </div>
+                <div class="battle-slot-tools">
+                  <span class="lbl">Click card or pick button</span>
+                  <button type="button" class="battle-zoom-btn" id="zoom-btn-left">${zoomState.left ? 'Shrink' : '🔍 Inspect (1280x800)'}</button>
+                </div>
+                <div class="battle-frame-wrap ${zoomState.left ? 'zoomed' : ''}" id="frame-left">
+                  <div class="card">
+                    <div class="scaler">${designA.scalerHtml}</div>
+                  </div>
+                </div>
+                <div class="battle-slot-desc">${designA.desc}</div>
+              </div>
+
+              <!-- SLOT RIGHT (B) -->
+              <div class="battle-slot" id="slot-right">
+                <div class="battle-slot-top">
+                  <div class="battle-slot-info">
+                    <div class="battle-slot-title"><b>${designB.num}</b>${designB.title}</div>
+                    <div class="battle-slot-sub">${designB.sub}</div>
+                  </div>
+                  <button type="button" class="battle-pick-btn" id="pick-btn-right">
+                    Pick This <kbd>2 / →</kbd>
+                  </button>
+                </div>
+                <div class="battle-slot-tools">
+                  <span class="lbl">Click card or pick button</span>
+                  <button type="button" class="battle-zoom-btn" id="zoom-btn-right">${zoomState.right ? 'Shrink' : '🔍 Inspect (1280x800)'}</button>
+                </div>
+                <div class="battle-frame-wrap ${zoomState.right ? 'zoomed' : ''}" id="frame-right">
+                  <div class="card">
+                    <div class="scaler">${designB.scalerHtml}</div>
+                  </div>
+                </div>
+                <div class="battle-slot-desc">${designB.desc}</div>
+              </div>
+            </div>
+          `;
+
+          // Bind listeners
+          document.getElementById('pick-btn-left').addEventListener('click', () => pickOption(designA.id));
+          document.getElementById('pick-btn-right').addEventListener('click', () => pickOption(designB.id));
+
+          document.getElementById('frame-left').querySelector('.scaler').addEventListener('click', () => {
+            if (!zoomState.left) pickOption(designA.id);
+          });
+          document.getElementById('frame-right').querySelector('.scaler').addEventListener('click', () => {
+            if (!zoomState.right) pickOption(designB.id);
+          });
+
+          document.getElementById('zoom-btn-left').addEventListener('click', (e) => {
+            e.stopPropagation();
+            zoomState.left = !zoomState.left;
+            render();
+          });
+          document.getElementById('zoom-btn-right').addEventListener('click', (e) => {
+            e.stopPropagation();
+            zoomState.right = !zoomState.right;
+            render();
+          });
+
+          document.getElementById('btn-undo').addEventListener('click', undoPick);
+          document.getElementById('btn-restart-seq').addEventListener('click', () => startTournament(false));
+          document.getElementById('btn-restart-rnd').addEventListener('click', () => startTournament(true));
+          document.getElementById('btn-exit').addEventListener('click', () => setMode(false));
+        }
+
+        function renderChampionScreen() {
+          const champ = designs[championId];
+          const champVictories = matchHistory.filter(m => m.winnerId === championId);
+
+          const victoriesListHtml = champVictories.map(m => {
+            const defeated = designs[m.loserId];
+            return `<li><span class="r-tag">${m.roundName}</span> Defeated <b>#${defeated.num}</b> ${defeated.title} (${defeated.sub})</li>`;
+          }).join('');
+
+          battleView.innerHTML = `
+            <div class="battle-hud">
+              <div class="battle-hud-top">
+                <div class="battle-status">
+                  <span>🏆</span> TOURNAMENT COMPLETED · WINNER DECIDED
+                </div>
+                <div class="battle-actions">
+                  <button type="button" class="battle-btn" id="btn-undo" ${undoStack.length === 0 ? 'disabled' : ''}>↩ Undo Final Pick</button>
+                  <button type="button" class="battle-btn accent" id="btn-restart-seq">⚔ New Tournament (Sequential)</button>
+                  <button type="button" class="battle-btn" id="btn-restart-rnd">🔀 New Tournament (Shuffled)</button>
+                  <button type="button" class="battle-btn" id="btn-view-gal">▦ View in Gallery</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="battle-champion-box">
+              <div class="champion-banner">
+                <h2><b>🏆 Champion:</b> #${champ.num} ${champ.title} <em>(${champ.sub})</em></h2>
+                <p>${champ.desc}</p>
+              </div>
+
+              <div class="battle-slot-tools">
+                <span class="lbl">Winning Layout</span>
+                <button type="button" class="battle-zoom-btn" id="zoom-btn-champ">${zoomState.champion ? 'Shrink' : '🔍 Inspect Full Size (1280x800)'}</button>
+              </div>
+
+              <div class="battle-frame-wrap ${zoomState.champion ? 'zoomed' : ''}" id="frame-champ">
+                <div class="card">
+                  <div class="scaler">${champ.scalerHtml}</div>
+                </div>
+              </div>
+
+              <div class="battle-run-summary">
+                <h4>Tournament Path to Victory</h4>
+                <ul class="battle-run-list">
+                  ${victoriesListHtml || '<li>Uncontested run.</li>'}
+                </ul>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('btn-undo').addEventListener('click', undoPick);
+          document.getElementById('btn-restart-seq').addEventListener('click', () => startTournament(false));
+          document.getElementById('btn-restart-rnd').addEventListener('click', () => startTournament(true));
+          document.getElementById('btn-view-gal').addEventListener('click', () => viewWinnerInGallery(champ.id));
+
+          document.getElementById('zoom-btn-champ').addEventListener('click', () => {
+            zoomState.champion = !zoomState.champion;
+            render();
+          });
+        }
+
+        // Global keyboard listener
+        window.addEventListener('keydown', (e) => {
+          if (!isBattleMode) return;
+
+          // If in match view
+          if (championId === null && roundMatches.length > 0) {
+            const match = roundMatches[currentMatchIdx];
+            if (!match) return;
+
+            if (e.key === '1' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              pickOption(match[0]);
+            } else if (e.key === '2' || e.key === 'ArrowRight') {
+              e.preventDefault();
+              pickOption(match[1]);
+            } else if (e.key === 'u' || e.key === 'U' || (e.key === 'z' && (e.ctrlKey || e.metaKey))) {
+              e.preventDefault();
+              undoPick();
+            } else if (e.key === 'Escape') {
+              if (zoomState.left || zoomState.right) {
+                zoomState.left = false;
+                zoomState.right = false;
+                render();
+              }
+            }
+          } else if (championId !== null) {
+            if (e.key === 'u' || e.key === 'U' || (e.key === 'z' && (e.ctrlKey || e.metaKey))) {
+              e.preventDefault();
+              undoPick();
+            }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

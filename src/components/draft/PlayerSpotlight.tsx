@@ -9,6 +9,12 @@ interface PlayerSpotlightProps {
   canDraft: boolean
   reason: string
   actionLabel: string
+  /**
+   * Where the panel sits and how big it is — the one thing that differs
+   * between the two screens that use it. Free Pick docks it beside the pool
+   * at a fixed width; Spin the Wheel gives it a whole cell of the orbit.
+   */
+  className?: string
 }
 
 /**
@@ -25,7 +31,14 @@ interface PlayerSpotlightProps {
 // crashing on a lookup miss.
 const DEFAULT_CENTER: [number, number, number, number] = [0.5, 0.35, 0.8, 0.2]
 
-export function PlayerSpotlight({ player, onDraft, canDraft, reason, actionLabel }: PlayerSpotlightProps) {
+export function PlayerSpotlight({
+  player,
+  onDraft,
+  canDraft,
+  reason,
+  actionLabel,
+  className = 'hidden w-[var(--draft-portrait)] shrink-0 lg:block',
+}: PlayerSpotlightProps) {
   const [failed, setFailed] = useState(false)
 
   useEffect(() => setFailed(false), [player?.id])
@@ -33,7 +46,9 @@ export function PlayerSpotlight({ player, onDraft, canDraft, reason, actionLabel
   const [fx, fy, ar, fh] = player ? (faceCenters[slugify(player.name)] ?? DEFAULT_CENTER) : DEFAULT_CENTER
 
   return (
-    <div className="spotlight-frame relative hidden w-[var(--draft-portrait)] shrink-0 overflow-hidden border border-line bg-surface lg:block">
+    <div
+      className={`spotlight-frame relative overflow-hidden border border-line bg-surface ${className}`}
+    >
       {player && !failed ? (
         <img
           key={player.id}
@@ -63,7 +78,10 @@ export function PlayerSpotlight({ player, onDraft, canDraft, reason, actionLabel
         />
       ) : null}
 
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-[8px] bg-gradient-to-t from-ground via-ground/75 to-transparent p-[14px] pt-[40px]">
+      {/* Named so a layout with a differently-shaped panel can deepen it — the
+          orbit's portrait is wide and short, and this fade has a third of the
+          height there that it has here to get out of the way of a photograph. */}
+      <div className="spotlight-scrim absolute inset-x-0 bottom-0 flex flex-col gap-[8px] bg-gradient-to-t from-ground via-ground/75 to-transparent p-[14px] pt-[40px]">
         <p className="truncate text-[10.5px] leading-[1.4] text-dim">{reason}</p>
         <button
           type="button"
