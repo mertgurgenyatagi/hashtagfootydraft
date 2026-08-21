@@ -1356,3 +1356,256 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* ============================================================================
+   THE AUCTION DRAFT SCREEN — "The block"
+   Layout 01 of the exhibition: the lot is the page, and one unbroken centre
+   column runs the count, the footballer, the countdown and the bidders. It
+   inherits `.draft` for the frame padding and the pitch tokens, and everything
+   below is what that layout has no equivalent of anywhere else in the app.
+
+   Two of the exhibition's twelve non-negotiables live here rather than in a
+   component: the stadium runs LOUD on this route (`.plate-block`, well past the
+   .30–.36 the earlier screens use), and every photograph and crest carries its
+   own colour with no filter over it at all. Nothing on this screen tints, greys
+   or blends artwork — the plate is the only treated image on the page, which is
+   precisely what makes the faces read as the only colour on it.
+   ============================================================================ */
+
+.auction {
+  /* One `clamp()` against `cqh` per size, same as everywhere else — but read
+     which container each one resolves against before touching a number. The
+     three marked *displayer* below are used inside `.spotlight-frame`, which
+     is itself a size container, so their `cqh` is a percentage of the
+     photograph's own box (~420px at 1280x800) rather than of the app frame.
+     The rest sit outside it and are scaled against the frame's 800px, where
+     `max / 8` lands the preferred term exactly on the drawn value. */
+  --auction-name: clamp(26px, 11.8cqh, 50px); /* displayer */
+  --auction-open: clamp(17px, 6.1cqh, 26px); /* displayer */
+  --auction-stamp: clamp(34px, 16cqh, 68px); /* displayer */
+  --auction-clock: clamp(28px, 5.75cqh, 46px);
+  --auction-bid: clamp(19px, 4cqh, 32px);
+
+  /* The pitch gets a narrower column here than on Free Pick, so the nodes and
+     the plates come down with it. */
+  --draft-node: clamp(32px, 5.25cqh, 42px);
+  --draft-name: 104px;
+  --draft-name-size: 13px;
+}
+
+.auction-name {
+  font-size: var(--auction-name);
+}
+.auction-clock {
+  font-size: var(--auction-clock);
+}
+.auction-bid {
+  font-size: var(--auction-bid);
+}
+.auction-open {
+  font-size: var(--auction-open);
+}
+.auction-stamp {
+  font-size: var(--auction-stamp);
+}
+
+/* ---- The columns. One, then two, then three — same three shapes as the
+        other draft screens, at this layout's own widths. ---- */
+
+.auction-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Explicit, because an `auto` row is sized by its tallest item and the one
+     column that would not shrink would set the height of all three. */
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+}
+
+.auction-rail {
+  display: none;
+  min-height: 0;
+}
+
+.auction-centre,
+.auction-board {
+  display: flex;
+  min-height: 0;
+}
+
+/* One phone-width column: the block and the elevens take turns. */
+@media (max-width: 767px) {
+  .auction[data-pane='board'] .auction-centre,
+  .auction[data-pane='block'] .auction-board {
+    display: none;
+  }
+}
+
+/* Two: what is on the block, and what everyone has built. */
+@media (min-width: 768px) {
+  .auction-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(228px, 26vw, 292px);
+  }
+}
+
+/* Three. The rail comes back with the record of what has already gone — the
+   one thing on this screen that is history rather than the present tense. */
+@media (min-width: 1180px) {
+  .auction-grid {
+    grid-template-columns: 236px minmax(0, 1fr) clamp(256px, 22vw, 296px);
+  }
+
+  .auction-rail {
+    display: flex;
+  }
+}
+
+/* ---- Money. One figure, one suffix, everywhere it appears. Only the
+        pseudo-element is declared, so nothing here can outrank a utility on
+        the element itself — see the `.plate` gotcha above. ---- */
+
+.money::after {
+  content: 'M';
+  font-size: 0.44em;
+  margin-left: 0.09em;
+  vertical-align: 0.42em;
+  opacity: 0.5;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+/* ---- The two chips in the top bar. ---- */
+
+.auction-tag {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  white-space: nowrap;
+  border-width: 1px;
+  border-radius: 2px;
+  padding: 3px 7px;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ---- The sold record: full square faces, two across the rail.
+
+   Square rather than the ruled 22px discs layout 01 first drew, on Mert's
+   instruction — a lot is a footballer before it is a price, and at rail width
+   a square photograph identifies one far faster than a surname in 12px. ---- */
+
+.auction-sold {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auction-sold-face {
+  aspect-ratio: 1;
+}
+
+/* Below this the rail is showing one row of cards and a clock's worth of chat;
+   the second row is the first thing to give. */
+@container app (max-height: 700px) {
+  .auction-sold > li:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+/* NON-NEGOTIABLE 9 — the queue is sealed. Nothing on the screen previews it,
+   so the boundary between what you can see and what you cannot is drawn as an
+   object rather than left as an absence. */
+.auction-seal {
+  border: 1px dashed var(--color-line-strong);
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    color-mix(in oklab, var(--color-ink) 4%, transparent) 5px 6px
+  );
+}
+
+/* ---- The bidders, side by side. Five across on a desktop column; on a phone
+        they wrap rather than compress to an unreadable 60px. ---- */
+
+.auction-bids {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+}
+
+/* ---- The displayer. ---- */
+
+.auction-block-top {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--color-ground) 80%, transparent),
+    transparent
+  );
+}
+
+/* ---- The countdown, drained rather than counted.
+
+   An animation rather than a transition on width: the clock is restarted by
+   any bid from any seat, and a keyed animation restarts cleanly where a
+   transition would ease back from wherever it had got to. Compositor-only,
+   like everything else that moves in this app. ---- */
+
+.auction-drain {
+  transform-origin: left center;
+  animation-name: fd-drain;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* ---- One phone-width column has to hold a photograph, a clock, five bidders
+        and three steps without the page ever scrolling. The bidders are where
+        the room comes from: five cards in one row rather than three in two,
+        which costs them their seat disc — the mark is already on the table
+        strip directly above, in the same order — and buys the displayer back
+        about ninety pixels of height. ---- */
+
+@media (max-width: 767px) {
+  .auction-bids {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .auction-bid-card {
+    padding: 6px 6px 6px;
+    gap: 4px;
+  }
+
+  .auction-bid-disc {
+    display: none;
+  }
+
+  .auction-pass {
+    width: 72px;
+  }
+}
+
+/* ---- The stadium, LOUD.
+
+   Non-negotiable 10 of the exhibition: .72 here against the .30–.36 every
+   earlier screen uses, full bleed and vignetted toward the top rather than
+   pushed into one edge. The plate is what gives the site life, and on this
+   route it is also doing a second job — it stays monochrome and tinted on
+   purpose so that the now-unfiltered photographs and crests read as the only
+   colour on the page. The scrim over it is what keeps the type on top of it
+   readable at that opacity. ---- */
+
+.plate-block {
+  opacity: 0.72;
+  -webkit-mask-image: radial-gradient(125% 105% at 50% 26%, #000 32%, transparent 100%);
+  mask-image: radial-gradient(125% 105% at 50% 26%, #000 32%, transparent 100%);
+}
+
+.plate-block img {
+  filter: grayscale(1) contrast(1.22) brightness(0.68);
+}
+
+.plate-block-scrim {
+  background: color-mix(in oklab, var(--color-ground) 74%, transparent);
+}

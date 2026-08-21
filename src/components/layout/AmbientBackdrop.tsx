@@ -23,8 +23,9 @@ export function AmbientBackdrop() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isSpin = location.pathname.startsWith('/draft/spin-the-wheel')
-  const isDraft = location.pathname.startsWith('/draft') && !isSpin
-  const isLobby = !isHome && !isDraft && !isSpin
+  const isAuction = location.pathname.startsWith('/draft/auction')
+  const isDraft = location.pathname.startsWith('/draft') && !isSpin && !isAuction
+  const isLobby = !isHome && !isDraft && !isSpin && !isAuction
 
   const shown = (visible: boolean) =>
     `absolute inset-0 transition-opacity duration-500 ease-out ${
@@ -73,6 +74,25 @@ export function AmbientBackdrop() {
           />
           <div className="plate-tint absolute inset-0" />
         </div>
+      </div>
+
+      {/* Auction: full bleed and loud — .72 against the .30–.36 the others run
+          at, vignetted toward the top so the block's own caption stays on the
+          quiet part of it. A scrim rides over the photograph rather than the
+          opacity coming down, because the point of the change is that the
+          stand is *there*; what has to give is contrast under the type, not
+          the plate itself. */}
+      <div className={shown(isAuction)}>
+        <div className="plate-block absolute inset-0">
+          <img
+            src={`${import.meta.env.BASE_URL}stadium.webp`}
+            alt=""
+            className="plate-drift h-full w-full object-cover object-[50%_30%]"
+            draggable={false}
+          />
+          <div className="plate-tint absolute inset-0" />
+        </div>
+        <div className="plate-block-scrim absolute inset-0" />
       </div>
 
       {/* Free Pick: a narrow band down the left edge, well under the reading
