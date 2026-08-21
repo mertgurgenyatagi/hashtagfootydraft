@@ -103,6 +103,19 @@ pass: no brainstorming phase, sensible defaults chosen and stated rather than as
 Deal or No Deal draft screen** below for the full record. That branch was committed, pushed
 and merged to `main` on 2026-08-20. All work described below is now on `main`.
 
+The **`auction-draft-ui`** branch, cut on 2026-08-21, opened the last of the four draft screens
+with a **12-layout exhibition** (`mockups/auction.html`), built against twelve non-negotiables
+Mert set before any layout was drawn — see **The Auction draft screen exhibition** below. Two of
+those constraints are stated as **site-wide changes that start here**: player photographs and club
+crests now carry their own colour with no filter at all, and the stadium plate runs far louder
+than the earlier screens set it. A third — that **auction bidding is real time, not turn-based** —
+is a game-rule clarification and is recorded under Auction below. **Layout 01 · The block** was
+picked off that exhibition and **built the same day**, with the sold record swapped to layout 09's
+square photographs; both site-wide changes went in with it, on the Auction route only. That
+completes the front end — all four formats now have a screen. A Tachyon-mode pass throughout: no
+brainstorming phase, no plan phase, defaults chosen and stated afterward rather than asked
+mid-build.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -163,7 +176,7 @@ does it. Nothing anywhere else in `src/` declares a colour.
 | `--color-ground` | `#071414` | page ground — near-black, deep teal |
 | `--color-ink` | `#e2f0ee` | primary text — off-white, faintly green |
 | `--color-accent` | `#ef7a3c` | orange — primary CTA fill, section titles, focus rings |
-| `--color-tint` | `#123030` | the `mix-blend-mode: color` wash over every photograph |
+| `--color-tint` | `#123030` | the `mix-blend-mode: color` wash over the stadium backdrop |
 
 Derived, in the same block: `--color-surface` / `--color-surface-2` (panels, tiles),
 `--color-line` / `--color-line-strong` (hairlines), `--color-muted` / `--color-dim`
@@ -182,6 +195,11 @@ Standing rules:
 - **No glow.** No `box-shadow` as a halo, no coloured blur. Depth comes from an offset
   directional shadow or a flat surface step.
 - **Off-white, never `#fff`.** Use `--color-ink` wherever pure white is tempting.
+- **Photographs of footballers and club crests are exempt from all of it.** They render in their
+  own colour, unfiltered — no grayscale, no tint wash, no blend mode. *(Set by Mert 2026-08-21 on
+  the `auction-draft-ui` exhibition; site-wide in intent, not yet applied to `src/`.)* The tint is
+  the backdrop's treatment only. The one-saturated-accent rule still governs everything the app
+  draws itself.
 - **Do not reuse the Premier League palette** (`#37003C` / `#00FF87`) — #footydraft
   spans multiple leagues and hasn't earned those colours.
 
@@ -366,8 +384,8 @@ LANCZOS, and save at `quality=76, method=6`.
 
 ### Built so far
 
-**The home page, both lobbies and two of the four draft screens — Free Pick and Spin the
-Wheel.** `App.tsx` is a
+**The home page, both lobbies and all four draft screens — Free Pick, Spin the Wheel,
+Deal or No Deal and Auction.** `App.tsx` is a
 `HashRouter` over `/`, `/solo/:formatId` (plus a bare `/solo`), `/lobby/:code` and
 `/draft/:formatId`, with a catch-all back to home. The hash is not a preference: GitHub Pages serves static files
 with no rewrite rules, so a deep link that isn't in the hash 404s on refresh — and
@@ -1212,6 +1230,209 @@ round shuffle, the round-robin order, the box draw, and the banker's pricing/off
 hands to the next seat rather than reversing. Not checked in a browser this pass, per Mert's
 explicit "no playwright."
 
+### The Auction draft screen exhibition (2026-08-21, `auction-draft-ui`)
+
+**Where:** `mockups/auction.html`. Same self-contained gallery shell as the other four — 1280×800
+frames at half scale, click one to zoom to full width, opens straight off disk, no build step and
+no server, plus the per-frame **Hide** button the Deal or No Deal run introduced.
+
+**Twelve layouts, not twenty.** Palette fixed to petrol, type held to Oswald + Inter, no motion —
+the three standing exhibition rules. What is different about this run is that it was built to a
+**list of twelve non-negotiables set before any layout was drawn**, so no frame is distinguishable
+by which requirement it dropped. Every one of the twelve satisfies all twelve:
+
+1. Pitch view with drafter tabs. 2. A turn indicator. 3. Chat. 4. **A fixed centre stack** — the
+count of what is left at the top of the player displayer, the displayer, then the countdown, then
+the lobby members side by side with their bids plainly visible. 5. A back-to-menu control.
+6. Events legible with or without a narrator. 7. **No sentences anywhere.** 8. Player photographs
+and club crests in their own colour with no effects. 9. Upcoming lots a mystery, previous lots
+shown. 10. The stadium loud, not faint. 11. Pitch nodes are faces. 12. Bidding drawn as real time.
+
+01 The block · Marquee Hero — 02 Floodlight · Photographic — 03 The rostrum · Split Studio —
+04 The ledger · Stat-Led — 05 The board · Bento Grid — 06 Paddle · Index-First — 07 Exchange ·
+Workbench — 08 Podium · Map/Diagram — 09 Lots · Catalogue — 10 The name · Type Specimen —
+11 Tote · Component Playground — 12 Terrace · Ecosystem Index.
+
+**One internally consistent draft state across all twelve**, so the frames are comparable: Auction ·
+Top 5 leagues · 5 drafters (You, Priya, Sam, Bot 1, Bot 2) · 800M each at start · lot 23 of 75 ·
+Kylian Mbappé (ST, Real Madrid) on the block · opening 140M · held at 165M by Sam · 9s. Your four
+purchases are Alisson, Saliba, Hakimi and Rice for 295M, which is where the 505M left comes from.
+Every name, club, nation, age, crest and price is a real row of `player_data.csv`; the 75-lot
+figure is the `15 × N` cap and the 800M figure is the documented ×19 budget at Top 5.
+
+#### Three decisions the constraints forced, worth carrying into the build
+
+- **A real-time auction has no turn, so the turn indicator is a *holder* readout** — who currently
+  holds the lot, at what price — welded to the countdown that their bid resets. There is no turn
+  language anywhere on any frame, and the three increment buttons are live for every seat at once.
+- **The increment buttons carry two numbers**, the step and what it lands on (`+5` over `170M`).
+  A step button that names only its step makes you do arithmetic against a clock.
+- **The sealed tile** (`24 · ?`) is how non-negotiable 9 is drawn. Every frame ends its record of
+  sold lots with one, so the boundary between what you can see and what you cannot is a visible
+  edge rather than an absence. Unsold lots stay in the record (lot 19, Pedri) — R8-Q4 makes that a
+  real event and it belongs on screen.
+
+#### Three inventions specific to one frame each
+
+- **07's price ladder** — opening bid, live high, and where each of the three steps would land,
+  plotted on one horizontal scale. The only place a bid is a position rather than a figure.
+- **08's podium** — bid drawn as bar height against the opening bid, so who is winning is a shape
+  before it is a number, and a passed seat is a dashed stub rather than merely dimmed.
+- **12's index band** — all five squads as eleven filled-or-empty cells plus each drafter's last
+  purchase, so the four boards you are *not* looking at still tell you something.
+
+**Status: resolved.** Layout **01 · The block** (Marquee Hero) is what got built, with one
+modification Mert asked for on picking: **the Sold record uses layout 09's full square
+photographs** rather than 01's ruled rows of 22px discs. Built the same day — see **The
+Auction draft screen** below, which supersedes the frame wherever they disagree.
+
+**Two site-wide changes this run states:**
+
+- **Player photographs and club crests carry their own colour, with no filter at all** *(Mert,
+  2026-08-21)*. This is the first screen in the app to do it, and it is intended to go everywhere.
+  It narrows the `--color-tint` rule under Design tokens — the `mix-blend-mode: color` wash is now
+  the **backdrop's** treatment, not "every photograph's". The never-recolour-a-crest rule is
+  unchanged and this only strengthens it.
+- **The stadium plate is loud** — `.55–.90` across these frames against the `.30–.36` the earlier
+  runs used, because the plate is what gives the site life. It stays monochrome and tinted on
+  purpose: with the photographs now in colour, the plate is what makes the faces read as the only
+  colour on the page. Flagged as a judgement call — a full-colour plate is one line, but it would
+  break the four-prime palette everywhere at once.
+
+**Both are now live in `src/`, but only on the Auction route.** The Auction screen draws every
+photograph and crest unfiltered and runs the plate at `.72` full bleed (`.plate-block` in
+`index.css`, a fifth placement in `AmbientBackdrop`). The other three draft screens, the two
+lobbies and the home page still run their own `.30–.55` placements. Rolling the loud plate out
+to them is a separate pass and has not been done — the change reads very differently under a
+pool of four hundred rows than it does under one photograph.
+
+### The Auction draft screen (built, 2026-08-21, `auction-draft-ui`)
+
+`src/routes/AuctionDraft.tsx`, reached through `Draft.tsx`, which now dispatches all four
+formats. New parts are `src/lib/auctionEngine.ts` (pure) and three components in
+`src/components/draft/` — `AuctionBlock`, `BidBoard`, `SoldRecord`. It shares the pool loader,
+`PitchView`, `TableStrip` and `DraftChat` with the other three, and reuses the `.spotlight-frame`
+/ `.spotlight-photo` face-anchoring formula for the displayer.
+
+**Layout 01 · The block**, as picked, with the one modification asked for: the Sold record is
+layout 09's square-cropped cards rather than 01's ruled rows. It is a **Tachyon-mode** pass — no
+brainstorming, no plan phase, defaults chosen and stated here rather than asked mid-build.
+
+#### What makes it a different screen, not the same screen with money on it
+
+**There is no turn, so there is no turn indicator and no turn language anywhere on it.** Every
+seat's increment buttons are live at once, any seat can raise at any moment, and the clock
+measures *inactivity* rather than anybody's window — a bid from anyone sends it back to full and
+a lot sells when the clock runs out on it. What the screen shows in place of a turn is a
+**holder**: who has the lot, at what price, welded to the left end of the countdown rail their
+bid resets.
+
+**There is also no narrator.** Non-negotiable 6 said events had to be legible with or without
+one and non-negotiable 7 banned sentences outright, and layout 01 has neither — so the build
+doesn't either. Events are *drawn*: the hammer lands across the photograph at display size and
+holds for 1.9s, the sold record keeps the history, the holder readout carries the present tense,
+and the HIGH tag moves between bid cards. **Nothing on this screen is a sentence** — the only
+prose anywhere in the column is what people type into chat.
+
+#### What is on screen
+
+Top bar: `Back to home`, an accent `Auction` chip and the scope chip, with the table strip
+opposite. The strip's accent disc marks **the holder**, not a turn. Then three hairline-divided
+columns — `236px / 1fr / clamp(256px, 22vw, 296px)`:
+
+- **Sold**, left — the last four lots as square face cards, newest first, two across: photograph,
+  surname and price, crest and buyer. Your own purchases are drawn in accent; an **unsold lot
+  stays in the record**, dimmed whole, because passing on a footballer is a real event *(R8-Q4)*
+  and a record that only listed sales would rewrite what happened. Under it, the **sealed tile** —
+  `24 · ?`. Nothing on the screen previews the queue, so the boundary between what you can see
+  and what you cannot is drawn as an object rather than left as an absence. Chat sits beneath.
+- **The block**, centre — the fixed stack, in the order the non-negotiables set it: the count
+  (`Lot 23 / 75` · `52 left`) at the top of the displayer, the displayer, the countdown, the five
+  drafters side by side with their bids, then the three steps. The footballer is full bleed and
+  face-anchored, in their own colour, with the opening bid in the caption.
+- **The elevens**, right — `PitchView` behind the same drafter tabs the other three screens use,
+  with `Filled n / 11` and `Left {budget}M` under it. Every board is open to everyone the whole
+  way through, same as everywhere else.
+
+**The increments carry two numbers each** — the step and what it lands on (`+5` over `170M`). A
+button that names only its step makes you do arithmetic against a clock. **The first bid on a lot
+is exactly at the opening price**, so the three steps are redundant in round one and mask down to
+one `Bid` and a `Pass`, exactly as the rule says. A step you cannot afford is disabled, and
+nobody bids against themselves.
+
+#### The rules it implements
+
+- **The lot list is capped at 15 × lobby size**, built position-by-position first — `N` per
+  single-occupancy slot and `2N` for CB, which is `11N` — with the remaining `4N` drawn from the
+  rest of the scoped pool under the settled `p ∝ exp((ability − max) / 10)` skew. The order is
+  then shuffled: reveal order is fully random *(R6-Q1)*.
+- **Budget is `(average derived price of the scoped pool) × 19`, rounded to the nearest 100M**
+  *(R8-Q0 as amended)*. This is the first place in `src/` that figure has existed, which closes
+  the follow-up the training spec flagged: there was no frontend budget number to update, so ×19
+  is simply what shipped.
+- **Opening bid is 70% of derived price, rounded to the nearest 5M.**
+- **A purchase lands straight in an open slot; only when every slot for that position is full
+  does it overflow** *(R7.2-Q1)*. The spares panel is rendered **only on your own board and only
+  once there is something in it** — a spare is private *(R5-Q8)*, and an empty panel for a state
+  most drafts never reach is furniture. Clicking one performs the **two-way graveyard swap**
+  *(R7.3-Q2)*: it goes into its slot and whoever was holding it comes back out. That works after
+  the draft ends too, which is all that survives of post-draft editing under a hard position gate.
+- **Bidding is not gated by slot status** *(R5-Q6)* — a seat with a full XI can keep raising, and
+  the bots do, at about a third of their normal appetite.
+- **Unsold lots** go to the pile and **backfill** fills any empty slot at the end with the
+  cheapest still-eligible footballer, drawn from the scoped pool minus everything sold — so it
+  reaches the un-auctioned remainder first and the unsold pile only after. The Squad Completion
+  Guarantee holds by construction.
+- **The hard global stop** *(R3-Q10)*: the auction ends the moment no seat with an open slot can
+  afford the opening bid on any remaining lot, or when the lot list runs out.
+
+#### Judgement calls made without asking, worth overruling if wrong
+
+- **Timers off still gets a countdown, at the 15s default.** The clock is this format's own
+  closing mechanism rather than a courtesy to a slow drafter — with no turns, it is the only
+  thing that ends a lot, so switching it off would leave a lot open forever.
+- **A bot that has been priced out is marked passed** rather than quietly stopping. Its valuation
+  is fixed for the lot's length and its budget only falls, so it can never come back in — saying
+  so is what draws the four dimmed cards next to the one holding it, which is the read layout 01
+  gets from `.bid.out`.
+- **Bots are heuristics local to the engine**, like the other three screens: a per-lot ceiling
+  from derived price, positional need and how many slots are left, with a deterministic per-seat
+  "taste" so a table doesn't agree on every valuation. The exported ML policy is still not wired
+  into any draft screen.
+- **The pitch previews your buy only while you actually hold the lot.** A preview of somebody
+  else's lot landing in your XI is a lie.
+- **The plate change is Auction-only for now** — see above.
+
+#### One race worth not rediscovering
+
+A lot closes when its clock reaches zero, and a *new* lot renders once before its own clock
+effect has run — so a plain `seconds` state is still holding the previous lot's zero at that
+moment and hammers the new lot down unsold before anybody has seen it. The countdown is
+therefore stored as `{ key, left }`, stamped with the lot-and-bid it belongs to, and the closing
+effect refuses to act on a value whose key isn't the current one. That makes the state
+unrepresentable rather than merely rare — the same fix the Spin the Wheel screen needed for its
+own one-render window.
+
+#### Gotcha worth not rediscovering
+
+**`cqh` resolves against the nearest size container, and `.spotlight-frame` is one.** Three of
+this screen's type sizes (`--auction-name`, `--auction-open`, `--auction-stamp`) are read inside
+the displayer, so their `cqh` is a percentage of the *photograph's* box, not of the app frame's
+800px — the usual `max / 8` derivation is wrong for them and gives a size that sits on its floor
+forever. They are scaled against the displayer's own ~420px instead, and marked as such in the
+CSS. Everything else on the screen sits outside that container and uses the normal derivation.
+
+#### Verification
+
+`npm run build` (typecheck + build) and `npm test` — 40 tests, 11 files, all passing.
+`src/lib/auctionEngine.test.ts` covers the opening-bid rounding, the ×19 budget, the `15 × N` cap
+and its position coverage at 2 and 5 drafters, and that a bidder stops at its ceiling and never
+bids past its budget. `src/routes/AuctionDraft.test.tsx` opens a lot, asserts the holder readout
+and the absence of any turn language, bids at the opening price and confirms the three steps come
+out and that you cannot raise against yourself. **Not checked in a browser this pass, per Mert's
+explicit "no playwright"** — the layout maths was done by hand against 1280×800, 1280×700 and
+320×568 instead, which is where the mobile bid-card rules below 768px came from.
+
 ### Both lobbies: viability gating (2026-08-18)
 
 Both settings panels are now gated by what the table can actually seat — see Draft
@@ -1291,6 +1512,12 @@ permanently broken squad — you end up with worse players, not fewer players. T
 also the default behavior when a pick/bid timer expires unattended (see Turns &
 Timers). Deal or No Deal has no budget in the briefing, so "running out of money"
 doesn't apply there.
+
+**Bidding is real time, not turn-based** *(restated 2026-08-21 as a constraint on the screen)*.
+Every seat can raise at any moment; there is no rotation, no "your turn", and no per-seat window.
+The screen must therefore show a **holder** — who currently holds the lot and at what price —
+rather than a turn indicator, and every seat's increment controls stay live at once. What the
+countdown measures is inactivity, not a turn: see the timer rule above.
 
 There's **no designated opener/nominator** — any footballer can be bid on by anyone the
 moment it appears, no rotating turn to bring it up. *(R2-Q5)* Footballers surface
@@ -1889,18 +2116,23 @@ This table is kept as a historical index of what each round covered.
 
 ## Project Status
 
-**Front end:** the home page, both lobbies and **three draft screens — Free Pick, Spin the
-Wheel and Deal or No Deal** — are built and routed: `/`, `/solo/:formatId`, `/lobby/:code`,
-`/draft/:formatId`, the last dispatching on the format. Free Pick went through a
+**Front end: complete.** The home page, both lobbies and **all four draft screens — Free Pick,
+Spin the Wheel, Deal or No Deal and Auction** — are built and routed: `/`, `/solo/:formatId`,
+`/lobby/:code`, `/draft/:formatId`, the last dispatching on the format. Free Pick went through a
 simplification pass on 2026-08-20 (a quieter rail, a rebuilt face-anchoring system, no
 section numerals); Spin the Wheel was built the same day off the Orbit layout; Deal or No
-Deal followed, also 2026-08-20, off the exhibition's picked layout 18. All screens sit inside
+Deal followed, also 2026-08-20, off the exhibition's picked layout 18; Auction closed the set on
+2026-08-21 off layout 01, with the sold record taking layout 09's square cards. All screens sit inside
 one app frame with a symmetric inset — left equals right, top equals bottom, on every route —
 and have stopped measuring the window themselves — see The app frame, symmetric above, and do
 not write `100dvh` or a route-local padding figure again. Every control on every one of
 them goes somewhere; there are no dead ends left in the flow. Nothing is wired to Firebase,
-so opponents, bots and chat are simulated on screen per the fake-the-functionality rule. The
-one remaining format — Auction — has no draft screen yet.
+so opponents, bots and chat are simulated on screen per the fake-the-functionality rule.
+
+**The two site-wide changes the Auction exhibition stated are live, but on the Auction route
+only** — full-colour unfiltered photographs and crests, and the stadium plate at `.72` rather
+than `.30–.36`. Rolling either out to the other six screens is a separate pass and has not been
+done. See **The Auction draft screen** above.
 
 **Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
 are exported to `public/botModels/`. **Auction training has since run** — a real pipeline,

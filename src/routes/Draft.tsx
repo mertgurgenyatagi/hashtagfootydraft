@@ -22,6 +22,7 @@ import {
   timeoutChoice,
 } from '../lib/draftEngine'
 import { type Player, inScope, loadPool } from '../lib/players'
+import { AuctionDraft } from './AuctionDraft'
 import { DondDraft } from './DondDraft'
 import { SpinDraft } from './SpinDraft'
 
@@ -85,13 +86,16 @@ export function Draft() {
   // Keyed on the format so arriving at a different one rebuilds the draft
   // rather than resuming somebody else's.
   //
-  // Three screens live behind this route. They share the pool, the pitch, the
-  // table strip and the chat; what differs is where a turn's board comes from
-  // — a free pick reads the whole scope, a spin reads whatever the wheel
-  // stopped on, and Deal or No Deal has no board at all, only boxes — and that
-  // difference is structural enough for each to be its own layout.
+  // All four screens live behind this route. They share the pool, the pitch,
+  // the table strip and the chat; what differs is where a turn's board comes
+  // from — a free pick reads the whole scope, a spin reads whatever the wheel
+  // stopped on, Deal or No Deal has no board at all, only boxes, and the
+  // Auction has no *turn* at all, only a lot and a clock measuring how long
+  // nobody has raised on it. That difference is structural enough for each to
+  // be its own layout.
   if (formatId === 'spin-the-wheel') return <SpinDraft key={formatId} config={config} />
   if (formatId === 'deal-or-no-deal') return <DondDraft key={formatId} config={config} />
+  if (formatId === 'auction') return <AuctionDraft key={formatId} config={config} />
 
   return <DraftRoom key={formatId ?? 'free-pick'} config={config} />
 }
