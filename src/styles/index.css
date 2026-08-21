@@ -707,53 +707,29 @@
   contain-intrinsic-size: auto 79px;
 }
 
-/* Establishes the query context `.spotlight-photo` below is computed against —
-   the panel's own rendered box, so a face lands in the same spot regardless
-   of how tall the panel itself ends up at a given viewport. */
-.spotlight-frame {
-  container-type: size;
-}
-
-/* The face-anchored portrait. `--face-fx` / `--face-fy` (0–1, the face box's
-   own centre as a fraction of the source photo), `--face-ar` (the photo's
-   width / height) and `--face-fh` (the face box's own height, as a fraction
-   of the photo's height) come from `faceCenters` via PlayerSpotlight.tsx.
-   Two things happen, in this order:
-
-   1. Scaled so the face reads as roughly the same size everywhere, with a
-      cover fit as the floor underneath that. Three candidate heights, and
-      the largest wins:
-        - 100cqh / 100cqw÷ar — plain object-fit: cover, so the panel is
-          never left with a gap regardless of what the other two produce.
-        - 30cqh ÷ fh — scales so the *face box* reaches 30% of the panel's
-          height. This is doing double duty: it is what evens out apparent
-          face size across photos taken at wildly different zoom levels, and
-          it is the only thing that gives a landscape photo in this portrait
-          panel any vertical slack to reposition in at all — a bare cover
-          fit here always binds on height with zero slack, since every
-          source photo is wider-than-tall and the panel is the opposite, so
-          without this term step 2 below could never move a face vertically.
-      Width follows from `aspect-ratio` once height is set.
-   2. The face, not the photo, gets centred. `translate` is clamped so the
-      photo's own edge — 0px at the near side, `100cqw|cqh - 100%` at the far
-      side, i.e. the rendered box's own width/height — can never pull in past
-      the panel border and leave a gap. Inside that range it targets the
-      point that puts the face at 50% across, 35% down. A face box already
-      large relative to its own photo (a tight crop to begin with) can hit
-      this clamp and land as near that point as the source photo allows,
-      never with a blank strip beside it. */
-.spotlight-photo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: auto;
-  max-width: none;
-  aspect-ratio: var(--face-ar);
-  height: max(100cqh, calc(100cqw / var(--face-ar)), calc(30cqh / var(--face-fh)));
-  transform: translate(
-    clamp(calc(100cqw - 100%), calc(50cqw - (var(--face-fx) * 100%)), 0px),
-    clamp(calc(100cqh - 100%), calc(35cqh - (var(--face-fy) * 100%)), 0px)
-  );
+/* The dot-grid portrait (`Dotgrid.tsx`) — see HANDOVER.md Part 2. Every
+   player's `players-cells/{slug}.webp` is the same fixed 80×100 grid of flat,
+   averaged cell colours, cropped from the standardised `players-4x5` face
+   crop. The mask geometry (one radial gradient, sized in `%` of *its own*
+   tile, so it punches a circle out of every cell regardless of that tile's
+   pixel size) is the only part that's a static rule — it's identical for
+   every player and every frame. `background-size`/`position` and
+   `mask-size`/`position` are NOT: an earlier version expressed those as
+   percentages too, assuming one fixed aspect ratio per frame, and it
+   stretched non-uniformly on every container that didn't happen to match
+   that guess (which, at this site's fluid sizing, was most of the time).
+   `Dotgrid.tsx` now measures each instance's actual rendered box via
+   `ResizeObserver` and sets those four in px, from one shared scale factor —
+   so dots stay circular at any container size instead of only at one assumed
+   ratio. */
+.dotgrid {
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-image: radial-gradient(circle at center, #000 37.5%, transparent 37.5%);
+  mask-image: radial-gradient(circle at center, #000 37.5%, transparent 37.5%);
+  filter: saturate(1.6);
 }
 
 /* The scroll containers: the pool and the chat log. The default bar is a

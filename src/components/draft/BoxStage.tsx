@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
-import { faceCenters } from '../../data/faceAnchors'
-import { type Player, slugify } from '../../lib/players'
-
-/** Same fallback the other two photo surfaces use for an unmarked face box. */
-const DEFAULT_CENTER: [number, number, number, number] = [0.5, 0.35, 0.8, 0.2]
+import type { Player } from '../../lib/players'
+import { Dotgrid } from './Dotgrid'
 
 export interface Decision {
   label: string
@@ -42,8 +39,6 @@ export function BoxStage({ player, label, accent = false, decisions = [], note }
   const [failed, setFailed] = useState(false)
   useEffect(() => setFailed(false), [player.id])
 
-  const [fx, fy, ar, fh] = faceCenters[slugify(player.name)] ?? DEFAULT_CENTER
-
   return (
     <div
       className={[
@@ -58,21 +53,11 @@ export function BoxStage({ player, label, accent = false, decisions = [], note }
           alt=""
         />
       ) : (
-        <img
+        <Dotgrid
           key={player.id}
-          className="spotlight-photo dond-stage-photo fx fx-fade"
-          style={
-            {
-              '--face-fx': fx,
-              '--face-fy': fy,
-              '--face-ar': ar,
-              '--face-fh': fh,
-              animationDuration: '460ms',
-            } as React.CSSProperties
-          }
-          src={player.portrait}
-          alt={player.name}
-          decoding="async"
+          player={player}
+          frame="box-stage"
+          className="fx fx-fade absolute inset-0"
           onError={() => setFailed(true)}
         />
       )}

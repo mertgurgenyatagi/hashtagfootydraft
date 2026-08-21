@@ -116,6 +116,63 @@ completes the front end — all four formats now have a screen. A Tachyon-mode p
 brainstorming phase, no plan phase, defaults chosen and stated afterward rather than asked
 mid-build.
 
+The **`purification`** branch, cut from `main` on 2026-08-21, replaced every player portrait
+with a generated dot-grid (LED/halftone) rendering of the photograph — see **Art assets** below
+for the settled result. Getting there took several rounds, each rejected for a stated reason
+before the next was tried:
+
+- A **live in-browser tuner** (a canvas-based Artifact) with sliders for cell size, dot size and
+  colour scope, then extended with a face-relative zone — smaller dots near a face box pasted
+  from `face_coordinates.json`, bigger ones outside it, blended by a soft alpha mask radiating
+  outward. The first version of that blend was a real bug, not just a style choice: the outer
+  grid stayed visible through the gaps of the finer one because only the face layer faded in,
+  nothing faded the background layer out — fixed by masking both layers off the same distance
+  field.
+- A **stepped-band, no-fade version** (`dotgrid_batch.py`), which replaced the alpha blend with
+  plain integer modulo — cell size grouped into a few discrete distance-based bands from the face
+  box, no alpha anywhere. Run once against 10 random players and judged **"Absolutely awful"** —
+  rejected outright, face-relative premise included.
+- A **continuous-multiplier version** — one formula (`multiplier = 1 + floor(steps / growth_rate)`)
+  instead of a band lookup table — tuned live through a deliberately bare tkinter GUI
+  (`dotgrid_gui_tuner.py`, no preview widget, just overwrites `dotgrid-tuning.png` on every run so
+  the file gets reopened by hand). Superseded before it was ever used for a real decision: the
+  face-relative premise itself was dropped next.
+- A **flat, uniform round**: no face awareness at all, one pixel pitch for every frame on the
+  site — 4px, 75% dot size, full colour range, no posterising. `dotgrid_rollout.py` (kept in the
+  session scratchpad, not the repo) applied it directly into `public/players/{slug}.svg` for all
+  545 photos in ~213s. **Superseded within the same day** — see below.
+
+**A pool-scoping bug surfaced while checking this on screen, unrelated to the portrait swap**: the
+running pool only ever includes players from the top five leagues regardless of scope — Mats
+Hummels and Ederson (Fenerbahçe) didn't appear at all, which is what prompted the check in the
+first place. Confirmed separate from the SVG change by trying a top-five player (Thibaut Courtois)
+with the identical treatment, who rendered fine. **Not yet fixed** — noted here so it isn't lost.
+
+**The flat round broke down on the site's taller, narrower portrait frames.** One pixel pitch
+applied everywhere means a wide frame (the Auction block) and a tall one (the Free Pick
+spotlight) end up with wildly different dot counts from the same photo, so "4px" reads as fine
+grain in one place and chunky in another. What shipped that day to fix it — separate SVG assets,
+one per player per frame, 4,360 files at ~3.8 GB — was itself superseded within the same session:
+SVG at that scale was slower to build and heavier to serve than the photos it replaced. Two more
+passes landed on what's actually shipped now — a standardised 4:5 face crop, a CSS mask over a
+tiny colour grid instead of per-dot SVG circles, and a crop measured live against each frame's
+*actual* rendered box rather than assumed, at a source density tuned per frame — settled against
+the real screens through a `/dotgrid-tuner` route (`DotgridTuner.tsx`, still in the route table,
+not yet removed) that mounts them unmodified — same engine, same bots, same timers — rather than
+a mockup of them. See **Art assets** below for the full mechanism and the final tuned values.
+
+One finishing touch followed the crop/density tuning: the dot-grid's cell colours read flatter
+than the source photographs, since averaging a busy region of pixels into one flat colour pulls
+saturation down along with detail. A `filter: saturate()` on the shared `.dotgrid` rule in
+`index.css` fixes that in one place for every frame; tried at 1.0/1.4/1.6 against the Auction
+block and the Free Pick spotlight, **1.6 is what Mert settled on** (2026-08-22) — see Art assets
+below for the detail. The `purification` branch was committed, pushed and merged to `main` on
+2026-08-22. All work described below is now on `main`. A new branch,
+**`cleanup-and-optimization`**, was then cut from `main` the same day — the untracked debris
+scattered across the repo root from the rejected dot-grid rounds above (per-player test SVGs and
+PNGs, throwaway HTML tuners, the tkinter GUI tuner script) was deliberately left uncommitted
+rather than swept into the purification merge, and is the obvious first thing for it to clear.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -340,17 +397,20 @@ Total is ~249 MB across 545 files — noticeably more than the rest of this repo
 real cost of that decision; revisit if it becomes a problem (git-lfs, a CDN, or
 per-use-case derivatives generated from the face boxes below are all on the table).
 
-To help with that future cropping, `face_coordinates.json` has a hand-marked bounding
-box per player — `{ x, y, width, height, imageWidth, imageHeight }`, all in that
-player's own image's pixel space — locating their face, so a later smart-crop can anchor
-on it instead of guessing. Marked by hand against `public/players/`; the tool used to do
-it was a throwaway local HTML page, not worth keeping once the data existed.
+To help with that cropping, `face_coordinates.json` has a hand-marked bounding box per
+player — `{ x, y, width, height, imageWidth, imageHeight }`, all in that player's own
+image's pixel space — locating their face. Marked by hand against `public/players/`; the
+tool used to do it was a throwaway local HTML page, not worth keeping once the data
+existed. It is now what `scripts/crop_players_4x5.py` reads to produce the standardised
+4:5 crop described below.
 
-**`src/data/faceAnchors.ts` is the second consumer**, generated from the same file: the
-centre of each face box as a percentage of the image, fed straight to `object-position`
-so a crop of any shape lands on the face. The draft screen's portrait panel uses it. It
-is 545 entries and ~12 KB in the bundle, which beat a second network fetch for a file the
-screen needs on first paint.
+**`src/data/faceAnchors.ts` is a second, older consumer of the same file** — the centre
+of each face box as a percentage of the image, once fed straight to the draft screens'
+portrait panels via CSS custom properties (see The portrait panel's face anchoring,
+below, for how). **No longer used for rendering**: the standardised 4:5 crop places every
+player's face at the same position by construction, so the per-player lookup this did is
+redundant for that job now. Left in place — generated, harmless, 545 entries, ~12 KB —
+rather than deleted, since nothing depends on removing it.
 
 **`public/faces/` is the first consumer of that data.** `scripts/make_face_crops.py`
 reads a player's face box, cuts a 4:5 portrait around it such that the face occupies a
@@ -368,6 +428,120 @@ click on the right thumbnail, since no fully-automatic heuristic proved reliable
 to trust unattended. Raw fetches land in `assets/` (gitignored, kept locally as the
 archive) and `scripts/process_player_images.py` converts whichever ones match
 `player_data.csv` into the `public/players/{slug}.webp` files actually shipped.
+
+**What's actually rendered on screen is not that `.webp` — every portrait is a generated
+dot-grid (LED/halftone) rendering of it**, settled by Mert on the `purification` branch
+(2026-08-21 to 2026-08-22; see the branch narrative above for the rounds this converged
+through). Three pieces, in order:
+
+**1. One standardised 4:5 crop per player.** `scripts/crop_players_4x5.py` reads
+`face_coordinates.json` and crops each of the 545 sourced photos to a fixed 4:5 aspect
+ratio, native resolution, targeting a consistent vertical placement of the face:
+**top edge at 15% down the crop, centre at 27.5%, bottom at 40%** — the unique point
+inside Mert's stated ranges (top 10–15%, centre 25–30%, bottom 35–40%) whose centre sits
+at its own range's exact midpoint. Output: `public/players-4x5/{slug}.webp`, 147 MB.
+**265/545 hit that target exactly; 280/545 got clamped** — the crop slides only as far
+toward the ideal point as the source image allows before it would run past an edge, so a
+face marked too close to its own photo's border lands as near 15/27.5/40% as that photo
+permits rather than being forced off it. **`nico-williams` is a confirmed bad clamp**
+(face small, dark, off to one side) found by spot-checking a handful of the 280 clamped
+rows, not a systematic pass — there are likely others, not yet found. Jan Oblak is the
+most extreme source photo in the set regardless of clamping (face box is 52.3% of his own
+photo's height); confirmed against all 545, holds for both a 4:5 and a 1:1 target aspect.
+
+**2. A colour grid at each frame's density, not one shared resolution.** A flat grid size
+for every frame was wrong at both ends actually in use: a wide hero surface (the Auction
+block) had room for more detail than a shared low resolution gave it, and a tiny avatar
+(`spare-face`, `pitch-node`) pushed cells below the ~3px floor where the CSS circle mask
+below loses precision and renders mostly blank. `scripts/make_dotgrid_cells.py`
+box-filter-downsamples each `players-4x5` crop straight to every density any frame
+actually uses (currently 16/48/64/96 columns-across, rows following at `cols × 1.25` to
+hold the 4:5 aspect), one flat averaged colour per cell, saved lossless. Output:
+`public/players-cells/{slug}--{density}.webp`, 545 players × 4 densities = 2,180 files,
+23 MB total — two to three orders of magnitude smaller than the per-frame-SVG approach
+this replaced (4,360 files, 3.8 GB), because the shape (a circle, not a photo) is now a
+CSS rule shared by every player rather than data baked per file.
+
+**3. A CSS mask over that grid, cropped live, not assumed.** `src/components/draft/
+Dotgrid.tsx` renders each portrait as a `<div>`: the colour grid as a pixelated
+`background-image`, with a repeating circular `mask-image` (one radial gradient, sized in
+`%` of its own tile) punched over it — `.dotgrid` in `index.css` holds the one CSS rule
+this needs, shared by every player and every frame. The crop itself is computed in JS, not
+CSS: a `ResizeObserver` reads the instance's *actual* rendered box and derives one uniform
+scale factor from it (`max(width/cols, height/rows)`, the same arithmetic as
+`object-fit: cover`), so `background-size`/`mask-size` land in matching px on both axes and
+dots stay circular at any container size. An earlier version expressed the crop as
+independent `background-size`/`mask-size` percentages, which only avoids stretching the
+circles into ellipses at the one aspect ratio it happened to assume per frame — wrong most
+of the time on a fluid, `clamp()`-sized layout, which is what this replaced it to fix.
+
+`Player.portraitBase` holds the slug path with no extension
+(`public/players-cells/{slug}`); `cellGridSrc(player, density)` appends `--{density}.webp`.
+`DotgridFrame` is still the closed set of eight frame names, one per real render site —
+unchanged from before:
+
+| Frame | Where | Component |
+|---|---|---|
+| `spare-face` | Auction bench, off-turn drafters | `SpareFace` in `AuctionDraft.tsx` |
+| `auction-block` | The lot currently up for bid | `AuctionBlock.tsx` |
+| `box-stage` | The opened/offered box | `BoxStage.tsx` (Deal or No Deal) |
+| `box-grid-tile` | The unopened box grid | `BoxGrid.tsx` (Deal or No Deal) |
+| `pitch-node` | A drafted player on the pitch | `PitchView.tsx` (Free Pick, Spin the Wheel) |
+| `sold-record-face` | The scrolling sold-lots record | `SoldRecord.tsx` (Auction) |
+| `spotlight-free-pick` | The pool-side portrait panel | `PlayerSpotlight.tsx`, Free Pick |
+| `spotlight-spin` | The pool-side portrait panel | `PlayerSpotlight.tsx`, Spin the Wheel |
+
+`Dotgrid.tsx`'s `FRAME_CROPS` holds four numbers per frame — `density` (source
+columns-across), `zoom` (a multiplier past the tightest fit that still covers the box with
+no gap; higher crops in further), and `panX`/`panY` (0–1, where the visible window sits
+within whatever slack the extra zoom created). Tuned by hand against the real, live
+screens rather than guessed or measured once and assumed stable — see below — final
+values:
+
+| Frame | density | zoom | panX | panY |
+|---|---|---|---|---|
+| `spare-face` | 48 | 2.04 | 0.44 | 0.16 |
+| `auction-block` | 96 | 1 | 0 | 0.12 |
+| `box-stage` | 64 | 1 | 0.8 | 0.15 |
+| `box-grid-tile` | 48 | 1.1 | 0.54 | 0.09 |
+| `pitch-node` | 16 | 1.26 | 0.52 | 0 |
+| `sold-record-face` | 48 | 2.04 | 0.44 | 0.15 |
+| `spotlight-free-pick` | 64 | 1 | 0.38 | 0.12 |
+| `spotlight-spin` | 48 | 1 | 0.45 | 0.11 |
+
+Getting these right needed seeing them against the real layouts, not a mockup or a
+one-time measurement of them — a `/dotgrid-tuner` route (`DotgridTuner.tsx`, at the time
+of writing **still in the route table, not yet removed**) mounts the real screens
+unmodified — same engine, same bots, same timers, same CSS — with a side panel that
+overrides one frame's crop and density at a time via `DotgridTuningContext`
+(`src/components/draft/DotgridTuning.tsx`), so tuning never transcribes the layout by
+hand. While tuning, the density override is generated client-side from the full-resolution
+`players-4x5` crop via canvas (`src/lib/dotgridCanvas.ts`, `fullResCropSrc` in
+`players.ts`) rather than requiring a pre-generated file for every density tried; nothing
+in this path runs when the provider isn't mounted, i.e. never in production. Mert paged
+through all four draft screens with it and handed back the table above.
+
+**Saturation, added after the crop/density tuning above.** Even with the crop and density
+right, the dot-grid read flatter than the source photographs — averaging a busy region of
+pixels into one flat cell colour pulls saturation down along with detail. `.dotgrid` in
+`index.css` carries `filter: saturate(1.6)`, one rule shared by every frame, so this is a
+single-line, site-wide fix rather than a per-frame one; nothing about the generated colour-grid
+assets themselves changed. Tried live at 1.0 (no boost), 1.4 and 1.6 against the Auction block
+and the Free Pick spotlight; **1.6 is what Mert settled on** (2026-08-22). This sits a little
+apart from the site's "no filter at all" rule for photographs (Design tokens, above) — that
+rule guards against a *decorative* palette treatment (grayscale, tint, blend mode) landing on
+real colour; a saturation correction on a generated colour grid, restoring fidelity a lossy
+averaging step took away, is a different kind of thing, and was asked for explicitly rather
+than assumed.
+
+**Open, not yet done:** the 280 clamped 4:5 crops haven't had a systematic pass (only
+`nico-williams` is confirmed bad); Safari's support for `mask-image` at these tile sizes
+hasn't been checked at all; and the source `.webp` originals in `public/players/`
+(~249 MB) are unreferenced by any code now but not yet deleted — worth revisiting
+alongside `players-4x5/` and `players-cells/` together, each its own further copy of the
+same 545 photos at a different stage, if the repo's size becomes a real problem. All of this,
+plus the untracked round-experiment debris noted above, is fair game for the
+**`cleanup-and-optimization`** branch cut from `main` once `purification` merged.
 
 The other real asset in the build is the backdrop, `public/stadium.webp` (234 KB). It is
 referenced through `import.meta.env.BASE_URL`, not a leading slash, so it survives being
@@ -791,37 +965,48 @@ The full-backs sit **higher up the pitch than the centre-backs** (`y: 71` agains
 That is where they play, and it is also what stops the LB and CB name plates grazing each
 other at 768px.
 
-#### The portrait panel's face anchoring (rebuilt from scratch, 2026-08-20)
+#### The portrait panel's face anchoring (rebuilt from scratch, 2026-08-20; superseded, 2026-08-22)
 
-The portrait panel does not use a pre-cropped image — per the standing rule that player
+**Historical record — no longer how the panel actually works.** Built 2026-08-20 as
+described below (a `faceAnchors.ts` lookup feeding four CSS custom properties into a
+`.spotlight-photo` scale-and-clamp formula, per player, per photo's own native aspect
+ratio), and superseded on the `purification` branch once every player's photo was itself
+cropped to one standardised 4:5 aspect with the face at a fixed, consistent position —
+see **Art assets** above. With the source already consistent, the panel no longer needs
+per-player positioning math at all: `PlayerSpotlight.tsx` just renders a `Dotgrid` at the
+`spotlight-free-pick` / `spotlight-spin` crop tuned for it, same as every other frame.
+`.spotlight-photo` and the `faceAnchors.ts` lookup this section describes are both dead
+for this purpose now (`faceAnchors.ts` is left in place regardless, per Art assets).
+
+The portrait panel did not use a pre-cropped image — per the standing rule that player
 photos stay at native resolution and aspect ratio (see Art assets above), whatever crop a
-layout needs happens at that layout, not at ingest. The panel needs a face centred at
+layout needs happens at that layout, not at ingest. The panel needed a face centred at
 **50% across, 35% down** its own frame regardless of the source photo's own shape, without
 ever cropping in past the photo's own edge and leaving a gap.
 
-`src/data/faceAnchors.ts` is generated from `face_coordinates.json` (the same hand-marked
+`src/data/faceAnchors.ts` was generated from `face_coordinates.json` (the same hand-marked
 face boxes described under Art assets) into 545 four-value tuples, `fx, fy, ar, fh` per
 player: the face box's own centre as a fraction of the source photo (`fx`, `fy`), the source
 photo's aspect ratio (`ar`), and the face box's own height as a fraction of the photo's
-height (`fh`). `PlayerSpotlight.tsx` reads the tuple for the selected player and passes all
+height (`fh`). `PlayerSpotlight.tsx` read the tuple for the selected player and passed all
 four straight through as CSS custom properties; a player with a photo but no marked box
-falls back to a plausible default (`0.5, 0.35, 0.8, 0.2`) rather than crashing the lookup.
+fell back to a plausible default (`0.5, 0.35, 0.8, 0.2`) rather than crashing the lookup.
 
-`.spotlight-photo` in `index.css` does the actual placement, in two steps:
+`.spotlight-photo` in `index.css` did the actual placement, in two steps:
 
-1. **Scale.** Height is `max()` of three candidates: plain `object-fit: cover` (never leaves
-   a gap), a width-driven cover at the photo's own aspect ratio, and — the term that makes
-   the rest of this work — `30cqh ÷ fh`, which scales the image until the *face box itself*
-   reaches 30% of the panel's height. This does two jobs: it evens out how large a face reads
-   across photos taken at wildly different zoom levels, and it is the only term that gives a
+1. **Scale.** Height was `max()` of three candidates: plain `object-fit: cover` (never leaves
+   a gap), a width-driven cover at the photo's own aspect ratio, and — the term that made
+   the rest of this work — `30cqh ÷ fh`, which scaled the image until the *face box itself*
+   reached 30% of the panel's height. This did two jobs: it evened out how large a face read
+   across photos taken at wildly different zoom levels, and it was the only term that gave a
    landscape photo in this portrait panel any vertical slack to reposition in — a bare cover
    fit always binds on height with zero slack, since every source photo is wider than the
    panel is.
-2. **Position.** `translate()` is clamped between `0px` (the photo's near edge flush with the
+2. **Position.** `translate()` was clamped between `0px` (the photo's near edge flush with the
    panel) and `100cqw|cqh - 100%` (the photo's far edge flush with the panel) on each axis.
-   Inside that range it targets whatever point puts the face at 50%/35%. A face box that is
-   already large relative to its own photo — a tight crop to begin with — hits the clamp and
-   lands as close to that point as the source photo allows, never with a blank strip beside
+   Inside that range it targeted whatever point put the face at 50%/35%. A face box that was
+   already large relative to its own photo — a tight crop to begin with — hit the clamp and
+   landed as close to that point as the source photo allowed, never with a blank strip beside
    it.
 
 Verified in a browser at 50.0%/35.05% face-centre position across photos of very different
@@ -2134,6 +2319,26 @@ only** — full-colour unfiltered photographs and crests, and the stadium plate 
 than `.30–.36`. Rolling either out to the other six screens is a separate pass and has not been
 done. See **The Auction draft screen** above.
 
+**Every player portrait is now a generated dot-grid rendering** — a CSS mask over a small,
+per-frame-density colour grid, cropped live against each frame's own rendered box — done
+on the `purification` branch, 2026-08-21 to 2026-08-22; see Art assets above for the
+settled mechanism, the final tuned values, and what's still open (a systematic pass over
+the 280 clamped 4:5 crops; Safari verification; deleting the now-superseded source
+copies). The `/dotgrid-tuner` dev route this was tuned through is still in the route
+table and should come out before this ships. The original `.webp` photographs in
+`public/players/` are unreferenced by any render path now (`players-4x5/`, the crop stage
+between them and what's shipped, is still live — it's what generation reads, and what the
+tuner's client-side density preview reads too) but not yet deleted. Every rendering also
+carries a **`saturate(1.6)` filter** on the shared `.dotgrid` rule, added 2026-08-22 to
+counteract the saturation the cell-averaging step loses — see Art assets above. The
+`purification` branch merged to `main` the same day; a **`cleanup-and-optimization`** branch
+was then cut from `main` to pick up the open items above.
+
+**Known bug, unrelated to the above, not yet fixed:** the running player pool only ever includes
+players from the top five leagues, regardless of scope — surfaced while checking the portrait
+change on screen (Mats Hummels and Ederson-Fenerbahçe didn't appear at all), confirmed unrelated
+by trying a top-five player with the same treatment.
+
 **Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
 are exported to `public/botModels/`. **Auction training has since run** — a real pipeline,
 checkpoint and exported policy all now exist; see the 2026-08-20 update at the top of the
@@ -2152,7 +2357,8 @@ about the front end.** The front end has repeatedly used its own working documen
 removed once that build's content was folded into this document — first for the Free Pick
 tuning pass (removed 2026-08-20, folded into The Free Pick draft screen above), then again
 for the Deal or No Deal build (removed 2026-08-20, folded into The Deal or No Deal draft
-screen above). It is not a durable file; this document is. A second, lossier copy of
+screen above), then a third time for the dot-grid portrait work (removed 2026-08-22, folded
+into Art assets above). It is not a durable file; this document is. A second, lossier copy of
 everything below used to sit underneath this section too; it was deleted on 2026-08-19.
 
 # Project Handover Document

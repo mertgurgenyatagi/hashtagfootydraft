@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
 import { type FormationSlot, formation } from '../../data/formation'
-import { faceCenters } from '../../data/faceAnchors'
 import type { Drafter, Squad } from '../../lib/draftEngine'
-import { type Player, slugify } from '../../lib/players'
-
-/** Same fallback PlayerSpotlight uses for a photo with no marked face box. */
-const DEFAULT_CENTER: [number, number] = [0.5, 0.35]
+import type { Player } from '../../lib/players'
+import { Dotgrid } from './Dotgrid'
 
 interface PitchViewProps {
   drafters: Drafter[]
@@ -146,7 +143,6 @@ function Node({
   const shown = player ?? preview
   const [failed, setFailed] = useState(false)
   useEffect(() => setFailed(false), [player?.id])
-  const [fx, fy] = player ? (faceCenters[slugify(player.name)] ?? DEFAULT_CENTER) : DEFAULT_CENTER
 
   return (
     <div
@@ -164,12 +160,11 @@ function Node({
         ].join(' ')}
       >
         {shown && !failed ? (
-          <img
+          <Dotgrid
             key={shown.id}
-            className={`h-full w-full object-cover ${arrived ? 'fx fx-pop' : ''}`}
-            style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }}
-            src={shown.portrait}
-            alt={shown.name}
+            player={shown}
+            frame="pitch-node"
+            className={`h-full w-full ${arrived ? 'fx fx-pop' : ''}`}
             onError={() => setFailed(true)}
           />
         ) : shown ? (

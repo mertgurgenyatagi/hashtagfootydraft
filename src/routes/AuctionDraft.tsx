@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import { AuctionBlock, type BlockResult } from '../components/draft/AuctionBlock'
 import { BidBoard } from '../components/draft/BidBoard'
 import { DraftChat } from '../components/draft/DraftChat'
+import { Dotgrid } from '../components/draft/Dotgrid'
 import { PitchView } from '../components/draft/PitchView'
 import { SoldRecord } from '../components/draft/SoldRecord'
 import { TableStrip } from '../components/draft/TableStrip'
 import type { Message } from '../components/lobby/LobbyChat'
 import { SectionLabel } from '../components/ui/SectionLabel'
-import { faceCenters } from '../data/faceAnchors'
 import { SQUAD_SIZE, formation } from '../data/formation'
 import { leagues, scopes } from '../data/lobbyOptions'
 import {
@@ -23,7 +23,7 @@ import {
   stepFor,
 } from '../lib/auctionEngine'
 import type { Drafter, Pick, Squad } from '../lib/draftEngine'
-import { type Player, inScope, loadPool, slugify } from '../lib/players'
+import { type Player, inScope, loadPool } from '../lib/players'
 import type { DraftConfig } from './Draft'
 
 /** The table you get cold, matching the other three screens. */
@@ -679,18 +679,11 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
 
 function SpareFace({ player }: { player: Player }) {
   const [failed, setFailed] = useState(false)
-  const [fx, fy] = faceCenters[slugify(player.name)] ?? [0.5, 0.35]
 
   if (failed) return <img className="crest h-[62%] w-[62%]" src={player.crest} alt={player.club} />
 
   return (
-    <img
-      className="h-full w-full object-cover"
-      style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }}
-      src={player.portrait}
-      alt={player.name}
-      onError={() => setFailed(true)}
-    />
+    <Dotgrid player={player} frame="spare-face" className="h-full w-full" onError={() => setFailed(true)} />
   )
 }
 

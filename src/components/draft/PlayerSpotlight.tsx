@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { faceCenters } from '../../data/faceAnchors'
-import { type Player, slugify } from '../../lib/players'
+import type { DotgridFrame, Player } from '../../lib/players'
+import { Dotgrid } from './Dotgrid'
 
 interface PlayerSpotlightProps {
   /** Whoever is selected. Only loads on selection — not on hover. */
@@ -9,6 +9,11 @@ interface PlayerSpotlightProps {
   canDraft: boolean
   reason: string
   actionLabel: string
+  /**
+   * Which dot-grid asset to request — the panel's aspect ratio differs
+   * enough between its two hosts that they're tuned as separate frames.
+   */
+  frame: Extract<DotgridFrame, 'spotlight-free-pick' | 'spotlight-spin'>
   /**
    * Where the panel sits and how big it is — the one thing that differs
    * between the two screens that use it. Free Pick docks it beside the pool
@@ -22,49 +27,32 @@ interface PlayerSpotlightProps {
  * action docked over the bottom of it rather than sitting in a bar of its
  * own beneath the list.
  *
- * Sizing and placement are handled entirely by the `.spotlight-photo` CSS
- * rule in index.css, driven by four custom properties set here from
- * `faceCenters` — see that rule for the actual scale-and-clamp formula.
+ * Sizing and placement are handled entirely by the `dg-spotlight-*` CSS
+ * rules in index.css — see the `.dotgrid` comment there for the crop.
  */
-// Fallback for the rare player with a photo but no marked face box —
-// dead centre, standard portrait aspect, mid-range face size, better than
-// crashing on a lookup miss.
-const DEFAULT_CENTER: [number, number, number, number] = [0.5, 0.35, 0.8, 0.2]
-
 export function PlayerSpotlight({
   player,
   onDraft,
   canDraft,
   reason,
   actionLabel,
+  frame,
   className = 'hidden w-[var(--draft-portrait)] shrink-0 lg:block',
 }: PlayerSpotlightProps) {
   const [failed, setFailed] = useState(false)
 
   useEffect(() => setFailed(false), [player?.id])
 
-  const [fx, fy, ar, fh] = player ? (faceCenters[slugify(player.name)] ?? DEFAULT_CENTER) : DEFAULT_CENTER
-
   return (
     <div
       className={`spotlight-frame relative overflow-hidden border border-line bg-surface ${className}`}
     >
       {player && !failed ? (
-        <img
+        <Dotgrid
           key={player.id}
-          className="spotlight-photo fx fx-fade"
-          style={
-            {
-              '--face-fx': fx,
-              '--face-fy': fy,
-              '--face-ar': ar,
-              '--face-fh': fh,
-              animationDuration: '320ms',
-            } as React.CSSProperties
-          }
-          src={player.portrait}
-          alt={player.name}
-          decoding="async"
+          player={player}
+          frame={frame}
+          className="fx fx-fade absolute inset-0"
           onError={() => setFailed(true)}
         />
       ) : player ? (

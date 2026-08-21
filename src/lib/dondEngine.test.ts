@@ -29,7 +29,7 @@ function buildPool(): Player[] {
         ability: 120 + copy * 5,
         price: 10 + copy,
         crest: '',
-        portrait: '',
+        portraitBase: '',
       })
     }
   }

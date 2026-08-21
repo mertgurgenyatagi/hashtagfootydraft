@@ -26,7 +26,7 @@ function buildPool(): Player[] {
             ability: 100 + copy,
             price: 10 + copy,
             crest: '',
-            portrait: '',
+            portraitBase: '',
           })
         }
       }

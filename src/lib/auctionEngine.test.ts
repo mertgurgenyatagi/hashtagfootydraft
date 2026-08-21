@@ -24,7 +24,7 @@ function make(id: number, position: PositionCode, ability: number, price: number
     ability,
     price,
     crest: '',
-    portrait: '',
+    portraitBase: '',
   }
 }
 

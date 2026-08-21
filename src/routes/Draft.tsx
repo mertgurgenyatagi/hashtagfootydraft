@@ -100,7 +100,7 @@ export function Draft() {
   return <DraftRoom key={formatId ?? 'free-pick'} config={config} />
 }
 
-function DraftRoom({ config }: { config: DraftConfig }) {
+export function DraftRoom({ config }: { config: DraftConfig }) {
   const scope = config.scope ?? 'top-5'
   const league = config.league ?? 'premier-league'
   const constraint = config.constraint ?? 'club-1'
@@ -498,6 +498,7 @@ function DraftRoom({ config }: { config: DraftConfig }) {
                 canDraft={canDraft}
                 reason={reason}
                 actionLabel={actionLabel}
+                frame="spotlight-free-pick"
               />
             }
           />

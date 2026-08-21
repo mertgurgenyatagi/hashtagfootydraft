@@ -521,6 +521,7 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
                   canDraft={canDraft}
                   reason={reason}
                   actionLabel={actionLabel}
+                  frame="spotlight-spin"
                   className="hidden min-w-0 lg:block lg:flex-[35]"
                 />
               }

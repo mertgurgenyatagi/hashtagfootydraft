@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
-import { faceCenters } from '../../data/faceAnchors'
 import type { Lot } from '../../lib/auctionEngine'
-import { type Player, slugify } from '../../lib/players'
-
-/** Same fallback the other three photo surfaces use for an unmarked face box. */
-const DEFAULT_CENTER: [number, number, number, number] = [0.5, 0.35, 0.8, 0.2]
+import type { Player } from '../../lib/players'
+import { Dotgrid } from './Dotgrid'
 
 export interface BlockResult {
   /** Null when the lot drew no bid at all and went to the unsold pile. */
@@ -89,15 +86,13 @@ export function AuctionBlock({ lot, left, total, result }: AuctionBlockProps) {
 }
 
 /**
- * The photograph. Placement is the shared `.spotlight-photo` formula — the face
- * lands at 50% across and 35% down whatever shape this panel ends up, with the
- * source photo's own edges clamped so it never pulls in and leaves a gap.
+ * The photograph. `dg-auction-block` (index.css) crops the standardised
+ * dot-grid asset to this frame's own shape — no per-player positioning left
+ * to do here.
  */
 function BlockPhoto({ player }: { player: Player }) {
   const [failed, setFailed] = useState(false)
   useEffect(() => setFailed(false), [player.id])
-
-  const [fx, fy, ar, fh] = faceCenters[slugify(player.name)] ?? DEFAULT_CENTER
 
   if (failed) {
     return (
@@ -110,21 +105,11 @@ function BlockPhoto({ player }: { player: Player }) {
   }
 
   return (
-    <img
+    <Dotgrid
       key={player.id}
-      className="spotlight-photo fx fx-fade"
-      style={
-        {
-          '--face-fx': fx,
-          '--face-fy': fy,
-          '--face-ar': ar,
-          '--face-fh': fh,
-          animationDuration: '520ms',
-        } as React.CSSProperties
-      }
-      src={player.portrait}
-      alt={player.name}
-      decoding="async"
+      player={player}
+      frame="auction-block"
+      className="fx fx-fade absolute inset-0"
       onError={() => setFailed(true)}
     />
   )

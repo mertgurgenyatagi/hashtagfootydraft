@@ -1,11 +1,9 @@
-import { faceCenters } from '../../data/faceAnchors'
+import { useState } from 'react'
 import type { Sale } from '../../lib/auctionEngine'
 import type { Drafter } from '../../lib/draftEngine'
-import { slugify } from '../../lib/players'
+import type { Player } from '../../lib/players'
+import { Dotgrid } from './Dotgrid'
 import { SectionLabel } from '../ui/SectionLabel'
-
-/** Same fallback every other photo surface in the app uses. */
-const DEFAULT_CENTER: [number, number] = [0.5, 0.35]
 
 interface SoldRecordProps {
   sales: Sale[]
@@ -52,7 +50,6 @@ export function SoldRecord({ sales, drafters, youSeat, nextLot, show = 4 }: Sold
         {recent.map((sale) => {
           const mine = sale.seat === youSeat
           const buyer = sale.seat === null ? null : drafters[sale.seat]
-          const [fx, fy] = faceCenters[slugify(sale.player.name)] ?? DEFAULT_CENTER
 
           return (
             <li
@@ -62,20 +59,7 @@ export function SoldRecord({ sales, drafters, youSeat, nextLot, show = 4 }: Sold
                 buyer === null ? 'border-line opacity-40' : mine ? 'border-accent-line' : 'border-line',
               ].join(' ')}
             >
-              <span className="auction-sold-face block w-full overflow-hidden bg-surface-2">
-                <img
-                  className="h-full w-full object-cover"
-                  style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }}
-                  src={sale.player.portrait}
-                  alt={sale.player.name}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(event) => {
-                    event.currentTarget.style.display = 'none'
-                  }}
-                />
-              </span>
-
+              <SoldFace player={sale.player} />
               <span className="flex items-center justify-between gap-2 px-[7px] pb-[5px] pt-[5px]">
                 <span className="truncate text-[11px] font-medium leading-none text-ink">
                   {sale.player.surname}
@@ -123,5 +107,24 @@ export function SoldRecord({ sales, drafters, youSeat, nextLot, show = 4 }: Sold
         </span>
       ) : null}
     </section>
+  )
+}
+
+/** Same silent-hide-on-failure the card used with a bare `<img>` — the card's
+ * own crest and surname beneath it are label enough without this photo. */
+function SoldFace({ player }: { player: Player }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) return null
+
+  return (
+    <span className="auction-sold-face block w-full overflow-hidden bg-surface-2">
+      <Dotgrid
+        player={player}
+        frame="sold-record-face"
+        className="h-full w-full"
+        onError={() => setFailed(true)}
+      />
+    </span>
   )
 }

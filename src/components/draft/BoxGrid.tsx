@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react'
-import { faceCenters } from '../../data/faceAnchors'
 import type { Box } from '../../lib/dondEngine'
 import type { Drafter } from '../../lib/draftEngine'
-import { slugify } from '../../lib/players'
-
-/** Same fallback the other two photo surfaces use for an unmarked face box. */
-const DEFAULT_CENTER: [number, number] = [0.5, 0.35]
+import { Dotgrid } from './Dotgrid'
 
 interface BoxGridProps {
   boxes: Box[]
@@ -68,8 +64,6 @@ function BoxFace({
   useEffect(() => setFailed(false), [box.player.id])
 
   if (box.openedBy !== null) {
-    const [fx, fy] = faceCenters[slugify(box.player.name)] ?? DEFAULT_CENTER
-
     return (
       <div
         className={[
@@ -82,12 +76,10 @@ function BoxFace({
           {failed ? (
             <img className="crest m-auto h-[50%] w-[50%] opacity-40" src={box.player.crest} alt="" />
           ) : (
-            <img
-              className="h-full w-full object-cover"
-              style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }}
-              src={box.player.portrait}
-              alt={box.player.name}
-              decoding="async"
+            <Dotgrid
+              player={box.player}
+              frame="box-grid-tile"
+              className="h-full w-full"
               onError={() => setFailed(true)}
             />
           )}

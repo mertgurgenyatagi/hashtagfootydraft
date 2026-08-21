@@ -23,7 +23,44 @@ export interface Player {
   /** Also never rendered — Free Pick has no currency. The auto-pick uses it. */
   price: number
   crest: string
-  portrait: string
+  /** Not a usable image URL on its own — see `cellGridSrc`. Points at
+   * `players-cells/{slug}`, the standardised 80×100 colour-grid raster the
+   * `Dotgrid` component reads; the per-frame crop into it is CSS, not data. */
+  portraitBase: string
+}
+
+/**
+ * Every distinct place a player photo actually renders on screen — one entry
+ * per crop tuned in `Dotgrid.tsx`'s `FRAME_CROPS`.
+ */
+export type DotgridFrame =
+  | 'spare-face'
+  | 'auction-block'
+  | 'box-stage'
+  | 'box-grid-tile'
+  | 'pitch-node'
+  | 'sold-record-face'
+  | 'spotlight-free-pick'
+  | 'spotlight-spin'
+
+/**
+ * Frames settled on different source densities during tuning (a hero surface
+ * wants more columns than a tiny avatar), so the density is part of the
+ * filename — `make_dotgrid_cells.py` generates one file per player per
+ * density actually used by some `FRAME_CROPS` entry, not per frame name.
+ */
+export function cellGridSrc(player: Pick<Player, 'portraitBase'>, density: number): string {
+  return `${player.portraitBase}--${density}.webp`
+}
+
+/**
+ * The full-resolution standardised crop `players-cells/` was itself
+ * downsampled from — production code never needs this, only
+ * `DotgridTuner.tsx`, to regenerate a grid at a different density client-side
+ * while tuning.
+ */
+export function fullResCropSrc(player: Pick<Player, 'portraitBase'>): string {
+  return `${player.portraitBase.replace('players-cells/', 'players-4x5/')}.webp`
 }
 
 /**
@@ -167,7 +204,7 @@ export async function loadPool(signal?: AbortSignal): Promise<Player[]> {
       ability: Number(cells[abilityAt]) || 0,
       price: Number(cells[priceAt]) || 0,
       crest: crestUrl(clubSlug),
-      portrait: `${base}players/${slugify(name)}.webp`,
+      portraitBase: `${base}players-cells/${slugify(name)}`,
     })
   }
 
