@@ -173,6 +173,98 @@ scattered across the repo root from the rejected dot-grid rounds above (per-play
 PNGs, throwaway HTML tuners, the tkinter GUI tuner script) was deliberately left uncommitted
 rather than swept into the purification merge, and is the obvious first thing for it to clear.
 
+That branch was renamed **`clean-bloat-and-repalette`** later the same day, then used for a full
+workspace probe — every file the app's code actually imports or reads, checked directly rather
+than assumed, against everything sitting in the repo. The findings were packaged into a
+31-question, plain-English artifact ("Squad Cuts") and answered by Mert in one pass. What came
+back and was acted on:
+
+- **All 29 untracked dot-grid-round leftovers are gone**: the twelve per-player test renders
+  (boniface/digne/mario/richarlison/spinazzola/williams/zinchenko), the ten random test photos,
+  the tkinter tuner and its saved picture, the CSS-mask proof screenshot, and both throwaway
+  browser tuners together with the scripts that built them.
+- **The in-app `/dotgrid-tuner` route is gone.** `DotgridTuner.tsx`, `DotgridTuning.tsx` and
+  `dotgridCanvas.ts` are deleted, `App.tsx` no longer mounts the route, and `Dotgrid.tsx` lost the
+  tuning-context override path it only ever needed while that route existed — it now always reads
+  the shipped `FRAME_CROPS` table and density asset directly. `fullResCropSrc` in `players.ts`,
+  which existed only to feed the tuner, is gone with it.
+- **Four more dead files removed**: `StadiumPlate.tsx` and `LobbyPlate.tsx` (superseded by the
+  shared `AmbientBackdrop`/`LobbyLayout` since the `seamlessness` branch, but never deleted until
+  now), and `faceAnchors.ts` (already flagged unused in Art assets above). `public/botModels/` —
+  the real-file remnant of the broken symlink described under The app frame, symmetric above — is
+  deleted too; the one surviving copy is `src/data/botModels/`, still not wired into any draft
+  screen.
+- **`public/players/`, the 253 MB of original uncropped photos, is deleted.** The probe found
+  nothing in `src/` reads it, but also found two build scripts — `make_face_crops.py` and
+  `crop_players_4x5.py` — read directly from it, so it was restored and flagged back to Mert
+  rather than deleted outright. He confirmed the delete anyway once he knew the tradeoff. Both
+  scripts still work if this ever needs regenerating: `process_player_images.py` rebuilds
+  `public/players/` from the raw fetches in the gitignored `assets/` folder (593 MB, still on
+  disk locally, never deleted), and everything downstream of it follows from there. Nothing is
+  actually unrecoverable — there's just no checked-in intermediate copy any more.
+- **A new top-level `data/` folder** holds the five CSV/JSON files still actually read by
+  something: `data/player_data.csv`, `data/face_coordinates.json`,
+  `data/draft_config_permutations.csv`, `data/draft_config_simulation_results.csv`,
+  `data/player_data_multiposition_backup.csv`. Every script that reads them was updated to match.
+  Everything else that used to sit loose at the repo root — `player_names_clubs.csv`,
+  `player_names_nations.csv`, `player_single_position.csv`,
+  `draft_config_simulation_results_500.csv`, `draft_config_fsc_viable_at_5.csv`,
+  `crop_4x5_report.csv`, `face_height_ratios.csv` (and the script that made the last one,
+  `compute_face_height_ratios.mjs`) — was either a one-time, job-already-done input or a file
+  nobody, Mert included, could explain the purpose of, and got deleted.
+- **`scripts/` split into `scripts/images/`** (`crop_players_4x5.py`, `index_images.py`,
+  `make_dotgrid_cells.py`, `make_face_crops.py`, `process_club_logos.py`,
+  `process_player_images.py`) **and `scripts/draft-data/`** (`generate_viability_data.mjs`,
+  `simulate_draft_configs.mjs`), grouped by what they actually do. `scripts/training/` was left
+  where it is — already its own subfolder. Every moved script had its repo-root path resolution
+  fixed for the new depth; `index_images.py` never anchored to its own file location at all
+  before this and was fixed properly rather than just patched. Its output, `player_images.json`,
+  moved from `public/` (where it shipped to the live site for no reason — nothing in `src/` ever
+  read it) to `scripts/player_images.json`.
+- **`player_data.csv` now has one source of truth.** `data/player_data.csv` and the
+  `public/player_data.csv` the running app actually fetches were two independently-editable
+  copies that happened to still match. `scripts/sync_player_data.mjs` now copies one to the
+  other, wired in as `predev`/`prebuild` in `package.json`, so a future edit to only one of them
+  can't go unnoticed.
+- **All seven "pick a design" exhibitions are deleted, not archived** — `mockups/home.html`,
+  `lobby.html`, `lobby-solo.html`, `free-pick.html`, `spin-wheel.html`, `dond.html`,
+  `auction.html`, and the `orbit-tuner.html` hand-tuning page went with them, and the `mockups/`
+  folder itself no longer exists. Mert's call, not the recommendation on offer (which was to keep
+  them as a design record) — every pick they were for is already built and shipped. **Every
+  "Where: mockups/…" pointer in the exhibition write-ups below is now historical**: the decisions
+  and the reasoning stay accurate, the files themselves aren't there to open anymore.
+- **The 2026-08-15 home-page design spec is deleted** — it described a scrapped version of the
+  home page (a different palette, a scrolling photo strip at the bottom) superseded two days
+  later by the `frontend-retry` exhibition. The 2026-08-19 Auction training pipeline spec's status
+  line was corrected in place from "implementation pending" to reflect that the run actually
+  happened; the design reasoning in the rest of it was already still accurate and untouched.
+- **The "What Survives in `scripts/training/`" table further down this document was wrong** and
+  is now corrected inline where it appears — it described several files and checkpoints as
+  existing that a same-day 2026-08-19 commit had already deleted for good.
+- **The three `bot-questionnaire-N.md` files are deleted**; the Questionnaire Log table's
+  citations of them by filename are corrected below to drop the now-dead references.
+- **`.claude/skills/` and `.agents/skills/` stay duplicated on purpose** — Mert confirmed he runs
+  more than one coding assistant against this repo, so both need their own copy of the same
+  skill files.
+
+Two more direct tweaks landed straight in `src/styles/index.css` before this branch closed out,
+both made by hand rather than through a build session. **The four palette primes were retuned**:
+`--color-ground` `#071414` → `#03071e`, `--color-ink` `#e2f0ee` → `#f1faee`, `--color-accent`
+`#ef7a3c` → `#faa307`, `--color-tint` `#123030` → `#14213d` — moving the site off the teal/orange
+combination every earlier narrative entry in this document calls "petrol" toward a near-black
+indigo ground with a gold/amber accent. Every derived token below the four primes
+(`--color-surface`, `--color-line`, `--color-muted`, `--color-accent-ink`, `--color-shade`, and
+the five `--color-league-*` wheel slices) recomputes off the new values automatically, since
+nothing else in `src/` declares a colour of its own — see Design tokens above for the current
+values and the mechanism. **"Petrol" is now a historical name** describing what was true when
+each earlier entry was written, not the current values; those entries are left as-is. Separately,
+**the dot-grid portrait mask's circle radius was widened from 37.5% to 50%** (`.dotgrid` in
+`index.css` — see Art assets above), the largest it can go before adjacent dots start overlapping
+into a solid grid, since at 50% each circle's edge just touches its neighbour's.
+
+Unlike every pass recorded above, **this one did touch git**: committed, pushed, and merged into
+`main`. A new branch, **`tweak-sweep`**, was then cut from `main` for whatever comes next.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -221,7 +313,13 @@ home page's own spec is `docs/superpowers/specs/2026-08-15-home-page-design.md`.
 
 ### Design tokens
 
-**Petrol is the palette. This is settled and project-wide** — not a per-page choice.
+**Four hand-picked primes are the palette. This is settled and project-wide** — not a
+per-page choice. **The four values themselves were retuned in place by Mert on
+2026-08-22** — see the `clean-bloat-and-repalette` branch narrative above for the
+before/after hexes; "petrol" (the teal/orange combination every earlier narrative entry
+in this document names) is now a historical label, not a description of the current
+values. The mechanism this section describes — four primes, everything else
+`color-mix`-derived from them — is unchanged; only the four hex values are new.
 
 Defined once in `src/styles/index.css` as a Tailwind v4 `@theme static` block. The
 palette declares **four primes**; every other colour in the app derives from those four
@@ -230,15 +328,15 @@ does it. Nothing anywhere else in `src/` declares a colour.
 
 | Prime | Value | Role |
 |---|---|---|
-| `--color-ground` | `#071414` | page ground — near-black, deep teal |
-| `--color-ink` | `#e2f0ee` | primary text — off-white, faintly green |
-| `--color-accent` | `#ef7a3c` | orange — primary CTA fill, section titles, focus rings |
-| `--color-tint` | `#123030` | the `mix-blend-mode: color` wash over the stadium backdrop |
+| `--color-ground` | `#03071e` | page ground — near-black, deep indigo/navy |
+| `--color-ink` | `#f1faee` | primary text — off-white, faintly green |
+| `--color-accent` | `#faa307` | amber/gold — primary CTA fill, section titles, focus rings |
+| `--color-tint` | `#14213d` | the `mix-blend-mode: color` wash over the stadium backdrop |
 
 Derived, in the same block: `--color-surface` / `--color-surface-2` (panels, tiles),
 `--color-line` / `--color-line-strong` (hairlines), `--color-muted` / `--color-dim`
 (secondary and tertiary text), `--color-accent-ink` / `--color-accent-soft` /
-`--color-accent-line` (text on orange, hover fills, accent hairlines), and
+`--color-accent-line` (text on accent, hover fills, accent hairlines), and
 `--color-shade` (the one colour darker than the ground).
 
 `@theme static`, not plain `@theme`, matters: Tailwind prunes theme variables no utility
@@ -247,7 +345,7 @@ rather than by a class.
 
 Standing rules:
 
-- **Exactly one saturated accent** (orange). If a second functional colour is ever
+- **Exactly one saturated accent** (amber/gold). If a second functional colour is ever
   needed for "secured" states, derive it from the primes — don't add a fifth.
 - **No glow.** No `box-shadow` as a halo, no coloured blur. Depth comes from an offset
   directional shadow or a flat surface step.
@@ -369,7 +467,7 @@ scraped from, not the division the club plays in, so it files Fenerbahçe's play
 is the authority. It falls out of the crest set for free — a club the app cannot draw is
 a club it should not offer — and it is generated, so regenerate rather than hand-edit.
 
-`scripts/process_club_logos.py` is what produced them — it imports from an external
+`scripts/images/process_club_logos.py` is what produced them — it imports from an external
 Wikipedia-sourced logo dump (kept outside the repo, like the other raw source art),
 maps CSV club names to Wikipedia article filenames through a hand-built table, and
 compresses in two stages: downsample any embedded raster the export wrapped, then `svgo
@@ -385,7 +483,7 @@ table Ødegaard, Groß, Guðmundsson, Nørgaard, Sørloth and Højlund all miss 
 Anything still missing falls through to the club crest at the point of use. The one gap is
 `ederson-atalanta` (the CSV has two different players named "Ederson"; only one photo
 was ever fetched and it's unambiguously the other one, the Fenerbahçe keeper — see
-`scripts/process_player_images.py`'s docstring). It falls through to the SVG stand-in
+`scripts/images/process_player_images.py`'s docstring). It falls through to the SVG stand-in
 until a distinct photo is fetched for him specifically.
 
 These are **deliberately uncropped and unresized** — full original resolution, each
@@ -401,18 +499,18 @@ To help with that cropping, `face_coordinates.json` has a hand-marked bounding b
 player — `{ x, y, width, height, imageWidth, imageHeight }`, all in that player's own
 image's pixel space — locating their face. Marked by hand against `public/players/`; the
 tool used to do it was a throwaway local HTML page, not worth keeping once the data
-existed. It is now what `scripts/crop_players_4x5.py` reads to produce the standardised
+existed. It is now what `scripts/images/crop_players_4x5.py` reads to produce the standardised
 4:5 crop described below.
 
-**`src/data/faceAnchors.ts` is a second, older consumer of the same file** — the centre
+**`src/data/faceAnchors.ts` was a second, older consumer of the same file** — the centre
 of each face box as a percentage of the image, once fed straight to the draft screens'
 portrait panels via CSS custom properties (see The portrait panel's face anchoring,
-below, for how). **No longer used for rendering**: the standardised 4:5 crop places every
-player's face at the same position by construction, so the per-player lookup this did is
-redundant for that job now. Left in place — generated, harmless, 545 entries, ~12 KB —
-rather than deleted, since nothing depends on removing it.
+below, for how). It stopped being used for rendering once the standardised 4:5 crop
+started placing every player's face at the same position by construction, and was
+**deleted 2026-08-22** — it sat unused for a while first, on the reasoning that nothing
+depended on removing it, but the workspace cleanup that day decided otherwise.
 
-**`public/faces/` is the first consumer of that data.** `scripts/make_face_crops.py`
+**`public/faces/` is the first consumer of that data.** `scripts/images/make_face_crops.py`
 reads a player's face box, cuts a 4:5 portrait around it such that the face occupies a
 fixed 42% of the crop's height (anchored at 44% from the top, so there's room for
 shoulders), and writes a 256×320 WebP. The point is that a set of them reads as one
@@ -426,7 +524,7 @@ Player photos are fetched via `save_player_images.py` (`run_save.bat`) — semi-
 it drives the browser through a Google Images search per player and waits for a manual
 click on the right thumbnail, since no fully-automatic heuristic proved reliable enough
 to trust unattended. Raw fetches land in `assets/` (gitignored, kept locally as the
-archive) and `scripts/process_player_images.py` converts whichever ones match
+archive) and `scripts/images/process_player_images.py` converts whichever ones match
 `player_data.csv` into the `public/players/{slug}.webp` files actually shipped.
 
 **What's actually rendered on screen is not that `.webp` — every portrait is a generated
@@ -434,7 +532,7 @@ dot-grid (LED/halftone) rendering of it**, settled by Mert on the `purification`
 (2026-08-21 to 2026-08-22; see the branch narrative above for the rounds this converged
 through). Three pieces, in order:
 
-**1. One standardised 4:5 crop per player.** `scripts/crop_players_4x5.py` reads
+**1. One standardised 4:5 crop per player.** `scripts/images/crop_players_4x5.py` reads
 `face_coordinates.json` and crops each of the 545 sourced photos to a fixed 4:5 aspect
 ratio, native resolution, targeting a consistent vertical placement of the face:
 **top edge at 15% down the crop, centre at 27.5%, bottom at 40%** — the unique point
@@ -453,7 +551,7 @@ photo's height); confirmed against all 545, holds for both a 4:5 and a 1:1 targe
 for every frame was wrong at both ends actually in use: a wide hero surface (the Auction
 block) had room for more detail than a shared low resolution gave it, and a tiny avatar
 (`spare-face`, `pitch-node`) pushed cells below the ~3px floor where the CSS circle mask
-below loses precision and renders mostly blank. `scripts/make_dotgrid_cells.py`
+below loses precision and renders mostly blank. `scripts/images/make_dotgrid_cells.py`
 box-filter-downsamples each `players-4x5` crop straight to every density any frame
 actually uses (currently 16/48/64/96 columns-across, rows following at `cols × 1.25` to
 hold the 4:5 aspect), one flat averaged colour per cell, saved lossless. Output:
@@ -466,7 +564,10 @@ CSS rule shared by every player rather than data baked per file.
 Dotgrid.tsx` renders each portrait as a `<div>`: the colour grid as a pixelated
 `background-image`, with a repeating circular `mask-image` (one radial gradient, sized in
 `%` of its own tile) punched over it — `.dotgrid` in `index.css` holds the one CSS rule
-this needs, shared by every player and every frame. The crop itself is computed in JS, not
+this needs, shared by every player and every frame. The circle's radius shipped at **37.5%**
+of its own tile and was widened to **50%** on 2026-08-22 (see the `clean-bloat-and-repalette`
+branch narrative above) — the largest it can go before adjacent dots start touching and
+merging into a solid grid. The crop itself is computed in JS, not
 CSS: a `ResizeObserver` reads the instance's *actual* rendered box and derives one uniform
 scale factor from it (`max(width/cols, height/rows)`, the same arithmetic as
 `object-fit: cover`), so `background-size`/`mask-size` land in matching px on both axes and
@@ -536,12 +637,15 @@ than assumed.
 
 **Open, not yet done:** the 280 clamped 4:5 crops haven't had a systematic pass (only
 `nico-williams` is confirmed bad); Safari's support for `mask-image` at these tile sizes
-hasn't been checked at all; and the source `.webp` originals in `public/players/`
-(~249 MB) are unreferenced by any code now but not yet deleted — worth revisiting
-alongside `players-4x5/` and `players-cells/` together, each its own further copy of the
-same 545 photos at a different stage, if the repo's size becomes a real problem. All of this,
-plus the untracked round-experiment debris noted above, is fair game for the
-**`cleanup-and-optimization`** branch cut from `main` once `purification` merged.
+hasn't been checked at all. The untracked round-experiment debris this paragraph used to
+mention was cleared 2026-08-22 on the `clean-bloat-and-repalette` branch (renamed from
+`cleanup-and-optimization`) — see the branch narrative above. That same pass also deleted
+the source `.webp` originals in `public/players/` (~253 MB) — nothing in `src/` reads
+them, and although `scripts/images/make_face_crops.py` and
+`scripts/images/crop_players_4x5.py` both still read directly from that folder, Mert
+confirmed the delete anyway once he knew. Regenerating either downstream stage now means
+first re-running `scripts/images/process_player_images.py` against the raw fetches still
+sitting in the gitignored `assets/` folder, which is untouched.
 
 The other real asset in the build is the backdrop, `public/stadium.webp` (234 KB). It is
 referenced through `import.meta.env.BASE_URL`, not a leading slash, so it survives being
@@ -975,8 +1079,8 @@ cropped to one standardised 4:5 aspect with the face at a fixed, consistent posi
 see **Art assets** above. With the source already consistent, the panel no longer needs
 per-player positioning math at all: `PlayerSpotlight.tsx` just renders a `Dotgrid` at the
 `spotlight-free-pick` / `spotlight-spin` crop tuned for it, same as every other frame.
-`.spotlight-photo` and the `faceAnchors.ts` lookup this section describes are both dead
-for this purpose now (`faceAnchors.ts` is left in place regardless, per Art assets).
+`.spotlight-photo` and the `faceAnchors.ts` lookup this section describes were both dead
+for this purpose by then; `faceAnchors.ts` itself was deleted 2026-08-22, per Art assets.
 
 The portrait panel did not use a pre-cropped image — per the standing rule that player
 photos stay at native resolution and aspect ratio (see Art assets above), whatever crop a
@@ -1641,9 +1745,10 @@ item's automatic minimum size (`min-height: auto`) is content-based and, for a r
 element, clamps the height back *up* past an explicit `h-[64%]` using the image's
 intrinsic aspect ratio. Landscape and square marks are width-constrained so it never
 bites; the two portrait lockups (Serie A, Ligue 1) grew past the chip and clipped along
-its bottom edge. `mockups/crest-chip.html` reproduces it before/after at 6× with a
-measured readout, and `mockups/logo-centre.html` is the throwaway that ruled out the
-artwork itself being off-centre.
+its bottom edge. Two throwaway repro pages caught this at the time — `mockups/crest-chip.html`
+reproduced it before/after at 6× with a measured readout, `mockups/logo-centre.html` ruled out
+the artwork itself being off-centre — both already gone by the time this document was checked
+against reality again on 2026-08-22; neither survived the `resolution-generalization` cleanup.
 
 ## Configuration Mechanics
 
@@ -2013,8 +2118,9 @@ canonical position per player, decided across three questionnaire rounds on 2026
 All 546 players were replaced in a single delivery — the "however many batches it takes"
 possibility from R7-Q2 never materialized; Mert handed over the full pool at once as
 `player_single_position.csv` (`Name,Nation,Position`; ten formation-slot labels only,
-validated against the live data with zero invalid values). The original multi-position
-file is preserved at `player_data_multiposition_backup.csv`.
+validated against the live data with zero invalid values) — deleted 2026-08-22 once its
+one job was long done. The original multi-position file is preserved at
+`data/player_data_multiposition_backup.csv`.
 
 Settled, Round 1 (R7):
 - **Destructive replacement** — the single listed position is now each player's only
@@ -2137,11 +2243,11 @@ finish:
 
 ### The simulation
 
-`scripts/simulate_draft_configs.mjs` runs every configuration in
-`draft_config_permutations.csv` (2,176 rows: 4 formats × 68 scopes × constraints ×
-lobby sizes 2–5) against `player_data.csv`, up to 50,000 simulated drafts each,
+`scripts/draft-data/simulate_draft_configs.mjs` runs every configuration in
+`data/draft_config_permutations.csv` (2,176 rows: 4 formats × 68 scopes × constraints ×
+lobby sizes 2–5) against `data/player_data.csv`, up to 50,000 simulated drafts each,
 flagging and skipping a configuration the moment one run hits a shortage. Results land
-in `draft_config_simulation_results.csv`.
+in `data/draft_config_simulation_results.csv`.
 
 The script's header comments record exactly what each format models and — more
 importantly — what it deliberately doesn't invent: Auction has no bidding strategy
@@ -2154,7 +2260,8 @@ simulation doesn't fabricate mechanics.
 
 Run depth mattered: 500 runs proved deadlocks exist, 5,000 caught two more
 configurations that 500 had missed. **5,000 is the authoritative pass**; the 500-run
-results are kept alongside as `draft_config_simulation_results_500.csv` for comparison.
+results were kept alongside as `draft_config_simulation_results_500.csv` for comparison
+until 2026-08-22, when that comparison was judged done with and the file deleted.
 
 ### What it found
 
@@ -2177,14 +2284,14 @@ results are kept alongside as `draft_config_simulation_results_500.csv` for comp
 
 ### What ships
 
-`scripts/generate_viability_data.mjs` turns the results CSV into
+`scripts/draft-data/generate_viability_data.mjs` turns the results CSV into
 `src/data/draftViability.ts` — one number per `format|scope|constraint` triple: the
 largest table it still completes at, absent meaning never. It drops the nationality
 rows (unreachable now the Scope is gone) and re-verifies monotonicity, throwing if it
 ever breaks. 34 entries.
 
 `src/lib/draftViability.ts` is the lookup the lobbies use. Regenerate with
-`node scripts/generate_viability_data.mjs` after any re-run of the simulation, and note
+`node scripts/draft-data/generate_viability_data.mjs` after any re-run of the simulation, and note
 that **`player_data.csv` changing invalidates all of it** — the whole chain has to be
 re-run.
 
@@ -2295,9 +2402,13 @@ This table is kept as a historical index of what each round covered.
 | 5 | Wheel category timing, constraint scope clarification, share-image asset, format/scope selection, bot auto-fill, Auction bidding-after-full-XI, D-o-N-D rotation, graveyard visibility, lobby lifecycle | Answered |
 | 6 | Auction/D-o-N-D reveal-quality ordering, constraint scope (per-squad vs global), Free Pick constraint deadlocks, default timer length, host transfer, indefinite-blocking bidding, AI proposer targeting, share-image timing | Answered |
 | 7 | Position reform: full remap to single positions, Multi-Position Eligibility retirement, Auction overflow-to-graveyard mechanic, hard-gate placement, Post-Draft Editing narrowed | Answered |
-| 8 | Bot Questionnaire 1: Auction budget formula, Auction bid timer resets, unsold player handling, D-o-N-D banker & boxes, Free Pick deadlock stance, non-auction post-draft lock, position-weighted squad evaluation metric, ML RL training approach, bot live delay | Answered (`bot-questionnaire-1.md`) |
-| 9 | Bot Questionnaire 2: Separate models per format, margin-over-average RL reward, Auction +5M/+10M/+25M actions, Deal or No Deal -15 banker discount, pure ML selection policies, randomized 2-5 seats & weighted scopes, in-browser ONNX/JS execution | Answered (`bot-questionnaire-2.md`) |
-| 10 | Bot Questionnaire 3: Multi-agent PPO, 500k+ episodes, Champion Checkpoint League evaluation, full pool 546-player embeddings, comprehensive auction/D-o-N-D observations, action masking, softmax temperature ~0.6 | Answered (`bot-questionnaire-3.md`) |
+| 8 | Bot Questionnaire 1: Auction budget formula, Auction bid timer resets, unsold player handling, D-o-N-D banker & boxes, Free Pick deadlock stance, non-auction post-draft lock, position-weighted squad evaluation metric, ML RL training approach, bot live delay | Answered |
+| 9 | Bot Questionnaire 2: Separate models per format, margin-over-average RL reward, Auction +5M/+10M/+25M actions, Deal or No Deal -15 banker discount, pure ML selection policies, randomized 2-5 seats & weighted scopes, in-browser ONNX/JS execution | Answered |
+| 10 | Bot Questionnaire 3: Multi-agent PPO, 500k+ episodes, Champion Checkpoint League evaluation, full pool 546-player embeddings, comprehensive auction/D-o-N-D observations, action masking, softmax temperature ~0.6 | Answered |
+
+The raw `bot-questionnaire-1.md` / `-2.md` / `-3.md` files this table used to cite by name were
+themselves deleted 2026-08-22, in the same pass that cleared the rest of this table's siblings —
+the summaries above are what's left of rounds 8–10.
 
 ## Project Status
 
@@ -2323,16 +2434,19 @@ done. See **The Auction draft screen** above.
 per-frame-density colour grid, cropped live against each frame's own rendered box — done
 on the `purification` branch, 2026-08-21 to 2026-08-22; see Art assets above for the
 settled mechanism, the final tuned values, and what's still open (a systematic pass over
-the 280 clamped 4:5 crops; Safari verification; deleting the now-superseded source
-copies). The `/dotgrid-tuner` dev route this was tuned through is still in the route
-table and should come out before this ships. The original `.webp` photographs in
-`public/players/` are unreferenced by any render path now (`players-4x5/`, the crop stage
-between them and what's shipped, is still live — it's what generation reads, and what the
-tuner's client-side density preview reads too) but not yet deleted. Every rendering also
-carries a **`saturate(1.6)` filter** on the shared `.dotgrid` rule, added 2026-08-22 to
-counteract the saturation the cell-averaging step loses — see Art assets above. The
-`purification` branch merged to `main` the same day; a **`cleanup-and-optimization`** branch
-was then cut from `main` to pick up the open items above.
+the 280 clamped 4:5 crops; Safari verification). The `/dotgrid-tuner` dev route this was
+tuned through has since come out of the app entirely — deleted 2026-08-22, along with the
+`fullResCropSrc` helper and tuning-context code it was the only user of; see the branch
+narrative above. The original `.webp` photographs that used to sit at `public/players/`
+were unreferenced by any render path and are now deleted (2026-08-22) — `players-4x5/`,
+the crop stage between them and what's shipped, is still live and is what generation
+reads. See Art assets above for what regenerating either stage from scratch now takes.
+Every rendering also carries a **`saturate(1.6)` filter** on the
+shared `.dotgrid` rule, added 2026-08-22 to counteract the saturation the cell-averaging
+step loses — see Art assets above. The `purification` branch merged to `main` the same
+day; a **`cleanup-and-optimization`** branch was then cut from `main`, renamed
+**`clean-bloat-and-repalette`**, and used to clear the open items above — see the branch
+narrative near the top of this document for the full record of what that pass did.
 
 **Known bug, unrelated to the above, not yet fixed:** the running player pool only ever includes
 players from the top five leagues, regardless of scope — surfaced while checking the portrait
@@ -2415,9 +2529,23 @@ The outstanding work is writing an implementation plan from it and then executin
 - **State Representation:** features concatenated into a flat vector (one‑hot positions, player abilities, current squad needs, etc.).
 - **Inference:** the frontend performs the matrix multiplications from the exported JSON weights and picks the highest‑probability action.
 
+**Correction, 2026-08-22 — the table below is wrong about the current state and was never
+fixed.** `config.py`, `player_pool.py`, `models.py`, `export_weights.py`, `live_config.json`,
+`static/dashboard.html`, and the `dond`/`free_pick`/`spin_wheel` checkpoints it describes as
+surviving were all deleted for good, along with everything else format-specific, by the same
+"Remove training scripts and experimental HTML UI; finalize bot development" commit that the
+Git Operations section at the very bottom of this document already records as having run on
+2026-08-19. This table just described a point in time that commit had already ended by the time
+anyone read it back. What actually still exists in `scripts/training/` today is only what the
+2026-08-20 update above and the Auction-specific work below describe: `env_auction.py`, `ppo.py`,
+`train_auction.py`, `scripted_auction.py`, `reference_auction.py`, `obs_auction.py`, its test,
+`checkpoints/auction/champion.pt`, and `metrics/auction_history.json` — nothing shared, and
+nothing for the other three formats.
+
 ## What Survives in `scripts/training/`
 
-Only shared infrastructure. Everything format‑specific was wiped.
+Only shared infrastructure, **as of when this was written — see the correction directly above.**
+Everything format‑specific was wiped.
 
 | File | What it gives you |
 |---|---|

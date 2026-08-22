@@ -1,7 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { Draft } from './routes/Draft'
-import { DotgridTuner } from './routes/DotgridTuner'
 import { Home } from './routes/Home'
 import { MultiLobby } from './routes/MultiLobby'
 import { SoloLobby } from './routes/SoloLobby'
@@ -24,9 +23,6 @@ export function App() {
           <Route path="/solo/:formatId" element={<SoloLobby />} />
           <Route path="/lobby/:code" element={<MultiLobby />} />
           <Route path="/draft/:formatId" element={<Draft />} />
-          {/* Dev-only, for tuning the dot-grid crops against the real live
-              screens — see DotgridTuner.tsx. Remove once that's settled. */}
-          <Route path="/dotgrid-tuner" element={<DotgridTuner />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </AppShell>

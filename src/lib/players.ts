@@ -54,16 +54,6 @@ export function cellGridSrc(player: Pick<Player, 'portraitBase'>, density: numbe
 }
 
 /**
- * The full-resolution standardised crop `players-cells/` was itself
- * downsampled from — production code never needs this, only
- * `DotgridTuner.tsx`, to regenerate a grid at a different density client-side
- * while tuning.
- */
-export function fullResCropSrc(player: Pick<Player, 'portraitBase'>): string {
-  return `${player.portraitBase.replace('players-cells/', 'players-4x5/')}.webp`
-}
-
-/**
  * Characters `NFKD` will not decompose, because they are letters in their own
  * right rather than an ASCII letter wearing a mark. The portrait files on disk
  * were named through the same folding, so Ødegaard has to land on `odegaard`

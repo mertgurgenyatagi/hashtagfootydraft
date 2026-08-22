@@ -2,7 +2,9 @@
 
 **Date:** 2026-08-19
 **Branch:** `auction-training`
-**Status:** design approved, implementation pending
+**Status:** design approved, implementation carried out (2026-08-20) — see PROJECT.md's
+Project Handover section for the training run's actual results and what's still
+unverified about it.
 
 Auction is the one format of four with no trained model. Three prior days of attempts
 produced a trainer that was both slow (4.4–7.0 drafts/sec) and flat. `HANDOVER.md`

@@ -13,10 +13,10 @@
    most of them are read by hand-written CSS and inline styles, not by a utility. */
 @theme static {
   /* ---- The four primes. Everything else is mixed from these. ---- */
-  --color-ground: #071414;
-  --color-ink: #e2f0ee;
-  --color-accent: #ef7a3c;
-  --color-tint: #123030;
+  --color-ground: #03071e;
+  --color-ink: #f1faee;
+  --color-accent: #faa307;
+  --color-tint: #14213d;
 
   /* ---- Derived, once. No other colour is declared anywhere in the app. ---- */
   --color-surface: color-mix(in oklab, var(--color-ground) 92%, var(--color-ink));
@@ -727,8 +727,8 @@
   image-rendering: pixelated;
   -webkit-mask-repeat: repeat;
   mask-repeat: repeat;
-  -webkit-mask-image: radial-gradient(circle at center, #000 37.5%, transparent 37.5%);
-  mask-image: radial-gradient(circle at center, #000 37.5%, transparent 37.5%);
+  -webkit-mask-image: radial-gradient(circle at center, #000 50%, transparent 50%);
+  mask-image: radial-gradient(circle at center, #000 50%, transparent 50%);
   filter: saturate(1.6);
 }
 
