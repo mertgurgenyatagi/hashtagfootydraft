@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Questionnaire 2: Firestore Schema & Data Modeling</title>
+    <style>
+        :root {
+            --color-ground: #121009;
+            --color-ink: #ededec;
+            --color-accent: #fbbf24;
+            --color-surface: #1e1c15;
+            --color-line: #33312a;
+            --color-muted: #8b8b88;
+        }
+        body {
+            background-color: var(--color-ground);
+            color: var(--color-ink);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        h1 {
+            color: var(--color-accent);
+            border-bottom: 1px solid var(--color-line);
+            padding-bottom: 1rem;
+        }
+        .question-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-line);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+        .option-label input[type="radio"] {
+            margin-top: 0.25rem;
+            margin-right: 0.75rem;
+            accent-color: var(--color-accent);
+        }
+        .custom-input {
+            background-color: var(--color-ground);
+            color: var(--color-ink);
+            border: 1px solid var(--color-line);
+            border-radius: 6px;
+            padding: 0.5rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            box-sizing: border-box;
+        }
+        .custom-input:focus {
+            outline: 1px solid var(--color-accent);
+            border-color: var(--color-accent);
+        }
+        .copy-btn {
+            background-color: var(--color-accent);
+            color: var(--color-ground);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            margin-bottom: 4rem;
+        }
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--color-accent);
+            color: var(--color-ground);
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: bold;
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Integration Questionnaire 2:<br>Firestore Schema & Data Modeling</h1>
+    <p style="color: var(--color-muted); margin-bottom: 2rem;">You selected a Single Document approach in Q1. This questionnaire locks down the schema for that document and how we track specific mechanics. Click copy at the bottom to format your answers into Markdown for <code>integration_questionnaire_2.md</code>.</p>
+
+    <div id="questions-container"></div>
+
+    <button class="copy-btn" onclick="copyToClipboard()">Copy Answers to Clipboard</button>
+    <div id="toast">Copied to clipboard!</div>
+
+    <script>
+        const questions = [
+            {
+                id: "q1",
+                title: "1. Lobby Document ID Structure:",
+                options: [
+                    "Use the 5-letter Room Code directly as the Document ID (easy routing, but collision risk if codes are short).",
+                    "Use auto-generated Firestore IDs and store the Room Code as a field inside it (requires a query to join by code)."
+                ]
+            },
+            {
+                id: "q2",
+                title: "2. Player Identification (Linking Firebase to the CSV):",
+                options: [
+                    "Use the player's exact Name string as the ID (easy to read, but breaks if there are two 'J. Smiths').",
+                    "Use the CSV row index (e.g., 'row_42') as the ID (brittle if CSV order changes).",
+                    "Generate and embed a unique slug/UUID into the CSV and use that as the primary key."
+                ]
+            },
+            {
+                id: "q3",
+                title: "3. Seat Tracking Representation:",
+                options: [
+                    "An array of User IDs where the index implicitly dictates draft order (e.g., [user1, bot1, user2]).",
+                    "A Map/Dictionary keyed by User ID with an explicit `order` field (e.g., { user1: { order: 0 }, bot1: { order: 1 } })."
+                ]
+            },
+            {
+                id: "q4",
+                title: "4. Bot Identification in the Database:",
+                options: [
+                    "Treat bots just like human Anonymous Auth IDs (e.g., `bot_1`, `bot_2`) residing directly in the seats array.",
+                    "Keep bots in a separate `bots` array and resolve them at the application layer."
+                ]
+            },
+            {
+                id: "q5",
+                title: "5. Chat Message Storage (1MB document limit risk):",
+                options: [
+                    "Store chat inside the single document (Limits the draft to roughly ~3000 messages before breaking).",
+                    "Store chat in a dedicated `chat` subcollection (Costs more reads, completely prevents document bloat)."
+                ]
+            },
+            {
+                id: "q6",
+                title: "6. Narrator / Action Log Storage:",
+                options: [
+                    "Store a complete array of all historical events inside the single document (good for rewind, bloats document).",
+                    "Store only the `latestEvent` object. We overwrite it on every turn; historical events are not saved."
+                ]
+            },
+            {
+                id: "q7",
+                title: "7. Turn Indicator Storage (Free Pick / Spin / DOND):",
+                options: [
+                    "Store the `activeSeatIndex` (e.g., 0, 1, 2). The client looks up whose turn it is from the seats array.",
+                    "Store the `activeUserId`. The client simply compares their ID to the active ID."
+                ]
+            },
+            {
+                id: "q8",
+                title: "8. Auction State Representation (Inside the Document):",
+                options: [
+                    "A nested object `currentLot: { playerId, highestBid, holderId, expiresAt }` updated on every bid.",
+                    "Flattened fields at the root of the document (e.g., `auction_lot_id`, `auction_highest_bid`)."
+                ]
+            },
+            {
+                id: "q9",
+                title: "9. Graveyard / Overflow Storage:",
+                options: [
+                    "A `graveyard` array inside each user's specific squad object.",
+                    "A global `overflow` object mapping Player IDs to their owner."
+                ]
+            },
+            {
+                id: "q10",
+                title: "10. Draft Status Flags:",
+                options: [
+                    "A single `status` string: 'lobby' -> 'drafting' -> 'completed'.",
+                    "Discrete boolean flags: `isDraftStarted: true`, `isDraftCompleted: false`."
+                ]
+            }
+        ];
+
+        const container = document.getElementById('questions-container');
+
+        questions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            const title = document.createElement('h3');
+            title.className = 'question-title';
+            title.textContent = q.title;
+            card.appendChild(title);
+
+            q.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = q.id;
+                radio.value = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(opt));
+                card.appendChild(label);
+            });
+
+            // Custom 'Other' option
+            const otherLabel = document.createElement('label');
+            otherLabel.className = 'option-label';
+            
+            const otherRadio = document.createElement('input');
+            otherRadio.type = 'radio';
+            otherRadio.name = q.id;
+            otherRadio.value = "Other";
+            
+            otherLabel.appendChild(otherRadio);
+            otherLabel.appendChild(document.createTextNode("Other / Custom:"));
+            
+            const customInput = document.createElement('input');
+            customInput.type = 'text';
+            customInput.className = 'custom-input';
+            customInput.placeholder = 'Type your custom answer here...';
+            customInput.id = `${q.id}-custom`;
+            
+            // Auto-select 'Other' radio when typing in custom input
+            customInput.addEventListener('input', () => {
+                otherRadio.checked = true;
+            });
+
+            const otherWrapper = document.createElement('div');
+            otherWrapper.appendChild(otherLabel);
+            otherWrapper.appendChild(customInput);
+            card.appendChild(otherWrapper);
+
+            container.appendChild(card);
+        });
+
+        function copyToClipboard() {
+            let markdown = `# Integration Questionnaire 2 Answers\n\n`;
+            let allAnswered = true;
+
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                let answer = "Not answered";
+                
+                if (selected) {
+                    if (selected.value === "Other") {
+                        const customVal = document.getElementById(`${q.id}-custom`).value.trim();
+                        answer = customVal ? customVal : "Other (left blank)";
+                    } else {
+                        answer = selected.value;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+
+                markdown += `**${q.title}**\n> ${answer}\n\n`;
+            });
+
+            if (!allAnswered) {
+                if (!confirm("You haven't answered all questions. Copy anyway?")) {
+                    return;
+                }
+            }
+
+            navigator.clipboard.writeText(markdown).then(() => {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+            }).catch(err => {
+                alert("Failed to copy to clipboard: " + err);
+            });
+        }
+    </script>
+</body>
+</html>
