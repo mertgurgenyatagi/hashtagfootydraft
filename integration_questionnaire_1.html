@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Questionnaire 1: Core Architecture</title>
+    <style>
+        :root {
+            --color-ground: #121009;
+            --color-ink: #ededec;
+            --color-accent: #fbbf24;
+            --color-surface: #1e1c15;
+            --color-line: #33312a;
+            --color-muted: #8b8b88;
+        }
+        body {
+            background-color: var(--color-ground);
+            color: var(--color-ink);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        h1 {
+            color: var(--color-accent);
+            border-bottom: 1px solid var(--color-line);
+            padding-bottom: 1rem;
+        }
+        .question-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-line);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+        .option-label input[type="radio"] {
+            margin-top: 0.25rem;
+            margin-right: 0.75rem;
+            accent-color: var(--color-accent);
+        }
+        .custom-input {
+            background-color: var(--color-ground);
+            color: var(--color-ink);
+            border: 1px solid var(--color-line);
+            border-radius: 6px;
+            padding: 0.5rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            box-sizing: border-box;
+        }
+        .custom-input:focus {
+            outline: 1px solid var(--color-accent);
+            border-color: var(--color-accent);
+        }
+        .copy-btn {
+            background-color: var(--color-accent);
+            color: var(--color-ground);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            margin-bottom: 4rem;
+        }
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--color-accent);
+            color: var(--color-ground);
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: bold;
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Integration Questionnaire 1:<br>Backend & Core Architecture</h1>
+    <p style="color: var(--color-muted); margin-bottom: 2rem;">Please fill out this form to set the constraints and rules for the Firebase integration. Clicking copy at the bottom will format your answers nicely into Markdown so you can paste them into <code>integration_questionnaire_1.md</code>.</p>
+
+    <div id="questions-container"></div>
+
+    <button class="copy-btn" onclick="copyToClipboard()">Copy Answers to Clipboard</button>
+    <div id="toast">Copied to clipboard!</div>
+
+    <script>
+        const questions = [
+            {
+                id: "q1",
+                title: "1. Database choice for real-time draft state (Crucial for Auction latency):",
+                options: [
+                    "Firestore (Standard, document-based, easy query but potentially slower for sub-second auction bids).",
+                    "Firebase Realtime Database (Faster for pure real-time sync, harder to query).",
+                    "Hybrid (Firestore for lobby/rosters, Realtime DB strictly for the live Auction clock/bidding)."
+                ]
+            },
+            {
+                id: "q2",
+                title: "2. Authentication requirement:",
+                options: [
+                    "Anonymous Auth (Users just click an invite link and enter a display name, no login required).",
+                    "Google/Email Sign-in (Persistent user profiles, stats over time).",
+                    "No Firebase Auth at all (Just a randomly generated ID stored in localStorage)."
+                ]
+            },
+            {
+                id: "q3",
+                title: "3. Bot Execution Environment (where do the bots run their ONNX models?):",
+                options: [
+                    "Client-side on the Host's browser (Zero server cost but if host disconnects, bots pause until host passes).",
+                    "Client-side distributed (Any client can execute bot turns, race conditions resolved via transactions).",
+                    "Serverless (Cloud Functions execute bot turns; costs money, higher latency, but robust)."
+                ]
+            },
+            {
+                id: "q4",
+                title: "4. Handling Host Disconnection during a live draft (Project.md says 'Host passes to next earliest joiner'):",
+                options: [
+                    "Client-side heartbeat: Next earliest joiner detects host absence and takes over bot execution.",
+                    "Cloud function sweep: A cron job detects dead hosts and reassigns the host flag in the DB.",
+                    "We need to rewrite the 'Host passes' rule, it's too complex for V1 integration."
+                ]
+            },
+            {
+                id: "q5",
+                title: "5. Security Rules vs Client Trust:",
+                options: [
+                    "Strict Backend Validation: Firestore security rules heavily restrict writes, validating every bid amount and slot availability.",
+                    "Optimistic Client Trust: Security rules only prevent cross-lobby interference; we trust the client app logic to enforce game rules.",
+                    "No security rules for now (Test Mode), lock it down later."
+                ]
+            },
+            {
+                id: "q6",
+                title: "6. Lobby Lifecycle & Cleanup:",
+                options: [
+                    "Ephemeral: Lobbies and draft history auto-delete 24 hours after completion via TTL policy.",
+                    "Persistent: Draft history is saved forever to allow users to view past line-ups indefinitely.",
+                    "Manual: Host must explicitly delete the room, otherwise it stays forever."
+                ]
+            },
+            {
+                id: "q7",
+                title: "7. Data Model: Squad and Pick Storage:",
+                options: [
+                    "Single Document: The entire draft state and all squads live in one JSON document (easy sync, 1MB limit).",
+                    "Subcollections: Each pick/bid is a separate document inside a `drafts` collection (scalable, more reads/writes).",
+                    "Hybrid: Base lobby state in one doc, event stream (bids, chat) in a subcollection."
+                ]
+            },
+            {
+                id: "q8",
+                title: "8. Transitioning from Fake to Real Data:",
+                options: [
+                    "Hard Switch: Strip out all fake simulation timers immediately and wire UI directly to Firebase listeners.",
+                    "Hybrid State: Keep fake simulation for offline/solo mode, use Firebase only for multiplayer lobbies.",
+                    "Feature Flagging: Introduce Firebase gradually per-format behind a debug toggle."
+                ]
+            },
+            {
+                id: "q9",
+                title: "9. Auction Clock Synchronization:",
+                options: [
+                    "Server Timestamp: Firebase Cloud Functions handle the 15s timer expiration and close the lot.",
+                    "Client-Driven: The Host's browser runs the timer and writes a 'Sold' event to the DB when it expires.",
+                    "Time-agnostic DB: The DB just stores `expiresAt`. Clients compute if it's expired locally."
+                ]
+            },
+            {
+                id: "q10",
+                title: "10. Data Pre-loading Strategy (Player Pool 546 rows):",
+                options: [
+                    "Client fetches static CSV file from CDN as it does now, then joins it with Firebase player IDs locally.",
+                    "Migrate the entire 546-player pool into Firestore and read it on lobby load.",
+                    "Store players as a JSON string in the Lobby document."
+                ]
+            }
+        ];
+
+        const container = document.getElementById('questions-container');
+
+        questions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            const title = document.createElement('h3');
+            title.className = 'question-title';
+            title.textContent = q.title;
+            card.appendChild(title);
+
+            q.options.forEach((opt, optIndex) => {
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = q.id;
+                radio.value = opt;
+                
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(opt));
+                card.appendChild(label);
+            });
+
+            // Custom 'Other' option
+            const otherLabel = document.createElement('label');
+            otherLabel.className = 'option-label';
+            
+            const otherRadio = document.createElement('input');
+            otherRadio.type = 'radio';
+            otherRadio.name = q.id;
+            otherRadio.value = "Other";
+            
+            otherLabel.appendChild(otherRadio);
+            otherLabel.appendChild(document.createTextNode("Other / Custom:"));
+            
+            const customInput = document.createElement('input');
+            customInput.type = 'text';
+            customInput.className = 'custom-input';
+            customInput.placeholder = 'Type your custom answer here...';
+            customInput.id = `${q.id}-custom`;
+            
+            // Auto-select 'Other' radio when typing in custom input
+            customInput.addEventListener('input', () => {
+                otherRadio.checked = true;
+            });
+
+            const otherWrapper = document.createElement('div');
+            otherWrapper.appendChild(otherLabel);
+            otherWrapper.appendChild(customInput);
+            card.appendChild(otherWrapper);
+
+            container.appendChild(card);
+        });
+
+        function copyToClipboard() {
+            let markdown = `# Integration Questionnaire 1 Answers\n\n`;
+            let allAnswered = true;
+
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                let answer = "Not answered";
+                
+                if (selected) {
+                    if (selected.value === "Other") {
+                        const customVal = document.getElementById(`${q.id}-custom`).value.trim();
+                        answer = customVal ? customVal : "Other (left blank)";
+                    } else {
+                        answer = selected.value;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+
+                markdown += `**${q.title}**\n> ${answer}\n\n`;
+            });
+
+            if (!allAnswered) {
+                if (!confirm("You haven't answered all questions. Copy anyway?")) {
+                    return;
+                }
+            }
+
+            navigator.clipboard.writeText(markdown).then(() => {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+            }).catch(err => {
+                alert("Failed to copy to clipboard: " + err);
+            });
+        }
+    </script>
+</body>
+</html>
