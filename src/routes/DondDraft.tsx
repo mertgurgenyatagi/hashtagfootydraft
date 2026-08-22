@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { BoxGrid } from '../components/draft/BoxGrid'
 import { BoxStage, type Decision } from '../components/draft/BoxStage'
 import { DraftChat } from '../components/draft/DraftChat'
@@ -8,6 +7,8 @@ import { Narrator, type NarratorTone } from '../components/draft/Narrator'
 import { PitchView } from '../components/draft/PitchView'
 import { TableStrip } from '../components/draft/TableStrip'
 import type { Message } from '../components/lobby/LobbyChat'
+import { BackHome } from '../components/ui/BackHome'
+import { LanguageSwitch } from '../components/ui/LanguageSwitch'
 import { SectionLabel } from '../components/ui/SectionLabel'
 import { SQUAD_SIZE, formation } from '../data/formation'
 import {
@@ -91,8 +92,11 @@ function activeSeatOf(state: RoundState): number {
 export function DondDraft({ config }: { config: DraftConfig }) {
   const scope = config.scope ?? 'top-5'
   const league = config.league ?? 'premier-league'
-  const timerSetting = config.timer ?? '15'
-  const limit = timerSetting === 'off' ? null : Number(timerSetting)
+
+  /* No clock: the bid timer is the Auction's alone — see the note on `timers`
+     in lobbyOptions. A round here ends when the seat on it sticks, takes the
+     offer or goes back to the boxes, so there was nothing for a countdown to
+     close. The least-committal auto-choices it used to force are gone with it. */
 
   const drafters = config.drafters?.length ? config.drafters : DEFAULT_DRAFTERS
   const seatCount = drafters.length
@@ -108,7 +112,6 @@ export function DondDraft({ config }: { config: DraftConfig }) {
   const [round, setRound] = useState<RoundState | null>(null)
   const [tab, setTab] = useState(youSeat)
   const [pane, setPane] = useState<'boxes' | 'board'>('boxes')
-  const [seconds, setSeconds] = useState(limit ?? 0)
   const [messages, setMessages] = useState<Message[]>([])
   const [flash, setFlash] = useState<{ text: string; tone: NarratorTone } | null>(null)
 
@@ -402,44 +405,6 @@ export function DondDraft({ config }: { config: DraftConfig }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [complete])
 
-  /* -------------------------------------------------------------- the clock -- */
-
-  useEffect(() => {
-    if (complete || limit === null || !round) return
-    if (round.step === 'revealing' || round.step === 'done') return
-    setSeconds(limit)
-
-    const tick = window.setInterval(() => setSeconds((left) => Math.max(0, left - 1)), 1000)
-    return () => window.clearInterval(tick)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beatKey, complete, limit])
-
-  /**
-   * Out of time. The system takes the least-committal option every time —
-   * stick, and take the offer *(Turns & Timers)*. Neither introduces any more
-   * randomness than the drafter has already accepted, and neither is the
-   * choice they would have made.
-   */
-  useEffect(() => {
-    if (complete || limit === null || !round || !yourTurn || seconds > 0) return
-
-    if (round.step === 'choosing') {
-      const shut = round.boxes
-        .map((box, index) => ({ box, index }))
-        .filter((entry) => entry.box.openedBy === null)
-      if (shut.length > 0) openBox(shut[Math.floor(Math.random() * shut.length)].index)
-      return
-    }
-    if (round.step === 'deciding' && openedBox) {
-      settle(youSeat, openedBox.player, `You stuck with ${openedBox.player.surname}.`)
-      return
-    }
-    if (round.step === 'weighing' && activeOffer) {
-      settle(youSeat, activeOffer, `You took the deal — ${activeOffer.name}.`)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seconds, complete, limit, yourTurn])
-
   /* ------------------------------------------------------------- the room --- */
 
   const chattered = useRef('')
@@ -602,28 +567,21 @@ export function DondDraft({ config }: { config: DraftConfig }) {
 
   const you = drafters[youSeat]
   const lastArrival = picks[picks.length - 1]?.player.id ?? null
-  const showSeconds = limit !== null && !complete && round !== null && round.step !== 'revealing'
 
   return (
     <div className="draft dond flex h-full w-full flex-col px-[var(--app-inset-x)] py-[var(--app-inset-y)]">
-      {/* ---- The narrator, and the table it is talking about. ---- */}
-      <div className="fx fx-soft flex shrink-0 flex-col items-start gap-[10px] border-b border-line py-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-5">
-        <div className="flex min-w-0 items-center gap-4">
-          <Link
-            to="/"
-            className="shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
-          >
-            Back to home
-          </Link>
+      {/* ---- The way out, the narrator, and the table it is talking about. ---- */}
+      <div className="fx fx-soft flex shrink-0 flex-col items-stretch gap-[10px] border-b border-line py-[12px] sm:flex-row sm:items-center sm:gap-5">
+        <div className="flex shrink-0 items-center gap-3">
+          <BackHome confirm />
+          <LanguageSwitch className="hidden sm:flex" />
+        </div>
+
+        <div className="flex min-w-0 flex-1 justify-center">
           <Narrator text={narration.text} tone={narration.tone} beat={beat.current} />
         </div>
 
-        <div className="flex w-full shrink-0 items-center justify-between gap-5 sm:w-auto sm:justify-end">
-          {showSeconds ? (
-            <span className="tabular shrink-0 font-display text-[19px] font-medium leading-none min-[1180px]:hidden">
-              {String(Math.ceil(seconds)).padStart(2, '0')}
-            </span>
-          ) : null}
+        <div className="flex shrink-0 items-center justify-end">
           <TableStrip drafters={drafters} active={activeSeat} />
         </div>
       </div>

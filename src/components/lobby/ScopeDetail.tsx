@@ -49,12 +49,12 @@ export function ScopeDetail({
       <div className="mt-[var(--lobby-chip-mt)]">
         {readOnly ? (
           <div className="flex items-center gap-[clamp(0.25rem,0.7vw,0.5rem)]">
-            <span className="grid h-[var(--lobby-crest)] w-[clamp(2rem,5vw,3.25rem)] place-items-center rounded-[2px] border border-accent bg-accent-soft">
+            <span className="grid h-[var(--lobby-crest)] w-[clamp(2rem,5vw,3.25rem)] place-items-center rounded-sm border border-accent bg-accent-soft">
               <img
                 src={`${import.meta.env.BASE_URL}leagues/${league}.svg`}
                 alt=""
                 draggable={false}
-                className="crest h-[64%] w-[64%] object-contain"
+                className="crest h-[64%] w-[64%] min-h-0 min-w-0 object-contain"
               />
             </span>
             <span className="ml-1 truncate font-display text-[10px] font-medium uppercase tracking-[0.16em] text-dim">
@@ -91,7 +91,7 @@ export function ScopeDetail({
                   onClick={() => onLeagueChange(entry.id)}
                   className={[
                     'grid h-[var(--lobby-crest)] w-[clamp(2rem,5vw,3.25rem)] place-items-center',
-                    'rounded-[2px] border',
+                    'rounded-sm border',
                     'transition-[border-color,background-color,opacity] duration-150 ease-out',
                     unavailable
                       ? entry.id === league

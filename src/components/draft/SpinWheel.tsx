@@ -63,7 +63,7 @@ export function SpinWheel({
                 >
                   {slice.mark ? (
                     <img
-                      className="crest"
+                      className="crest-plain"
                       src={slice.mark}
                       alt=""
                       style={{ ...spin, transform: `rotate(${-rotation}deg)` }}

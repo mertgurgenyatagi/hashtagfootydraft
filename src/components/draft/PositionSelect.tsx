@@ -122,7 +122,7 @@ export function PositionSelect({
                 onClick={() => take(choice)}
                 className={[
                   'flex w-full items-center gap-[9px] px-[11px] py-[7px] text-left transition-colors duration-100 ease-out',
-                  index === active ? 'bg-accent-soft' : '',
+                  index === active ? 'rounded-[6px] bg-accent-soft' : '',
                 ].join(' ')}
               >
                 <span

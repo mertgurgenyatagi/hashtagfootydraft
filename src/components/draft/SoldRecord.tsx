@@ -9,8 +9,6 @@ interface SoldRecordProps {
   sales: Sale[]
   drafters: Drafter[]
   youSeat: number
-  /** The lot number nobody is allowed to see yet, or null once the list is out. */
-  nextLot: number | null
   /** How many cards fit the rail. Two columns, so an even number reads best. */
   show?: number
 }
@@ -19,22 +17,19 @@ interface SoldRecordProps {
  * What has already gone — the left rail, and the only record of the auction's
  * own history on the screen.
  *
- * Drawn as square-cropped faces rather than as the ruled list layout 01 first
- * had: a lot is a footballer before it is a price, and at rail width a square
- * photograph says which footballer far faster than a surname in 12px does.
- * *(Layout 09's card treatment, carried across on Mert's instruction.)*
+ * **A sold lot is a transaction, and the card is drawn as one.** The
+ * photograph is a strip along the top rather than a square: enough to see who
+ * it was, not so much that it crowds out the two facts the record actually
+ * exists to carry — **who bought them and for how much** — which now take the
+ * body of the card at the size the face used to have. The club crest is gone
+ * entirely; it was a third identifier for a footballer already named twice,
+ * and it was the smallest, busiest thing in the rail.
  *
  * An unsold lot stays in the record rather than disappearing — passing on a
  * footballer is a real event *(R8-Q4)*, and a record that only listed sales
- * would quietly rewrite what happened. It is dimmed whole, photograph and
- * crest included, which is the same treatment every other unavailable thing in
- * this app gets and the only one that respects the never-recolour-a-crest rule.
- *
- * The sealed tile underneath is the boundary. Upcoming lots are a mystery, so
- * the edge between what you can see and what you cannot is drawn as an object
- * rather than left as an absence.
+ * would quietly rewrite what happened. It is dimmed whole.
  */
-export function SoldRecord({ sales, drafters, youSeat, nextLot, show = 4 }: SoldRecordProps) {
+export function SoldRecord({ sales, drafters, youSeat, show = 4 }: SoldRecordProps) {
   const recent = sales.slice(-show).reverse()
 
   return (
@@ -46,72 +41,58 @@ export function SoldRecord({ sales, drafters, youSeat, nextLot, show = 4 }: Sold
         </span>
       </div>
 
-      <ul className="auction-sold">
-        {recent.map((sale) => {
-          const mine = sale.seat === youSeat
-          const buyer = sale.seat === null ? null : drafters[sale.seat]
+      {recent.length === 0 ? (
+        <p className="text-[11px] leading-[1.4] text-faint">Nothing has gone yet.</p>
+      ) : (
+        <ul className="auction-sold">
+          {recent.map((sale) => {
+            const mine = sale.seat === youSeat
+            const buyer = sale.seat === null ? null : drafters[sale.seat]
 
-          return (
-            <li
-              key={sale.lot}
-              className={[
-                'fx fx-soft flex flex-col overflow-hidden border bg-surface',
-                buyer === null ? 'border-line opacity-40' : mine ? 'border-accent-line' : 'border-line',
-              ].join(' ')}
-            >
-              <SoldFace player={sale.player} />
-              <span className="flex items-center justify-between gap-2 px-[7px] pb-[5px] pt-[5px]">
-                <span className="truncate text-[11px] font-medium leading-none text-ink">
-                  {sale.player.surname}
+            return (
+              <li
+                key={sale.lot}
+                className={[
+                  'fx fx-soft flex flex-col overflow-hidden rounded-md border bg-surface',
+                  buyer === null ? 'border-line opacity-40' : mine ? 'border-accent-line' : 'border-line',
+                ].join(' ')}
+              >
+                <SoldFace player={sale.player} />
+
+                <span className="flex flex-col gap-[4px] px-[8px] pb-[8px] pt-[6px]">
+                  <span className="truncate font-display text-[11px] font-medium uppercase leading-none tracking-[0.04em] text-muted">
+                    {sale.player.surname}
+                  </span>
+
+                  <span
+                    className={[
+                      'money tabular truncate font-display text-[17px] font-semibold leading-[0.9]',
+                      buyer === null ? 'text-dim' : mine ? 'text-accent' : 'text-ink',
+                    ].join(' ')}
+                  >
+                    {buyer === null ? '' : sale.price}
+                  </span>
+
+                  <span
+                    className={[
+                      'truncate font-display text-[10.5px] font-semibold uppercase leading-none tracking-[0.12em]',
+                      mine ? 'text-accent' : buyer === null ? 'text-dim' : 'text-muted',
+                    ].join(' ')}
+                  >
+                    {buyer === null ? 'Unsold' : buyer.name}
+                  </span>
                 </span>
-                <span
-                  className={[
-                    'tabular shrink-0 font-display text-[12px] font-semibold leading-none',
-                    mine ? 'text-accent' : 'text-ink',
-                    buyer === null ? '' : 'money',
-                  ].join(' ')}
-                >
-                  {buyer === null ? '—' : sale.price}
-                </span>
-              </span>
-
-              <span className="flex items-center gap-[5px] px-[7px] pb-[6px]">
-                <img className="crest h-[12px] w-[12px] shrink-0" src={sale.player.crest} alt="" />
-                <span
-                  className={[
-                    'truncate font-display text-[8.5px] font-medium uppercase tracking-[0.18em]',
-                    mine ? 'text-accent' : 'text-dim',
-                  ].join(' ')}
-                >
-                  {buyer === null ? 'Unsold' : buyer.name}
-                </span>
-              </span>
-            </li>
-          )
-        })}
-
-        {recent.length === 0 ? (
-          <li className="auction-seal col-span-2 grid h-[46px] place-items-center">
-            <span className="tabular font-display text-[11px] font-semibold uppercase tracking-[0.16em] text-dim">
-              —
-            </span>
-          </li>
-        ) : null}
-      </ul>
-
-      {nextLot !== null ? (
-        <span className="auction-seal grid h-[30px] shrink-0 place-items-center">
-          <span className="tabular font-display text-[11.5px] font-semibold uppercase tracking-[0.14em] text-dim">
-            {nextLot} · ?
-          </span>
-        </span>
-      ) : null}
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </section>
   )
 }
 
 /** Same silent-hide-on-failure the card used with a bare `<img>` — the card's
- * own crest and surname beneath it are label enough without this photo. */
+ * own surname beneath it is label enough without this photo. */
 function SoldFace({ player }: { player: Player }) {
   const [failed, setFailed] = useState(false)
 

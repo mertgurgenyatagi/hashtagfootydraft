@@ -127,7 +127,7 @@ export function SeatList({ seats, minSeats = MIN_SEATS, onAdd, onRemove }: SeatL
             ) : seat.tag ? (
               <span
                 className={[
-                  'shrink-0 rounded-[2px] border px-2 py-1 font-display text-[9.5px] font-medium uppercase tracking-[0.16em]',
+                  'shrink-0 rounded-sm border px-2 py-1 font-display text-[9.5px] font-medium uppercase tracking-[0.16em]',
                   seat.kind === 'you'
                     ? 'border-accent-line text-accent'
                     : 'border-line text-dim',

@@ -53,7 +53,11 @@ export function RoomCode({ code }: RoomCodeProps) {
         <button
           type="button"
           onClick={copy}
-          className="shrink-0 rounded-[2px] border border-line-strong px-3 py-[5px] font-display text-[10px] font-medium uppercase tracking-[0.16em] text-muted transition-colors duration-150 ease-out hover:border-ink hover:text-ink md:py-[7px]"
+          /* The one blue control in the app. Copying the invite is the only
+             action that sends something out of #footydraft rather than
+             changing something inside it, so it is the only thing that gets
+             the third accent. */
+          className="shrink-0 rounded-sm border border-link bg-link px-3 py-[5px] font-display text-[10px] font-medium uppercase tracking-[0.16em] text-link-ink transition-colors duration-150 ease-out hover:border-link-hover hover:bg-link-hover md:py-[7px]"
         >
           <span
             key={String(copied)}

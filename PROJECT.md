@@ -265,6 +265,126 @@ into a solid grid, since at 50% each circle's edge just touches its neighbour's.
 Unlike every pass recorded above, **this one did touch git**: committed, pushed, and merged into
 `main`. A new branch, **`tweak-sweep`**, was then cut from `main` for whatever comes next.
 
+The **`tweak-sweep`** branch's first pass, 2026-08-22, was a **full repalette against a
+reference site Mert built and is happy with** (`screenshots/image_other.png`, a Champions League
+tracker). His own by-hand retune of the four primes the day before — the near-black indigo and
+amber recorded directly above — was the attempt this supersedes: *"I tried to work with the
+existing four primary colors and change them, but that didn't quite work."* The mandate was to
+mimic the reference's palette as closely as possible, with explicit licence to add primes, rewire
+tokens, and change shapes. A Tachyon-mode pass. See **Design tokens** and **Corner radius** below
+for the settled result; what follows is the record of how it was arrived at.
+
+**The reference palette was measured, not eyeballed.** Its screenshot was sampled per-region with
+Pillow — most-common colour for flats, max `saturation × value` for the accents — which returned:
+page ground `#13110b`, panel fill `#15130e`, hairline `#2a2823`, off-white `#ededec`, secondary
+text `#8b8b88`, and three saturated colours: gold `#fbbf24`, green `#1f8a65`, blue `#193cb8`. The
+gold and the blue are Tailwind v4's `amber-400` and `blue-800` exactly, which is how the reference
+was built. Two structural facts came out of the same sampling and matter as much as the hexes:
+the neutrals are **warm in the darks and neutral in the lights** (a warm near-black ground under
+a colour-neutral off-white, not a tinted pair), and **panels sit barely above the ground** — a
+five-RGB-unit step — so what separates a panel from the page is its **hairline and its corner
+radius**, not its fill.
+
+**Two new primes, and they are not decoration.** The one-saturated-accent rule is replaced by a
+three-colour system in which each colour names a different kind of thing — gold for *value and
+ownership*, green for *presence and the present tense*, blue for *the one action that leaves the
+app*. The full statement of the split is in `index.css`'s prime block; the short version is that
+green is never actionable, which is what lets it sit beside gold without competing, and blue
+wears exactly one control (**Copy link**, in the multiplayer lobby — the only thing in
+#footydraft that sends something out of it).
+
+**The derived percentages were solved rather than guessed.** `color-mix(in oklab, …)` was
+implemented in Python (sRGB → linear → LMS → oklab and back) and swept at 0.1% resolution against
+each measured target, so every one of the eleven derived tokens lands within one or two RGB units
+of the reference. That is why `--color-surface` is 97% rather than the old 92%: the reference's
+panel-to-ground step really is that small, and reproducing it by eye would have overshot.
+
+**One place the small step doesn't work, and it was fixed at the component rather than in the
+token.** The lobbies are a full-height 50/50 diptych that divided its two halves with the surface
+step alone. At panel scale a 5-unit step is right; at half-a-screen scale it stops reading as a
+division at all, so `LobbyLayout` now draws a `border-r` hairline and keeps the small step.
+
+**Corners.** The app was square everywhere — 15 hardcoded `rounded-[2px]`, and nothing else. The
+reference rounds everything, and a barely-lighter panel *needs* the radius to read as an object
+rather than as a ruled region, so this is part of the palette rather than a separate decision.
+Tailwind's own `--radius-*` scale is overridden with the app's three steps (`sm` 8px for a chip,
+row or control; `md` 12px for a tile; `lg` 18px for a panel), the 15 hardcoded values became
+`rounded-sm`, and radius was added to the surfaces that had none — the displayer, the portrait
+panel, the box stage, bid and sold cards, format tiles, the pool and wheel rows, every input, the
+name gate, the select list and the sealed tile. *(The sealed tile and the sold card's square
+photograph were both cut on 2026-08-22 — see The Auction draft screen; nothing else in that list
+moved.)*
+
+**The stadium plate came down on all five placements.** Nothing about the plate changed except
+its weight, and it had to: against the old navy ground the photograph read as texture, and against
+a warm near-black one the same pixels read as a lit grey photograph sitting on top of the page.
+Every placement dropped (`.plate` .36 → .30, `.plate-corner` .55 → .36, `.plate-edge` .34 → .26,
+`.plate-orbit` .42 → .32, `.plate-block` **.72 → .42**, with its scrim up from 74% to 82%), and
+each one's `brightness()` came down with it. The Auction route's "loud plate" — non-negotiable 10
+of that exhibition — is the one this changes most: it is still by some way the loudest of the
+five, and it is no longer louder than the footballer on the block. The wheel's five league slices
+went the same way, remixed 52% into the **ground** rather than 66% into black so they sit in the
+page's warm family rather than glowing out of it.
+
+Verified in a browser at 1440×860 on all seven screens and at **320×568 on all seven at once** —
+zero horizontal and zero vertical overflow on every route, checked by measuring `scrollWidth` /
+`scrollHeight` against the client box rather than by looking. `npm run build` and `npm test`
+(40 tests, 11 files) both pass. **"Petrol" and the indigo/amber retune that briefly replaced it
+are both now historical names**; every earlier narrative entry in this document is left as
+written and describes what was true when it was written.
+
+A same-day follow-up on `tweak-sweep` widened the app frame's inset tokens after Mert judged
+the six `screenshots/` captures (Home, both lobbies, Auction, Free Pick, Spin the Wheel)
+congested on the sides and along the bottom, with the top the one edge he was happy with.
+`--app-inset-x`/`--app-inset-y` moved from `clamp(1.25rem, 3.4dvw/dvh, 3rem)` to
+`clamp(1.5rem, 4.5dvw/dvh, 4rem)` — see **The app frame, symmetric** below for the settled
+values and for why the *y* axis, not an asymmetry in the rule, was the actual source of the
+bottom feeling tighter than the top despite the left/right-equals-top/bottom guarantee holding
+throughout. `npm run build` passes; not yet re-verified against fresh screenshots at the new
+values (Playwright was unavailable this session).
+
+The **third pass on `tweak-sweep`**, 2026-08-22, was a single sweep of small changes across every
+screen in the app — Mert's own framing was *"massive, sweeping micro changes"* — delivered in one
+Tachyon-mode session with no browser verification (no Playwright, by instruction) and no new test
+suite beyond repairing the four existing tests the changes invalidated. Everything below is
+described in full in its own section; this is the index.
+
+**Five changes are project-wide and start here:**
+
+- **A language switch, English and Turkish, on every screen.** It moves; nothing behind it does.
+  Copy is still English in both positions — translation is its own pass — and the control shipped
+  first so every layout already has the room for it rather than having one cut into it later. See
+  **Language** under Frontend.
+- **The way out is a button, top left, on every screen but home**, and on the four draft screens
+  it asks first. See **Leaving a screen** below.
+- **The narrator is centred and set large** on the three screens that have one. The Auction, which
+  by its own non-negotiables has no narrator, gets the equivalent headline in the same position.
+- **The turn timer is the Auction's alone, and is now the Bid timer.** Free Pick, Spin the Wheel
+  and Deal or No Deal run no clock at all. See **Turns & Timers**, rewritten below.
+- **The pool is the whole pool.** The known scoping bug recorded in the `purification` narrative
+  above — the running pool only ever holding top-five-league players regardless of Scope — is
+  **fixed**. See **The pool scoping bug, fixed** below.
+
+**Per screen**, briefly: the home wordmark's letterform fill is now **dotted** like every other
+portrait on the site, its stack is top-weighted, and the `11 slots · 546 in the pool` line is
+gone. Both lobbies lost the helper paragraph in favour of **live chat**, lost `Who's playing` /
+`What you're playing`, and gained a display-weight **CONFIGURATION** title opposite `YOUR TABLE`.
+The Auction gained a **headline** naming the lot, its holder and the price; **every price in the
+app now carries a euro sign**; the sold record lost its crests and promoted the buyer and the
+price over the face; the sealed `24 · ?` tile and the **Pass** control are both gone; the steps
+were rebuilt at four times their old type size; and **bidding is shut for the first three seconds
+of every countdown**. Deal or No Deal's decision buttons fade in. Spin the Wheel's wheel turns
+**twice as long through eight rotations** and its landing point inside the slice is now uniformly
+random out to the edges.
+
+**And a performance pass**, which is the one item that came in as a complaint rather than as a
+request: browsing either player list was burning CPU on hover alone. See **Why the pool was
+expensive** below for what it actually was.
+
+`npm run build` and `npm test` (40 tests, 11 files) both pass. **Nothing is browser-verified** —
+the dotted wordmark, the Auction's rebuilt top bar at narrow widths, and the solo lobby's chat
+fitting above the fold are the three worth looking at first.
+
 ## Tachyon Mode
 
 A workflow keyword Mert invokes during build sessions — not a game rule, a process one.
@@ -313,31 +433,45 @@ home page's own spec is `docs/superpowers/specs/2026-08-15-home-page-design.md`.
 
 ### Design tokens
 
-**Four hand-picked primes are the palette. This is settled and project-wide** — not a
-per-page choice. **The four values themselves were retuned in place by Mert on
-2026-08-22** — see the `clean-bloat-and-repalette` branch narrative above for the
-before/after hexes; "petrol" (the teal/orange combination every earlier narrative entry
-in this document names) is now a historical label, not a description of the current
-values. The mechanism this section describes — four primes, everything else
-`color-mix`-derived from them — is unchanged; only the four hex values are new.
+**Six hand-picked primes are the palette. This is settled and project-wide** — not a
+per-page choice. **Repaletted on 2026-08-22 (`tweak-sweep`)** against a reference site
+Mert built and is happy with, measured out of `screenshots/image_other.png` rather than
+eyeballed — see the branch narrative above for the method and for what it supersedes.
+"Petrol" (the teal/orange combination every earlier narrative entry in this document
+names) and the near-black indigo that briefly replaced it are both historical labels, not
+descriptions of the current values. The mechanism this section describes — a small set of
+primes, everything else `color-mix`-derived from them — is unchanged; the prime *count*
+went from four to six and every hex is new.
 
-Defined once in `src/styles/index.css` as a Tailwind v4 `@theme static` block. The
-palette declares **four primes**; every other colour in the app derives from those four
-through one `color-mix(in oklab, …)` block written once, exactly as the exhibition file
-does it. Nothing anywhere else in `src/` declares a colour.
+Defined once in `src/styles/index.css` as a Tailwind v4 `@theme static` block. Every other
+colour in the app derives from the primes through one `color-mix(in oklab, …)` block
+written once. Nothing anywhere else in `src/` declares a colour.
 
 | Prime | Value | Role |
 |---|---|---|
-| `--color-ground` | `#03071e` | page ground — near-black, deep indigo/navy |
-| `--color-ink` | `#f1faee` | primary text — off-white, faintly green |
-| `--color-accent` | `#faa307` | amber/gold — primary CTA fill, section titles, focus rings |
-| `--color-tint` | `#14213d` | the `mix-blend-mode: color` wash over the stadium backdrop |
+| `--color-ground` | `#121009` | page ground — warm near-black |
+| `--color-ink` | `#ededec` | primary text — off-white, colour-neutral |
+| `--color-accent` | `#fbbf24` | gold — value and ownership; the only colour that means "act" |
+| `--color-tint` | `#2b241a` | the `mix-blend-mode: color` wash over the stadium backdrop |
+| `--color-live` | `#26a37b` | green — presence and the present tense; never actionable |
+| `--color-link` | `#193cb8` | blue — the one action that leaves the app |
+
+**The darks are warm and the lights are neutral.** That pairing is the reference's, and it
+is deliberate: a warm near-black under a colour-neutral off-white, not a tinted pair.
 
 Derived, in the same block: `--color-surface` / `--color-surface-2` (panels, tiles),
-`--color-line` / `--color-line-strong` (hairlines), `--color-muted` / `--color-dim`
-(secondary and tertiary text), `--color-accent-ink` / `--color-accent-soft` /
-`--color-accent-line` (text on accent, hover fills, accent hairlines), and
-`--color-shade` (the one colour darker than the ground).
+`--color-line` / `--color-line-strong` (hairlines), `--color-muted` / `--color-dim` /
+`--color-faint` (secondary, tertiary and quaternary text), `--color-accent-ink` /
+`--color-accent-soft` / `--color-accent-line` (text on accent, selected fills, accent
+hairlines), `--color-live-soft` / `--color-live-line`, `--color-link-ink` /
+`--color-link-hover`, and `--color-shade` (the one colour darker than the ground).
+
+**The percentages in that block were solved, not chosen.** `color-mix(in oklab, …)` was
+reimplemented numerically and swept against each measured reference value, so every
+derived token lands within a couple of RGB units of its target. Two consequences worth
+knowing before touching a number: `--color-surface` is **97%** ground, because the
+reference's panel-to-ground step really is that small, and a panel therefore takes its
+edge from its **hairline and its radius**, not from its fill.
 
 `@theme static`, not plain `@theme`, matters: Tailwind prunes theme variables no utility
 references, and most of the derived tokens are read by hand-written CSS and inline styles
@@ -345,8 +479,13 @@ rather than by a class.
 
 Standing rules:
 
-- **Exactly one saturated accent** (amber/gold). If a second functional colour is ever
-  needed for "secured" states, derive it from the primes — don't add a fifth.
+- **Three saturated colours, and each one names a different kind of thing.** Gold is value
+  and ownership — money, your seat, your rank, the selected chip, the primary CTA. Green is
+  presence and the present tense — somebody is here, somebody is thinking, a person said
+  this; it is **never actionable**, which is exactly what lets it sit beside gold without
+  competing with it. Blue is the one action that leaves the app, and wears **exactly one
+  control**: `Copy link` in the multiplayer lobby. A fourth saturated colour needs a
+  fourth *kind of thing* to name, or it is decoration — derive it from the primes instead.
 - **No glow.** No `box-shadow` as a halo, no coloured blur. Depth comes from an offset
   directional shadow or a flat surface step.
 - **Off-white, never `#fff`.** Use `--color-ink` wherever pure white is tempting.
@@ -357,6 +496,20 @@ Standing rules:
   draws itself.
 - **Do not reuse the Premier League palette** (`#37003C` / `#00FF87`) — #footydraft
   spans multiple leagues and hasn't earned those colours.
+
+### Corner radius
+
+**Three steps, declared as Tailwind's own `--radius-*` scale so `rounded-sm|md|lg` are
+this app's values and nothing reaches for an arbitrary one.** `sm` **8px** — a chip, a
+row, a control, an input. `md` **12px** — a tile: a bid card, a sold card, a format tile,
+a Deal or No Deal box. `lg` **18px** — a panel: the Auction displayer, the portrait panel,
+the box stage, an orbit panel, the name gate. `rounded-full` stays what it always was, for
+seat discs and pitch nodes.
+
+Added 2026-08-22 with the repalette above, and part of it rather than a separate decision:
+with panels sitting only five RGB units above the ground, the radius is doing half the work
+of making a panel read as an object instead of as a ruled region. Before this the app was
+square everywhere — fifteen hardcoded `rounded-[2px]` and nothing else.
 
 ### Typography
 
@@ -369,6 +522,40 @@ don't jitter. **Inter** for body copy, inputs, and helper text.
 The one carve-out is the **logo**, where the face is free. The home page's wordmark is
 set in **Bebas Neue** on that basis and is the only element in the app allowed to use it;
 it has its own token (`--font-wordmark`) so nothing else can reach for it by accident.
+
+### Language
+
+**English and Turkish, switchable from every screen.** `LanguageSwitch` is a two-position
+segmented control — `EN` / `TR`, English selected — and it appears on the home page's
+header, in both lobbies' right pane, and in the top bar of all four draft screens.
+
+**It is deliberately not wired to anything yet** *(2026-08-22)*. The switch moves and
+holds its position; the copy stays English in both. Translating the app is its own pass,
+and the control shipped ahead of it so that every layout already carries the room for it
+— a switch cut into seven finished screens later is seven layout arguments, and this way
+they are already had.
+
+Nothing in `src/` reads the selection. When translation does land, this is the component
+that grows a context; nothing else has to move.
+
+### Leaving a screen
+
+**The way back is a button, it is top left, and it is the same button everywhere.**
+`BackHome` — a bordered control with an arrow, in Oswald, at real button weight — sits at
+the top left of every screen in the app except the home page itself. *(Set by Mert,
+2026-08-22.)*
+
+Before this it was a line of 10px quiet label text, sitting in a lobby's *footer* next to
+the primary action and in a draft screen's top bar next to the narrator. On a set of
+screens that never scroll it is the only exit there is, and it was drawn as the least
+important thing on the page.
+
+**On the four draft screens it asks first.** `BackHome confirm` opens a real `<dialog>` —
+the same modal treatment the name gate uses, so the page behind it goes inert, focus is
+trapped and Escape cancels — saying that the draft ends there and nothing about it is
+saved. That is true: a draft only exists on its own page, so leaving one by mis-clicking
+is the single navigation in this app that costs anything. The two lobbies do **not**
+confirm; there is nothing to lose in a lobby.
 
 ### Copy
 
@@ -424,7 +611,7 @@ favourite.
 ### Backdrop
 
 One band, inert and painted behind everything (`StadiumPlate.tsx`): a full-bleed
-monochrome stadium plate at 36% opacity, zoomed past the frame so the pitch and its
+monochrome stadium plate at 30% opacity (36% until the 2026-08-22 repalette), zoomed past the frame so the pitch and its
 corner flag stay below the fold. It is masked down hard over its top third — which turns
 the blank sky into a roofline silhouette rather than a bright slab behind the wordmark —
 and dissolves at the bottom into the ground colour. A `mix-blend-mode: color` layer tints
@@ -456,16 +643,37 @@ enough that the crest reads as inlay rather than noise. This is the *only* place
 app allowed outside the four primes; the one-saturated-accent rule still governs
 everything the app draws itself.
 
+**The 1px ink outline around a crest is opt-in as of 2026-08-22, and used in exactly one
+place.** It exists because two of the five *league* marks are dark and would otherwise
+vanish into the ground, and it is drawn as four chained `drop-shadow()`s *around* the
+artwork rather than on it — which is four filter passes over a rasterised SVG, per crest,
+on every repaint that touches it. On a four-hundred-row pool that was sixteen hundred
+filter passes re-running as rows scrolled through `content-visibility` and as a row
+changed colour under the pointer, and it was the single largest cost on the screen (see
+**Why the pool was expensive** below). `.crest` still carries the outline and is used by
+`ScopeDetail`'s five league marks; everything else renders through `.crest-plain`, the
+same unfiltered artwork with no outline. Nothing about the rule above changes — no crest
+is recoloured either way.
+
 Coverage is the top five leagues only — 69 crests against 112 clubs in
 `player_data.csv`. **Clubs outside the top five have no crest and are not getting one:
-draw a ring (a bordered circle) in the same footprint instead.**
+draw a ring (a bordered circle) in the same footprint instead.** As of 2026-08-22 that
+is implemented rather than merely stated: `src/components/ui/Crest.tsx` takes
+`src: string | null` and renders `.crest-ring` — a bordered circle at the same size, in
+the same place in the row — whenever there is no mark. Every crest site in the app goes
+through it. `Player.crest` is null for a club outside the top five, so the fallback is
+data-driven rather than an error path.
 
 **Do not scope a draft by the CSV's `League` column.** It names the competition a row was
 scraped from, not the division the club plays in, so it files Fenerbahçe's players under
 "Serie A" and Flamengo's under "First Division", and 19 rows carry `-`. Scope by the
 **club** instead: `src/data/clubs.ts` maps all 69 crested club slugs to a `LeagueId`, and
-is the authority. It falls out of the crest set for free — a club the app cannot draw is
-a club it should not offer — and it is generated, so regenerate rather than hand-edit.
+is the authority. It is generated, so regenerate rather than hand-edit.
+
+**What that map does *not* decide is who is in the pool.** A club missing from it is a
+club outside the top five — `league: null`, `crest: null` — and its footballers are in
+every draft that scopes wide enough to include them. Reading the map as a pool filter is
+exactly the bug fixed on 2026-08-22; see **The pool scoping bug, fixed** below.
 
 `scripts/images/process_club_logos.py` is what produced them — it imports from an external
 Wikipedia-sourced logo dump (kept outside the repo, like the other raw source art),
@@ -606,9 +814,15 @@ values:
 | `box-stage` | 64 | 1 | 0.8 | 0.15 |
 | `box-grid-tile` | 48 | 1.1 | 0.54 | 0.09 |
 | `pitch-node` | 16 | 1.26 | 0.52 | 0 |
-| `sold-record-face` | 48 | 2.04 | 0.44 | 0.15 |
+| `sold-record-face` | 48 | 1 | 0.5 | 0.1 |
 | `spotlight-free-pick` | 64 | 1 | 0.38 | 0.12 |
 | `spotlight-spin` | 48 | 1 | 0.45 | 0.11 |
+
+`sold-record-face` was re-tuned on 2026-08-22 (from `2.04 / 0.44 / 0.15`) when the sold
+card's photograph went from a square to a 16:9 strip — see **The Auction draft screen**
+below. At that shape the cover scale is width-driven, so the old zoom cut a head crop out
+of a box only sixty pixels tall; at zoom 1 the face lands where the 4:5 source already
+puts it.
 
 Getting these right needed seeing them against the real layouts, not a mockup or a
 one-time measurement of them — a `/dotgrid-tuner` route (`DotgridTuner.tsx`, at the time
@@ -671,13 +885,25 @@ with no rewrite rules, so a deep link that isn't in the hash 404s on refresh —
 
 Home is a single `100dvh` viewport, top to bottom:
 
-- A **tagline** left, and `11 slots · 546 in the pool · 4-2-3-1` right.
+- A **tagline** left, and the **language switch** right. `11 slots · 546 in the pool ·
+  4-2-3-1` used to sit there and was removed 2026-08-22 — it was the only place in the
+  app still printing a pool count, which the no-internal-data rule under Copy has ruled
+  out everywhere else since 2026-08-19.
 - The **wall** — `FOOTY` over `DRAFT`, two five-letter lines stacking into a near-solid
   rectangle. The letterforms are filled via `background-clip: text` with a player face
   crop from `public/faces/` (named in `src/data/wallFaces.ts`), cycling through twelve
   players every 3.8s, cross-fading between them — grayscale, one `background-size: cover`
   image per instance, no tiling. The stadium plate is a separate layer behind everything,
   not the wordmark's fill.
+- **The fill is dotted** *(2026-08-22)*, like every other portrait on the site. Same
+  mechanism as `.dotgrid`: one repeating radial gradient, sized in `%` of its own tile so
+  it punches a circle out of each cell, applied as a `mask-image` **over** the
+  text-clipped picture — so the photo is cut to the letterforms first and then
+  perforated, and the gaps go fully transparent rather than being painted over, letting
+  the stadium plate read through them. The tile is a fixed pitch
+  (`clamp(6px, 0.85vw, 12px)`) rather than a measured one, since the wordmark is the only
+  frame on the site whose box the layout already pins — there is nothing here for
+  `Dotgrid.tsx`'s `ResizeObserver` to work out.
 - A short **description** — "Draft. Argue. Repeat." plus a two-sentence blurb — in the
   negative space to the wordmark's right, where an earlier cycling-portrait carousel used
   to live before the face-cycling moved into the wordmark itself. Hidden below `sm`,
@@ -700,6 +926,14 @@ The page **initialises as one sequenced move**, ~1.3s end to end: the plate scal
 wall is printed left-to-right by a `clip-path` wipe with an accent hairline riding its
 edge, then the description, the rules (which draw rather than appear), the tiles and the
 bar stagger in underneath.
+
+**The stack is top-weighted as of 2026-08-22.** The wordmark used to centre itself in
+whatever the formats and the lobby bar left over, which at a desktop height put well over
+a hundred pixels of nothing between it and `SINGLE PLAYER` while the bar hugged the bottom
+edge — Mert's read: too much space between the logo and the two sections under it. Every
+block is now stacked tight under the wordmark and the slack is given to the bottom, where
+the stadium is already doing the work. `MessageRow` gave up its reserved band with it: it
+used to hold height for a per-format description that was dropped passes ago.
 
 Design decisions were run through the **Hallmark** skill (`.claude/skills/hallmark/`);
 the run is logged at `.hallmark/log.json`.
@@ -846,8 +1080,11 @@ follows the frame's composition and departs from it where a live screen has to:
   ink stroke drawn *around* the artwork (`.crest`) — two of the five marks are dark and
   would otherwise vanish into the ground, and the alternative (a light plate behind each)
   is five bright tiles on a screen with no other bright surface.
-- **The timer is "Turn timer", not "Bid timer".** It applies to every format; naming it
-  after bidding privileges Auction.
+- ~~**The timer is "Turn timer", not "Bid timer".** It applies to every format; naming it
+  after bidding privileges Auction.~~ **Reversed 2026-08-22**, and the reasoning inverted
+  with it: it turned out to apply to exactly one format, so naming it after turns was
+  what misled. It is the **Bid timer**, it is offered on the Auction only, and it
+  collapses away for the other three. See Turns & Timers.
 - **Motion is the quiet register** — `fd-soft`, a fade with 7px of travel, staggered
   across the two halves; the plate keeps drifting on the shared 30s loop; every state
   change is a colour transition or a collapse. No wipes, no choreography.
@@ -864,6 +1101,30 @@ follows the frame's composition and departs from it where a live screen has to:
 the scope, league, constraint, timer and the seat list over as router state — so the draft
 opens on the table that was actually sitting in the lobby rather than on a default one. The
 status line kept its other job: it carries the disabled control's reason.
+
+#### Both lobbies: the 2026-08-22 pass
+
+Four changes, shared by the solo and friends screens through `LobbyLayout`:
+
+- **`CONFIGURATION`, at display weight, opposite `YOUR TABLE`.** The right half used to
+  open with a 10px `SectionLabel` reading `What you're playing` (or `Alex's draft` from a
+  guest's seat). The two halves now open the same way — a small row of chrome, then a
+  display heading on the same line across the divide — so the screen reads as one thing
+  rather than as a panel beside a page. A guest sees the same title; the status line
+  already says only the host can change what is under it.
+- **The way out moved to the top left** and became a button, replacing the `Who's playing`
+  label that sat there. See **Leaving a screen** above. The footer is now the status line
+  and `Kick off` alone.
+- **Chat, in both lobbies.** The solo lobby's bottom-left used to be a helper paragraph —
+  *"Two to five at the table, you included…"* — restating the seat rule the rendered
+  empty seat already makes legible. It is `LobbyChat` now, the same component the friends
+  lobby has always had, seeded with the table's own events: the lobby opening, a bot
+  seated, a bot removed. A room that says what has happened in it is a room; an empty
+  panel is furniture.
+- **The timer group is Auction-only, and is the Bid timer.** It collapses away for the
+  other three formats through the same `Collapse` wrapper the Constraint group uses — see
+  **Turns & Timers** below for the rule, and `lobbyOptions.ts` for why the option list is
+  now two values rather than five.
 
 ### The multiplayer lobby (built)
 
@@ -891,7 +1152,7 @@ different knob values. What a room full of people needs that a room full of bots
   the four settings groups and five seats have to land above the fold at 320×568, and
   this is where the room comes from.
 - **Host and guest are different screens.** Only the host sets Format, Scope, Constraint
-  and Turn timer *(R5-Q4)*, so a guest gets the same four groups drawn as static chips
+  and Bid timer *(R5-Q4)*, so a guest gets the same groups drawn as static chips
   with the host's choices already on them, `Only <host> can change the draft or start it`
   in the status line, and `Waiting for the host` where `Kick off` would be. Whose lobby
   it is rides in on router state and is kept in `sessionStorage` per code, so a refresh
@@ -1023,24 +1284,34 @@ for a while rather than just first sight of it. Mert judged it too busy and cut 
 
 #### What is on screen
 
-Top bar: the **narrator** and the **table**, directly — no wordmark, no configuration line
-— under a `--color-line-strong` rule. Then three columns — `270px / 1fr / 320–372px` —
-divided by hairlines rather than surface steps.
+Top bar, in three parts and in this order across every draft screen in the app *(settled
+2026-08-22)*: **the way out and the language switch** left, **the narrator** centred, **the
+table** right, under a `--color-line-strong` rule. Then three columns — `270px / 1fr /
+320–372px` — divided by hairlines rather than surface steps.
 
 - **The narrator** (`Narrator.tsx`) reports and nothing else: `Bot 2 took Virgil van Dijk —
   CB, Liverpool.`, held for 1.5s, then `Priya is picking.` It is **not a commentator** — no
   banter, no exclamation, no second person beyond `Your pick.` A drafter who looks away for
-  ten seconds looks back at this one line and knows where the draft is. A 7px dot carries
+  ten seconds looks back at this one line and knows where the draft is. A 9px dot carries
   the state: accent when it is you, a slow opacity breath while somebody else thinks.
+
+  **Centred and set large as of 2026-08-22** — `--draft-narrator`,
+  `clamp(14px, 2.35cqh, 20px)`, semibold, against the 13.5px it used to run at tucked in
+  beside a back link. The argument for the size is the same one that justifies the line
+  existing at all: if it is the thing you look at to find out where the draft is, it should
+  not be the thing you have to look *for*. Shared by Free Pick, Spin the Wheel and Deal or
+  No Deal; the Auction has no narrator by its own non-negotiables and puts its headline in
+  the same place instead.
 - **The table** (`TableStrip.tsx`) sits beside it as connected discs with names under them
   and nothing else — no pick counts, no per-seat status. Whose turn it is is the accent on
   the disc. Bots keep the lobby's outlined ring; a bot never gets a face.
 - **Round** (`DraftClock.tsx`) — just the ordinal round in Oswald ("1st round" … "11th
   round") and "of 11" underneath. The countdown and the pick count used to sit here too;
   both were cut 2026-08-20 as noise next to the one number that matters on this rail. The
-  seconds themselves still show, when a timer is running, as a small badge in the mobile top
-  bar below 1180px — that is the one place left where the number needs to live once the
-  rail is gone at that width.
+  seconds survived that pass as a small badge in the mobile top bar below 1180px, and are
+  **gone entirely as of 2026-08-22** along with the rest of this screen's clock — see
+  **Turns & Timers**. The state, the tick and the cheapest-eligible auto-pick that fired
+  on zero went with them.
 - **Used** (`SpentCrests.tsx`) — your own clubs at 34% opacity (nations as text when the
   constraint counts those). No heading beyond the plain label; the constraint's one-line
   explanation that used to sit under it was dropped with the rest of the section-numeral
@@ -1133,11 +1404,11 @@ gives nothing away, since there is nothing to give away.
 every round), `slotFor`, `blockedReason`, `botChoice` and `timeoutChoice`. Nothing in it
 touches React, which is what makes it the thing to read when a rule is in question.
 
-- **452 footballers** across the 69 crested clubs, parsed from `public/player_data.csv` at
-  mount. Every position is at least 27 deep, so a four-seat 4-2-3-1 under `1 per club` cannot
-  run out.
-- **A–Z**, as decided. Ability is read by the bots and by the timeout auto-pick and is
-  rendered nowhere.
+- **546 footballers**, parsed from `public/player_data.csv` at mount — the whole file, not
+  only the 452 at the 69 crested clubs. It was the smaller number until 2026-08-22; see
+  **The pool scoping bug, fixed** below. Every position is at least 27 deep even at the old
+  count, so a four-seat 4-2-3-1 under `1 per club` cannot run out either way.
+- **A–Z**, as decided. Ability is read by the bots and is rendered nowhere.
 - **`blockedReason` is one function** returning the sentence the row prints — `Manchester City
   is spent.`, `Your CB is filled.`, `Already drafted.` — or null. The pool row, the footer line
   and the `Draft` button's disabled state all read the same call, so they cannot disagree.
@@ -1147,8 +1418,9 @@ touches React, which is what makes it the thing to read when a rule is in questi
 - **Every pick goes through one `commit`**, and the choice is computed *inside* the state
   updater so it reads the squad it is actually landing in. A timer that fires twice, or a
   click racing a timeout, cannot produce two picks from one turn.
-- **On timeout** the system takes the cheapest eligible footballer, never the best — an
-  auto-pick that matched your own would make the clock meaningless.
+- ~~**On timeout** the system takes the cheapest eligible footballer, never the best.~~
+  **Moot as of 2026-08-22** — this screen has no clock to time out on. `timeoutChoice` is
+  still in `draftEngine.ts` and still correct; nothing calls it.
 - Nothing is wired to Firebase. Per the standing fake-the-functionality rule the screen
   simulates the room rather than announcing the gap: bots pick on a stagger, the clock runs,
   chat sends, picks land in the XI, and a full 44-pick draft completes with every eleven
@@ -1159,8 +1431,9 @@ touches React, which is what makes it the thing to read when a rule is in questi
 Three shapes, and the breakpoint that matters is not a Tailwind default:
 
 - **≥1180px** — three columns, rail and portrait panel present.
-- **768–1179px** — two columns, pool and pitch. The rail goes and its clock rides in the top
-  bar rather than disappearing. Name plates drop to `72px / 8.5px`.
+- **768–1179px** — two columns, pool and pitch. The rail goes. (Its clock used to ride up
+  into the top bar at this width; there is no clock on this screen any more.) Name plates
+  drop to `72px / 8.5px`.
 - **<768px** — one column, and the two halves take turns behind a `Who is left / The elevens`
   switch. **Pitch name plates are hidden entirely**: the whole pitch is inside 162px there, and
   eleven plates over that overlap each other, which reads worse than not having them.
@@ -1190,6 +1463,69 @@ console errors, and no overlapping name plates on any of the four boards.
 - **`content-visibility: auto`** on the pool rows. All ~446 are in the DOM at once so that a
   footballer you cannot take stays visible where you would expect them; this skips the work for
   the ones outside the scroller, and `contain-intrinsic-size` stops the scrollbar jumping.
+
+#### The pool scoping bug, fixed (2026-08-22)
+
+**The running pool only ever held players from the top five leagues, whatever the Scope
+was set to.** Surfaced during the `purification` branch when Mats Hummels and Ederson
+(Fenerbahçe) didn't appear at all, recorded there as unfixed, and fixed here.
+
+The cause was one line in `loadPool`: `const league = clubLeagues[clubSlug]; if (!league)
+continue`. `clubs.ts` maps the **69 clubs that have a crest** to a league, so any club
+outside the top five failed the lookup and every footballer at it was dropped at parse
+time — before Scope was consulted at all. `All players` and `Top 5 leagues` therefore
+returned the same 452 rows, and the CSV's other 94 were unreachable from the app.
+
+The reasoning behind that line is preserved verbatim in the old comment: *"a club with no
+crest is a club this screen cannot draw — so it is not in the pool at all."* That is the
+error. **Missing artwork is a rendering problem, and it is now solved where the rendering
+happens** — see `Crest` under Art assets, which draws the ring stand-in the rules already
+called for. Deleting the footballer was never the right answer to not having their badge.
+
+What changed:
+
+- `Player.league` is `LeagueId | null` and `Player.crest` is `string | null`. A club
+  missing from `clubs.ts` is a club outside the top five, not a club that doesn't exist.
+- `inScope` carries the distinction that the parse step used to swallow: `top-5` is now
+  `player.league !== null`, `league` is unchanged, and `all` genuinely means all 546.
+- The wheel gains one more slice under `All players` — keyed `other`, labelled
+  **Elsewhere**, sorted last, with no mark to draw and a `var(--color-league-*, …)`
+  fallback for its fill. It is a real slice with real players behind it.
+- `SpentCrests` reads `clubs.ts` directly to decide mark-or-ring, since it holds slugs
+  rather than players.
+
+**Scope by the club, still** — the CSV's `League` column is as unusable as it ever was.
+What changed is only that failing the club lookup means "outside the top five" rather than
+"does not exist".
+
+#### Why the pool was expensive (2026-08-22)
+
+Mert's report: *"Browsing the player list, even just hovering above the items, I can feel
+my CPU usage going up massively"* — worst on Spin the Wheel. Four things, in order of how
+much they were costing:
+
+1. **`.crest`'s outline, four hundred times over.** The 1px ink stroke around a crest is
+   four chained `drop-shadow()` filters, i.e. four filter passes over a rasterised SVG per
+   crest per repaint — and every pool row carries one. Rows enter and leave rendering
+   constantly under `content-visibility: auto` as you scroll, and a row changing colour
+   under the pointer repaints it. That is up to sixteen hundred filter passes doing work
+   for an outline nobody asked these crests for: it exists for the five *league* marks,
+   two of which are dark. The outline is opt-in now — see Art assets.
+2. **A 150ms transition on the row's hover fill.** Nine repaints of a row instead of one,
+   every time the pointer crossed it, on a list you sweep through rather than dwell on.
+   The colour lands immediately now. Both pools.
+3. **No paint containment on the rows.** `contain: content` is on `.pool-row` and
+   `.wheel-row` alongside the `content-visibility` they already had, so a row's repaint
+   cannot invalidate anything outside its own box.
+4. **The backdrop.** A full-viewport `mix-blend-mode: color` layer over an image that
+   scales for thirty seconds without stopping is the most expensive thing on any of these
+   screens, and nothing bounded it in either direction. `.backdrop-root` now carries
+   `isolation: isolate` (so the blend can never take the app's content as its backdrop)
+   and `contain: layout paint style` (so a repaint in front of it — four hundred rows
+   changing colour under a pointer, say — cannot drag it back through the compositor).
+
+None of it changes how anything looks. **Not measured in a browser** — no Playwright this
+session — so this is a list of things that were provably doing work, not a benchmark.
 
 #### One usability bug worth remembering
 
@@ -1252,9 +1588,21 @@ top-to-bottom room and a tall one the reverse — only left-vs-right and top-vs-
 guaranteed:
 
 ```css
---app-inset-x: clamp(1.25rem, 3.4dvw, 3rem);
---app-inset-y: clamp(1.25rem, 3.4dvh, 3rem);
+--app-inset-x: clamp(1.5rem, 4.5dvw, 4rem);
+--app-inset-y: clamp(1.5rem, 4.5dvh, 4rem);
 ```
+
+**Widened 2026-08-22 (`tweak-sweep`)** from the original `clamp(1.25rem, 3.4dvw/dvh, 3rem)`
+above — floor 1.25rem → 1.5rem, scale factor 3.4 → 4.5, cap 3rem → 4rem. Prompted by Mert
+paging through the six screenshots in `screenshots/` (Home, both lobbies, Auction, Free
+Pick, Spin the Wheel) and judging the sides and bottom edge congested everywhere content sat
+close to the frame, while the top read fine. The root cause wasn't asymmetry in the tokens —
+`x` and `y` were already equal to their own opposite edge, per the rule above — it's that
+`--app-inset-y` is `dvh`-driven and was consistently the smaller of the two at typical desktop
+aspect ratios (≈37px at 1080p vs. ≈48px for `--app-inset-x` under the old cap), so the bottom
+edge had less room than the sides even though top and bottom matched each other exactly.
+Raising the shared cap raises both axes together rather than special-casing one edge, keeping
+the one-token-pair rule intact.
 
 `dvw`/`dvh` rather than `vw`/`vh` on principle, not because it changes the number today: in
 every evergreen browser (Chrome, Opera and the rest of the Chromium/Gecko/WebKit family) the
@@ -1264,7 +1612,8 @@ what made the bottom look short was the four screens disagreeing with each other
 number being wrong. `--app-inset-bottom`, `.lobby-half`, `--draft-pad-x/-pad-y/-pad-y-bottom`
 and `--spin-pad-x/-pad-y/-pad-y-bottom` are all gone; the short-viewport override
 (`@media (max-height: 620px)`) is gone too, because the clamp's own floor already carries
-every screen down to the same 1.25rem minimum together, so there's no separate breakpoint
+every screen down to the same minimum (1.25rem originally, 1.5rem since the 2026-08-22
+widening below) together, so there's no separate breakpoint
 left to keep in sync by hand.
 
 **Component sizes that used to jump between two hand-picked pixel values at one remembered
@@ -1320,8 +1669,11 @@ equivalent of. That tuned arrangement is what was built.
 
 #### What is on screen
 
-Header — the format's name, the round, and one status line (`Your pick.` / `Priya is
-picking.` / `The wheel is spinning.`) with the state dot. Then a three-column grid over three
+Header — **the same three-part bar as the other draft screens as of 2026-08-22**: the way
+out and the language switch left, the narrator centred (`Your pick.` / `Priya is picking.`
+/ `The wheel is spinning.`, with the state dot), the round right. The format's own name
+came off it in that pass — no other draft screen names itself either, and the wheel is not
+subtle about which format this is. Then a three-column grid over three
 rows — see **Spin the Wheel: this pass** below for the current column widths and row layout,
 which have moved on from what shipped 2026-08-20.
 
@@ -1330,12 +1682,26 @@ which have moved on from what shipped 2026-08-20.
   spin, and a counter-transform per chip on the same curve and duration so a crest is
   upright at every frame rather than only at the end. The hub sits outside the rotating
   element — a hub that has to be un-spun shimmers for three seconds a turn — and reads
-  `The wheel / Spinning`, then `Landed / Serie A`, then `The draft / Complete`. The landing
-  is jittered inside its slice, because a pointer that stops dead centre every time looks
-  like a lookup.
+  `The wheel / Spinning`, then `Landed / Serie A`, then `The draft / Complete`.
+
+  **It spins for 5.6 seconds through eight full rotations** *(raised 2026-08-22 from 2.8s
+  and four)*. At the old length it read as a control settling rather than as a wheel
+  somebody had put their hand through, and the wait is the entire reason this format is
+  drawn as a wheel at all. Forty-four of them over a draft is the cost, and it is the right
+  one — nothing else is happening while it turns.
+
+  **Where it stops inside the slice is uniformly random, right out to the edges**
+  *(2026-08-22)*. It was always jittered rather than dead-centre, but only across the
+  middle 56% of the wedge — which meant it never came to rest anywhere near a boundary, and
+  a wheel that always stops comfortably inside a slice is a wheel that is visibly choosing
+  rather than landing. The spread is `0.98` now: a hairline of clearance at each edge so
+  the result is never ambiguous about which slice it is in, and every position between
+  those two hairlines equally likely.
 - **The turn indicator** sits under the wheel — the seats as connected discs with the
-  snake's direction, and the clock as a hairline draining along the bottom edge rather than
-  a number, except on your own turn where the number is the whole point.
+  snake's direction. It used to carry the clock too, as a hairline draining along the
+  bottom edge and as a number on your own turn; **both went with the clock itself on
+  2026-08-22** (see Turns & Timers). What is left in that corner is `Your pick` in accent,
+  or which way the snake is running.
 - **The pool**, centre — `{landed} · open slots`, or `· Priya's slots` when the clock is on
   somebody else. Rows are position code in accent, crest, name. The portrait sits beside the
   list rather than above it, and chat is stacked under the whole pool panel — see below.
@@ -1440,6 +1806,13 @@ Four changes, all Spin the Wheel-specific except the last:
 Verified with `npm run build` (typecheck + build) and `npm test`; not re-checked in a
 browser this pass, per Mert's explicit "no playwright."
 
+#### Spin the Wheel: the 2026-08-22 pass
+
+Three changes, on top of the app-wide ones (top bar, no clock, pool performance): the spin
+length and the landing spread described above, and `TurnIndicator` losing its countdown.
+The wheel is also where the pool-scoping fix is most visible — under `All players` there is
+now a sixth slice, **Elsewhere**, for the clubs outside the top five.
+
 ### The Deal or No Deal draft screen (built, 2026-08-20, `dond-ui`)
 
 `src/routes/DondDraft.tsx`, reached through `Draft.tsx`, which now dispatches on `formatId`:
@@ -1492,9 +1865,17 @@ Top bar — narrator and table strip, same as Free Pick. Then three hairline-div
   construction rather than as a separate step: a box player is only removed from the
   available pool once *somebody* ends the round holding them, so an unclaimed box player is
   simply never taken out of circulation.
-- **Timeout defaults to the least-committal option** (Turns & Timers): stick, and take the
-  offer. Timing out while choosing a box opens a random shut one, since there is no
-  "no-help" option for the one decision that has to happen.
+- ~~**Timeout defaults to the least-committal option**: stick, and take the offer.~~
+  **Moot as of 2026-08-22** — this screen has no clock. See Turns & Timers.
+- **A round completes before any offer goes out**, and it always did — restated here
+  2026-08-22 because Mert flagged it as possibly unimplemented. `RoundState.stage` runs
+  `'open'` first: every seat opens a box and decides stick-or-hear, in `order`, and only
+  when that cursor runs off the end does the banker price the round and the stage become
+  `'offer'`. Choosing to hear the offer therefore does **not** produce one on the spot —
+  it adds your seat to `hearing` and passes play on. Declining an offer works the same way
+  round: `backToBoxes` sets the step back to `'choosing'` *within the offer stage*, so the
+  second box is opened in that stage's own rotation rather than immediately. No change was
+  needed.
 
 #### Judgement calls made without asking, worth a look
 
@@ -1518,6 +1899,17 @@ round shuffle, the round-robin order, the box draw, and the banker's pricing/off
 `src/routes/DondDraft.test.tsx` plays a box open through to a stuck pick and confirms the turn
 hands to the next seat rather than reversing. Not checked in a browser this pass, per Mert's
 explicit "no playwright."
+
+#### Deal or No Deal: the 2026-08-22 pass
+
+Mert's read of the screen was that it is *"pretty much okay"*, and it was left alone apart
+from the app-wide changes (top bar, centred narrator, no clock, pitch tabs fading) and one
+thing specific to it: **the decision buttons fade in.** `Stick` / `Hear the offer` used to
+be simply *there* the instant the reveal hold ended, mid-read, with no transition at all —
+the stage is keyed on the box, so it does not remount when the step changes underneath it.
+They are keyed on their own labels now and carry `fx-soft` with 120ms of delay behind the
+face, and the note under them follows at 200ms. The one moment the whole format is about
+should not arrive as a jump cut.
 
 ### The Auction draft screen exhibition (2026-08-21, `auction-draft-ui`)
 
@@ -1559,7 +1951,9 @@ figure is the `15 × N` cap and the 800M figure is the documented ×19 budget at
 - **The sealed tile** (`24 · ?`) is how non-negotiable 9 is drawn. Every frame ends its record of
   sold lots with one, so the boundary between what you can see and what you cannot is a visible
   edge rather than an absence. Unsold lots stay in the record (lot 19, Pedri) — R8-Q4 makes that a
-  real event and it belongs on screen.
+  real event and it belongs on screen. **The tile itself was cut on 2026-08-22**; non-negotiable 9
+  is untouched and nothing previews the queue, but the absence turned out not to need a monument —
+  the record simply ends. Unsold lots staying in it is unaffected.
 
 #### Three inventions specific to one frame each
 
@@ -1619,35 +2013,75 @@ bid resets.
 **There is also no narrator.** Non-negotiable 6 said events had to be legible with or without
 one and non-negotiable 7 banned sentences outright, and layout 01 has neither — so the build
 doesn't either. Events are *drawn*: the hammer lands across the photograph at display size and
-holds for 1.9s, the sold record keeps the history, the holder readout carries the present tense,
-and the HIGH tag moves between bid cards. **Nothing on this screen is a sentence** — the only
-prose anywhere in the column is what people type into chat.
+holds for 1.9s, the sold record keeps the history, and the headline across the top carries the
+present tense. **Nothing on this screen is a sentence** — the only prose anywhere in the column
+is what people type into chat.
 
 #### What is on screen
 
-Top bar: `Back to home`, an accent `Auction` chip and the scope chip, with the table strip
-opposite. The strip's accent disc marks **the holder**, not a turn. Then three hairline-divided
-columns — `236px / 1fr / clamp(256px, 22vw, 296px)`:
+Top bar, in the same three parts as the other three draft screens *(rebuilt 2026-08-22)*: the
+way out and the language switch left, **the headline** centred, the table strip right. The
+strip's accent disc marks **the holder**, not a turn. Then three hairline-divided columns —
+`236px / 1fr / clamp(256px, 22vw, 296px)`:
 
-- **Sold**, left — the last four lots as square face cards, newest first, two across: photograph,
-  surname and price, crest and buyer. Your own purchases are drawn in accent; an **unsold lot
-  stays in the record**, dimmed whole, because passing on a footballer is a real event *(R8-Q4)*
-  and a record that only listed sales would rewrite what happened. Under it, the **sealed tile** —
-  `24 · ?`. Nothing on the screen previews the queue, so the boundary between what you can see
-  and what you cannot is drawn as an object rather than left as an absence. Chat sits beneath.
+- **The headline** — `HAALAND ● HIGHEST BIDDER: SAM ● €150M`, in Oswald bold at
+  `clamp(15px, 3.25cqh, 26px)`, with the price in accent when it is yours. Before anyone has
+  taken the lot it reads `HAALAND ● OPENING ● €140M`. It occupies the position the other three
+  screens give their narrator and does the same job — one line, read from across the room,
+  saying where the format currently stands — without a verb, which is what non-negotiable 7
+  requires. Below `lg` the `HIGHEST BIDDER:` label drops and the line runs name ● name ● price.
+  The `Auction` and scope chips that used to sit at the top left are **gone**; the format is not
+  in doubt while a countdown is draining under a photograph.
+- **Sold**, left — the last four lots, newest first, two across. **Rebuilt 2026-08-22**: the
+  photograph is a **16:9 strip** rather than a full square, the club crest is gone entirely, and
+  the two facts the record exists to carry — **who bought them and for how much** — take the body
+  of the card at the size the face used to have. A lot is a footballer before it is a price, which
+  is why layout 09's photographs were carried across in the first place; but the square swallowed
+  the card, and the crest was a third identifier for somebody already named twice and the
+  smallest, busiest thing in the rail. Your own purchases are drawn in accent; an **unsold lot
+  stays in the record**, dimmed whole *(R8-Q4)*. The sealed `24 · ?` tile under it is gone. Chat
+  sits beneath.
 - **The block**, centre — the fixed stack, in the order the non-negotiables set it: the count
   (`Lot 23 / 75` · `52 left`) at the top of the displayer, the displayer, the countdown, the five
-  drafters side by side with their bids, then the three steps. The footballer is full bleed and
+  drafters side by side with their bids, then the steps. The footballer is full bleed and
   face-anchored, in their own colour, with the opening bid in the caption.
 - **The elevens**, right — `PitchView` behind the same drafter tabs the other three screens use,
-  with `Filled n / 11` and `Left {budget}M` under it. Every board is open to everyone the whole
+  with `Filled n / 11` and `Left €{budget}M` under it. Every board is open to everyone the whole
   way through, same as everywhere else.
 
-**The increments carry two numbers each** — the step and what it lands on (`+5` over `170M`). A
-button that names only its step makes you do arithmetic against a clock. **The first bid on a lot
-is exactly at the opening price**, so the three steps are redundant in round one and mask down to
-one `Bid` and a `Pass`, exactly as the rule says. A step you cannot afford is disabled, and
-nobody bids against themselves.
+#### What the bottom of the centre stack looks like now (2026-08-22)
+
+Mert's read: the section under the displayer *"is not terrible, it's just not simple enough —
+the buttons are what sucks. The text is too small. You can't tell what the fuck they are
+saying."* Three things went, and one thing got the room they freed.
+
+- **The holder chip is gone.** It named who had the lot and at what price, immediately under a
+  headline that now says the same thing four times the size. Repeating it was costing the row it
+  sat in and telling nobody anything.
+- **The `Bids` / `Budget` label row and the per-seat budget meters are gone.** The bid figure and
+  the budget figure stayed; the bar under them was decoration and the labels were captioning two
+  columns of obvious numbers.
+- **`Pass` is gone.** A seat that stops bidding has passed — the rules have no pass *action*, and
+  offering one as a control invented a move the format does not have. Bots are still marked out
+  when the price crosses their fixed valuation, which is what draws the dimmed cards; you are
+  simply never marked out, because you can always come back in.
+- **The steps got all of it.** They are the only controls on this screen and they were the
+  smallest type on it. The figure now reads at `clamp(17px, 3.125cqh, 25px)` — against 14px — with
+  the price it lands on underneath at `clamp(10px, 1.5cqh, 12px)`, on a two-pixel border and
+  roughly double the vertical padding. Below 768px the "to €175M" line drops and the figure keeps
+  its size.
+
+**The increments still carry two numbers each** — the step and what it lands on. A button that
+names only its step makes you do arithmetic against a clock. **The first bid on a lot is exactly
+at the opening price**, so the three steps are redundant in round one and mask down to a single
+button reading the opening price over `Open the bidding`. A step you cannot afford is disabled,
+and nobody bids against themselves.
+
+**Every price in the app carries a euro sign** *(2026-08-22)*. `.money` gains a `::before` at
+0.66em alongside the `M` it already rode behind, so one rule covers the headline, the steps, the
+bids, the budgets, the sold record, the opening-bid caption and the hammer. The one price that is
+a plain string rather than a `.money` element — the chat line a purchase writes — carries it
+literally.
 
 #### The rules it implements
 
@@ -1679,7 +2113,14 @@ nobody bids against themselves.
 
 - **Timers off still gets a countdown, at the 15s default.** The clock is this format's own
   closing mechanism rather than a courtesy to a slow drafter — with no turns, it is the only
-  thing that ends a lot, so switching it off would leave a lot open forever.
+  thing that ends a lot, so switching it off would leave a lot open forever. *(This is also
+  why the timer setting survived here alone when it was taken off the other three screens on
+  2026-08-22 — see Turns & Timers.)*
+- **The three-second lockout applies to the room, not only to you.** It would have been
+  cheaper to disable your own buttons and leave the bots alone, and it would have been a lie:
+  the point of the rule is a beat in which nothing moves, and two bots trading raises through
+  it would take that beat away while pretending to give it to you. See the rule under
+  Configuration Mechanics → Auction.
 - **A bot that has been priced out is marked passed** rather than quietly stopping. Its valuation
   is fixed for the lot's length and its budget only falls, so it can never come back in — saying
   so is what draws the four dimmed cards next to the one holding it, which is the read layout 01
@@ -1761,9 +2202,11 @@ Every draft is configured along three independent axes: **Format**, **Scope**, a
 3 example players: John, Paul, Ringo. Each starts with a budget calculated dynamically from
 the pool: **(Average Derived Price of all players in the selected pool) × 19, rounded to the nearest 100M EUR** *(R8-Q0 / amended 2026-08-19)*.
 A footballer comes up starting at a predetermined opening bid (70% of derived market value, rounded to nearest 5M).
-The **first bid on a lot is exactly at the opening price** *(clarified 2026-08-19)*, so increment buttons are redundant in the first round and mask down to {Pass, Bid}.
-Players bid in real time. The auction turn timer represents the maximum allowed inactivity without a bid:
+The **first bid on a lot is exactly at the opening price** *(clarified 2026-08-19)*, so increment buttons are redundant in the first round and mask down to a single Bid.
+*(That used to read `{Pass, Bid}`; there is no Pass control as of 2026-08-22 — a seat that stops bidding has passed, and the rules never had a pass **action**.)*
+Players bid in real time. The **Bid timer** represents the maximum allowed inactivity without a bid:
 **any valid bid resets the countdown timer back to its full duration** (e.g. 15s) *(R8-Q3)*.
+It is the only timer in the game — see Turns & Timers.
 A player is sold to the highest bidder only when the full timer expires with zero new bids.
 If no one bids at opening bid and the initial timer expires, the footballer is **discarded into an unsold pile**
 and is only resurfaced for end-of-auction backfill if no other viable players remain in the pool *(R8-Q4)*.
@@ -1808,6 +2251,22 @@ Every seat can raise at any moment; there is no rotation, no "your turn", and no
 The screen must therefore show a **holder** — who currently holds the lot and at what price —
 rather than a turn indicator, and every seat's increment controls stay live at once. What the
 countdown measures is inactivity, not a turn: see the timer rule above.
+
+**Nobody may bid for the first three seconds of a countdown** *(set by Mert, 2026-08-22 —
+"a gameplay feature that will be fleshed out later on")*. Since any bid sends the countdown back
+to full, this is a cooling-off period **after every raise**, not a one-off at the top of a lot:
+raise, and the block is shut to everyone for three seconds before anyone — including you — can
+raise again. It applies to the room exactly as it applies to a human seat.
+
+What it buys is a beat in which nothing moves, to look at the footballer and at what they are
+being held at before deciding, which is the only decision this format has. Without it a lot can
+be walked up by two bots trading raises faster than anybody can read them.
+
+Implementation note, since the rule is stated loosely and will be revisited: it is its own timer
+(`LOCKOUT_MS` in `AuctionDraft.tsx`) keyed on the lot-and-bid the countdown belongs to, rather
+than a read off the countdown's remaining seconds — so it is exact rather than rounded to
+whichever second the 1s tick happened to land on. The bidding loop checks it before it reads any
+valuations, and the steps go disabled with a line naming how long is left.
 
 There's **no designated opener/nominator** — any footballer can be bid on by anyone the
 moment it appears, no rotating turn to bring it up. *(R2-Q5)* Footballers surface
@@ -1986,18 +2445,37 @@ block, and backfill can still reach the un-auctioned remainder of the scoped poo
 somehow can't. *(2026-08-19)*
 
 ### Turns & Timers
-Host-configurable per-turn/bid timer (a length can be set, or timers can be turned off
-entirely), defaulting to **~15 seconds** before a host changes it. *(R1-Q6, R6-Q5)* On
-timeout, the system defaults to the **least-committal, no-help option** rather than
-picking something good on the player's behalf — consistent with
-the Auction backfill philosophy (stalling gets you scraps, not a curated pick):
-- **Auction:** no special handling needed — bidding just closes without that player's
-  input if they don't act.
-- **Deal or No Deal:** stick/hear-the-offer defaults to **stick**; take/go-back-to-the-
-  boxes defaults to **take the offer**. Both avoid introducing more randomness.
-- **Free Pick / Spin the Wheel:** auto-picks the **cheapest eligible remaining
-  footballer** for that slot — mirroring the Auction backfill rule. *(R2-Q7, decided by
-  Claude; first-pass rule, may get refined later)*
+
+**Rewritten 2026-08-22. There is one timer in this game, it belongs to the Auction, and it
+is called the Bid timer.** *(Set by Mert.)*
+
+~~Host-configurable per-turn/bid timer in every format, defaulting to ~15 seconds.~~ What
+the Auction's clock measures is **how long a lot has sat without a bid** — it is that
+format's own closing mechanism, the only thing that ends a lot in a game with no turns, and
+any bid from any seat sends it back to full. Nothing in the other three formats resembles
+that. A snake draft's turn ends when somebody picks; a Deal or No Deal round ends when the
+seat on it sticks, takes the offer or goes back to the boxes. A countdown there was never
+closing anything — it was only hurrying people along, which is not a rule.
+
+So **Free Pick, Spin the Wheel and Deal or No Deal run no clock at all**: no countdown, no
+badge, no drain, and no auto-choice on expiry. `timeoutChoice` remains in
+`draftEngine.ts` — still correct, called by nothing.
+
+**The Bid timer is offered on the Auction only**, and has **two values: 15 s or Off**
+*(narrowed from 10/15/30/60/Off, 2026-08-22)*. The intermediate lengths were never a
+decision anybody was making; they were a slider drawn as chips. In both lobbies the group
+collapses away entirely when the format isn't Auction, the same way the Constraint group
+does for everything but Free Pick.
+
+`Off` is still honoured as a *setting* and still cannot switch the clock off in practice —
+see the judgement call under The Auction draft screen: with no turns, a lot with no clock
+stays open forever, so the screen falls back to the 15s default. That is unchanged from
+2026-08-21 and remains the one place a setting doesn't do what it says.
+
+On expiry the Auction needs no special handling: bidding closes without that seat's input
+if they don't act. *(The per-format timeout defaults settled in R2-Q7 and the Deal or No
+Deal stick/take-the-offer defaults are moot with the clocks gone; kept in the questionnaire
+record, not in force.)*
 
 ### Disconnection & Reconnection
 A player who drops mid-draft gets replaced by a bot after **45 seconds** disconnected.
@@ -2412,8 +2890,25 @@ the summaries above are what's left of rounds 8–10.
 
 ## Project Status
 
-**Front end: complete.** The home page, both lobbies and **all four draft screens — Free Pick,
-Spin the Wheel, Deal or No Deal and Auction** — are built and routed: `/`, `/solo/:formatId`,
+**Front end: complete, repaletted and then swept 2026-08-22.** The sweep — a single pass of
+small changes across every screen — added a **language switch (EN/TR, not yet wired)** and a
+**prominent top-left way out that confirms before leaving a draft**, centred and enlarged the
+**narrator**, made the **turn timer the Auction's alone** (renamed the Bid timer, cut to 15 s or
+Off, with no clock at all on the other three screens), **dotted the home wordmark's fill**,
+gave both lobbies **live chat and a `CONFIGURATION` title**, rebuilt the Auction's top bar
+around a **headline** and its steps at four times their old type size, put a **euro sign on
+every price**, added a **three-second lockout after every bid**, **fixed the pool-scoping bug**,
+and cut the cost of browsing either player list. See the `tweak-sweep` narrative at the top of
+this document for the index and each screen's own section for the detail. **None of it is
+browser-verified** — no Playwright that session.
+
+Six primes (warm near-black ground,
+neutral off-white ink, gold, green, blue, plus the backdrop tint), every derived token solved
+numerically against a measured reference, a three-step corner-radius scale, and the stadium plate
+brought down on all five of its placements — see **Design tokens**, **Corner radius** and the
+`tweak-sweep` branch narrative at the top of this document. The home page, both lobbies and
+**all four draft screens — Free Pick, Spin the Wheel, Deal or No Deal and Auction** — are built
+and routed: `/`, `/solo/:formatId`,
 `/lobby/:code`, `/draft/:formatId`, the last dispatching on the format. Free Pick went through a
 simplification pass on 2026-08-20 (a quieter rail, a rebuilt face-anchoring system, no
 section numerals); Spin the Wheel was built the same day off the Orbit layout; Deal or No
@@ -2448,10 +2943,11 @@ day; a **`cleanup-and-optimization`** branch was then cut from `main`, renamed
 **`clean-bloat-and-repalette`**, and used to clear the open items above — see the branch
 narrative near the top of this document for the full record of what that pass did.
 
-**Known bug, unrelated to the above, not yet fixed:** the running player pool only ever includes
-players from the top five leagues, regardless of scope — surfaced while checking the portrait
-change on screen (Mats Hummels and Ederson-Fenerbahçe didn't appear at all), confirmed unrelated
-by trying a top-five player with the same treatment.
+**That known bug is fixed (2026-08-22).** The running pool only ever included players from the
+top five leagues regardless of Scope — one line in `loadPool` dropped any club missing from
+`clubs.ts` at parse time, before Scope was consulted. `All players` now genuinely means all 546;
+a club with no crest draws the ring stand-in the rules already called for rather than being
+deleted from the game. See **The pool scoping bug, fixed** above.
 
 **Bots:** development is complete for Deal or No Deal, Spin the Wheel and Free Pick; models
 are exported to `public/botModels/`. **Auction training has since run** — a real pipeline,

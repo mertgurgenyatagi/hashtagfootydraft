@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Box } from '../../lib/dondEngine'
 import type { Drafter } from '../../lib/draftEngine'
+import { Crest } from '../ui/Crest'
 import { Dotgrid } from './Dotgrid'
 
 interface BoxGridProps {
@@ -74,7 +75,7 @@ function BoxFace({
       >
         <div className="min-h-0 flex-1 overflow-hidden">
           {failed ? (
-            <img className="crest m-auto h-[50%] w-[50%] opacity-40" src={box.player.crest} alt="" />
+            <Crest className="m-auto h-[50%] w-[50%] opacity-40" src={box.player.crest} alt="" />
           ) : (
             <Dotgrid
               player={box.player}
@@ -85,7 +86,7 @@ function BoxFace({
           )}
         </div>
         <div className="flex shrink-0 items-center gap-[6px] border-t border-line px-[7px] py-[5px]">
-          <img className="crest h-[14px] w-[14px] shrink-0" src={box.player.crest} alt="" />
+          <Crest className="h-[14px] w-[14px] shrink-0" src={box.player.crest} alt="" />
           <span
             className={[
               'truncate font-display text-[11px] font-medium uppercase tracking-[0.04em]',

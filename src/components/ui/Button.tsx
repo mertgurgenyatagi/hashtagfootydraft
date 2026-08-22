@@ -9,8 +9,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /**
- * Standardized button primitive adhering to the Petrol design system.
- * - 'accent': Primary CTA with orange fill, crisp border, and hover inverse
+ * Standardized button primitive adhering to the app's design tokens.
+ * - 'accent': Primary CTA with gold fill, crisp border, and hover inverse
  * - 'surface': Secondary action with surface-2 fill and line-strong border
  * - 'ghost': Quiet text action (e.g. Back to home, Cancel)
  */
@@ -26,9 +26,9 @@ export function Button({
 
   const variants: Record<ButtonVariant, string> = {
     accent:
-      'rounded-[2px] border border-accent bg-accent text-accent-ink hover:bg-transparent hover:text-accent disabled:border-line disabled:bg-transparent disabled:text-faint',
+      'rounded-sm border border-accent bg-accent text-accent-ink hover:bg-transparent hover:text-accent disabled:border-line disabled:bg-transparent disabled:text-faint',
     surface:
-      'rounded-[2px] border border-line bg-surface text-ink hover:border-line-strong hover:bg-surface-2 disabled:border-line disabled:text-dim',
+      'rounded-sm border border-line bg-surface text-ink hover:border-line-strong hover:bg-surface-2 disabled:border-line disabled:text-dim',
     ghost:
       'border-0 bg-transparent text-[10px] font-medium tracking-[0.2em] text-muted hover:text-ink disabled:text-faint',
   }

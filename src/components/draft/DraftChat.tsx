@@ -53,7 +53,7 @@ export function DraftChat({ messages, onSend, you }: DraftChatProps) {
                     <span
                       className={[
                         'mr-[7px] font-display text-[10px] font-medium uppercase tracking-[0.12em]',
-                        message.author === you ? 'text-accent' : 'text-muted',
+                        message.author === you ? 'text-accent' : 'text-live',
                       ].join(' ')}
                     >
                       {message.author}
@@ -86,7 +86,7 @@ export function DraftChat({ messages, onSend, you }: DraftChatProps) {
           onChange={(event) => setDraft(event.target.value.slice(0, MESSAGE_MAX))}
           placeholder="Message the room"
           autoComplete="off"
-          className="w-full border border-line bg-ground/60 px-[10px] py-[7px] font-sans text-[11.5px] text-ink transition-colors duration-100 ease-out hover:border-line-strong focus:border-accent-line focus:outline-none"
+          className="w-full rounded-sm border border-line bg-ground/60 px-[10px] py-[7px] font-sans text-[11.5px] text-ink transition-colors duration-100 ease-out hover:border-line-strong focus:border-accent-line focus:outline-none"
         />
       </form>
     </section>

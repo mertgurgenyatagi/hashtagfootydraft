@@ -12,7 +12,12 @@ export interface Player {
   age: number
   club: string
   clubSlug: string
-  league: LeagueId
+  /**
+   * Null for a club outside the top five. Those footballers are in the pool —
+   * the pool is the whole CSV — they simply have no league mark and no crest
+   * to draw, which is a rendering fact rather than a reason to leave them out.
+   */
+  league: LeagueId | null
   position: PositionCode
   /**
    * Read by the bots when they choose, and by the timeout auto-pick. Never
@@ -22,7 +27,8 @@ export interface Player {
   ability: number
   /** Also never rendered — Free Pick has no currency. The auto-pick uses it. */
   price: number
-  crest: string
+  /** Null when the club has no crest on file. Draw the ring stand-in instead. */
+  crest: string | null
   /** Not a usable image URL on its own — see `cellGridSrc`. Points at
    * `players-cells/{slug}`, the standardised 80×100 colour-grid raster the
    * `Dotgrid` component reads; the per-frame crop into it is CSS, not data. */
@@ -138,13 +144,18 @@ export function crestUrl(clubSlug: string): string {
 
 /**
  * The pool, read from the same CSV every other part of this project measures
- * against.
+ * against. **Every eligible row in it**, not only the ones with a crest on
+ * file: an earlier version dropped any club missing from `clubs.ts`, which
+ * silently cut the pool to the top five leagues no matter what Scope was set
+ * to — Hummels and Ederson (Fenerbahçe) never appeared at all. Missing artwork
+ * is a rendering problem and is now solved where the rendering happens (see
+ * `Crest`), not by deleting the footballer.
  *
- * Scope comes from the club rather than from the file's own `League` column:
- * that column names the competition a row was scraped from, so it puts
+ * Scope still comes from the club rather than from the file's own `League`
+ * column: that column names the competition a row was scraped from, so it puts
  * Fenerbahçe in Serie A and Flamengo in the Spanish first division. `clubs.ts`
- * is the map that actually holds, and a club with no crest is a club this
- * screen cannot draw — so it is not in the pool at all.
+ * is the map that actually holds, and a club that isn't in it is simply a club
+ * outside the top five — `league: null`, in the pool, out of `top-5`.
  */
 export async function loadPool(signal?: AbortSignal): Promise<Player[]> {
   const response = await fetch(`${base}player_data.csv`, { signal })
@@ -174,8 +185,7 @@ export async function loadPool(signal?: AbortSignal): Promise<Player[]> {
     if (!name || !club || !POSITIONS.has(position)) continue
 
     const clubSlug = slugify(club)
-    const league = clubLeagues[clubSlug]
-    if (!league) continue
+    const league = clubLeagues[clubSlug] ?? null
 
     const id = `${slugify(name)}|${clubSlug}`
     if (seen.has(id)) continue
@@ -193,7 +203,7 @@ export async function loadPool(signal?: AbortSignal): Promise<Player[]> {
       position: position as PositionCode,
       ability: Number(cells[abilityAt]) || 0,
       price: Number(cells[priceAt]) || 0,
-      crest: crestUrl(clubSlug),
+      crest: league ? crestUrl(clubSlug) : null,
       portraitBase: `${base}players-cells/${slugify(name)}`,
     })
   }
@@ -219,8 +229,13 @@ function teamsheetName(name: string): string {
   return last
 }
 
-/** Scope, as the lobby sets it. `top-5` is every club we hold a crest for. */
+/**
+ * Scope, as the lobby sets it. `top-5` is every club we hold a crest for —
+ * which is exactly the set with a non-null `league` — and `all` really does
+ * mean all of them, Fenerbahçe and Flamengo included.
+ */
 export function inScope(player: Player, scope: string, league: string): boolean {
   if (scope === 'league') return player.league === league
+  if (scope === 'top-5') return player.league !== null
   return true
 }

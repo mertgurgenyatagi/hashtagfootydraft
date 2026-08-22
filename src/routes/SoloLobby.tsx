@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ChipGroup, Collapse } from '../components/lobby/ChipGroup'
+import { LobbyChat, type Message } from '../components/lobby/LobbyChat'
 import { LobbyLayout } from '../components/lobby/LobbyLayout'
 import { ScopeDetail } from '../components/lobby/ScopeDetail'
 import { SeatList, type Seat } from '../components/lobby/SeatList'
+import { BackHome } from '../components/ui/BackHome'
 import { Button } from '../components/ui/Button'
 import { formats } from '../data/formats'
 import { MAX_SEATS, constraints, scopes, timers } from '../data/lobbyOptions'
@@ -32,8 +34,9 @@ const GROUP_GAP = 'pt-[var(--lobby-gap)]'
  * Landing here without one leaves every format unpicked rather than defaulting
  * to any of them — the four are equals.
  *
- * Kicking off is still an honest dead end: the draft screen doesn't exist, so
- * the status line says so instead of faking a destination.
+ * Kicking off opens the draft on exactly this table: the scope, the league,
+ * the constraint, the bid timer and the seat list all travel over as router
+ * state, so the draft starts on the configuration in front of you.
  */
 export function SoloLobby() {
   const { formatId } = useParams()
@@ -58,6 +61,15 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
   const nextBotId = useRef(4)
   const [bots, setBots] = useState<number[]>([1, 2, 3])
 
+  /* Chat is live here too. There is nobody else in a solo lobby to talk to yet,
+     which is exactly why the table's own events go through it — a room that
+     says what has happened in it is a room, and an empty panel is furniture. */
+  const messageId = useRef(1)
+  const [messages, setMessages] = useState<Message[]>([
+    { id: 0, kind: 'system', author: '', body: 'Table opened — three bots seated.' },
+  ])
+  const say = (message: Omit<Message, 'id'>) =>
+    setMessages((current) => [...current, { ...message, id: messageId.current++ }])
 
   const seats: Seat[] = [
     {
@@ -79,6 +91,8 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
 
   /** Constraints exist for Free Pick and are not offered anywhere else. */
   const takesConstraint = format === 'free-pick'
+  /** A bid timer exists for the Auction, and is not offered anywhere else. */
+  const takesTimer = format === 'auction'
 
   /**
    * How many drafters the settings have to seat. Every option below is
@@ -121,23 +135,21 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
             const id = nextBotId.current
             nextBotId.current += 1
             setBots((current) => [...current, id])
+            say({ kind: 'system', author: '', body: `Bot ${bots.length + 1} seated.` })
           }}
-          onRemove={(id) => setBots((current) => current.filter((entry) => String(entry) !== id))}
+          onRemove={(id) => {
+            setBots((current) => current.filter((entry) => String(entry) !== id))
+            say({ kind: 'system', author: '', body: 'A bot left the table.' })
+          }}
         />
       }
       leftFooterContent={
-        <>
-          <div className="hidden flex-1 md:block" />
-          <p
-            className="fx fx-soft hidden max-w-[46ch] text-[10.5px] leading-[1.5] text-dim md:block"
-            style={{ animationDelay: '560ms' }}
-          >
-            Two to five at the table, you included. Bots are added one at a time and all play the
-            same default style.
-          </p>
-        </>
+        <LobbyChat
+          you="You"
+          messages={messages}
+          onSend={(body) => say({ kind: 'said', author: 'You', body })}
+        />
       }
-      rightHeaderLabel="What you're playing"
       settingsContent={
         <>
           <ChipGroup
@@ -185,27 +197,27 @@ function ReadyRoom({ formatId }: { formatId?: string }) {
             </div>
           </Collapse>
 
-          <div className={GROUP_GAP}>
-            <ChipGroup
-              label="Turn timer"
-              options={timers}
-              value={timer}
-              onChange={setTimer}
-              delayMs={500}
-            />
-          </div>
+          {/* The bid timer is the Auction's own closing mechanism and has no
+              counterpart anywhere else, so it collapses away with the rest of
+              the formats rather than sitting there naming a rule they don't
+              have. Same collapsing wrapper the Constraint group uses. */}
+          <Collapse open={takesTimer}>
+            <div className={GROUP_GAP}>
+              <ChipGroup
+                label="Bid timer"
+                options={timers}
+                value={timer}
+                onChange={setTimer}
+                note="How long a lot can sit without a bid. Any bid sends it back to full."
+                delayMs={500}
+              />
+            </div>
+          </Collapse>
         </>
       }
       statusMessage={resting}
       statusKey={resting}
-      backControl={
-        <Link
-          to="/"
-          className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
-        >
-          Back to home
-        </Link>
-      }
+      backControl={<BackHome />}
       actionControl={
         <Button
           variant="accent"

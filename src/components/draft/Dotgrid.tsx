@@ -16,7 +16,10 @@ const FRAME_CROPS: Record<DotgridFrame, { zoom: number; panX: number; panY: numb
   'box-stage': { zoom: 1, panX: 0.8, panY: 0.15, density: 64 },
   'box-grid-tile': { zoom: 1.1, panX: 0.54, panY: 0.09, density: 48 },
   'pitch-node': { zoom: 1.26, panX: 0.52, panY: 0, density: 16 },
-  'sold-record-face': { zoom: 2.04, panX: 0.44, panY: 0.15, density: 48 },
+  // Re-tuned when the sold card's photograph went from a square to a 16:9
+  // strip: the scale is width-driven at that shape, so the old 2.04 zoom cut
+  // a head crop out of a box already only sixty pixels tall.
+  'sold-record-face': { zoom: 1, panX: 0.5, panY: 0.1, density: 48 },
   'spotlight-free-pick': { zoom: 1, panX: 0.38, panY: 0.12, density: 64 },
   'spotlight-spin': { zoom: 1, panX: 0.45, panY: 0.11, density: 48 },
 }

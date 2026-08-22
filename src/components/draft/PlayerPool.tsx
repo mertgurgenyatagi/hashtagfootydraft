@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useRef } from 'react'
 import { type PositionCode, positionCodes, positionNames } from '../../data/formation'
 import type { Player } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 
 export interface PoolRow {
   player: Player
@@ -81,7 +82,7 @@ export function PlayerPool({
   return (
     <section className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-[16px]">
-        <div className="flex min-w-0 flex-1 basis-[25%] items-center gap-[10px] border border-line bg-ground/60 px-[13px] py-[8px] transition-colors duration-150 ease-out focus-within:border-accent-line">
+        <div className="flex min-w-0 flex-1 basis-[25%] items-center gap-[10px] rounded-sm border border-line bg-ground/60 px-[13px] py-[8px] transition-colors duration-150 ease-out focus-within:border-accent-line">
           <span aria-hidden="true" className="text-[12px] leading-none text-accent">
             &#8981;
           </span>
@@ -99,7 +100,7 @@ export function PlayerPool({
           />
           <span
             aria-hidden="true"
-            className="shrink-0 border border-line px-[5px] py-px font-display text-[9px] leading-[1.4] text-dim"
+            className="shrink-0 rounded-[4px] border border-line px-[5px] py-px font-display text-[9px] leading-[1.4] text-dim"
           >
             /
           </span>
@@ -141,12 +142,16 @@ export function PlayerPool({
                     onDoubleClick={() => {
                       if (!blocked && canDraft) onDraft()
                     }}
+                    /* No transition on the hover fill, deliberately: a 150ms
+                       ease is nine repaints of the row instead of one, times
+                       four hundred rows you sweep the pointer straight
+                       through. The colour lands immediately instead. */
                     className={[
-                      'flex w-full items-center gap-[14.5px] border-b border-line px-[8px] py-[15px] text-left transition-[background-color,opacity] duration-150 ease-out',
+                      'flex w-full items-center gap-[14.5px] border-b border-line px-[8px] py-[15px] text-left',
                       blocked ? 'opacity-[0.34]' : selected ? 'bg-accent-soft' : 'hover:bg-surface',
                     ].join(' ')}
                   >
-                    <img className="crest h-[25.5px] w-[25.5px] shrink-0" src={player.crest} alt="" />
+                    <Crest className="h-[25.5px] w-[25.5px] shrink-0" src={player.crest} alt="" />
 
                     <span className="flex min-w-0 flex-1 flex-col gap-[2.5px]">
                       <span
@@ -182,7 +187,7 @@ export function PlayerPool({
           type="button"
           onClick={onDraft}
           disabled={!canDraft}
-          className="shrink-0 rounded-[2px] border border-accent bg-accent px-[22px] py-[10px] font-display text-[12px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
+          className="shrink-0 rounded-sm border border-accent bg-accent px-[22px] py-[10px] font-display text-[12px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
         >
           {actionLabel}
         </button>

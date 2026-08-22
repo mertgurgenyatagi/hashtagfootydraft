@@ -1,4 +1,6 @@
+import { clubLeagues } from '../../data/clubs'
 import { crestUrl } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 import { SectionLabel } from '../ui/SectionLabel'
 
 interface SpentCrestsProps {
@@ -27,9 +29,11 @@ export function SpentCrests({ constraint, clubs, clubNames, nations }: SpentCres
         <ul className="flex flex-wrap items-center gap-[10px]">
           {clubs.map((slug) => (
             <li key={slug} className="fx fx-pop">
-              <img
-                className="crest h-[24px] w-[24px] opacity-[0.34]"
-                src={crestUrl(slug)}
+              {/* A club outside the top five has no mark and never will, so it
+                  spends as the ring stand-in rather than as a broken image. */}
+              <Crest
+                className="h-[24px] w-[24px] opacity-[0.34]"
+                src={clubLeagues[slug] ? crestUrl(slug) : null}
                 alt={clubNames[slug] ?? slug}
                 title={clubNames[slug] ?? slug}
               />

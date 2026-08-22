@@ -43,14 +43,23 @@ export function categoryFor(scope: string): WheelCategory {
   return scope === 'league' ? 'club' : 'league'
 }
 
+/**
+ * The pool holds footballers at clubs outside the top five, and those clubs
+ * have no league on file — so under an `All players` scope the wheel gains one
+ * more slice for everybody else. It is a real slice with real players behind
+ * it, and it is the only one with no mark to draw.
+ */
+export const OTHER_LEAGUE = 'other'
+
 export function entityKey(player: Player, category: WheelCategory): string {
-  if (category === 'league') return player.league
+  if (category === 'league') return player.league ?? OTHER_LEAGUE
   if (category === 'club') return player.clubSlug
   return player.nation
 }
 
 function entityLabel(player: Player, category: WheelCategory): string {
   if (category === 'league') {
+    if (!player.league) return 'Elsewhere'
     return leagues.find((league) => league.id === player.league)?.name ?? player.league
   }
   if (category === 'club') return player.club
@@ -58,7 +67,7 @@ function entityLabel(player: Player, category: WheelCategory): string {
 }
 
 function entityMark(player: Player, category: WheelCategory): string | null {
-  if (category === 'league') return leagueMark(player.league)
+  if (category === 'league') return player.league ? leagueMark(player.league) : null
   if (category === 'club') return player.crest
   return null
 }
@@ -91,8 +100,11 @@ export function wheelSlices(
   const slices = [...found.values()]
 
   if (category === 'league') {
+    // `indexOf` returns -1 for the everybody-else slice, which puts it first —
+    // it belongs last, after the five that have a mark.
     const order = leagues.map((league) => league.id)
-    return slices.sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key))
+    const at = (key: string) => (order.indexOf(key) < 0 ? order.length : order.indexOf(key))
+    return slices.sort((a, b) => at(a.key) - at(b.key))
   }
 
   return slices.sort((a, b) => a.label.localeCompare(b.label))
@@ -100,24 +112,31 @@ export function wheelSlices(
 
 /**
  * Where the wheel stops so that slice `index` sits under the pointer at the
- * top. Always at least four whole turns further round than it is now — a
- * wheel that takes the short way to the next result reads as a dial being
- * set rather than as a wheel being spun.
+ * top. Always at least **eight** whole turns further round than it is now — a
+ * wheel that takes the short way to the next result reads as a dial being set
+ * rather than as a wheel being spun, and the same is true of one that only
+ * goes round a few times before easing to a halt.
  *
- * The landing is jittered inside the slice rather than always dead-centre,
- * because a pointer that stops on the exact middle every single time looks
- * like a lookup, which is what this is trying not to look like.
+ * **The landing point inside the slice is uniformly random**, right out to
+ * the edges. An earlier version held it to the middle 56% of the slice, which
+ * meant the pointer never came to rest anywhere near a boundary — and a wheel
+ * that always stops comfortably inside a wedge is a wheel that is visibly
+ * choosing rather than landing. `0.98` leaves a hairline of clearance at each
+ * edge so the result is never ambiguous about which slice it is in; every
+ * position between those two hairlines is equally likely.
  */
+const SLICE_SPREAD = 0.98
+
 export function landingRotation(
   current: number,
   index: number,
   count: number,
   random: () => number = Math.random,
 ): number {
-  if (count <= 0 || index < 0) return current + 360 * 4
+  if (count <= 0 || index < 0) return current + 360 * 8
   const step = 360 / count
-  const target = -((index + 0.5) * step) + (random() - 0.5) * step * 0.56
-  const next = current + 360 * 4
+  const target = -((index + 0.5) * step) + (random() - 0.5) * step * SLICE_SPREAD
+  const next = current + 360 * 8
   return next + (((target - next) % 360) + 360) % 360
 }
 
@@ -158,6 +177,10 @@ const NEUTRAL_RAMP = [
 ]
 
 export function sliceColours(slices: WheelSlice[], category: WheelCategory): string[] {
-  if (category === 'league') return slices.map((slice) => `var(--color-league-${slice.key})`)
+  if (category === 'league') {
+    // The fallback is what the everybody-else slice paints in: there is no
+    // `--color-league-other`, and there should not be — it is not a league.
+    return slices.map((slice) => `var(--color-league-${slice.key}, var(--color-surface-2))`)
+  }
   return slices.map((_, index) => NEUTRAL_RAMP[index % NEUTRAL_RAMP.length])
 }

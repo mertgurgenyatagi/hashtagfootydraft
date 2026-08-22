@@ -17,7 +17,7 @@ import { SectionLabel } from '../ui/SectionLabel'
  */
 export function chipClass(selected: boolean, readOnly = false, unavailable = false) {
   return [
-    'rounded-[2px] border px-[clamp(0.5rem,1.2vw,1rem)] py-[var(--lobby-chip-py)]',
+    'rounded-sm border px-[clamp(0.5rem,1.2vw,1rem)] py-[var(--lobby-chip-py)]',
     'font-display text-[clamp(0.625rem,1vw,0.8125rem)] font-medium uppercase tracking-[0.08em]',
     'whitespace-nowrap transition-colors duration-150 ease-out',
     unavailable

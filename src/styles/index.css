@@ -1,52 +1,94 @@
 @import 'tailwindcss';
 
 /* Hallmark · macrostructure: Type Specimen ("The wall", layout 04 of the exhibition)
- * theme: custom — "petrol" · genre: atmospheric · tone: floodlit, austere, competitive
- * primes: ground #071414 · ink #e2f0ee · accent #ef7a3c · tint #123030
- * axes: dark paper band / display-condensed roman / warm accent (~40°)
+ * theme: custom — "ember" · genre: atmospheric · tone: floodlit, austere, competitive
+ * primes: ground #121009 · ink #ededec · accent #fbbf24 · tint #2b241a
+ *         + live #26a37b · link #193cb8
+ * axes: warm near-black band / display-condensed roman / gold accent (~43°)
  * enrichment: E-photographic — stadium.webp clipped into the wordmark, plus
- *             face-anchored player crops (scripts/make_face_crops.py)
+ *             face-anchored player crops (scripts/images/make_face_crops.py)
  * pre-emit critique: P5 H5 E4 S5 R4 V4
  */
 
 /* `static` so the derived tokens below survive Tailwind's unused-variable pruning —
    most of them are read by hand-written CSS and inline styles, not by a utility. */
 @theme static {
-  /* ---- The four primes. Everything else is mixed from these. ---- */
-  --color-ground: #03071e;
-  --color-ink: #f1faee;
-  --color-accent: #faa307;
-  --color-tint: #14213d;
+  /* ---- The primes. Everything else is mixed from these. ----
 
-  /* ---- Derived, once. No other colour is declared anywhere in the app. ---- */
-  --color-surface: color-mix(in oklab, var(--color-ground) 92%, var(--color-ink));
-  --color-surface-2: color-mix(in oklab, var(--color-ground) 84%, var(--color-ink));
-  --color-line: color-mix(in oklab, var(--color-ground) 76%, var(--color-ink));
-  --color-line-strong: color-mix(in oklab, var(--color-ground) 55%, var(--color-ink));
-  --color-muted: color-mix(in oklab, var(--color-ink) 58%, var(--color-ground));
-  --color-dim: color-mix(in oklab, var(--color-ink) 30%, var(--color-ground));
-  --color-faint: color-mix(in oklab, var(--color-ink) 16%, var(--color-ground));
-  --color-accent-ink: color-mix(in oklab, var(--color-accent) 14%, var(--color-ground));
-  --color-accent-soft: color-mix(in oklab, var(--color-accent) 20%, var(--color-ground));
-  --color-accent-line: color-mix(in oklab, var(--color-accent) 50%, var(--color-ground));
+     Four of them are the ground/ink/accent/tint set the app has always had.
+     Two more were added 2026-08-22: the palette this now matches carries three
+     saturated colours rather than one, and they are not interchangeable —
+     each names a different kind of thing, which is what keeps three from
+     reading as decoration:
+
+       accent (gold)  — value and ownership. Money, your seat, your rank, the
+                        selected chip, the primary CTA. The loudest thing on
+                        any screen, and still the only colour that means "act".
+       live  (green)  — presence and the present tense. Somebody is here,
+                        somebody is thinking, a clock is running, a person said
+                        this. Never actionable, which is why it can sit beside
+                        gold without competing with it.
+       link  (blue)   — the one action that leaves the app: copying an invite
+                        out to somewhere else. Exactly one control wears it.
+
+     ---- */
+  --color-ground: #121009;
+  --color-ink: #ededec;
+  --color-accent: #fbbf24;
+  --color-tint: #2b241a;
+  --color-live: #26a37b;
+  --color-link: #193cb8;
+
+  /* ---- Derived, once. No other colour is declared anywhere in the app. ----
+
+     The percentages are not eyeballed: they were solved against the reference
+     palette by evaluating `color-mix(in oklab, …)` numerically and picking the
+     mix that lands on each measured value, so a change to a prime moves every
+     step below it and keeps the same relationship. ---- */
+  --color-surface: color-mix(in oklab, var(--color-ground) 97%, var(--color-ink));
+  --color-surface-2: color-mix(in oklab, var(--color-ground) 91%, var(--color-ink));
+  --color-line: color-mix(in oklab, var(--color-ground) 86%, var(--color-ink));
+  --color-line-strong: color-mix(in oklab, var(--color-ground) 73%, var(--color-ink));
+  --color-muted: color-mix(in oklab, var(--color-ink) 60%, var(--color-ground));
+  --color-dim: color-mix(in oklab, var(--color-ink) 41%, var(--color-ground));
+  --color-faint: color-mix(in oklab, var(--color-ink) 22%, var(--color-ground));
+  --color-accent-ink: color-mix(in oklab, var(--color-accent) 3%, var(--color-ground));
+  --color-accent-soft: color-mix(in oklab, var(--color-accent) 16%, var(--color-ground));
+  --color-accent-line: color-mix(in oklab, var(--color-accent) 43%, var(--color-ground));
+  --color-live-soft: color-mix(in oklab, var(--color-live) 15%, var(--color-ground));
+  --color-live-line: color-mix(in oklab, var(--color-live) 42%, var(--color-ground));
+  --color-link-ink: color-mix(in oklab, var(--color-link) 6%, var(--color-ink));
+  --color-link-hover: color-mix(in oklab, var(--color-link) 82%, var(--color-ink));
   /* The one colour that goes *below* the ground: the band that swallows the
      "play with friends" title when a format is hovered. */
-  --color-shade: color-mix(in oklab, var(--color-ground) 12%, black);
+  --color-shade: color-mix(in oklab, var(--color-ground) 78%, black);
+
+  /* ---- Corner radius. ----
+     Overrides Tailwind's own `--radius-*` scale, so `rounded-sm|md|lg` are
+     this app's three steps and nothing has to reach for an arbitrary value:
+     `sm` for a chip, a row or a control, `md` for a tile, `lg` for a panel.
+     Squared corners were what the exhibition frames drew; the palette this
+     screen now matches rounds everything, and a hairline-bordered dark panel
+     needs the radius to read as an object rather than as a ruled region. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
 
   /* ---- The wheel's five slices. The second licensed exception. ----
      Spin the Wheel draws a league's identity as a field of colour rather than
      as a mark, which is the same claim the crests make and the same answer:
      a league recoloured into the palette is a league misnamed. They are the
-     only colours in the app outside the four primes that are not artwork, and
-     they exist for exactly one element. Every one is mixed 66% into black so
-     the wheel still sits on a petrol page rather than on top of it — and the
-     one-saturated-accent rule is untouched, because none of them is an accent:
-     nothing is ever actionable because it is one of these. */
-  --color-league-premier-league: color-mix(in oklab, #3b1858 66%, black);
-  --color-league-la-liga: color-mix(in oklab, #f74942 66%, black);
-  --color-league-serie-a: color-mix(in oklab, #036ef7 66%, black);
-  --color-league-bundesliga: color-mix(in oklab, #ca0213 66%, black);
-  --color-league-ligue-1: color-mix(in oklab, #091b3c 66%, black);
+     only colours in the app outside the primes that are not artwork, and they
+     exist for exactly one element. Every one is mixed 52% into the *ground*
+     rather than into black, so the wheel sits in the page's own warm family
+     rather than on top of it — and the accent rules are untouched, because
+     none of them is an accent: nothing is ever actionable because it is one
+     of these. */
+  --color-league-premier-league: color-mix(in oklab, #3b1858 52%, var(--color-ground));
+  --color-league-la-liga: color-mix(in oklab, #f74942 52%, var(--color-ground));
+  --color-league-serie-a: color-mix(in oklab, #036ef7 52%, var(--color-ground));
+  --color-league-bundesliga: color-mix(in oklab, #ca0213 52%, var(--color-ground));
+  --color-league-ligue-1: color-mix(in oklab, #091b3c 52%, var(--color-ground));
 
   /* ---- Type. Two families only. The wordmark is the logo, and gets the third. ---- */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -193,8 +235,8 @@
    pair to match it.
    ============================================================================ */
 .app-frame {
-  --app-inset-x: clamp(1.25rem, 3.4dvw, 3rem);
-  --app-inset-y: clamp(1.25rem, 3.4dvh, 3rem);
+  --app-inset-x: clamp(1.5rem, 4.5dvw, 4rem);
+  --app-inset-y: clamp(1.5rem, 4.5dvh, 4rem);
   container-type: size;
   container-name: app;
 }
@@ -206,11 +248,24 @@
    reads as both the ground and the fill.
    ============================================================================ */
 
+/* The backdrop's own root, under every route.
+   `isolation` bounds the `mix-blend-mode: color` tint below to this subtree,
+   so it can never take the app's content as its backdrop; `contain` bounds
+   the reverse, which is the half that costs. A full-viewport blended layer
+   over an image that scales for thirty seconds without stopping is the most
+   expensive thing on any of these screens, and without containment a repaint
+   anywhere in front of it — four hundred pool rows changing colour under a
+   pointer, say — can drag it back through the compositor with them. */
+.backdrop-root {
+  isolation: isolate;
+  contain: layout paint style;
+}
+
 /* Pulled hard over the top third on purpose: that drops the blank sky almost to
    the ground colour, so the roofline reads as a silhouette rather than a bright
    slab behind the wordmark. The bottom dissolves rather than stopping on a line. */
 .plate {
-  opacity: 0.36;
+  opacity: 0.3;
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgb(0 0 0 / 0.08) 0%,
@@ -232,7 +287,7 @@
 }
 
 .plate img {
-  filter: grayscale(1) contrast(1.4) brightness(0.26);
+  filter: grayscale(1) contrast(1.4) brightness(0.2);
 }
 
 /* Takes hue and saturation from the tint and keeps the photo's own luminance, so
@@ -249,7 +304,7 @@
    the settings half instead of running full bleed, dissolving toward the top
    left so the chip groups always sit on flat ground. */
 .plate-corner {
-  opacity: 0.55;
+  opacity: 0.36;
   -webkit-mask-image: radial-gradient(
     125% 125% at 100% 100%,
     #000 14%,
@@ -265,7 +320,7 @@
 }
 
 .plate-corner img {
-  filter: grayscale(1) contrast(1.25) brightness(0.44);
+  filter: grayscale(1) contrast(1.25) brightness(0.32);
 }
 
 /* ============================================================================
@@ -367,7 +422,8 @@
 
 /* Depth is an offset directional shadow. No halo, no coloured blur. */
 .gate-panel {
-  box-shadow: 14px 14px 0 0 var(--color-shade);
+  border-radius: var(--radius-lg);
+  box-shadow: 10px 10px 0 0 var(--color-shade);
 }
 
 /* Crests render full colour and unfiltered — a recoloured badge is a falsified
@@ -375,18 +431,52 @@
    four 1px offsets, chained so each shadow falls on the last and the corners
    close up. It exists because two of the five league marks are dark and would
    otherwise disappear into the ground. A muted line tone, not full ink — the
-   outline only needs to separate the mark from the ground, not frame it. */
+   outline only needs to separate the mark from the ground, not frame it.
+
+   **It is opt-in, and deliberately so.** Four chained `drop-shadow()`s is four
+   filter passes over a rasterised SVG, per crest, on every repaint that
+   touches it — which on a four-hundred-row pool meant sixteen hundred of them
+   re-running as rows scrolled in and out of `content-visibility` and as a row
+   changed colour under the pointer. That is where the pool's cost was. The
+   five league marks in the lobby keep it (`Crest stroked`); everything else
+   uses `.crest-plain`, which is the same unfiltered artwork with no outline. */
 .crest {
   --crest-stroke: color-mix(in oklab, var(--color-ink) 40%, transparent);
   filter: drop-shadow(0 1px 0 var(--crest-stroke)) drop-shadow(0 -1px 0 var(--crest-stroke))
     drop-shadow(1px 0 0 var(--crest-stroke)) drop-shadow(-1px 0 0 var(--crest-stroke));
 }
 
+.crest-plain {
+  /* Nothing to declare — it exists so a crest can be addressed without being
+     filtered, and so the two cases read differently in the markup. */
+  object-fit: contain;
+}
+
+/* The stand-in for a club outside the top five, where there is no mark on file
+   and none coming. A ring in the same footprint: same size, same place in the
+   row, nothing recoloured and no broken-image glyph where a badge should be. */
+.crest-ring {
+  border: 1.5px solid color-mix(in oklab, var(--color-ink) 46%, transparent);
+  background: color-mix(in oklab, var(--color-ink) 5%, transparent);
+}
+
 /* A player portrait inside the letterforms, one of several stacked layers
    cross-fading by opacity. One image per instance, sized to cover the whole
    two-line box — no tiling. Grayscale because the crops are in colour,
-   unlike stadium.webp which is monochrome at the source. */
+   unlike stadium.webp which is monochrome at the source.
+
+   **And dotted**, like every other portrait on the site. The same mechanism
+   the draft screens use (`.dotgrid` below): one repeating radial gradient,
+   sized in `%` of its own tile so it punches a circle out of each cell, laid
+   over the picture as a mask. Here it sits on top of `background-clip: text`,
+   so the picture is clipped to the letterforms first and then perforated —
+   the gaps between the dots go fully transparent and the stadium plate reads
+   through them rather than being painted over. The tile is a fixed pitch
+   rather than a measured one: the wordmark is the only frame on the site
+   whose box the layout already pins, so there is nothing here for
+   `Dotgrid.tsx`'s ResizeObserver to work out. */
 .wordmark-fill {
+  --wordmark-cell: clamp(6px, 0.85vw, 12px);
   background-image: var(--wordmark-image);
   background-size: cover;
   background-position: center 30%;
@@ -395,6 +485,12 @@
   background-clip: text;
   color: transparent;
   filter: grayscale(1) contrast(1.35) brightness(1.1);
+  -webkit-mask-image: radial-gradient(circle at center, #000 50%, transparent 50%);
+  mask-image: radial-gradient(circle at center, #000 50%, transparent 50%);
+  -webkit-mask-size: var(--wordmark-cell) var(--wordmark-cell);
+  mask-size: var(--wordmark-cell) var(--wordmark-cell);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
 }
 
 /* ============================================================================
@@ -617,6 +713,9 @@
      between them rather than snapping at one remembered height. */
   --draft-clock: clamp(42px, 7.5cqh, 60px);
   --draft-portrait: clamp(260px, 40cqh, 320px);
+  /* The narrator is the centre of the top bar on every draft screen and is
+     sized to be read from across a desk, not scanned for. */
+  --draft-narrator: clamp(14px, 2.35cqh, 20px);
   --draft-node: clamp(60px, 8.5cqh, 68px);
   --draft-name: 184px;
   --draft-name-size: 18px;
@@ -701,9 +800,22 @@
 /* Four hundred ruled rows are in the DOM at once so that a footballer you
    cannot take is still visible, struck through, where you would expect them.
    Skipping the work for the ones outside the scroller keeps that honest and
-   cheap; the intrinsic size stops the scrollbar jumping as they resolve. */
-.pool-row {
+   cheap; the intrinsic size stops the scrollbar jumping as they resolve.
+
+   `contain: content` on top of that is what keeps a hover cheap: without it a
+   row changing colour can invalidate paint beyond its own box, and there are
+   four hundred of them under the pointer. The hover itself is a straight
+   colour swap with no transition — a 150ms ease meant nine repaints of a row
+   instead of one, every time the pointer crossed it, and this list is
+   something you sweep through rather than dwell on. */
+.pool-row,
+.wheel-row {
+  border-radius: var(--radius-sm);
   content-visibility: auto;
+  contain: content;
+}
+
+.pool-row {
   contain-intrinsic-size: auto 79px;
 }
 
@@ -760,13 +872,13 @@
    first column always sits on flat ground. Fainter than either of the other
    two placements — this screen is busier than the ones before it. */
 .plate-edge {
-  opacity: 0.34;
+  opacity: 0.26;
   -webkit-mask-image: linear-gradient(to right, #000 0%, rgb(0 0 0 / 0.4) 46%, transparent 88%);
   mask-image: linear-gradient(to right, #000 0%, rgb(0 0 0 / 0.4) 46%, transparent 88%);
 }
 
 .plate-edge img {
-  filter: grayscale(1) contrast(1.3) brightness(0.3);
+  filter: grayscale(1) contrast(1.3) brightness(0.24);
 }
 
 /* Somebody else is thinking. A slow opacity breath on a 7px dot — the quiet
@@ -804,12 +916,13 @@
      and pitch also read from. */
   --spin-row-top: clamp(6rem, 18.75cqh, 10.5rem);
   --spin-row-bottom: clamp(8.5rem, 24.75cqh, 14.5rem);
-  --spin-title: 15px;
   /* Single `clamp()` per size instead of a jumped pair — see the note on
      `.draft` above for the `max / 8` reasoning. */
   --spin-report: clamp(13.5px, 1.875cqh, 15px);
-  --spin-seconds: clamp(22px, 3.375cqh, 27px);
   --spin-seat: clamp(32px, 5cqh, 40px);
+  /* Read by the shared Narrator, which `.spin` hosts in its own header rather
+     than in `.draft`'s top bar — so this screen needs its own declaration. */
+  --draft-narrator: clamp(14px, 2.35cqh, 20px);
   /* Read by PitchView, which is shared with the Free Pick screen. The orbit
      gives the eleven a smaller cell than the Free Pick layout does — the sun
      takes the room — so the nodes and the name plates come down with it, a
@@ -981,12 +1094,12 @@
 .spin-panel {
   background: color-mix(in oklab, var(--color-surface) 86%, transparent);
   border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
 }
 
-/* Same trick as the Free Pick pool: every row is in the DOM at once, and the
-   ones outside the scroller skip their layout until they are needed. */
+/* Same trick as the Free Pick pool — declared with it above; only the
+   remembered row height differs, this list being the tighter of the two. */
 .wheel-row {
-  content-visibility: auto;
   contain-intrinsic-size: auto 43px;
 }
 
@@ -1059,7 +1172,9 @@
 }
 
 /* Counter-rotated on the same curve and duration as the wheel, so a crest is
-   upright at every frame of the spin rather than only at the end of it. */
+   upright at every frame of the spin rather than only at the end of it. The
+   mark goes unstroked here: the chip is already an off-white disc, so there is
+   nothing for an outline to separate it from. */
 .wheel-chip img,
 .wheel-chip b {
   width: 100%;
@@ -1123,8 +1238,9 @@
   color: var(--color-accent);
 }
 
-/* ---- The clock, drawn rather than counted. ---- */
-
+/* The drain the Auction's countdown rides on. It lived here first, when this
+   screen had a clock of its own — the turn indicator's hairline drain went
+   with the clock itself, since a spin's turn ends when somebody picks. */
 @keyframes fd-drain {
   from {
     transform: scaleX(1);
@@ -1132,19 +1248,6 @@
   to {
     transform: scaleX(0);
   }
-}
-
-.turn-drain {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-accent);
-  transform-origin: left center;
-  animation-name: fd-drain;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
 }
 
 /* ---- The position dropdown. ---- */
@@ -1176,7 +1279,8 @@
   overflow-y: auto;
   background: var(--color-ground);
   border: 1px solid var(--color-line-strong);
-  box-shadow: 7px 7px 0 0 var(--color-shade);
+  border-radius: var(--radius-md);
+  box-shadow: 6px 6px 0 0 var(--color-shade);
 }
 
 /* ---- The draft's stadium, for this screen only. ---- */
@@ -1187,13 +1291,13 @@
    a little above centre — the wheel then sits in front of a stand rather than
    beside one. */
 .plate-orbit {
-  opacity: 0.42;
+  opacity: 0.32;
   -webkit-mask-image: radial-gradient(62% 68% at 46% 44%, #000 0%, transparent 100%);
   mask-image: radial-gradient(62% 68% at 46% 44%, #000 0%, transparent 100%);
 }
 
 .plate-orbit img {
-  filter: grayscale(1) contrast(1.3) brightness(0.3);
+  filter: grayscale(1) contrast(1.3) brightness(0.24);
 }
 
 /* ============================================================================
@@ -1259,7 +1363,7 @@
   overflow: hidden;
   border-width: 1px;
   border-style: solid;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 .dond-box-shut {
@@ -1295,7 +1399,7 @@
   height: 9px;
   transform: translate(-50%, -50%);
   border: 1px solid var(--color-line-strong);
-  border-radius: 1px;
+  border-radius: 2px;
   background: color-mix(in oklab, var(--color-ink) 8%, var(--color-surface-2));
 }
 
@@ -1361,6 +1465,15 @@
   --auction-stamp: clamp(34px, 16cqh, 68px); /* displayer */
   --auction-clock: clamp(28px, 5.75cqh, 46px);
   --auction-bid: clamp(19px, 4cqh, 32px);
+  /* The headline across the top of the screen: the footballer on the block,
+     who holds them and at what. It is the present tense of the whole format,
+     so it is set at display weight rather than as a status line. */
+  --auction-head: clamp(15px, 3.25cqh, 26px);
+  /* The three steps. They were the only controls on the screen and the
+     smallest type on it; the figure now reads at a glance and the line
+     underneath says where it lands. */
+  --auction-step: clamp(17px, 3.125cqh, 25px);
+  --auction-step-note: clamp(10px, 1.5cqh, 12px);
 
   /* The pitch gets a narrower column here than on Free Pick, so the nodes and
      the plates come down with it. */
@@ -1383,6 +1496,15 @@
 }
 .auction-stamp {
   font-size: var(--auction-stamp);
+}
+.auction-head {
+  font-size: var(--auction-head);
+}
+.auction-step-figure {
+  font-size: var(--auction-step);
+}
+.auction-step-note {
+  font-size: var(--auction-step-note);
 }
 
 /* ---- The columns. One, then two, then three — same three shapes as the
@@ -1435,9 +1557,22 @@
   }
 }
 
-/* ---- Money. One figure, one suffix, everywhere it appears. Only the
-        pseudo-element is declared, so nothing here can outrank a utility on
-        the element itself — see the `.plate` gotcha above. ---- */
+/* ---- Money. One currency, one figure, one suffix, everywhere it appears.
+        Only the pseudo-elements are declared, so nothing here can outrank a
+        utility on the element itself — see the `.plate` gotcha above.
+
+        The euro sign leads at nearly the figure's own size, because it is
+        part of reading the number rather than a footnote to it; the `M` still
+        rides small and raised behind it. Every price in the app carries both:
+        the block, the bids, the budgets, the sold record and the hammer. ---- */
+
+.money::before {
+  content: '€';
+  font-size: 0.66em;
+  margin-right: 0.06em;
+  opacity: 0.72;
+  font-weight: 500;
+}
 
 .money::after {
   content: 'M';
@@ -1449,28 +1584,14 @@
   font-weight: 500;
 }
 
-/* ---- The two chips in the top bar. ---- */
+/* ---- The sold record: a face strip over the transaction, two across the rail.
 
-.auction-tag {
-  display: inline-flex;
-  align-items: center;
-  flex: none;
-  white-space: nowrap;
-  border-width: 1px;
-  border-radius: 2px;
-  padding: 3px 7px;
-  font-family: var(--font-display);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-/* ---- The sold record: full square faces, two across the rail.
-
-   Square rather than the ruled 22px discs layout 01 first drew, on Mert's
-   instruction — a lot is a footballer before it is a price, and at rail width
-   a square photograph identifies one far faster than a surname in 12px. ---- */
+   Layout 01 first drew this as ruled rows of 22px discs; it became full square
+   photographs on Mert's instruction, since a lot is a footballer before it is
+   a price. The square then swallowed the card, and what the record is *for* —
+   who bought them, and for how much — was left reading at 12px underneath a
+   picture of somebody already gone. The photograph is a 16:9 strip now: still
+   enough to recognise a face, no longer the whole card. ---- */
 
 .auction-sold {
   display: grid;
@@ -1479,7 +1600,9 @@
 }
 
 .auction-sold-face {
-  aspect-ratio: 1;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+  overflow: hidden;
 }
 
 /* Below this the rail is showing one row of cards and a clock's worth of chat;
@@ -1490,17 +1613,10 @@
   }
 }
 
-/* NON-NEGOTIABLE 9 — the queue is sealed. Nothing on the screen previews it,
-   so the boundary between what you can see and what you cannot is drawn as an
-   object rather than left as an absence. */
-.auction-seal {
-  border: 1px dashed var(--color-line-strong);
-  background: repeating-linear-gradient(
-    135deg,
-    transparent 0 5px,
-    color-mix(in oklab, var(--color-ink) 4%, transparent) 5px 6px
-  );
-}
+/* NON-NEGOTIABLE 9 is untouched — the queue is still sealed, and nothing on
+   this screen previews it. What went is the *tile* that used to say so under
+   the sold record: `24 · ?`, a hatched box drawing attention to the absence of
+   information. The absence needed no monument; the record simply ends. */
 
 /* ---- The bidders, side by side. Five across on a desktop column; on a phone
         they wrap rather than compress to an unreadable 60px. ---- */
@@ -1557,8 +1673,11 @@
     display: none;
   }
 
-  .auction-pass {
-    width: 72px;
+  /* At this width three steps side by side are three narrow columns; the
+     figure keeps its size and the "to €170M" line under it goes, since the
+     bid it lands on is the number on the button next to the holder anyway. */
+  .auction-step-note {
+    display: none;
   }
 }
 
@@ -1573,15 +1692,15 @@
    readable at that opacity. ---- */
 
 .plate-block {
-  opacity: 0.72;
+  opacity: 0.42;
   -webkit-mask-image: radial-gradient(125% 105% at 50% 26%, #000 32%, transparent 100%);
   mask-image: radial-gradient(125% 105% at 50% 26%, #000 32%, transparent 100%);
 }
 
 .plate-block img {
-  filter: grayscale(1) contrast(1.22) brightness(0.68);
+  filter: grayscale(1) contrast(1.22) brightness(0.4);
 }
 
 .plate-block-scrim {
-  background: color-mix(in oklab, var(--color-ground) 74%, transparent);
+  background: color-mix(in oklab, var(--color-ground) 82%, transparent);
 }

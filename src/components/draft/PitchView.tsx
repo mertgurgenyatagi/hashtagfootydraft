@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { type FormationSlot, formation } from '../../data/formation'
 import type { Drafter, Squad } from '../../lib/draftEngine'
 import type { Player } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 import { Dotgrid } from './Dotgrid'
 
 interface PitchViewProps {
@@ -66,7 +67,10 @@ export function PitchView({
         ))}
       </div>
 
-      <div className="mt-[16px] flex min-h-0 flex-1 items-start justify-center">
+      {/* Keyed on the tab so switching boards cross-fades rather than cutting.
+          Eleven nodes swapping at once is the largest single change on any of
+          these screens, and it was the one that happened without a transition. */}
+      <div key={tab} className="fx fx-fade mt-[16px] flex min-h-0 flex-1 items-start justify-center">
         <div className="relative h-full max-h-full" style={{ aspectRatio: '68 / 105' }}>
           <Markings />
 
@@ -168,9 +172,9 @@ function Node({
             onError={() => setFailed(true)}
           />
         ) : shown ? (
-          <img
+          <Crest
             key={`${shown.id}-crest`}
-            className={`crest h-[62%] w-[62%] ${arrived ? 'fx fx-pop' : ''}`}
+            className={`h-[62%] w-[62%] ${arrived ? 'fx fx-pop' : ''}`}
             src={shown.crest}
             alt={shown.club}
           />
@@ -192,7 +196,7 @@ function Node({
         <span
           key={shown.id}
           className={[
-            'pitch-name max-w-[var(--draft-name)] truncate rounded-[2px] bg-ground/85 px-[4px] py-[2px] font-display text-[length:var(--draft-name-size)] font-medium uppercase leading-none tracking-[0.03em]',
+            'pitch-name max-w-[var(--draft-name)] truncate rounded-sm bg-ground/85 px-[4px] py-[2px] font-display text-[length:var(--draft-name-size)] font-medium uppercase leading-none tracking-[0.03em]',
             player ? 'text-ink' : 'text-accent',
             arrived ? 'fx fx-soft' : '',
           ].join(' ')}

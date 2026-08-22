@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { DotgridFrame, Player } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 import { Dotgrid } from './Dotgrid'
 
 interface PlayerSpotlightProps {
@@ -45,7 +46,7 @@ export function PlayerSpotlight({
 
   return (
     <div
-      className={`spotlight-frame relative overflow-hidden border border-line bg-surface ${className}`}
+      className={`spotlight-frame relative overflow-hidden rounded-lg border border-line bg-surface ${className}`}
     >
       {player && !failed ? (
         <Dotgrid
@@ -58,9 +59,9 @@ export function PlayerSpotlight({
       ) : player ? (
         // No photograph on file. The badge stands in rather than the panel
         // collapsing and taking the column width with it.
-        <img
+        <Crest
           key={`${player.id}-crest`}
-          className="crest fx fx-fade absolute left-1/2 top-1/2 h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 opacity-40"
+          className="fx fx-fade absolute left-1/2 top-1/2 h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 opacity-40"
           src={player.crest}
           alt=""
         />
@@ -75,7 +76,7 @@ export function PlayerSpotlight({
           type="button"
           onClick={onDraft}
           disabled={!canDraft}
-          className="w-full shrink-0 rounded-[2px] border border-accent bg-accent px-[16px] py-[10px] font-display text-[12px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
+          className="w-full shrink-0 rounded-sm border border-accent bg-accent px-[16px] py-[10px] font-display text-[12px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
         >
           {actionLabel}
         </button>

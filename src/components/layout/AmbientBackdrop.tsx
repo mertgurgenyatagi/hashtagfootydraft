@@ -33,7 +33,10 @@ export function AmbientBackdrop() {
     }`
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none">
+    <div
+      aria-hidden="true"
+      className="backdrop-root pointer-events-none fixed inset-0 z-0 select-none overflow-hidden"
+    >
       {/* Home: full bleed. */}
       <div className={shown(isHome)}>
         <div className="plate fx fx-plate absolute inset-0">

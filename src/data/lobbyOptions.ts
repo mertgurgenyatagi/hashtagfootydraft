@@ -52,12 +52,21 @@ export const constraints: Choice[] = [
   { id: 'nation-3', name: '3 per nation' },
 ]
 
-/** Per turn, in every format — not just the bidding one. */
+/**
+ * **Auction only, and two values.**
+ *
+ * It was once a turn timer offered in every format; it is a *bid* timer now,
+ * and a bid timer is a thing only one of the four formats has. What it
+ * measures there is inactivity rather than anybody's window — any bid from any
+ * seat sends it back to full — so it is the auction's own closing mechanism
+ * and has no counterpart in a format where turns simply pass to the next
+ * person. The other three no longer run a clock at all.
+ *
+ * Fifteen seconds or none. The intermediate lengths were never a decision
+ * anybody was making; they were a slider drawn as chips.
+ */
 export const timers: Choice[] = [
-  { id: '10', name: '10 s' },
   { id: '15', name: '15 s' },
-  { id: '30', name: '30 s' },
-  { id: '60', name: '60 s' },
   { id: 'off', name: 'Off' },
 ]
 

@@ -34,7 +34,7 @@ export function ActionBar({ onCreate, onJoin }: ActionBarProps) {
         <button
           type="button"
           onClick={onCreate}
-          className="shrink-0 border border-accent bg-accent px-6 py-[11px] sm:py-[13px] font-display text-[12px] font-medium uppercase tracking-[0.09em] text-accent-ink transition-[transform,background-color,border-color] duration-100 ease-out hover:bg-transparent hover:text-accent active:translate-y-px sm:px-8"
+          className="shrink-0 rounded-sm border border-accent bg-accent px-6 py-[11px] sm:py-[13px] font-display text-[12px] font-medium uppercase tracking-[0.09em] text-accent-ink transition-[transform,background-color,border-color] duration-100 ease-out hover:bg-transparent hover:text-accent active:translate-y-px sm:px-8"
         >
           Create a lobby
         </button>
@@ -50,12 +50,12 @@ export function ActionBar({ onCreate, onJoin }: ActionBarProps) {
             placeholder="Enter room code"
             autoComplete="off"
             spellCheck={false}
-            className="tabular w-full min-w-0 border border-line-strong bg-ground/60 px-4 py-[11px] sm:py-[13px] font-display text-[12px] uppercase tracking-[0.14em] text-ink transition-colors duration-100 ease-out placeholder:tracking-[0.09em] hover:border-line focus:border-accent-line focus:outline-none sm:w-[16rem]"
+            className="tabular w-full min-w-0 rounded-sm border border-line-strong bg-ground/60 px-4 py-[11px] sm:py-[13px] font-display text-[12px] uppercase tracking-[0.14em] text-ink transition-colors duration-100 ease-out placeholder:tracking-[0.09em] hover:border-line focus:border-accent-line focus:outline-none sm:w-[16rem]"
           />
           <button
             type="submit"
             disabled={!canJoin}
-            className="shrink-0 border border-line-strong px-5 py-[11px] sm:py-[13px] font-display text-[12px] font-medium uppercase tracking-[0.09em] text-ink transition-[transform,border-color,color,opacity] duration-100 ease-out hover:border-ink active:translate-y-px disabled:border-line disabled:text-dim disabled:hover:border-line sm:px-7"
+            className="shrink-0 rounded-sm border border-line-strong px-5 py-[11px] sm:py-[13px] font-display text-[12px] font-medium uppercase tracking-[0.09em] text-ink transition-[transform,border-color,color,opacity] duration-100 ease-out hover:border-ink active:translate-y-px disabled:border-line disabled:text-dim disabled:hover:border-line sm:px-7"
           >
             Join lobby
           </button>

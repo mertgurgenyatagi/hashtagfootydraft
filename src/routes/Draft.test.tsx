@@ -91,12 +91,17 @@ describe('Draft', () => {
     expect(rows[0]).toHaveTextContent('AMF Player 1')
   })
 
-  it('shows a countdown badge when a turn timer is set', async () => {
+  // The timer is the Auction's and only the Auction's: a snake draft's turn
+  // ends when somebody picks, so this screen runs no clock whatever the lobby
+  // was set to — including a lobby that predates the change and still hands a
+  // length over in its router state.
+  it('runs no countdown, even when a timer arrives in the config', async () => {
     renderDraft('15')
-    expect(await screen.findByText('15')).toBeInTheDocument()
+    await screen.findByText(/your pick/i)
+    expect(screen.queryByText(/^\d{2}$/)).not.toBeInTheDocument()
   })
 
-  it('shows no countdown badge when the timer is off', async () => {
+  it('runs no countdown when the timer is off', async () => {
     renderDraft('off')
     await screen.findByText(/your pick/i)
     expect(screen.queryByText(/^\d{2}$/)).not.toBeInTheDocument()

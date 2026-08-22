@@ -64,7 +64,7 @@ export function LobbyChat({ messages, onSend, you }: LobbyChatProps) {
                     <span
                       className={[
                         'mr-2 font-display text-[10.5px] font-medium uppercase tracking-[0.12em]',
-                        message.author === you ? 'text-accent' : 'text-muted',
+                        message.author === you ? 'text-accent' : 'text-live',
                       ].join(' ')}
                     >
                       {message.author}
@@ -97,12 +97,12 @@ export function LobbyChat({ messages, onSend, you }: LobbyChatProps) {
           onChange={(event) => setDraft(event.target.value.slice(0, MESSAGE_MAX))}
           placeholder="Message the lobby"
           autoComplete="off"
-          className="min-w-0 flex-1 border border-line bg-ground/60 px-3 py-[9px] font-sans text-[12px] text-ink transition-colors duration-100 ease-out hover:border-line-strong focus:border-accent-line focus:outline-none"
+          className="min-w-0 flex-1 rounded-sm border border-line bg-ground/60 px-3 py-[9px] font-sans text-[12px] text-ink transition-colors duration-100 ease-out hover:border-line-strong focus:border-accent-line focus:outline-none"
         />
         <button
           type="submit"
           disabled={draft.trim().length === 0}
-          className="shrink-0 border border-line-strong px-4 font-display text-[10px] font-medium uppercase tracking-[0.16em] text-muted transition-colors duration-150 ease-out hover:border-ink hover:text-ink disabled:border-line disabled:text-faint disabled:hover:border-line disabled:hover:text-faint"
+          className="shrink-0 rounded-sm border border-line-strong px-4 font-display text-[10px] font-medium uppercase tracking-[0.16em] text-muted transition-colors duration-150 ease-out hover:border-ink hover:text-ink disabled:border-line disabled:text-faint disabled:hover:border-line disabled:hover:text-faint"
         >
           Send
         </button>

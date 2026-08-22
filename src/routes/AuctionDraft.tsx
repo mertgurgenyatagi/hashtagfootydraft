@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { AuctionBlock, type BlockResult } from '../components/draft/AuctionBlock'
 import { BidBoard } from '../components/draft/BidBoard'
 import { DraftChat } from '../components/draft/DraftChat'
@@ -8,9 +7,11 @@ import { PitchView } from '../components/draft/PitchView'
 import { SoldRecord } from '../components/draft/SoldRecord'
 import { TableStrip } from '../components/draft/TableStrip'
 import type { Message } from '../components/lobby/LobbyChat'
+import { BackHome } from '../components/ui/BackHome'
+import { Crest } from '../components/ui/Crest'
+import { LanguageSwitch } from '../components/ui/LanguageSwitch'
 import { SectionLabel } from '../components/ui/SectionLabel'
 import { SQUAD_SIZE, formation } from '../data/formation'
-import { leagues, scopes } from '../data/lobbyOptions'
 import {
   type Lot,
   type Sale,
@@ -47,6 +48,19 @@ const RESULT_HOLD = 1900
 
 /** How often the room considers raising. Bids land on some of these, not all. */
 const BID_TICK = 480
+
+/**
+ * **Nobody may bid for the first three seconds of a countdown** — and the
+ * countdown restarts on every bid, so this is a cooling-off period after each
+ * raise rather than a one-off at the top of a lot.
+ *
+ * It applies to the room exactly as it applies to you: the simulated seats
+ * read the same flag, so a lot cannot be walked up by two bots trading raises
+ * faster than anybody can read them. What it buys is a beat to look at the
+ * footballer and at what they are being held at before deciding, which is the
+ * only decision this format has.
+ */
+const LOCKOUT_MS = 3000
 
 const CHATTER = [
   'too rich for me',
@@ -136,6 +150,8 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
    * the value makes that state unrepresentable rather than merely unlikely.
    */
   const [clock, setClock] = useState<{ key: number; left: number }>({ key: -1, left: limit })
+  /** False for the first `LOCKOUT_MS` of every countdown — see the note above. */
+  const [armed, setArmed] = useState(false)
   const [tab, setTab] = useState(youSeat)
   const [pane, setPane] = useState<'block' | 'board'>('block')
   const [messages, setMessages] = useState<Message[]>([])
@@ -191,8 +207,8 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
   }, [sales, drafters, startBudget])
 
   /** The bidding loop reads these several times a second; state would go stale. */
-  const live = useRef({ squads, budgets, block })
-  live.current = { squads, budgets, block }
+  const live = useRef({ squads, budgets, block, armed })
+  live.current = { squads, budgets, block, armed }
 
   const award = useCallback((seat: number, player: Player) => {
     setBoard((previous) => {
@@ -273,14 +289,6 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
     })
   }, [])
 
-  const pass = useCallback((seat: number) => {
-    setBlock((previous) =>
-      previous && previous.phase === 'live' && !previous.out.includes(seat)
-        ? { ...previous, out: [...previous.out, seat] }
-        : previous,
-    )
-  }, [])
-
   /** Open whatever the cursor is pointing at, or stop the auction. */
   useEffect(() => {
     if (lots.length === 0 || finished) return
@@ -316,6 +324,9 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
     const tick = window.setInterval(() => {
       const now = live.current.block
       if (!now || now.phase !== 'live') return
+      // The lockout is the room's too — see LOCKOUT_MS. Held before the
+      // valuations are read at all, so a locked tick costs nothing.
+      if (!live.current.armed) return
 
       const willing: { seat: number; step: number }[] = []
       const spent: number[] = []
@@ -389,6 +400,22 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
   }, [block?.lot.number, block?.resets, block?.phase, limit])
 
   /**
+   * The lockout, on the same key as the countdown it belongs to: a new lot or
+   * a new bid closes bidding for `LOCKOUT_MS` and then opens it again. Its own
+   * timer rather than a read off `clock.left`, so it is exact rather than
+   * rounded to whichever second the tick happened to land on.
+   */
+  useEffect(() => {
+    if (!block || block.phase !== 'live') {
+      setArmed(false)
+      return
+    }
+    setArmed(false)
+    const timer = window.setTimeout(() => setArmed(true), LOCKOUT_MS)
+    return () => window.clearTimeout(timer)
+  }, [block?.lot.number, block?.resets, block?.phase])
+
+  /**
    * The clock ran out with no new bid, so the lot closes: to the highest
    * bidder, or into the unsold pile if nobody ever took the opening price
    * *(R8-Q4)*.
@@ -417,7 +444,7 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
           id: messageId.current++,
           kind: 'system',
           author: '',
-          body: `Lot ${lot.number} · ${lot.player.name} · ${price}M`,
+          body: `Lot ${lot.number} · ${lot.player.name} · €${price}M`,
         },
       ])
     }
@@ -492,11 +519,6 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
 
   /* --------------------------------------------------------------- render --- */
 
-  const scopeName =
-    scope === 'league'
-      ? (leagues.find((entry) => entry.id === league)?.name ?? 'One league')
-      : (scopes.find((entry) => entry.id === scope)?.name ?? 'Top 5 leagues')
-
   const you = drafters[youSeat]
   const yourSquad = squads[youSeat] ?? {}
   const shownSquad = squads[tab] ?? {}
@@ -526,22 +548,31 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
       className="draft auction flex h-full w-full flex-col px-[var(--app-inset-x)] py-[var(--app-inset-y)]"
       data-pane={pane}
     >
-      {/* ---- Where you are, and the table you are at. ---- */}
-      <div className="fx fx-soft flex shrink-0 flex-col items-start gap-[10px] border-b border-line-strong py-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-5">
-        <div className="flex min-w-0 items-center gap-4">
-          <Link
-            to="/"
-            className="shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
-          >
-            Back to home
-          </Link>
-          <span className="auction-tag border-accent-line text-accent">Auction</span>
-          <span className="auction-tag hidden border-line-strong text-muted sm:inline-flex">
-            {scopeName}
-          </span>
+      {/* ---- The way out, the lot, and the table you are at.
+
+              Where the other three screens put a narrator, this one puts the
+              headline — the footballer on the block, who holds them and at
+              what. It is the same job (one line, read from across the room,
+              saying where the format currently stands) done without a
+              sentence, which non-negotiable 7 rules out on this screen. ---- */}
+      <div className="fx fx-soft flex shrink-0 flex-col items-stretch gap-[10px] border-b border-line-strong py-[12px] sm:flex-row sm:items-center sm:gap-5">
+        <div className="flex shrink-0 items-center gap-3">
+          <BackHome confirm confirmNote="The auction ends here. Nothing about it is saved." />
+          <LanguageSwitch className="hidden sm:flex" />
         </div>
 
-        <div className="flex w-full shrink-0 items-center justify-end sm:w-auto">
+        <div className="flex min-w-0 flex-1 justify-center">
+          {block ? (
+            <Headline
+              player={block.lot.player}
+              holder={block.holder === null ? null : drafters[block.holder].name}
+              yours={block.holder === youSeat}
+              price={block.price}
+            />
+          ) : null}
+        </div>
+
+        <div className="flex shrink-0 items-center justify-end">
           <TableStrip drafters={drafters} active={block?.holder ?? -1} />
         </div>
       </div>
@@ -552,12 +583,7 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
           className="auction-rail fx fx-soft flex-col gap-[20px] pr-[26px] pt-[20px]"
           style={{ animationDelay: '90ms' }}
         >
-          <SoldRecord
-            sales={sales}
-            drafters={drafters}
-            youSeat={youSeat}
-            nextLot={lots[cursor + 1]?.number ?? null}
-          />
+          <SoldRecord sales={sales} drafters={drafters} youSeat={youSeat} />
           <DraftChat
             messages={messages}
             you={you.name}
@@ -591,17 +617,16 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
                 bids={block.bids}
                 out={block.out}
                 budgets={budgets}
-                startBudget={startBudget}
                 seconds={clock.key === clockKey ? clock.left : limit}
                 limit={limit}
                 resetKey={clockKey}
                 live={block.phase === 'live'}
+                armed={armed}
                 onBid={(step) => placeBid(youSeat, step)}
-                onPass={() => pass(youSeat)}
               />
             </>
           ) : (
-            <div className="grid min-h-0 flex-1 place-items-center border border-line-strong bg-surface">
+            <div className="grid min-h-0 flex-1 place-items-center rounded-lg border border-line-strong bg-surface">
               <span className="font-display text-[11px] font-medium uppercase tracking-[0.2em] text-dim">
                 {poolError ?? (finished ? 'Closed' : 'Opening')}
               </span>
@@ -677,10 +702,74 @@ export function AuctionDraft({ config }: { config: DraftConfig }) {
   )
 }
 
+/**
+ * The lot, in one line, at the top of the screen: who is up, who holds them
+ * and at what. Three facts and two dots — no verb, no sentence, per the
+ * exhibition's non-negotiable 7.
+ */
+function Headline({
+  player,
+  holder,
+  yours,
+  price,
+}: {
+  player: Player
+  holder: string | null
+  yours: boolean
+  price: number
+}) {
+  return (
+    <p
+      aria-live="polite"
+      className="auction-head flex min-w-0 items-baseline justify-center gap-[10px] truncate font-display font-bold uppercase leading-none tracking-[0.02em]"
+    >
+      <span key={player.id} className="fx fx-soft truncate text-ink">
+        {player.surname}
+      </span>
+
+      <Dot />
+
+      {holder === null ? (
+        <>
+          <span className="shrink-0 text-[0.52em] font-medium tracking-[0.2em] text-dim">
+            Opening
+          </span>
+          <Dot />
+          <span className="money tabular shrink-0 text-muted">{price}</span>
+        </>
+      ) : (
+        <>
+          <span className="hidden shrink-0 text-[0.52em] font-medium tracking-[0.2em] text-dim lg:inline">
+            Highest bidder:
+          </span>
+          <span className="max-w-[8ch] shrink truncate text-ink">{holder}</span>
+          <Dot />
+          <span
+            key={price}
+            className={`money tabular fx fx-soft shrink-0 ${yours ? 'text-accent' : 'text-ink'}`}
+          >
+            {price}
+          </span>
+        </>
+      )}
+    </p>
+  )
+}
+
+function Dot() {
+  return (
+    <span aria-hidden="true" className="shrink-0 self-center text-[0.4em] text-accent">
+      ●
+    </span>
+  )
+}
+
 function SpareFace({ player }: { player: Player }) {
   const [failed, setFailed] = useState(false)
 
-  if (failed) return <img className="crest h-[62%] w-[62%]" src={player.crest} alt={player.club} />
+  if (failed) {
+    return <Crest className="h-[62%] w-[62%]" src={player.crest} alt={player.club} />
+  }
 
   return (
     <Dotgrid player={player} frame="spare-face" className="h-full w-full" onError={() => setFailed(true)} />

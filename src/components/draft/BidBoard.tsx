@@ -1,6 +1,5 @@
 import { BID_STEPS } from '../../lib/auctionEngine'
 import type { Drafter } from '../../lib/draftEngine'
-import { SectionLabel } from '../ui/SectionLabel'
 
 interface BidBoardProps {
   drafters: Drafter[]
@@ -10,30 +9,41 @@ interface BidBoardProps {
   price: number
   /** The last figure each seat put up on this lot. */
   bids: Record<number, number>
-  /** Seats that have passed on this lot. */
+  /** Seats the price has already climbed past. */
   out: number[]
   budgets: number[]
-  startBudget: number
   seconds: number
   limit: number
   /** Bumped by every bid, so the drain restarts rather than easing back. */
   resetKey: number
   live: boolean
+  /**
+   * False for the first few seconds of every countdown — see the lockout note
+   * in `AuctionDraft`. Nobody can raise while it is false, the room included.
+   */
+  armed: boolean
   onBid: (step: number) => void
-  onPass: () => void
 }
 
 /**
- * The bottom two thirds of the centre stack: the holder readout welded to the
- * countdown it resets, the five seats bidding side by side, and the three steps.
+ * Everything under the displayer: the countdown, the table's bids side by
+ * side, and the steps.
  *
- * A real-time auction has no turn, so there is no turn indicator on this screen
- * and no turn language anywhere in it. What there is instead is a *holder* —
- * who has the lot and at what price — and a clock that measures inactivity
- * rather than anybody's window. Any bid from any seat sends it back to full.
+ * **Stripped back to those three things.** It used to open with a holder chip
+ * naming who had the lot and at what price — which is now the headline across
+ * the top of the whole screen, set four times the size, so repeating it here
+ * was costing the row that carried it and telling nobody anything. The bid
+ * cards lost their budget meters for the same reason the figure beside them
+ * survived: the number is the fact, the bar was decoration.
  *
- * The increments carry two numbers each: the step, and what the step lands on.
- * A button that names only its step makes you do arithmetic against a clock.
+ * What that bought is **the steps**, which are the only controls on this
+ * screen and were the smallest type on it. Each one is now a real button with
+ * a real label: the step at reading size on top, what it lands on underneath.
+ * A button that names only its step makes you do arithmetic against a clock,
+ * and a button that names it in ten-pixel type makes you squint first.
+ *
+ * There is no Pass. A seat that stops bidding has passed; saying so out loud
+ * was a control for a rule the auction does not have.
  */
 export function BidBoard({
   drafters,
@@ -43,62 +53,38 @@ export function BidBoard({
   bids,
   out,
   budgets,
-  startBudget,
   seconds,
   limit,
   resetKey,
   live,
+  armed,
   onBid,
-  onPass,
 }: BidBoardProps) {
   const held = holder !== null
-  const youOut = out.includes(youSeat)
   const youHold = holder === youSeat
   const yourBudget = budgets[youSeat] ?? 0
 
   /* The first bid on a lot is exactly at the opening price, so the three steps
-     are redundant until somebody has taken it and mask down to bid-or-pass. */
-  const offers = held ? BID_STEPS.map((step) => ({ step, lands: price + step })) : [{ step: 0, lands: price }]
+     are redundant until somebody has taken it and mask down to a single bid. */
+  const offers = held
+    ? BID_STEPS.map((step) => ({ step, lands: price + step }))
+    : [{ step: 0, lands: price }]
 
-  const canRaise = live && !youOut && !youHold
+  const canRaise = live && armed && !youHold
+  /** Whole seconds still to run on the lockout, for the line that names it. */
+  const opensIn = Math.max(0, Math.ceil(seconds - (limit - LOCKOUT)))
 
   return (
     <div className="flex shrink-0 flex-col">
-      {/* ---- The holder, and the clock their bid resets. ---- */}
+      {/* ---- The clock, and how much of it is left. ---- */}
       <div className="mt-[clamp(10px,2cqh,16px)] flex items-center gap-[16px]">
         <span
           className={[
-            'flex shrink-0 items-center gap-[10px] whitespace-nowrap rounded-[2px] border px-[12px] py-[8px]',
-            held ? 'border-accent-line bg-accent-soft' : 'border-line bg-surface',
+            'tabular auction-clock shrink-0 font-display font-semibold leading-[0.8]',
+            live && seconds <= 5 ? 'narrator-pulse text-accent' : 'text-accent',
           ].join(' ')}
         >
-          <span
-            className={[
-              'font-display text-[8.5px] font-medium uppercase tracking-[0.22em]',
-              held ? 'text-accent' : 'text-dim',
-            ].join(' ')}
-          >
-            {held ? 'Holding' : 'Opening'}
-          </span>
-
-          {held ? (
-            <>
-              <Disc drafter={drafters[holder]} tone="lead" />
-              <span className="max-w-[92px] truncate text-[13px] font-semibold leading-none text-ink">
-                {drafters[holder].name}
-              </span>
-            </>
-          ) : null}
-
-          <span
-            key={price}
-            className={[
-              'money tabular fx fx-soft font-display text-[19px] font-semibold leading-none',
-              held ? 'text-accent' : 'text-muted',
-            ].join(' ')}
-          >
-            {price}
-          </span>
+          {String(Math.max(0, Math.ceil(seconds))).padStart(2, '0')}
         </span>
 
         <span className="h-[3px] min-w-0 flex-1 overflow-hidden bg-line">
@@ -108,35 +94,20 @@ export function BidBoard({
             style={{ animationDuration: `${limit}s`, animationPlayState: live ? 'running' : 'paused' }}
           />
         </span>
-
-        <span
-          className={[
-            'tabular auction-clock shrink-0 font-display font-semibold leading-[0.8] text-accent',
-            live && seconds <= 5 ? 'narrator-pulse' : '',
-          ].join(' ')}
-        >
-          {String(Math.max(0, Math.ceil(seconds))).padStart(2, '0')}
-        </span>
       </div>
 
       {/* ---- The table, side by side, with what each of them has said. ---- */}
-      <div className="mt-[clamp(10px,1.9cqh,15px)] flex items-baseline justify-between gap-4">
-        <SectionLabel>Bids</SectionLabel>
-        <SectionLabel>Budget</SectionLabel>
-      </div>
-
-      <ul className="auction-bids mt-[8px]">
+      <ul className="auction-bids mt-[clamp(9px,1.7cqh,14px)]">
         {drafters.map((drafter, seat) => {
           const high = seat === holder
           const passed = out.includes(seat)
           const bid = bids[seat]
-          const budget = budgets[seat] ?? 0
 
           return (
             <li
               key={drafter.id}
               className={[
-                'auction-bid-card relative flex min-w-0 flex-col gap-[6px] border px-[10px] pb-[8px] pt-[9px] transition-colors duration-300 ease-out',
+                'auction-bid-card relative flex min-w-0 flex-col gap-[5px] rounded-md border px-[10px] pb-[8px] pt-[9px] transition-colors duration-300 ease-out',
                 high
                   ? 'border-accent bg-accent-soft'
                   : seat === youSeat
@@ -145,12 +116,6 @@ export function BidBoard({
                 passed && !high ? 'opacity-40' : '',
               ].join(' ')}
             >
-              {high ? (
-                <span className="absolute -right-px -top-px bg-accent px-[5px] py-[2px] font-display text-[8px] font-bold uppercase leading-none tracking-[0.14em] text-accent-ink">
-                  High
-                </span>
-              ) : null}
-
               <span
                 className={[
                   'flex items-center gap-[6px] truncate whitespace-nowrap text-[11.5px] font-medium leading-none',
@@ -171,24 +136,16 @@ export function BidBoard({
                 {bid === undefined ? '—' : bid}
               </span>
 
-              <span className="flex items-baseline justify-between gap-[6px]">
-                <span className="h-[2px] min-w-0 flex-1 overflow-hidden bg-line">
-                  <span
-                    className="block h-full origin-left bg-accent transition-transform duration-500 ease-out"
-                    style={{ transform: `scaleX(${startBudget > 0 ? budget / startBudget : 0})` }}
-                  />
-                </span>
-                <span className="tabular shrink-0 font-display text-[11px] font-medium leading-none text-muted">
-                  {budget}
-                </span>
+              <span className="money tabular truncate font-display text-[11px] font-medium leading-none text-muted">
+                {budgets[seat] ?? 0}
               </span>
             </li>
           )
         })}
       </ul>
 
-      {/* ---- Three steps, live for every seat at once. ---- */}
-      <div className="mt-[clamp(9px,1.7cqh,13px)] flex items-stretch gap-[8px]">
+      {/* ---- The steps. The only controls on the screen, drawn like it. ---- */}
+      <div className="mt-[clamp(9px,1.7cqh,14px)] flex items-stretch gap-[9px]">
         {offers.map((offer) => {
           const affordable = offer.lands <= yourBudget
           const enabled = canRaise && affordable
@@ -200,47 +157,45 @@ export function BidBoard({
               disabled={!enabled}
               onClick={() => onBid(offer.step)}
               className={[
-                'flex min-w-0 flex-1 flex-col items-center justify-center gap-[4px] rounded-[2px] border px-[6px] py-[11px] font-display font-semibold leading-none tracking-[0.04em] transition-[background-color,border-color,color] duration-150 ease-out',
+                'auction-step flex min-w-0 flex-1 flex-col items-center justify-center gap-[5px] rounded-sm border-2 px-[8px] py-[clamp(9px,2.1cqh,17px)] font-display font-semibold uppercase leading-none tracking-[0.04em] transition-[background-color,border-color,color,transform] duration-150 ease-out active:translate-y-px',
                 enabled
                   ? 'border-accent bg-accent text-accent-ink hover:bg-transparent hover:text-accent'
                   : 'border-line bg-transparent text-faint',
               ].join(' ')}
             >
-              <span className="tabular text-[14px]">
-                {held ? `+${offer.step}` : 'Bid'}
+              <span className="money tabular auction-step-figure">
+                {held ? `+${offer.step}` : offer.lands}
               </span>
               <span
                 className={[
-                  'money tabular text-[10px] font-medium',
+                  'auction-step-note font-medium tracking-[0.12em]',
                   enabled ? 'text-accent-ink/70' : 'text-faint',
                 ].join(' ')}
               >
-                {offer.lands}
+                {held ? <>to <span className="money tabular">{offer.lands}</span></> : 'Open the bidding'}
               </span>
             </button>
           )
         })}
-
-        <button
-          type="button"
-          disabled={!live || youOut || youHold}
-          onClick={onPass}
-          className={[
-            'auction-pass flex w-[96px] shrink-0 flex-col items-center justify-center gap-[4px] rounded-[2px] border px-[6px] py-[11px] font-display font-semibold leading-none tracking-[0.04em] transition-colors duration-150 ease-out',
-            youOut
-              ? 'border-line text-faint'
-              : !live || youHold
-                ? 'border-line text-faint'
-                : 'border-line-strong text-muted hover:border-ink hover:text-ink',
-          ].join(' ')}
-        >
-          <span className="text-[14px] uppercase">{youOut ? 'Out' : 'Pass'}</span>
-          <span className="text-[10px]">&nbsp;</span>
-        </button>
       </div>
+
+      {/* One line under the steps, and only when there is something to say —
+          why they are off, rather than a permanently reserved caption. */}
+      <p
+        className={[
+          'mt-[7px] shrink-0 truncate font-display text-[10.5px] font-medium uppercase tracking-[0.16em] transition-opacity duration-200 ease-out',
+          live && !armed ? 'text-muted opacity-100' : 'text-dim opacity-0',
+        ].join(' ')}
+        aria-live="polite"
+      >
+        {live && !armed ? `Bidding opens in ${opensIn}` : ' '}
+      </p>
     </div>
   )
 }
+
+/** Kept in step with `LOCKOUT_MS` in `AuctionDraft`, in whole seconds. */
+const LOCKOUT = 3
 
 /** The seat disc. Bots keep their dashed outline; a bot never gets a face. */
 function Disc({ drafter, tone }: { drafter: Drafter; tone: 'lead' | 'you' | 'plain' }) {

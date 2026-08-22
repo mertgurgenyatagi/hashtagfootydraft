@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { DraftChat } from '../components/draft/DraftChat'
 import { Narrator, type NarratorTone } from '../components/draft/Narrator'
 import { type FeedLine, NarratorFeed } from '../components/draft/NarratorFeed'
@@ -9,6 +8,8 @@ import { SpinWheel } from '../components/draft/SpinWheel'
 import { TurnIndicator } from '../components/draft/TurnIndicator'
 import { WheelPool } from '../components/draft/WheelPool'
 import type { Message } from '../components/lobby/LobbyChat'
+import { BackHome } from '../components/ui/BackHome'
+import { LanguageSwitch } from '../components/ui/LanguageSwitch'
 import {
   SQUAD_SIZE,
   type FormationSlot,
@@ -25,7 +26,6 @@ import {
   roundAt,
   seatAt,
   slotFor,
-  timeoutChoice,
 } from '../lib/draftEngine'
 import { type Player, inScope, loadPool } from '../lib/players'
 import {
@@ -48,8 +48,14 @@ const DEFAULT_DRAFTERS: Drafter[] = [
   { id: 'bot-2', name: 'Bot 2', kind: 'bot', mark: '2' },
 ]
 
-/** Long enough to read as a spin, short enough to sit through forty-four times. */
-const SPIN_MS = 2800
+/**
+ * The spin runs long on purpose. At 2.8s the wheel read as a control settling
+ * rather than as a wheel somebody had put their hand through; the whole point
+ * of drawing this format as a wheel is the wait, and eight turns need the room
+ * to decelerate through. Forty-four of them over a draft is the cost, and it
+ * is the right one — there is nothing else happening while it turns.
+ */
+const SPIN_MS = 5600
 const BOT_PAUSE = [1500, 3400]
 const HUMAN_PAUSE = [2400, 5000]
 
@@ -76,8 +82,10 @@ const CHATTER = [
 export function SpinDraft({ config }: { config: DraftConfig }) {
   const scope = config.scope ?? 'top-5'
   const league = config.league ?? 'premier-league'
-  const timerSetting = config.timer ?? '15'
-  const limit = timerSetting === 'off' ? null : Number(timerSetting)
+
+  /* No clock: the bid timer is the Auction's alone — see the note on `timers`
+     in lobbyOptions. A spin ends the turn when somebody picks off what it
+     landed on, so there was never anything here for a countdown to close. */
 
   const drafters = config.drafters?.length ? config.drafters : DEFAULT_DRAFTERS
   const seatCount = drafters.length
@@ -96,7 +104,6 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
   const [filter, setFilter] = useState<PositionCode | null>(null)
   const [tab, setTab] = useState(youSeat)
   const [pane, setPane] = useState<'wheel' | 'pool' | 'board'>('pool')
-  const [seconds, setSeconds] = useState(limit ?? 0)
   const [messages, setMessages] = useState<Message[]>([])
   const [feed, setFeed] = useState<FeedLine[]>([])
 
@@ -279,29 +286,6 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
     return () => window.clearTimeout(timer)
   }, [settled, activeSeat, complete, youSeat, drafters, commit, round, entityPool.length])
 
-  /* ------------------------------------------------------------- the clock -- */
-
-  useEffect(() => {
-    if (complete || limit === null || !settled) return
-    setSeconds(limit)
-
-    const tick = window.setInterval(() => {
-      setSeconds((left) => Math.max(0, left - 1))
-    }, 1000)
-
-    return () => window.clearInterval(tick)
-  }, [overall, settled, complete, limit])
-
-  // Out of time. The system takes the cheapest footballer the wheel left on
-  // the board, which is never the pick you would have made.
-  useEffect(() => {
-    if (complete || limit === null || !settled || seconds > 0 || !yourTurn) return
-    if (entityPool.length === 0) return
-    commit(youSeat, (squad, already) =>
-      timeoutChoice(entityPoolRef.current, squad, 'none', already),
-    )
-  }, [seconds, complete, limit, settled, yourTurn, commit, youSeat, entityPool.length])
-
   /* ---------------------------------------------------------- the reporting -- */
 
   const reported = useRef(-1)
@@ -456,29 +440,25 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
       className="spin flex h-full w-full flex-col px-[var(--app-inset-x)] py-[var(--app-inset-y)]"
       data-pane={pane}
     >
-      {/* ---- What this is, which round it is, and where the draft stands. ---- */}
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-x-5 gap-y-[6px] pb-[var(--spin-gap-y)]">
-        <div className="flex min-w-0 items-center gap-4">
-          <Link
-            to="/"
-            className="shrink-0 font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
-          >
-            Back to home
-          </Link>
-          <span className="font-display text-[length:var(--spin-title)] font-medium uppercase leading-none tracking-[0.09em] text-ink">
-            Spin the Wheel
-          </span>
+      {/* ---- The way out, the narrator in the middle, and where the draft
+              stands. Same three-part bar as the other three screens. ---- */}
+      <header className="flex shrink-0 flex-col items-stretch gap-x-5 gap-y-[6px] pb-[var(--spin-gap-y)] sm:flex-row sm:items-center">
+        <div className="flex shrink-0 items-center gap-3">
+          <BackHome confirm />
+          <LanguageSwitch className="hidden sm:flex" />
         </div>
-        <div className="flex min-w-0 items-center gap-[18px]">
-          <span className="shrink-0 font-display text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-muted">
-            Round {round} of {SQUAD_SIZE}
-          </span>
+
+        <div className="flex min-w-0 flex-1 justify-center">
           <Narrator
             text={status.text}
             tone={status.tone}
             beat={overall * 2 + (settled ? 1 : 0)}
           />
         </div>
+
+        <span className="shrink-0 text-right font-display text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-muted">
+          Round {round} of {SQUAD_SIZE}
+        </span>
       </header>
 
       {/* ---- The orbit: one sun, four satellites, none of them touching. ---- */}
@@ -549,10 +529,7 @@ export function SpinDraft({ config }: { config: DraftConfig }) {
             drafters={drafters}
             active={activeSeat}
             reversed={round % 2 === 0}
-            seconds={limit === null || !settled ? null : seconds}
-            limit={limit}
             turn={overall}
-            running={settled && !complete}
             yourTurn={yourTurn}
           />
         </div>

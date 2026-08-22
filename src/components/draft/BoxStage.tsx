@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Player } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 import { Dotgrid } from './Dotgrid'
 
 export interface Decision {
@@ -42,13 +43,13 @@ export function BoxStage({ player, label, accent = false, decisions = [], note }
   return (
     <div
       className={[
-        'spotlight-frame fx fx-soft absolute inset-0 overflow-hidden border bg-surface-2',
+        'spotlight-frame fx fx-soft absolute inset-0 overflow-hidden rounded-lg border bg-surface-2',
         accent ? 'border-accent-line' : 'border-line-strong',
       ].join(' ')}
     >
       {failed ? (
-        <img
-          className="crest absolute left-1/2 top-1/2 h-[84px] w-[84px] -translate-x-1/2 -translate-y-1/2 opacity-40"
+        <Crest
+          className="absolute left-1/2 top-1/2 h-[84px] w-[84px] -translate-x-1/2 -translate-y-1/2 opacity-40"
           src={player.crest}
           alt=""
         />
@@ -77,7 +78,7 @@ export function BoxStage({ player, label, accent = false, decisions = [], note }
         </span>
 
         <span className="flex flex-wrap items-center gap-[10px]">
-          <img className="crest h-[19px] w-[19px] shrink-0" src={player.crest} alt="" />
+          <Crest className="h-[19px] w-[19px] shrink-0" src={player.crest} alt="" />
           <span className="truncate text-[12.5px] leading-none text-muted">
             {player.club} · {player.nation} · {player.age}
           </span>
@@ -86,15 +87,24 @@ export function BoxStage({ player, label, accent = false, decisions = [], note }
           </span>
         </span>
 
+        {/* The stage itself is keyed on the box, so it does not remount when
+            the reveal hold ends and the choice arrives — the buttons would
+            otherwise simply be *there*, mid-read, with no transition at all.
+            Keyed on their own labels and given the quiet fade instead, with a
+            beat of delay so the face lands before the decision does. */}
         {decisions.length > 0 ? (
-          <div className="mt-[clamp(2px,1cqh,8px)] flex flex-wrap items-center gap-[clamp(8px,1.6cqh,16px)]">
+          <div
+            key={decisions.map((decision) => decision.label).join('|')}
+            className="fx fx-soft mt-[clamp(2px,1cqh,8px)] flex flex-wrap items-center gap-[clamp(8px,1.6cqh,16px)]"
+            style={{ animationDelay: '120ms', animationDuration: '520ms' }}
+          >
             {decisions.map((decision) => (
               <button
                 key={decision.label}
                 type="button"
                 onClick={decision.onChoose}
                 className={[
-                  'dond-decision rounded-[2px] border-2 font-display font-semibold uppercase transition-[background-color,border-color,color,transform] duration-150 ease-out active:translate-y-px',
+                  'dond-decision rounded-sm border-2 font-display font-semibold uppercase transition-[background-color,border-color,color,transform] duration-150 ease-out active:translate-y-px',
                   decision.primary
                     ? 'border-accent bg-accent text-accent-ink hover:bg-transparent hover:text-accent'
                     : 'border-line-strong bg-ground/70 text-ink hover:border-ink',
@@ -106,7 +116,15 @@ export function BoxStage({ player, label, accent = false, decisions = [], note }
           </div>
         ) : null}
 
-        {note ? <p className="truncate text-[11px] leading-[1.4] text-dim">{note}</p> : null}
+        {note ? (
+          <p
+            key={note}
+            className="fx fx-soft truncate text-[11px] leading-[1.4] text-dim"
+            style={{ animationDelay: '200ms', animationDuration: '520ms' }}
+          >
+            {note}
+          </p>
+        ) : null}
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ChipGroup, Collapse } from '../components/lobby/ChipGroup'
 import { LobbyChat, type Message } from '../components/lobby/LobbyChat'
 import { LobbyLayout } from '../components/lobby/LobbyLayout'
@@ -7,6 +7,7 @@ import { NameGate } from '../components/lobby/NameGate'
 import { RoomCode } from '../components/lobby/RoomCode'
 import { ScopeDetail } from '../components/lobby/ScopeDetail'
 import { SeatList, type Seat } from '../components/lobby/SeatList'
+import { BackHome } from '../components/ui/BackHome'
 import { Button } from '../components/ui/Button'
 import { formats } from '../data/formats'
 import { MAX_SEATS, MIN_SEATS, constraints, leagues, scopes, timers } from '../data/lobbyOptions'
@@ -203,6 +204,8 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
 
   /** Constraints exist for Free Pick and are not offered anywhere else. */
   const takesConstraint = format === 'free-pick'
+  /** A bid timer exists for the Auction, and is not offered anywhere else. */
+  const takesTimer = format === 'auction'
   const enoughSeats = seats.length >= MIN_SEATS
 
   /**
@@ -272,7 +275,6 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
           onSend={(body) => say({ kind: 'said', author: session.name, body })}
         />
       }
-      rightHeaderLabel={session.host ? "What you're playing" : `${hostName}'s draft`}
       settingsContent={
         <>
           <ChipGroup
@@ -324,28 +326,25 @@ function Room({ code, session }: { code: string; session: LobbySession }) {
             </div>
           </Collapse>
 
-          <div className={GROUP_GAP}>
-            <ChipGroup
-              label="Turn timer"
-              options={timers}
-              value={timer}
-              onChange={setTimer}
-              readOnly={!session.host}
-              delayMs={500}
-            />
-          </div>
+          {/* Auction only — see the note on `timers` in lobbyOptions. */}
+          <Collapse open={takesTimer}>
+            <div className={GROUP_GAP}>
+              <ChipGroup
+                label="Bid timer"
+                options={timers}
+                value={timer}
+                onChange={setTimer}
+                readOnly={!session.host}
+                note="How long a lot can sit without a bid. Any bid sends it back to full."
+                delayMs={500}
+              />
+            </div>
+          </Collapse>
         </>
       }
       statusMessage={resting}
       statusKey={resting}
-      backControl={
-        <Link
-          to="/"
-          className="font-display text-[10px] font-medium uppercase tracking-[0.2em] text-muted transition-colors duration-150 ease-out hover:text-ink"
-        >
-          Leave lobby
-        </Link>
-      }
+      backControl={<BackHome label="Leave lobby" />}
       actionControl={
         <Button
           variant="accent"

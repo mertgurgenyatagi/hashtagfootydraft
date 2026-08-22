@@ -98,7 +98,7 @@ export function NameGate({ mode, code, onSubmit, onCancel }: NameGateProps) {
             placeholder="e.g. Alex"
             autoComplete="given-name"
             spellCheck={false}
-            className="mt-[clamp(0.75rem,2.5vh,1.125rem)] w-full border border-line-strong bg-ground px-4 py-[13px] font-sans text-[14px] text-ink transition-colors duration-100 ease-out hover:border-line focus:border-accent-line focus:outline-none"
+            className="mt-[clamp(0.75rem,2.5vh,1.125rem)] w-full rounded-sm border border-line-strong bg-ground px-4 py-[13px] font-sans text-[14px] text-ink transition-colors duration-100 ease-out hover:border-line focus:border-accent-line focus:outline-none"
           />
 
           <div className="mt-[clamp(0.875rem,3vh,1.375rem)] flex items-center justify-between gap-4">

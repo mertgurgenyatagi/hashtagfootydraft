@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Lot } from '../../lib/auctionEngine'
 import type { Player } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 import { Dotgrid } from './Dotgrid'
 
 export interface BlockResult {
@@ -32,7 +33,7 @@ interface AuctionBlockProps {
  */
 export function AuctionBlock({ lot, left, total, result }: AuctionBlockProps) {
   return (
-    <div className="spotlight-frame relative min-h-0 flex-1 overflow-hidden border border-line-strong bg-surface-2">
+    <div className="spotlight-frame relative min-h-0 flex-1 overflow-hidden rounded-lg border border-line-strong bg-surface-2">
       <BlockPhoto player={lot.player} />
 
       {/* The count, at the top of the displayer. */}
@@ -60,7 +61,7 @@ export function AuctionBlock({ lot, left, total, result }: AuctionBlockProps) {
             {lot.player.name}
           </span>
           <span className="flex min-w-0 items-center gap-[9px]">
-            <img className="crest h-[19px] w-[19px] shrink-0" src={lot.player.crest} alt="" />
+            <Crest className="h-[19px] w-[19px] shrink-0" src={lot.player.crest} alt="" />
             <span className="shrink-0 font-display text-[9.5px] font-semibold uppercase tracking-[0.13em] text-accent">
               {lot.player.position}
             </span>
@@ -96,8 +97,8 @@ function BlockPhoto({ player }: { player: Player }) {
 
   if (failed) {
     return (
-      <img
-        className="crest absolute left-1/2 top-1/2 h-[92px] w-[92px] -translate-x-1/2 -translate-y-1/2 opacity-40"
+      <Crest
+        className="absolute left-1/2 top-1/2 h-[92px] w-[92px] -translate-x-1/2 -translate-y-1/2 opacity-40"
         src={player.crest}
         alt=""
       />

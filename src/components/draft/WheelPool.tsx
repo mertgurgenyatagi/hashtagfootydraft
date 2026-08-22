@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useRef } from 'react'
 import type { PositionCode } from '../../data/formation'
 import type { Player } from '../../lib/players'
+import { Crest } from '../ui/Crest'
 import { SectionLabel } from '../ui/SectionLabel'
 import { PositionSelect } from './PositionSelect'
 
@@ -92,7 +93,7 @@ export function WheelPool({
         ].join(' ')}
         aria-hidden={spinning}
       >
-        <div className="flex min-w-[112px] flex-1 items-center gap-[8px] border border-line bg-ground/60 px-[11px] py-[8px] transition-colors duration-150 ease-out focus-within:border-accent-line">
+        <div className="flex min-w-[112px] flex-1 items-center gap-[8px] rounded-sm border border-line bg-ground/60 px-[11px] py-[8px] transition-colors duration-150 ease-out focus-within:border-accent-line">
           <span aria-hidden="true" className="text-[11px] leading-none text-accent">
             &#8981;
           </span>
@@ -111,7 +112,7 @@ export function WheelPool({
           />
           <span
             aria-hidden="true"
-            className="shrink-0 border border-line px-[4px] py-px font-display text-[9px] leading-[1.4] text-dim"
+            className="shrink-0 rounded-[4px] border border-line px-[4px] py-px font-display text-[9px] leading-[1.4] text-dim"
           >
             /
           </span>
@@ -146,8 +147,11 @@ export function WheelPool({
                       onDoubleClick={() => {
                         if (canDraft) onDraft()
                       }}
+                      /* Untransitioned, same reasoning as the Free Pick pool:
+                         the colour lands at once rather than costing the row
+                         nine repaints on the way through. */
                       className={[
-                        'flex w-full items-center gap-[11px] border-b border-line px-[7px] py-[10.5px] text-left transition-colors duration-150 ease-out',
+                        'flex w-full items-center gap-[11px] border-b border-line px-[7px] py-[10.5px] text-left',
                         selected ? 'bg-accent-soft' : 'hover:bg-surface-2',
                       ].join(' ')}
                     >
@@ -158,7 +162,7 @@ export function WheelPool({
                       <span className="w-[32px] shrink-0 font-display text-[11px] font-semibold uppercase leading-none tracking-[0.11em] text-accent">
                         {player.position}
                       </span>
-                      <img className="crest h-[21px] w-[21px] shrink-0" src={player.crest} alt="" />
+                      <Crest className="h-[21px] w-[21px] shrink-0" src={player.crest} alt="" />
                       <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium leading-none text-ink">
                         {player.name}
                       </span>
@@ -182,7 +186,7 @@ export function WheelPool({
           type="button"
           onClick={onDraft}
           disabled={!canDraft}
-          className="shrink-0 rounded-[2px] border border-accent bg-accent px-[9px] py-[4px] font-display text-[11.5px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
+          className="shrink-0 rounded-sm border border-accent bg-accent px-[9px] py-[4px] font-display text-[11.5px] font-semibold uppercase tracking-[0.1em] text-accent-ink transition-[background-color,border-color,color,transform] duration-150 ease-out hover:bg-transparent hover:text-accent active:translate-y-px disabled:pointer-events-none disabled:border-line disabled:bg-transparent disabled:text-faint"
         >
           {actionLabel}
         </button>

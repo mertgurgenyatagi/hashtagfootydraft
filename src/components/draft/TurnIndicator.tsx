@@ -7,52 +7,46 @@ interface TurnIndicatorProps {
   active: number
   /** Which way the snake is running this round, for the connectors. */
   reversed: boolean
-  /** Null when the lobby turned the clock off, and while the wheel spins. */
-  seconds: number | null
-  /** The full length of a turn, so the drain bar knows how far it has to go. */
-  limit: number | null
-  /** Restarts the drain. Changes once per pick and never within one. */
+  /** Changes once per pick and never within one. Re-runs the seat transition. */
   turn: number
-  running: boolean
   yourTurn: boolean
 }
 
 /**
- * Who is at the table, who is on the clock, and how much of it is left.
+ * Who is at the table and whose turn it is.
  *
  * The seats are the same connected discs the Free Pick screen puts in its top
  * bar, given room to be read at a glance — the connectors carry the snake's
  * direction, which is the one thing about a draft order that is not obvious
  * from looking at it.
  *
- * The clock is a hairline draining along the bottom rather than a number,
- * except on your own turn, where the number is the whole point. A countdown
- * ticking in the corner of the eye of somebody who cannot act on it is just
- * something moving.
+ * There is no clock on it any more. The bid timer belongs to the Auction and
+ * only to the Auction — a spin's turn ends when somebody picks — so the
+ * seconds readout and the hairline that used to drain along the bottom edge
+ * are both gone.
  */
 export function TurnIndicator({
   drafters,
   active,
   reversed,
-  seconds,
-  limit,
   turn,
-  running,
   yourTurn,
 }: TurnIndicatorProps) {
   return (
-    <section className="spin-panel relative flex min-h-0 flex-1 flex-col overflow-hidden p-[14px]">
+    <section
+      key={turn}
+      className="spin-panel relative flex min-h-0 flex-1 flex-col overflow-hidden p-[14px]"
+    >
       <div className="flex shrink-0 items-baseline justify-between gap-3">
         <SectionLabel>Table</SectionLabel>
-        {yourTurn && seconds !== null ? (
-          <span className="tabular font-display text-[length:var(--spin-seconds)] font-medium leading-none text-accent">
-            {String(Math.ceil(seconds)).padStart(2, '0')}
-          </span>
-        ) : (
-          <span className="truncate font-display text-[10.5px] font-medium uppercase tracking-[0.14em] text-dim">
-            {reversed ? 'Order reversed' : 'Order as drawn'}
-          </span>
-        )}
+        <span
+          className={[
+            'truncate font-display text-[10.5px] font-medium uppercase tracking-[0.14em]',
+            yourTurn ? 'text-accent' : 'text-dim',
+          ].join(' ')}
+        >
+          {yourTurn ? 'Your pick' : reversed ? 'Order reversed' : 'Order as drawn'}
+        </span>
       </div>
 
       <ul className="mt-auto flex shrink-0 items-start justify-center pt-[12px]">
@@ -90,15 +84,6 @@ export function TurnIndicator({
           </li>
         ))}
       </ul>
-
-      {limit !== null && running ? (
-        <span
-          key={turn}
-          aria-hidden="true"
-          className="turn-drain"
-          style={{ animationDuration: `${limit}s` }}
-        />
-      ) : null}
     </section>
   )
 }
